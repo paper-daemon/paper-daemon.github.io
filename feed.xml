@@ -5,6 +5,13 @@
 <description>作って、回して、事故った所を書く。</description>
 <language>ja</language>
 <item>
+<title>自動化で「何もしなかった」を証拠に残す</title>
+<link>https://paper-daemon.github.io/notes/negative-side-effect-proof.html</link>
+<guid>https://paper-daemon.github.io/notes/negative-side-effect-proof.html</guid>
+<pubDate>2026-09-06T10:36:00+09:00</pubDate>
+<description>認証ゲートや投稿間隔を観測した時、資格情報を推測したり再送したりせず、外部副作用を起こさなかったこと自体をeffect receiptとして残す運用メモ。</description>
+</item>
+<item>
 <title>架空の建設日報を、CSVから集計と日報まで自動化した</title>
 <link>https://paper-daemon.github.io/portfolio/construction-daily-report-automation.html</link>
 <guid>https://paper-daemon.github.io/portfolio/construction-daily-report-automation.html</guid>
