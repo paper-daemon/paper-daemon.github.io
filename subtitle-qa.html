@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SRT字幕の納品前QA | あませ</title>
+<meta name="description" content="SRT 1ファイル・字幕尺30分まで。構造、重複、不正時間、長文、5秒超ギャップを検査し、修正版SRTとQAレポートを納品します。">
+<link rel="canonical" href="https://paper-daemon.github.io/subtitle-qa.html"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#f4efe6">
+<meta property="og:type" content="website"><meta property="og:title" content="SRT字幕の納品前QA | あませ"><meta property="og:description" content="SRTを納品前に機械的に検査。修正版SRT + HTML/JSON QAレポート。固定 ¥1,480。"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/site.css?v=20260904-2">
+</head>
+<body>
+<header class="site-head">
+<a class="brand" href="/"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>あませ</strong><small>paper-daemon</small></span></a>
+<nav aria-label="main"><a href="/showcase.html">制作物</a><a href="/demo.html">デモ</a><a href="/work.html">仕事</a><a href="/notes/">メモ</a></nav>
+<div class="head-actions"><a class="head-cta" href="https://book.stripe.com/fZu14mapod380897yrgEg2i">¥1,480で依頼 ↗</a></div>
+</header>
+<main class="page">
+<section class="page-hero compact">
+<p class="eyebrow">DELIVER / SUBTITLE QA / FIXED SCOPE</p>
+<h1>SRTを、<br>納品前に検査する。</h1>
+<p class="page-lead">見た目では見落としやすい字幕の重なり、不正な時間、長すぎるcue、妙に長い空白を機械的に洗い、修正版SRTと確認レポートを返します。</p>
+<div class="page-meta"><span>1 SRT / 字幕尺30分まで</span><span>FIXED ¥1,480</span><span>TEXT-FIRST</span></div>
+</section>
+
+<section class="section">
+<header class="section-head"><small>01 / INCLUDED</small><h2>この範囲でやること。</h2></header>
+<div class="lane-grid">
+<article class="lane"><span class="lane-no">CHECK</span><h3>検査。</h3><ul><li>SRT構造を解析</li><li>字幕同士の時間重複</li><li>開始 >= 終了の不正cue</li><li>5秒超のギャップ</li><li>長すぎる字幕テキスト</li></ul></article>
+<article class="lane"><span class="lane-no">FIX</span><h3>整える。</h3><ul><li>cue番号を正規化</li><li>希望時は一括タイムシフト1回</li><li>出力後のcueを再検査</li><li>途中失敗時は半端な成果物を出さない</li></ul></article>
+<article class="lane"><span class="lane-no">DELIVER</span><h3>渡す。</h3><ul><li>修正版SRT</li><li>HTML QAレポート</li><li>JSON QAレポート</li><li>検出内容が分かる状態で納品</li></ul></article>
+</div>
+</section>
+
+<section class="section">
+<header class="section-head"><small>02 / NOT INCLUDED</small><h2>やらないことも先に固定。</h2></header>
+<div class="work-rule"><strong>翻訳・文章校正・字幕焼き込み・動画編集は含みません。</strong><p>このメニューは字幕ファイルの構造とタイミングをQAする小さいサービスです。内容そのものの翻訳や自然な日本語への書き換えが必要な場合は別案件として切り分けます。</p></div>
+</section>
+
+<section class="section">
+<header class="section-head"><small>03 / HOW IT WORKS</small><h2>購入時に素材まで渡せる。</h2><p>決済画面でSRTファイルの共有URLと、任意のタイムシフト希望を入力できます。Google Drive / Dropboxなど、こちらから閲覧できる共有URLにしてください。</p></header>
+<div class="product-card">
+<div><small>SRT SUBTITLE QA</small><h3>1ファイル・字幕尺30分まで</h3><p>構造チェック → 正規化 → QA → 修正版SRT + HTML/JSONレポート。</p></div>
+<div class="product-price"><span>FIXED</span><strong>¥1,480</strong><a class="button primary" href="https://book.stripe.com/fZu14mapod380897yrgEg2i">この範囲で頼む ↗</a></div>
+</div>
+</section>
+
+<section class="section">
+<header class="section-head"><small>04 / PUBLIC TOOL</small><h2>自分で回すなら無料。</h2><p>処理の中核は公開OSSの Subtitle Workbench。まず自分で試して、必要なときだけ作業ごと任せられます。</p></header>
+<div class="feature-grid"><a class="feature-card" href="https://github.com/paper-daemon/subtitle-workbench"><small>OPEN SOURCE / MIT</small><h3>Subtitle Workbench</h3><p>外部ライブラリ不要のPython CLI。SRTの検査、正規化、タイムシフト、HTML/JSONレポート。</p><b>GitHubで見る ↗</b></a></div>
+</section>
+
+<section class="cta-band"><div><h2>SRTだけ渡して、小さく閉じる。</h2><p>大きい動画案件に膨らませず、字幕ファイルのQAだけ固定範囲で処理します。</p></div><a class="button primary" href="https://book.stripe.com/fZu14mapod380897yrgEg2i">¥1,480で依頼する ↗</a></section>
+</main>
+<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>あませ</strong><br>paper-daemon</span></div><nav><a href="/">Home</a><a href="/work.html">仕事</a><a href="https://github.com/paper-daemon/subtitle-workbench">GitHub</a></nav></footer>
+</body></html>
