@@ -69,7 +69,7 @@ jobs:
             const page=await browser.newPage({viewport:{width:1440,height:1000}});
             await page.goto('https://paper-daemon.github.io/',{waitUntil:'networkidle'});
             const home=await page.locator('body').innerText();
-            for(const text of ['作る。','制作物を見る','デモを触る']) if(!home.includes(text)) throw new Error(`home: missing ${text}`);
+            for(const text of ['作る。','制作物を見る','試す ↗']) if(!home.includes(text)) throw new Error(`home: missing ${text}`);
 
             await page.goto('https://paper-daemon.github.io/showcase.html',{waitUntil:'networkidle'});
             if(await page.locator('.link-row').count()<8) throw new Error('works: public proof list too small');
