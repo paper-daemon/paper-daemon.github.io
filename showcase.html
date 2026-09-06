@@ -16,7 +16,9 @@
 <a class="link-row" href="/portfolio/revenue-delivery-guard.html"><small>DELIVERY OPS</small><strong>Revenue Delivery Guard</strong><span>仮払い、QA、納品、検収、入金を分け、一度だけ正しく外部effectを実行する。</span><b>→</b></a>
 </div></section>
 
-<section class="section"><header class="section-head"><small>02 / AUTOMATION</small><h2>入力から成果物まで。</h2></header><div class="link-list">
+<section class="section"><header class="section-head"><small>02 / AUTOMATION</small><h2>入力から成果物まで。</h2><p>実運用で事故になりやすい「入力契約の崩れ」と「二重実行」も、小さい公開ツールとして切り出しています。</p></header><div class="link-list">
+<a class="link-row" href="https://github.com/paper-daemon/workflow-contract-gate"><small>API / WEBHOOK / CI</small><strong>Workflow Contract Gate</strong><span>API・Webhook・n8n/Make連携のpayload contractをCIで検証。required、type、enum、unknown fieldを依存少なめでチェック。</span><b>↗</b></a>
+<a class="link-row" href="https://github.com/paper-daemon/idempotency-receipt-ledger"><small>IDEMPOTENCY / SQLITE</small><strong>Idempotency Receipt Ledger</strong><span>外部effectの前にEXECUTE / SKIP / CONFLICTを判定し、timeout後の再実行でも二重送信・二重処理を避けるreceipt台帳。</span><b>↗</b></a>
 <a class="link-row" href="/portfolio/construction-daily-report-automation.html"><small>CSV / PYTHON</small><strong>建設日報の自動化</strong><span>架空CSVをvalidationし、日別集計と日本語日報へ変換。入力、コード、出力を公開。</span><b>→</b></a>
 <a class="link-row" href="https://github.com/paper-daemon/AgentLink/blob/main/CASE_STUDY_RAG_FLEET.md"><small>RAG / OBSERVABILITY</small><strong>RAG Fleet Harness</strong><span>複数agentのrouting、source、run ID、validation、healthを分けて追う。</span><b>↗</b></a>
 <a class="link-row" href="https://github.com/paper-daemon/AgentLink/tree/main/demos/receipt-replay-simulator"><small>RECOVERY</small><strong>Receipt Replay Simulator</strong><span>結果不明時のskip / retry / reconcileを分離して、二重effectを避ける。</span><b>↗</b></a>
