@@ -18,10 +18,17 @@ jobs:
           node-version: '22'
       - name: Wait for organized site and demo UI to reach GitHub Pages
         run: |
+          expected_css="$(grep -o 'site\.css?v=[^"'"'"' ]*' index.html | head -1)"
+          expected_demo="$(grep -o 'PD_AMASE_DEMO_V3_[A-Za-z0-9_]*' demo-amase-v3.js | head -1)"
+          if [ -z "$expected_css" ] || [ -z "$expected_demo" ]; then
+            echo 'Could not derive expected production markers from the checked-out commit.'
+            exit 1
+          fi
+          echo "Waiting for Pages markers: $expected_css / $expected_demo"
           for i in {1..48}; do
             home="$(curl -fsS --max-time 12 "https://paper-daemon.github.io/?run=${GITHUB_RUN_ID}" || true)"
             demo="$(curl -fsS --max-time 12 "https://paper-daemon.github.io/demo-amase-v3.js?run=${GITHUB_RUN_ID}" || true)"
-            if printf '%s' "$home" | grep -q 'site.css?v=20260903' && printf '%s' "$demo" | grep -q 'PD_AMASE_DEMO_V3_20260903_1'; then
+            if printf '%s' "$home" | grep -Fq "$expected_css" && printf '%s' "$demo" | grep -Fq "$expected_demo"; then
               echo 'Production site and demo UI are current.'
               exit 0
             fi
