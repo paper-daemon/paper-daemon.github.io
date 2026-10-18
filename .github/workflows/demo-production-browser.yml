@@ -86,9 +86,23 @@ jobs:
             if(notes<10) throw new Error(`notes: archive unexpectedly small (${notes})`);
 
             await page.goto('https://paper-daemon.github.io/work.html',{waitUntil:'networkidle'});
-            const stripe=await page.locator('a[href*="stripe.com"]').count();
-            if(stripe<10) throw new Error(`work: expected at least 10 verified checkout links, got ${stripe}`);
-            console.log(`PUBLIC_SITE_OK demos=${demos} notes=${notes} stripe=${stripe}`);
+            // Conversion-first curation: exactly three validated active technical service offers.
+            const expectedCheckout = [
+              'https://book.stripe.com/00w8wO6986EKdYZ05ZgEg2b',
+              'https://book.stripe.com/bJefZggNM1kq9IJbOHgEg2a',
+              'https://book.stripe.com/5kQaEWdBAgfkf33f0TgEg28'
+            ];
+            const actualCheckout=await page.locator('a[href*="stripe.com"]').evaluateAll(
+              nodes=>nodes.map(node=>node.href)
+            );
+            if(actualCheckout.length!==expectedCheckout.length
+               || actualCheckout.some(url=>!expectedCheckout.includes(url))){
+              throw new Error('work: curated active checkout links mismatch: '+JSON.stringify(actualCheckout));
+            }
+            if(await page.locator('a[href="https://amase-lab.booth.pm/items/8805258"]').count()<1){
+              throw new Error('work: downloadable product checkout missing');
+            }
+            console.log(`PUBLIC_SITE_OK demos=${demos} notes=${notes} checkout=${actualCheckout.length}`);
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
