@@ -46,6 +46,7 @@
 <div class="stat-row"><div class="stat"><b id="nodeCount">0</b><small>Nodes</small></div><div class="stat"><b id="riskCount">0</b><small>Potential risks</small></div><div class="stat"><b id="triggerCount">0</b><small>Triggers</small></div></div>
 <div id="verdict" class="verdict"></div><div id="findings"></div>
 <div class="btn-row"><button class="btn secondary" type="button" id="download">Download text report</button><button class="btn secondary" type="button" id="copy">Copy findings</button></div>
+<div class="finding info hidden" id="next-step" style="margin-top:18px"><small>Optional next step</small><strong id="next-step-title">Want to fix the risky nodes?</strong><p id="next-step-desc"></p><p style="margin:12px 0 0"><a class="btn" href="https://book.stripe.com/14AaEW8hge7c5stf0TgEg2c" rel="noopener noreferrer" aria-label="Buy optional $49 workflow diagnostic on Stripe">Get a scoped $49 review ↗</a> <span class="small muted">No upload or data sharing from this tool</span></p></div>
 </section>
 <section class="cta"><div><span class="eyebrow">Need the actual fix?</span><h2>From possible risk to a tested boundary.</h2><p class="small muted">A scoped $49 human-reviewed Automation & QA Diagnostic, with findings and prioritized next actions. The free tool and the paid service are separate; there is no automatic remediation.</p></div><a class="btn" href="https://book.stripe.com/14AaEW8hge7c5stf0TgEg2c" rel="noopener noreferrer">Get $49 diagnostic ↗</a></section>
 <section><span class="eyebrow">A safer workflow in 3 moves</span><div class="steps"><div class="step"><b>01 / RECORD</b><h3>Reserve a stable event ID</h3><p>Use the webhook provider's event ID, a business key, or a durable unique constraint. Do not trust the HTTP request arriving only once.</p></div><div class="step"><b>02 / RECONCILE</b><h3>Check before replay</h3><p>A timeout can mean "unknown." Check the remote write before retrying. A non-atomic check-then-write can race under concurrent events.</p></div><div class="step"><b>03 / VERIFY</b><h3>Test the failure path</h3><p>Send the same event twice, then simulate a timeout after the downstream write. Verify only one irreversible effect occurs.</p></div></div></section>
@@ -61,7 +62,7 @@ const triggerRx=/(webhook|trigger|schedule|cron)/i;
 const gateRx=/(redis|postgres|mysql|datastore|dataStore|if|switch|filter|code|function)/i;
 let lastReport="";
 function fail(s){error.textContent=s;error.classList.remove("hidden")}
-function reset(){error.textContent="";error.classList.add("hidden");out.classList.add("hidden");findings.replaceChildren();lastReport="";file.value=""}
+function reset(){error.textContent="";error.classList.add("hidden");out.classList.add("hidden");findings.replaceChildren();document.getElementById("next-step").classList.add("hidden");lastReport="";file.value=""}
 function safe(s){return String(s==null?"":s).slice(0,180)}
 function item(level,heading,body){return {level,heading,body}}
 function scan(workflow){
@@ -108,6 +109,10 @@ function render(doc){
  }
  lines.push("TEST: replay the same event twice; retry after a remote write succeeded; test two concurrent events.","Source: https://paper-daemon.github.io/n8n-retry-checker/");
  lastReport=lines.join("\n");
+ const help=document.getElementById("next-step"), severe=report.issues.some(x=>x.level==="critical");
+ document.getElementById("next-step-title").textContent=severe?"Get a human-reviewed recovery plan for this workflow":"Want a second pair of eyes on this workflow?";
+ document.getElementById("next-step-desc").textContent=severe?"The free scan found a pattern that warrants review. A $49 diagnostic covers one bounded workflow with prioritized findings and next steps, not automatic remediation.":"This scanner is heuristic. A separate $49 diagnostic can review one specific workflow and report limitations and next actions.";
+ help.classList.remove("hidden");
  out.scrollIntoView({behavior:"smooth",block:"start"});
 }
 async function readFile(f){reset();if(!f)return;if(f.size>2*1024*1024)return fail("Please choose a JSON file smaller than 2 MB.");if(!/\.json$/i.test(f.name))return fail("Choose a .json n8n export.");try{render(JSON.parse(await f.text()))}catch(e){fail("Unable to scan: "+safe(e.message))}}
