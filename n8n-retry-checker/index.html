@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>n8n Retry & Duplicate Risk Checker | Free Local Workflow Scan</title>
+<meta name="description" content="Free n8n workflow JSON checker for webhook retries, duplicate sends, risky write operations, missing recovery gates and silent failures. Runs entirely in your browser.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://paper-daemon.github.io/n8n-retry-checker/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0d1119">
+<meta property="og:type" content="website"><meta property="og:title" content="n8n Retry & Duplicate Risk Checker">
+<meta property="og:description" content="Find possible webhook replay, duplicate-side-effect and silent-failure risks in an exported n8n workflow. No uploads.">
+<meta property="og:image" content="https://paper-daemon.github.io/og-amase.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"n8n Retry & Duplicate Risk Checker","applicationCategory":"DeveloperApplication","operatingSystem":"Any modern browser","isAccessibleForFree":true,"url":"https://paper-daemon.github.io/n8n-retry-checker/","creator":{"@type":"Person","name":"Amase / paper-daemon"}}</script>
+<style>
+:root{color-scheme:dark;--bg:#0d1119;--panel:#151c28;--text:#eaf1f7;--muted:#a8b6c6;--line:#304051;--accent:#a2f0cd;--gold:#f6d58b;--red:#ffaeb4}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse 70% 46% at 75% 0%,#153743 0%,transparent 70%),var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--accent)}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.shell{max-width:1050px;margin:auto;padding:0 22px}.top{display:flex;justify-content:space-between;align-items:center;padding:21px 0;border-bottom:1px solid var(--line)}.logo{font-weight:850;letter-spacing:-.025em}.nav{display:flex;gap:18px;font-size:.85rem}.hero{padding:66px 0 38px;max-width:860px}.eyebrow{text-transform:uppercase;letter-spacing:.16em;color:var(--accent);font-size:.78rem;font-weight:800}.hero h1{font-size:clamp(2.6rem,7vw,5.35rem);line-height:1.02;letter-spacing:-.065em;margin:15px 0 19px}.hero h1 em{font-style:normal;color:var(--accent)}.hero p{max-width:700px;color:var(--muted);font-size:1.13rem}.chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}.chip{border:1px solid var(--line);border-radius:30px;padding:6px 12px;color:var(--muted);font-size:.79rem}
+.grid{display:grid;grid-template-columns:1.08fr .92fr;gap:20px}.panel{border:1px solid var(--line);background:linear-gradient(145deg,#192333,#111822);border-radius:21px;padding:24px;min-width:0}.panel h2{margin:0 0 10px;font-size:1.25rem;letter-spacing:-.03em}.muted{color:var(--muted)}.small{font-size:.87rem}.drop{display:block;cursor:pointer;padding:25px;border:2px dashed #4c6375;border-radius:15px;background:#0d1723;text-align:center;transition:.2s border-color,.2s background}.drop:hover,.drop.drag{border-color:var(--accent);background:#172c32}.drop strong{display:block;margin-bottom:5px}.drop input{position:absolute;width:1px;height:1px;opacity:0}.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid #6b9b8b;border-radius:11px;padding:11px 16px;background:var(--accent);color:#101820;font-weight:800;text-decoration:none}.btn:hover{filter:brightness(1.08)}.btn.secondary{background:transparent;color:var(--text);border-color:var(--line)}.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.results{margin-top:24px}.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}.stat{border:1px solid var(--line);border-radius:14px;padding:14px}.stat b{font-size:1.8rem;display:block;font-variant-numeric:tabular-nums}.stat small{color:var(--muted)}.finding{border-left:3px solid var(--gold);border-radius:8px;background:#141e2b;padding:13px 15px;margin-top:10px}.finding.critical{border-left-color:var(--red)}.finding.info{border-left-color:var(--accent)}.finding strong{display:block}.finding p{margin:6px 0 0;color:var(--muted);font-size:.9rem}.finding small{color:var(--gold);letter-spacing:.08em;text-transform:uppercase;font-weight:800}.finding.critical small{color:var(--red)}.finding.info small{color:var(--accent)}.verdict{border:1px solid #506259;border-radius:12px;background:#142824;padding:14px;color:#cdeedc}.cta{display:flex;align-items:center;justify-content:space-between;gap:25px;border:1px solid #476052;background:linear-gradient(110deg,#1a3635,#151d2b);border-radius:21px;padding:27px;margin:24px 0 40px}.cta h2{margin:5px 0 6px;line-height:1.2;letter-spacing:-.035em}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:30px 0 50px}.step{border-top:1px solid var(--line);padding-top:15px}.step b{color:var(--accent)}.step h3{font-size:1rem;margin:8px 0}.step p{font-size:.89rem;color:var(--muted)}footer{padding:25px 0 45px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:25px;flex-wrap:wrap;font-size:.82rem;color:var(--muted)}.hidden{display:none!important}.notice{color:var(--red);font-weight:700}.spinner{color:var(--accent)}.sep{margin:32px 0;border:0;border-top:1px solid var(--line)}
+@media(max-width:720px){.grid,.steps{grid-template-columns:1fr}.hero{padding-top:45px}.panel{padding:20px}.cta{align-items:flex-start;flex-direction:column}.nav{gap:10px}.stat b{font-size:1.35rem}.stat{padding:11px}.chips{margin-bottom:2px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="top"><a class="logo" href="/">amase<span style="color:var(--accent)">.</span> tools</a><nav class="nav" aria-label="Site"><a href="/global.html">Services</a><a href="/portfolio/idempotency-receipt-ledger.html">Proof</a><a href="https://github.com/paper-daemon">Code</a></nav></header>
+<main>
+<section class="hero"><div class="eyebrow">Free browser tool / automation reliability</div><h1>Will your n8n flow<br><em>do it twice?</em></h1><p>A duplicate webhook. A timeout after a successful write. One accidental retry can send two emails, create two leads, or trigger two payments. Scan an exported workflow for <strong>potential</strong> retry and duplicate-operation risks before they ship.</p><div class="chips"><span class="chip">100% local scan</span><span class="chip">No sign-in</span><span class="chip">No workflow upload</span><span class="chip">n8n JSON exports</span></div></section>
+<div class="grid">
+<section class="panel" aria-label="Upload workflow">
+<h2>01. Scan your workflow</h2><p class="small muted">Export a workflow as JSON in n8n. Choose it below. The file is read only in this browser tab. Nothing is sent to our server.</p>
+<label class="drop" id="drop"><strong>Choose an n8n workflow JSON</strong><span class="small muted">Click to browse or drag & drop · JSON only · maximum 2 MB</span><input id="file" type="file" accept=".json,application/json"></label>
+<div class="btn-row"><button class="btn secondary" id="demo" type="button">Try example workflow</button><button id="clear" class="btn secondary" type="button">Clear</button></div>
+<p class="small muted">The scanner reads node types, connection structure and safety-related settings. It does not run your automation or inspect live credentials.</p>
+<div role="alert" aria-live="assertive" id="error" class="notice hidden"></div>
+</section>
+<section class="panel" aria-label="What the checker tests">
+<h2>What it looks for</h2>
+<div class="finding critical"><small>Review</small><strong>Webhook → external side effect</strong><p>Could retries create the same email, CRM contact or API write twice?</p></div>
+<div class="finding"><small>Review</small><strong>Retrying non-idempotent actions</strong><p>Does an action repeat even after the remote system may have succeeded?</p></div>
+<div class="finding info"><small>Review</small><strong>Failure visibility</strong><p>Are errors ignored or routed to a review/recovery path?</p></div>
+<p class="small muted" style="margin-bottom:0">This is a static heuristic review, not a security certification or proof that every duplicate is prevented. Manual review is essential for high-impact workflows.</p>
+</section>
+</div>
+<section class="panel results hidden" id="results" aria-live="polite">
+<div class="eyebrow">Scan report</div><h2 id="reportTitle">Workflow</h2>
+<div class="stat-row"><div class="stat"><b id="nodeCount">0</b><small>Nodes</small></div><div class="stat"><b id="riskCount">0</b><small>Potential risks</small></div><div class="stat"><b id="triggerCount">0</b><small>Triggers</small></div></div>
+<div id="verdict" class="verdict"></div><div id="findings"></div>
+<div class="btn-row"><button class="btn secondary" type="button" id="download">Download text report</button><button class="btn secondary" type="button" id="copy">Copy findings</button></div>
+</section>
+<section class="cta"><div><span class="eyebrow">Need the actual fix?</span><h2>From possible risk to a tested boundary.</h2><p class="small muted">A scoped $49 human-reviewed Automation & QA Diagnostic, with findings and prioritized next actions. The free tool and the paid service are separate; there is no automatic remediation.</p></div><a class="btn" href="https://book.stripe.com/14AaEW8hge7c5stf0TgEg2c" rel="noopener noreferrer">Get $49 diagnostic ↗</a></section>
+<section><span class="eyebrow">A safer workflow in 3 moves</span><div class="steps"><div class="step"><b>01 / RECORD</b><h3>Reserve a stable event ID</h3><p>Use the webhook provider's event ID, a business key, or a durable unique constraint. Do not trust the HTTP request arriving only once.</p></div><div class="step"><b>02 / RECONCILE</b><h3>Check before replay</h3><p>A timeout can mean "unknown." Check the remote write before retrying. A non-atomic check-then-write can race under concurrent events.</p></div><div class="step"><b>03 / VERIFY</b><h3>Test the failure path</h3><p>Send the same event twice, then simulate a timeout after the downstream write. Verify only one irreversible effect occurs.</p></div></div></section>
+</main><footer><span>© Amase / paper-daemon. This scanner is a learning and triage aid, not production assurance.</span><span><a href="/portfolio/idempotency-receipt-ledger.html">Idempotency implementation</a> · <a href="/direct.html">Services</a></span></footer>
+</div>
+<script>
+(function(){
+"use strict";
+const file=document.getElementById("file"),drop=document.getElementById("drop"),error=document.getElementById("error");
+const out=document.getElementById("results"),findings=document.getElementById("findings");
+const highRisk=/\b(stripe|paypal|gmail|email|smtp|slack|telegram|hubspot|salesforce|airtable|googlesheets|postgres|mysql|supabase|httpRequest|notion|twilio|discord)\b/i;
+const triggerRx=/(webhook|trigger|schedule|cron)/i;
+const gateRx=/(redis|postgres|mysql|datastore|dataStore|if|switch|filter|code|function)/i;
+let lastReport="";
+function fail(s){error.textContent=s;error.classList.remove("hidden")}
+function reset(){error.textContent="";error.classList.add("hidden");out.classList.add("hidden");findings.replaceChildren();lastReport="";file.value=""}
+function safe(s){return String(s==null?"":s).slice(0,180)}
+function item(level,heading,body){return {level,heading,body}}
+function scan(workflow){
+ if(!workflow||typeof workflow!=="object"||!Array.isArray(workflow.nodes))throw Error("Not a valid n8n workflow export: expected a nodes array.");
+ if(workflow.nodes.length>1500)throw Error("Workflow too large for this preview (over 1,500 nodes).");
+ const nodes=workflow.nodes, connections=workflow.connections||{};
+ const edges=new Map();
+ for(const [name,entry] of Object.entries(connections)){let to=[];if(entry&&typeof entry==="object"){for(const groups of Object.values(entry)){if(!Array.isArray(groups))continue;for(const row of groups){if(!Array.isArray(row))continue;for(const target of row){if(target&&typeof target.node==="string")to.push(target.node)}}}}edges.set(name,to)}
+ const visited=new Set();
+ function reachable(start){const q=[start],done=new Set();while(q.length&&done.size<1600){let next=q.shift();if(done.has(next))continue;done.add(next);for(const target of edges.get(next)||[])if(!done.has(target))q.push(target)}return done}
+ const triggers=nodes.filter(n=>triggerRx.test(safe(n.type))),webhooks=triggers.filter(n=>/webhook/i.test(safe(n.type)));
+ const effects=nodes.filter(n=>highRisk.test(safe(n.type)));
+ const gates=nodes.filter(n=>gateRx.test(safe(n.type)));
+ const issues=[];
+ if(webhooks.length && effects.length){
+  const wpaths=webhooks.map(n=>({node:n,reach:reachable(safe(n.name))}));
+  const exposed=effects.filter(n=>wpaths.some(w=>w.reach.has(safe(n.name))));
+  if(exposed.length)issues.push(item("critical","Webhook reaches external-service actions",String(exposed.length)+" externally connected node(s) may perform side effects after a webhook. Verify atomic deduplication on provider event ID and reconcile remote writes before replay. This scan cannot prove whether deduplication already exists."));
+ }
+ const riskyRetries=effects.filter(n=>n.retryOnFail===true);
+ if(riskyRetries.length)issues.push(item("critical","Automatic retry on external actions",String(riskyRetries.length)+" external-service node(s) have retryOnFail enabled. Confirm destination idempotency and response-unknown handling before enabling replay."));
+ const ignored=nodes.filter(n=>n.continueOnFail===true);
+ if(ignored.length)issues.push(item("warn","Continue on failure is enabled",String(ignored.length)+" node(s) have continueOnFail enabled. Check that downstream steps do not mistake partial failure for success and that alerts/recovery are explicit."));
+ if(effects.length && !gates.length)issues.push(item("warn","No obvious decision or state gate found","The workflow contains external-service nodes but no recognizable conditional, code, or state-store node. Check for stable event IDs, dedupe and durable delivery receipts. A gate elsewhere may not be visible in this JSON."));
+ if(webhooks.length && !nodes.some(n=>/respondToWebhook/i.test(safe(n.type))))issues.push(item("info","Review webhook acknowledgment timing","No explicit Respond to Webhook node was detected. Verify whether the trigger sends an appropriate response and whether long-running work may cause provider retries."));
+ if(!nodes.length)issues.push(item("info","Empty workflow","Add nodes before a meaningful scan."));
+ if(!issues.length)issues.push(item("info","No selected heuristics triggered","The scan did not find its selected patterns. This does not mean the workflow is reliable or duplicate-safe. Test retries, concurrent events, failures after remote success, and manual recovery."));
+ return {nodes:nodes.length,triggers:triggers.length,issues,title:safe(workflow.name||"Untitled n8n workflow"),effects:effects.length};
+}
+function render(doc){
+ const report=scan(doc);reset();out.classList.remove("hidden");
+ document.getElementById("reportTitle").textContent=report.title;
+ document.getElementById("nodeCount").textContent=String(report.nodes);
+ document.getElementById("riskCount").textContent=String(report.issues.filter(x=>x.level!=="info").length);
+ document.getElementById("triggerCount").textContent=String(report.triggers);
+ document.getElementById("verdict").textContent=report.effects?"Review required: static checks cannot establish whether external actions are duplicate-safe.":"Only a preliminary scan. Test real executions and failure scenarios before production.";
+ const lines=["n8n RETRY & DUPLICATE RISK SCAN","Workflow: "+report.title,"Nodes: "+report.nodes,"Triggers: "+report.triggers,"","Static heuristics only. No live workflow test, credential scan or certification.",""];
+ for(const issue of report.issues){
+  const box=document.createElement("div");box.className="finding "+(issue.level==="critical"?"critical":issue.level==="info"?"info":"");
+  const small=document.createElement("small"),head=document.createElement("strong"),body=document.createElement("p");
+  small.textContent=issue.level==="critical"?"High-priority review":issue.level==="warn"?"Review":"Information";
+  head.textContent=issue.heading;body.textContent=issue.body;box.append(small,head,body);findings.append(box);
+  lines.push("["+issue.level.toUpperCase()+"] "+issue.heading,issue.body,"");
+ }
+ lines.push("TEST: replay the same event twice; retry after a remote write succeeded; test two concurrent events.","Source: https://paper-daemon.github.io/n8n-retry-checker/");
+ lastReport=lines.join("\n");
+ out.scrollIntoView({behavior:"smooth",block:"start"});
+}
+async function readFile(f){reset();if(!f)return;if(f.size>2*1024*1024)return fail("Please choose a JSON file smaller than 2 MB.");if(!/\.json$/i.test(f.name))return fail("Choose a .json n8n export.");try{render(JSON.parse(await f.text()))}catch(e){fail("Unable to scan: "+safe(e.message))}}
+file.addEventListener("change",()=>readFile(file.files[0]));
+for(const kind of ["dragenter","dragover"])drop.addEventListener(kind,e=>{e.preventDefault();drop.classList.add("drag")});
+for(const kind of ["dragleave","drop"])drop.addEventListener(kind,e=>{e.preventDefault();drop.classList.remove("drag")});
+drop.addEventListener("drop",e=>{if(e.dataTransfer&&e.dataTransfer.files[0])readFile(e.dataTransfer.files[0])});
+document.getElementById("demo").addEventListener("click",()=>render({name:"Demo: webhook -> CRM create -> email",nodes:[{name:"Inbound",type:"n8n-nodes-base.webhook"},{name:"CRM create",type:"n8n-nodes-base.hubspot",retryOnFail:true},{name:"Send mail",type:"n8n-nodes-base.gmail",continueOnFail:true}],connections:{Inbound:{main:[[{node:"CRM create",type:"main",index:0}]]},"CRM create":{main:[[{node:"Send mail",type:"main",index:0}]]}}}));
+document.getElementById("clear").addEventListener("click",reset);
+document.getElementById("download").addEventListener("click",()=>{if(!lastReport)return;const blob=new Blob([lastReport],{type:"text/plain;charset=utf-8"});const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="n8n-retry-risk-report.txt";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+document.getElementById("copy").addEventListener("click",async()=>{if(!lastReport)return;try{await navigator.clipboard.writeText(lastReport);document.getElementById("copy").textContent="Copied"}catch(e){fail("Clipboard was blocked by your browser. Use Download text report.")}});
+})();
+</script>
+</body>
+</html>
