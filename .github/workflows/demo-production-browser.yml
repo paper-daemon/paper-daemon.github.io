@@ -69,7 +69,9 @@ jobs:
             const page=await browser.newPage({viewport:{width:1440,height:1000}});
             await page.goto('https://paper-daemon.github.io/',{waitUntil:'networkidle'});
             const home=await page.locator('body').innerText();
-            for(const text of ['作る。','制作物を見る','試す ↗']) if(!home.includes(text)) throw new Error(`home: missing ${text}`);
+            if(!home.includes('作る。')) throw new Error('home: service section missing');
+            if(await page.locator('a[href="/n8n-retry-checker/"]').count()<1) throw new Error('home: free-tool route missing');
+            if(await page.locator('a[href*="amase-lab.booth.pm/items/"]').count()<1) throw new Error('home: digital-product checkout missing');
 
             await page.goto('https://paper-daemon.github.io/showcase.html',{waitUntil:'networkidle'});
             if(await page.locator('.link-row').count()<8) throw new Error('works: public proof list too small');
