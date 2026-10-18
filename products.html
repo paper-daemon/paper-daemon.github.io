@@ -1,24 +1,30 @@
 <!doctype html>
-<html lang="en"><head>
+<html lang="ja"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Digital Products | amase / paper-daemon</title>
-<meta name="description" content="Small practical digital kits for source-backed research and data validation. Secure Stripe checkout; ZIP delivery by email.">
-<link rel="canonical" href="https://paper-daemon.github.io/products.html"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#f4efe6">
+<title>完成済みツールと公開コード | あませ / paper-daemon</title>
+<meta name="description" content="購入後にダウンロードできる動画納品前QAキットと、無料で試せる動画・自動化チェックツール。その他の技術ツールは公開コードとCI結果を先に確認できます。">
+<link rel="canonical" href="https://paper-daemon.github.io/products.html">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#f4efe6">
 <link rel="stylesheet" href="/site.css?v=20260904-2">
 </head><body>
-<header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>amase</strong><small>paper-daemon</small></span></a><nav aria-label="main"><a href="/showcase.html">Work</a><a href="/direct.html">Services</a><a href="/products.html" aria-current="page">Products</a></nav><div class="head-actions"><a class="social-mini" href="https://github.com/paper-daemon">GH</a></div></header>
+<header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>あませ</strong><small>paper-daemon</small></span></a><nav aria-label="main"><a href="/showcase.html">制作物</a><a href="/work.html">仕事の依頼</a><a href="/products.html" aria-current="page">ツール</a></nav><div class="head-actions"><a class="head-cta" href="/work.html">仕事を頼む ↗</a></div></header>
 <main class="page">
-<section class="page-hero compact"><p class="eyebrow">DIGITAL KITS / SMALL / PRACTICAL</p><h1>Reusable tools for work that needs evidence.</h1><p class="page-lead">Two small digital kits built from the same QA and handoff principles used in the public portfolio. Secure Stripe checkout. ZIP delivery by email, normally within 24 hours.</p><div class="page-meta"><span>ONE-TIME</span><span>ZIP DELIVERY</span><span>PUBLIC PROOF</span></div></section>
-<div class="work-groups">
-<section class="service-group"><header><small>01 / RESEARCH</small><h2>Research Source Log Kit v2.</h2><p>Keep claims traceable after the research leaves your hands.</p></header><div class="service-cards">
-<a class="service-card" href="https://buy.stripe.com/6oU6oGeFEd38cUV3ibgEg2g"><h3>Research Source Log Kit v2</h3><p>Source log, claim matrix, research brief, fact-check checklist, handoff template, worked example, README, and validation helper.</p><span class="price"><small>ONE-TIME</small><b>$19</b></span><span class="order">Buy securely with Stripe ↗</span></a>
-<a class="service-card" href="/services/research-evidence.html"><h3>See the workflow first</h3><p>Public example of source logging, claim-to-evidence mapping, uncertainty handling, and evidence-based handoff.</p><span class="price"><small>PROOF</small><b>PUBLIC</b></span><span class="order">View workflow ↗</span></a>
+<section class="page-hero compact"><p class="eyebrow">SELECTED TOOLS / BUY LESS, VERIFY MORE</p>
+<h1>数より、ちゃんと使える道具。</h1>
+<p class="page-lead">現在の販売ページでは、購入後にそのまま受け取れる商品を主役にしています。手作業のメール納品キットは即納品と混同しないよう、ここでの積極販売から外しました。</p>
+<div class="page-meta"><span>無料版あり</span><span>利用条件を確認</span><span>自動で受け取る商品は区別</span></div></section>
+<section class="section"><header class="section-head"><small>01 / DIGITAL DOWNLOAD</small><h2>動画納品前QAキット</h2>
+<p>Python + ffmpeg/ffprobeで、動画の尺・codec・FPS・stream・デコード・ハッシュなどをチェックする、BOOTHのダウンロード商品です。利用前にBOOTHの商品説明・対応環境・内容をご確認ください。</p></header>
+<div class="product-card"><div><small>VIDEO DELIVERY QA / BOOTH</small><h3>動画の納品ミスを減らすチェックキット。</h3><p>無料チェッカーより詳しく検証するためのローカル実行ツールです。動画素材は手元で扱います。購入後の受け取りはBOOTHのダウンロード機能を使います。</p></div>
+<div class="product-price"><span>ONE-TIME</span><strong>¥980</strong><a class="button primary" href="https://amase-lab.booth.pm/items/8805258" rel="noopener noreferrer">商品内容を見る ↗</a></div></div>
+</section>
+<section class="section"><header class="section-head"><small>02 / FREE TOOLS</small><h2>まず試して、必要なら買う。</h2></header>
+<div class="feature-grid">
+<a class="feature-card" href="/video-preflight/"><small>VIDEO / BROWSER</small><h3>無料の動画メタデータ確認</h3><p>尺・解像度・容量をまとめて確認し、結果をCSVで保存。音声や動画の全編デコードまでは検証しません。</p><b>無料チェック →</b></a>
+<a class="feature-card" href="/n8n-retry-checker/"><small>AUTOMATION / BROWSER</small><h3>n8n重複実行リスク診断</h3><p>JSONをブラウザだけで静的分析。実運用で安全であることの保証ではありません。</p><b>無料で試す →</b></a>
+<a class="feature-card" href="https://github.com/paper-daemon/data-shape-guard"><small>OPEN SOURCE / PYTHON</small><h3>Data Shape Guard</h3><p>JSON・JSONLの構造変化を検知するCLI。公開テストとCI履歴も確認できます。</p><b>コードとテストを見る ↗</b></a>
 </div></section>
-<section class="service-group"><header><small>02 / DATA</small><h2>Data Shape Guard Business Pack v1.</h2><p>A practical companion pack for teams adopting the public Data Shape Guard CLI.</p></header><div class="service-cards">
-<a class="service-card" href="https://buy.stripe.com/4gM14m6982ou3klcSLgEg2h"><h3>Data Shape Guard Business Pack v1</h3><p>Configuration presets, CI rollout checklist, report template, sample payloads, team handoff template, and use notes.</p><span class="price"><small>ONE-TIME</small><b>$29</b></span><span class="order">Buy securely with Stripe ↗</span></a>
-<a class="service-card" href="https://github.com/paper-daemon/data-shape-guard"><h3>Use the public CLI first</h3><p>Inspect the dependency-free drift detector, strict parsing rules, tests, and CI behavior before buying the business companion pack.</p><span class="price"><small>OSS</small><b>FREE</b></span><span class="order">View on GitHub ↗</span></a>
-</div></section>
-</div>
-<section class="work-intro"><div><p class="eyebrow">FULFILLMENT</p><h2 style="margin:0;font:600 clamp(2rem,4vw,3.7rem)/1 var(--serif);letter-spacing:-.045em">Manual email delivery for now.</h2><p style="color:var(--muted);font-size:.8rem;max-width:720px">After payment, the ZIP is delivered to the purchase email, normally within 24 hours. Automated fulfillment is being built separately; the current checkout does not pretend the download is instant.</p></div><div class="work-rule"><strong>Need work instead of a template?</strong><p>Fixed-scope QA, automation, data cleanup, research, and monthly maintenance are available on the Direct Services page.</p><a class="button primary" href="/direct.html">View services ↗</a></div></section>
-</main><footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>amase</strong><br>paper-daemon</span></div><nav><a href="/">Home</a><a href="/direct.html">Services</a><a href="/products.html">Products</a><a href="https://github.com/paper-daemon">GitHub</a></nav></footer>
-</body></html>
+<section class="cta-band"><div><h2>自社フローへの導入が必要？</h2><p>テンプレート購入ではなく、ワークフローへの接続・修正・テストを依頼したい場合は、実装例のある3サービスから選べます。</p></div>
+<a class="button primary" href="/work.html">実装サービスを見る ↗</a></section>
+</main>
+<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>あませ</strong><br>paper-daemon</span></div><nav><a href="/">Home</a><a href="/work.html">仕事</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer></body></html>
