@@ -116,6 +116,34 @@ jobs:
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
+      - name: Validate live affiliate article and working checklist
+        run: |
+          node - <<'NODE'
+          const { chromium } = require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            for(const viewport of [{width:1365,height:900},{width:390,height:844}]){
+              const page=await browser.newPage({viewport});
+              const errors=[];page.on('pageerror',e=>errors.push(e.message));
+              await page.goto('https://paper-daemon.github.io/notes/taishoku-daiko-before-use.html?ci='+Date.now(),{waitUntil:'networkidle'});
+              await page.locator('#jobs-offer').waitFor();
+              const ads=page.locator('a[href*="h.accesstrade.net/sp/cc"]');
+              if(await ads.count()!==1)throw Error('approved affiliate tracking link missing or duplicated');
+              if(!(await ads.first().getAttribute('rel')).includes('sponsored'))throw Error('affiliate link is not disclosed');
+              if(!(await page.locator('body').innerText()).includes('この記事にはアフィリエイト広告を含みます'))throw Error('visible PR disclosure missing');
+              if(await page.locator('#check-items li').count()!==7)throw Error('7-item checklist broken');
+              await page.locator('#copy-checklist').click();
+              const msg=await page.locator('#copy-result').innerText();
+              if(!/コピー/.test(msg))throw Error('checklist control did not respond');
+              const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+              if(overflow>1)throw Error('affiliate article horizontal overflow '+overflow+'px');
+              if(errors.length)throw Error('browser error: '+errors.join(' | '));
+              await page.close();
+            }
+            await browser.close();
+            console.log('AFFILIATE_ARTICLE_OK');
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
       - name: Run real processing tests against production URL
         env:
           DEMO_BASE_URL: https://paper-daemon.github.io
