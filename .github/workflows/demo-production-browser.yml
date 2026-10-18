@@ -133,6 +133,7 @@ jobs:
               if(!(await page.locator('body').innerText()).includes('この記事にはアフィリエイト広告を含みます'))throw Error('visible PR disclosure missing');
               if(await page.locator('#check-items li').count()!==7)throw Error('7-item checklist broken');
               await page.locator('#copy-checklist').click();
+              await page.waitForFunction(()=>/コピー/.test(document.querySelector('#copy-result')?.textContent||''),null,{timeout:5000});
               const msg=await page.locator('#copy-result').innerText();
               if(!/コピー/.test(msg))throw Error('checklist control did not respond');
               const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
