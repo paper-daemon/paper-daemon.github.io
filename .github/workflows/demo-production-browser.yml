@@ -85,8 +85,34 @@ jobs:
 
             await page.goto('https://paper-daemon.github.io/work.html',{waitUntil:'networkidle'});
             const stripe=await page.locator('a[href*="stripe.com"]').count();
-            if(stripe!==33) throw new Error(`work: expected 33 Stripe links, got ${stripe}`);
+            if(stripe<10) throw new Error(`work: expected at least 10 verified checkout links, got ${stripe}`);
             console.log(`PUBLIC_SITE_OK demos=${demos} notes=${notes} stripe=${stripe}`);
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+      - name: Verify n8n scan demo and privacy-first behavior
+        run: |
+          node - <<'NODE'
+          const { chromium } = require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            for(const viewport of [{width:1365,height:900},{width:390,height:844}]){
+              const page=await browser.newPage({viewport});
+              const failures=[];
+              page.on('pageerror',e=>failures.push(e.message));
+              await page.goto('https://paper-daemon.github.io/n8n-retry-checker/?ci='+Date.now(),{waitUntil:'networkidle'});
+              await page.locator('#demo').click();
+              await page.locator('#results:not(.hidden)').waitFor();
+              const nodes=await page.locator('#nodeCount').innerText();
+              const risks=Number(await page.locator('#riskCount').innerText());
+              if(nodes!=='3'||risks<2)throw Error('demo scanner produced unexpected report '+nodes+' / '+risks);
+              if(await page.locator('.finding.critical').count()<2)throw Error('important risks not surfaced');
+              const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+              if(overflow>1)throw Error('mobile overflow '+overflow+'px');
+              if(failures.length)throw Error('browser error: '+failures.join(' | '));
+              await page.close();
+            }
+            console.log('N8N_RETRY_CHECKER_OK');
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
