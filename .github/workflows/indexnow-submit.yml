@@ -1,0 +1,75 @@
+name: IndexNow submit updated revenue URLs
+
+on:
+  workflow_run:
+    workflows: ["pages build and deployment"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: indexnow-updated-urls
+  cancel-in-progress: false
+
+jobs:
+  notify-search:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Submit recently updated site URLs to IndexNow
+        env:
+          SITE_HOST: paper-daemon.github.io
+          INDEXNOW_KEY_FILE: 6a78c5343ace6844284186b2252ba0cd4b88972c.txt
+        run: |
+          python - <<'PY'
+          import datetime as dt, json, os, pathlib, urllib.request, urllib.error, xml.etree.ElementTree as ET
+          root = pathlib.Path(".")
+          key_file = root / os.environ["INDEXNOW_KEY_FILE"]
+          key = key_file.stem
+          if key_file.read_text().strip() != key:
+              raise SystemExit("IndexNow key file does not match filename")
+          host = os.environ["SITE_HOST"]
+          today = dt.datetime.now(dt.timezone.utc).date()
+          cutoff = today - dt.timedelta(days=7)
+          doc = ET.parse(root / "sitemap.xml")
+          ns = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+          urls = []
+          for item in doc.findall("s:url", ns):
+              loc = (item.findtext("s:loc", default="", namespaces=ns) or "").strip()
+              lastmod = (item.findtext("s:lastmod", default="", namespaces=ns) or "").strip()
+              if not loc.startswith("https://" + host + "/") and loc != "https://" + host + "/":
+                  raise SystemExit("Out-of-scope sitemap URL: " + loc)
+              try:
+                  recently_changed = bool(lastmod and dt.date.fromisoformat(lastmod[:10]) >= cutoff)
+              except ValueError:
+                  raise SystemExit("Invalid lastmod " + lastmod)
+              if recently_changed:
+                  urls.append(loc)
+          urls = list(dict.fromkeys(urls))
+          if not urls:
+              print("INDEXNOW_NO_CHANGED_URLS"); raise SystemExit(0)
+          payload = json.dumps({
+              "host": host,
+              "key": key,
+              "keyLocation": f"https://{host}/{key_file.name}",
+              "urlList": urls,
+          }).encode()
+          req = urllib.request.Request("https://api.indexnow.org/indexnow", data=payload, headers={
+              "Content-Type": "application/json; charset=utf-8",
+              "User-Agent": "paper-daemon.github.io-indexnow/1.0",
+          }, method="POST")
+          try:
+              with urllib.request.urlopen(req, timeout=25) as response:
+                  code = response.status
+                  print("INDEXNOW_SUBMITTED", code, len(urls), "url(s)")
+                  for url in urls: print("URL", url)
+                  if code not in (200, 202): raise SystemExit(1)
+          except urllib.error.HTTPError as exc:
+              print("INDEXNOW_REJECTED", exc.code, exc.read(400).decode(errors="replace"))
+              raise SystemExit(1)
+          PY
