@@ -1,6 +1,13 @@
 name: IndexNow submit updated revenue URLs
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'sitemap.xml'
+      - 'notes/**'
+      - '.github/workflows/indexnow-submit.yml'
+      - '6a78c5343ace6844284186b2252ba0cd4b88972c.txt'
   workflow_run:
     workflows: ["pages build and deployment"]
     types: [completed]
