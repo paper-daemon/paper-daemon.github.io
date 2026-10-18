@@ -1,57 +1,119 @@
 <!doctype html>
-<html lang="ja"><head>
+<html lang="ja">
+<head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>仕事 | あませ / paper-daemon</title>
-<meta name="description" content="あませに頼める仕事。AI・自動化・Web・PC修正・動画/音声・データ整理を、範囲と料金を先に決めて進めます。顔合わせなしのテキスト進行にも対応。">
-<link rel="canonical" href="https://paper-daemon.github.io/work.html"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#f4efe6"><meta property="og:type" content="website"><meta property="og:title" content="頼めること | あませ"><meta property="og:description" content="大工事の前に、小さく切る。AI・自動化・Web・PC修正・動画QA・データ整理。"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
+<title>自動化・APIの修復と納品QA | あませ / paper-daemon</title>
+<meta name="description" content="自動化の二重実行防止、API/Webhookの契約検証、JSON/CSVの品質チェックを固定範囲で提供。公開コードとCIテストで事前確認できます。動画納品前QAのダウンロードツールも。">
+<link rel="canonical" href="https://paper-daemon.github.io/work.html"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#f4efe6"><meta property="og:type" content="website">
+<meta property="og:title" content="直す・守る・確かめる | あませ">
+<meta property="og:description" content="実装例・テストを確認してから依頼できる、自動化・API・データ品質の小さな技術サービス。">
+<meta property="og:image" content="https://paper-daemon.github.io/og-amase.png">
 <link rel="stylesheet" href="/site.css?v=20260904-2">
-</head><body>
+<style>
+.offer-head{padding:22px 0 16px;max-width:800px}.offer-head h2{font:600 clamp(1.8rem,4vw,3.1rem)/1.12 var(--serif);letter-spacing:-.04em;margin:10px 0}.offer-head p{color:var(--muted)}
+.curated-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;padding:10px 0 36px}
+.curated-card{display:flex;flex-direction:column;gap:12px;border:1px solid var(--line);border-radius:16px;background:var(--card);padding:24px;min-width:0}
+.curated-card small{font-size:.69rem;letter-spacing:.09em;color:var(--muted);font-weight:700}
+.curated-card h3{font:600 1.52rem/1.16 var(--serif);letter-spacing:-.03em;margin:0}
+.curated-card p{color:var(--muted);font-size:.8rem;margin:0;line-height:1.8}
+.curated-card ul{font-size:.76rem;padding-left:18px;margin:0;line-height:1.8}
+.curated-card .amount{font:700 1.7rem/1.2 var(--serif);letter-spacing:-.035em}
+.card-bottom{display:flex;flex-direction:column;gap:10px;margin-top:auto;padding-top:12px}
+.card-bottom a{font-size:.8rem;font-weight:700}
+.button.compact{padding:12px 15px;font-size:.82rem;text-align:center}
+.proof-label{display:inline-block;background:var(--soft);border-radius:6px;padding:4px 8px;color:var(--ink);font-size:.72rem}
+.limit-note{font-size:.77rem;color:var(--muted);line-height:1.9}
+.shelf{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:26px;align-items:center;border:1px solid var(--line);background:var(--card);border-radius:20px;padding:28px;margin:14px 0 44px}
+.shelf h3{font:600 clamp(1.5rem,3vw,2.2rem)/1.2 var(--serif);margin:10px 0}
+.shelf p{font-size:.85rem;color:var(--muted);line-height:1.8}
+.shelf-links{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}.shelf-links a{font-size:.81rem;font-weight:700}
+.shelf-price{font:700 2.7rem var(--serif);letter-spacing:-.05em;text-align:center}
+.shelf-price small{display:block;font:600 .7rem system-ui;letter-spacing:.12em;color:var(--muted);margin:5px 0 15px}
+.shelf-price a{display:block}
+.contactrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0 36px}
+.contactrow a{border:1px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;font-weight:700;background:var(--card)}
+.contactrow span{display:block;color:var(--muted);font-weight:400;font-size:.76rem;margin-top:5px}
+@media(max-width:810px){.curated-grid,.contactrow{grid-template-columns:1fr}.shelf{grid-template-columns:1fr}.shelf-price{text-align:left}.curated-card{padding:20px}.page{overflow-wrap:anywhere}}
+</style>
+</head>
+<body>
 <header class="site-head">
 <a class="brand" href="/"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>あませ</strong><small>paper-daemon</small></span></a>
-<nav aria-label="main"><a href="/showcase.html">制作物</a><a href="/demo.html">デモ</a><a href="/work.html" aria-current="page">仕事</a><a href="/notes/">メモ</a></nav>
-<div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase">Th</a><a class="social-mini" href="https://x.com/amase__iv">X</a><a class="head-cta" href="#markets">相談先 ↗</a></div>
+<nav aria-label="main"><a href="/showcase.html">制作物</a><a href="/n8n-retry-checker/">無料診断</a><a href="/work.html" aria-current="page">仕事</a><a href="/products.html">商品</a></nav>
+<div class="head-actions"><a class="head-cta" href="#contact">まず相談 ↗</a></div>
 </header>
 <main class="page">
-<section class="page-hero compact"><p class="eyebrow">WORK / FIXED SCOPE / TEXT-FIRST</p><h1>頼めること。</h1><p class="page-lead">最初から大きくしません。要件をテキストで見て、作る・直す・渡すのどこを任せるか、小さい範囲から切ります。</p><div class="page-meta"><span>顔合わせなしでもOK</span><span>範囲外は先に確認</span><span>成果物と確認結果を残す</span></div></section>
-<section class="work-intro"><div><p class="eyebrow">HOW I WORK</p><h2 style="margin:0;font:600 clamp(2rem,4vw,3.7rem)/1 var(--serif);letter-spacing:-.045em">相談 → 小さく試す → 必要なら広げる。</h2><p style="color:var(--muted);font-size:.8rem;max-width:720px">CrowdWorks / Lancersのメッセージだけでも進められます。電話やWeb面談を前提にせず、必要な情報・成果物・納期を文章で揃える方が得意です。</p></div><div class="work-rule"><strong>勝手に範囲を増やさない。</strong><p>追加作業が必要なら、先に止めて相談。固定料金の仕事を後から別物にしません。</p></div></section>
-<nav class="work-index" aria-label="仕事カテゴリ"><a href="#build">BUILD 作る</a><a href="#fix">FIX 直す</a><a href="#deliver">DELIVER 渡す</a><a href="#small">SMALL 小さい作業</a><a href="#markets">相談先</a></nav>
-<div class="work-groups">
-<section class="service-group" id="build"><header><small>01 / BUILD</small><h2>作る。</h2><p>ゼロから全部ではなく、まず動く最小単位を作ります。</p></header><div class="service-cards">
-<a class="service-card" href="https://book.stripe.com/00w8wOfJI1kqg77dWPgEg1f"><h3>サービスを1個つなぐ</h3><p>API / SaaS / ローカル処理を1つ。実装・設定・テスト・戻し方まで。</p><span class="price"><small>FIXED</small><b>¥3,980</b></span><span class="order">この範囲で頼む ↗</span></a>
-<a class="service-card" href="https://book.stripe.com/eVq00iapo3sy5st8CvgEg1a"><h3>Webページの壊れを直す</h3><p>1ページ最大3点。バックアップ、PC/スマホ確認、公開確認、戻し方。</p><span class="price"><small>FIXED</small><b>¥2,980</b></span><span class="order">この範囲で頼む ↗</span></a>
-<a class="service-card" href="https://book.stripe.com/8x23cudBAfbg0892e7gEg1g"><h3>Agent / RAGの壊れ方を1個潰す</h3><p>1フロー。耐障害処理を限定実装し、失敗ケースのテストまで。</p><span class="price"><small>FIXED</small><b>¥4,980</b></span><span class="order">この範囲で頼む ↗</span></a>
-<a class="service-card" href="https://www.lancers.jp/menu/detail/1340687"><h3>業務自動化を相談する</h3><p>Python / API / n8nなど。要件が固まっていない場合はLancersで先に切り分け。</p><span class="price"><small>FROM</small><b>¥30,000</b></span><span class="order">Lancersで相談 ↗</span></a>
-</div></section>
-
-<section class="service-group" id="fix"><header><small>02 / FIX</small><h2>直す。</h2><p>全部作り直す前に、再現して壊れている1点を切り分けます。</p></header><div class="service-cards">
-<a class="service-card" href="https://book.stripe.com/6oU00ibts2ou2gh9GzgEg1e"><h3>自動化のバグを1個直す</h3><p>再現、原因切り分け、修正、再実行確認、戻し方。</p><span class="price"><small>FIXED</small><b>¥1,980</b></span><span class="order">この範囲で頼む ↗</span></a>
-<a class="service-card" href="https://book.stripe.com/14AdR85548MSbQRbOHgEg18"><h3>PCの1症状を切り分ける</h3><p>60分 / 1症状。安全な修正、動作確認、変更メモ。</p><span class="price"><small>FIXED</small><b>¥1,980</b></span><span class="order">この範囲で頼む ↗</span></a>
-<a class="service-card" href="https://book.stripe.com/9B6cN49lk1kq4opg4XgEg1Q"><h3>フォルダを丸ごと片付ける</h3><p>1000ファイル。分類、名前整理、完全重複、空/壊れ候補、対応表。</p><span class="price"><small>FIXED</small><b>¥1,480</b></span><span class="order">この範囲で頼む ↗</span></a>
-<a class="service-card" href="/demo-view.html?id=svc-web-fix"><h3>先にWeb修復デモを見る</h3><p>崩れの検出から複数viewportの確認まで、仕事の前に流れを触れます。</p><span class="price"><small>DEMO</small><b>FREE</b></span><span class="order">ブラウザで試す →</span></a>
-</div></section>
-
-<section class="service-group" id="deliver"><header><small>03 / DELIVER</small><h2>渡す。</h2><p>見た目だけでなく、形式・尺・欠損・再利用しやすさまで確認します。</p></header><div class="service-cards">
-<a class="service-card" href="https://book.stripe.com/fZufZg2WW6EK9IJ1a3gEg19"><h3>動画を見られる状態まで仕上げる</h3><p>元尺10分。基本カット、支給字幕、音量、軽い色、FHD。</p><span class="price"><small>FIXED</small><b>¥1,980</b></span><span class="order">この範囲で頼む ↗</span></a>
-<a class="service-card" href="https://book.stripe.com/8x26oGdBA4wC5stbOHgEg15"><h3>音声20分を聞きやすくする</h3><p>ノイズ、音量、無音、形式。仕上げ版 + 処理メモ。</p><span class="price"><small>FIXED</small><b>¥1,480</b></span><span class="order">この範囲で頼む ↗</span></a>
-<a class="service-card" href="https://book.stripe.com/dRmaEW8hg3sy9IJ6ungEg16"><h3>画像10枚をWeb向けに整える</h3><p>比率、サイズ、圧縮、ぼかし、軽い色調整。</p><span class="price"><small>FIXED</small><b>¥980</b></span><span class="order">この範囲で頼む ↗</span></a>
-<a class="service-card" href="/subtitle-qa.html"><h3>SRT字幕を納品前にQAする</h3><p>SRT 1ファイル・字幕尺30分まで。構造、重複、不正時間、長文、5秒超ギャップを検査し、修正版 + HTML/JSONレポート。</p><span class="price"><small>FIXED</small><b>¥1,480</b></span><span class="order">詳細と依頼 →</span></a>
-<a class="service-card" href="https://amase-lab.booth.pm/items/8805258"><h3>動画納品前QAを自分で回す</h3><p>Python + ffmpeg/ffprobeのローカルQAキット。尺、stream、codec、decode、hash。</p><span class="price"><small>BOOTH</small><b>¥980</b></span><span class="order">ダウンロード商品を見る ↗</span></a>
-</div></section>
-
-<section class="service-group" id="small"><header><small>04 / SMALL</small><h2>小さい作業。</h2><p>単発の整理・調査・文章なら、技術案件に膨らませず小さく閉じます。</p></header><div class="service-cards">
-<a class="service-card" href="https://book.stripe.com/eVqfZgbtsbZ40891a3gEg1W"><h3>一覧を100件入力する</h3><p>指定Excel / CSVへ転記。表記ゆれを軽く整えて件数確認。</p><span class="price"><small>FIXED</small><b>¥1,280</b></span><span class="order">頼む ↗</span></a>
-<a class="service-card" href="https://buy.stripe.com/7sYaEWcxw0gmdYZ05ZgEg1c"><h3>候補を調べて比べる</h3><p>1テーマ。主要10ソース前後、比較表、注意点、参考リンク。</p><span class="price"><small>FIXED</small><b>¥980</b></span><span class="order">頼む ↗</span></a>
-<a class="service-card" href="https://buy.stripe.com/fZu4gybts9QWaMN05ZgEg1b"><h3>文章を読める形に整える</h3><p>8,000字目安。完成稿 + 短縮版 + 希望時トーン違い1案。</p><span class="price"><small>FIXED</small><b>¥780</b></span><span class="order">頼む ↗</span></a>
-<a class="service-card" href="https://book.stripe.com/6oU00i5541kqaMNf0TgEg1N"><h3>会議音声を議事録にする</h3><p>60分。文字起こし + 要点 + 決定事項 + TODO。</p><span class="price"><small>FIXED</small><b>¥1,980</b></span><span class="order">頼む ↗</span></a>
-</div></section>
-
-<section class="service-group" id="markets"><header><small>05 / CONTACT</small><h2>相談先。</h2><p>要件がまだ曖昧なら、いきなり決済せずメッセージから。</p></header><div class="market-panel">
-<a href="https://crowdworks.jp/public/employees/6470340"><strong>CrowdWorks</strong><span>相談・案件依頼。テキストで要件共有 ↗</span></a>
-<a href="https://www.lancers.jp/profile/aLuu"><strong>Lancers</strong><span>自動化・AI・制作の相談 ↗</span></a>
-<a href="https://amase-lab.booth.pm/"><strong>BOOTH</strong><span>完成済みツールをそのまま購入 ↗</span></a>
-</div></section>
+<section class="page-hero compact">
+<p class="eyebrow">SMALL SCOPE / PUBLIC PROOF / FIX BEFORE SCALE</p>
+<h1>動かすだけでなく、<br>壊れにくくする。</h1>
+<p class="page-lead">自動化・Webhook・API・データ処理の「壊れる境界」を、実装・検証・引き継ぎまで。商品を増やすより、今ちゃんと提供できる仕事に絞りました。</p>
+<div class="page-meta"><span>公開コードから実装を確認</span><span>明示した範囲内で作業</span><span>メール・テキスト中心</span></div>
+</section>
+<section aria-label="固定範囲の技術サービス" id="services">
+<div class="offer-head"><p class="eyebrow">01 / VERIFIED BUILDING BLOCKS</p><h2>最初は、この3つ。</h2>
+<p>各商品の下に公開ソースを置いています。記載のCI成功は公開CLIに対するテストの記録であり、個別顧客の環境での無事故・成果を保証するものではありません。</p></div>
+<div class="curated-grid">
+<article class="curated-card">
+<small>RELIABILITY / WEBHOOK</small><h3>二重実行・再試行の事故を防ぐ</h3>
+<p>再試行でメールや外部書込みが二重化するフロー1本に、冪等性キー・receipt・重複/競合判定を組み込む定額作業。</p>
+<ul><li>対象：既存の1ワークフロー</li><li>実装範囲を事前に限定</li><li>再試行・競合・復旧動作を確認</li></ul>
+<div class="card-bottom">
+<span class="proof-label">Python / SQLite / regression tests</span>
+<a href="https://github.com/paper-daemon/idempotency-receipt-ledger">公開ソースとテストを見る ↗</a>
+<a href="https://github.com/paper-daemon/idempotency-receipt-ledger/actions/runs/39091607754">直近のCI成功履歴 ↗</a>
+<div class="amount">$119 <small>USD / ONE-TIME</small></div>
+<a class="button primary compact" href="https://book.stripe.com/00w8wO6986EKdYZ05ZgEg2b" rel="noopener noreferrer">Stripeで対象範囲と決済を確認 ↗</a>
+</div></article>
+<article class="curated-card">
+<small>API / WEBHOOK CONTRACT</small><h3>APIの仕様ズレをテストで捕まえる</h3>
+<p>代表的なJSON API・Webhookの契約を記述し、保存した入力例を検証。CIに接続可能なチェックと結果を渡す。</p>
+<ul><li>対象：代表的な1契約境界</li><li>必須項目・型・列挙値のチェック</li><li>テスト用fixture・使用メモ</li></ul>
+<div class="card-bottom">
+<span class="proof-label">CLI / fixtures / CI tests</span>
+<a href="https://github.com/paper-daemon/workflow-contract-gate">公開ソースとテストを見る ↗</a>
+<a href="https://github.com/paper-daemon/workflow-contract-gate/actions/runs/33941115143">CI成功履歴 ↗</a>
+<div class="amount">$89 <small>USD / ONE-TIME</small></div>
+<a class="button primary compact" href="https://book.stripe.com/bJefZggNM1kq9IJbOHgEg2a" rel="noopener noreferrer">Stripeで対象範囲と決済を確認 ↗</a>
+</div></article>
+<article class="curated-card">
+<small>DATA PIPELINE / QUALITY</small><h3>CSV・JSONのデータ崩れを検出する</h3>
+<p>1つのデータフローの構造・欠損・型の変化をチェックする検証器とレポートを準備。元データは勝手に書き換えません。</p>
+<ul><li>対象：CSVまたはJSONの1フロー</li><li>型・フィールド・構造変化</li><li>機械判定と人が読めるレポート</li></ul>
+<div class="card-bottom">
+<span class="proof-label">Python / standard library / CI tests</span>
+<a href="https://github.com/paper-daemon/data-shape-guard">公開ソースとテストを見る ↗</a>
+<a href="https://github.com/paper-daemon/data-shape-guard/actions/runs/33957739426">CI成功履歴 ↗</a>
+<div class="amount">$99 <small>USD / ONE-TIME</small></div>
+<a class="button primary compact" href="https://book.stripe.com/5kQaEWdBAgfkf33f0TgEg28" rel="noopener noreferrer">Stripeで対象範囲と決済を確認 ↗</a>
+</div></article>
 </div>
-<section class="cta-band"><div><h2>迷ったら、URLかファイル1個から。</h2><p>「これ何とかして」で大丈夫。見える範囲だけ確認して、最初の一手を切ります。</p></div><a class="button primary" href="https://crowdworks.jp/public/employees/6470340">CrowdWorksで相談 ↗</a></section>
+<p class="limit-note">※ 上の3件は<strong>受託サービス</strong>で、購入後の即時ファイル納品ではありません。いずれも対象・納期・入力資料の扱いを確認してから着手します。マーケットプレイスから始まった相談は、そのプラットフォーム上で契約・決済します。価格はStripeの現在有効な商品と決済リンクに照合済み（2026年10月18日）。税金・換算額は最終決済画面で確認してください。</p>
+</section>
+<section aria-label="完成済みのデジタル商品" id="ready">
+<div class="offer-head"><p class="eyebrow">02 / SELF-SERVE / NO SCHEDULING</p><h2>買って、そのまま使う。</h2></div>
+<div class="shelf">
+<div><p class="eyebrow">VIDEO DELIVERY QA KIT / BOOTH</p><h3>動画納品前QAキット</h3>
+<p>動画の尺・解像度・FPS・codec・映像/音声stream・デコード整合性・SHA-256を、手元のPCで検査するためのPython + ffmpeg/ffprobeベースのデジタル商品。BOOTHで購入後ダウンロードする形式です。無料版は一部のメタデータだけを確認できます。</p>
+<div class="shelf-links"><a href="/video-preflight/">無料で尺・解像度をチェック ↗</a><a href="/showcase.html">関連の制作物を見る ↗</a></div></div>
+<div class="shelf-price">¥980<small>BOOTH / DIGITAL DOWNLOAD</small><a class="button primary compact" href="https://amase-lab.booth.pm/items/8805258" rel="noopener noreferrer">商品ページで内容を確認 ↗</a></div>
+</div>
+</section>
+<section aria-label="無料の技術デモ"><div class="offer-head"><p class="eyebrow">03 / TRY BEFORE BUY</p><h2>頼む前に、無料で試す。</h2></div>
+<div class="feature-grid">
+<a class="feature-card" href="/n8n-retry-checker/"><small>FREE / AUTOMATION</small><h3>n8nの重複実行リスクを見る</h3><p>ワークフローJSONをブラウザで静的診断。アップロードなし。完全な安全性の保証ではありません。</p><b>無料診断 →</b></a>
+<a class="feature-card" href="/video-preflight/"><small>FREE / VIDEO</small><h3>動画の尺・画角・容量を見る</h3><p>メタデータの一括確認とCSV保存。音声や全編デコードの検査までは行いません。</p><b>無料チェック →</b></a>
+<a class="feature-card" href="https://github.com/paper-daemon"><small>OPEN SOURCE</small><h3>先にコードとテストを見る</h3><p>公開した小さなツール、使用例、回帰テスト、CIを確認してから相談できます。</p><b>GitHubで確認 ↗</b></a>
+</div>
+</section>
+<section id="contact"><div class="offer-head"><p class="eyebrow">04 / DISCUSS FIRST</p><h2>依頼の前に相談したいとき。</h2>
+<p>環境や対象フローが合うか分からない場合は、決済前に要件を確認。価格だけで無理な作業範囲を約束しません。</p></div>
+<div class="contactrow">
+<a href="https://www.lancers.jp/profile/aLuu">Lancers<span>国内の案件相談・見積もり ↗</span></a>
+<a href="https://crowdworks.jp/public/employees/6470340">CrowdWorks<span>国内の小さな実務依頼 ↗</span></a>
+<a href="https://www.upwork.com/">Upwork<span>既存のプラットフォーム案件はその中で契約 ↗</span></a>
+</div></section>
 </main>
-<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>あませ</strong><br>paper-daemon</span></div><nav><a href="/">Home</a><a href="/showcase.html">制作物</a><a href="/demo.html">デモ</a><a href="/notes/">メモ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a></nav></footer>
+<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>あませ</strong><br>paper-daemon</span></div>
+<nav><a href="/">Home</a><a href="/showcase.html">制作物</a><a href="/products.html">デジタル商品</a><a href="https://github.com/paper-daemon">GitHub</a></nav></footer>
 </body></html>
