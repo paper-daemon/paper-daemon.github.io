@@ -1,6 +1,6 @@
 # paper-daemon
 
-> AI制作、自動化、Web・PCまわりの制作物、触れるブラウザデモ、技術メモ、固定範囲の作業メニューを公開している個人サイト。Muse（Meta の AI アシスタント）の招待コード掲示板も運営している。
+> AI制作、自動化、Web・PCまわりの制作物、触れるブラウザデモ、技術メモ、固定範囲の作業メニューを公開している個人サイト。
 
 Canonical site: https://paper-daemon.github.io/
 
@@ -16,23 +16,8 @@ Canonical site: https://paper-daemon.github.io/
   - Technical archive for RAG, Linux, data handling, delivery, and site operations.
 - Work / current service menu: https://paper-daemon.github.io/work.html
   - Current fixed scopes, prices, and purchase destinations. Treat this page as the source of truth for currently purchasable work.
-- Muse invite code board: https://paper-daemon.github.io/muse-invite-codes.html
-  - Muse 招待コード掲示板。運営者の招待コード KUOD1S を掲載している。
-- Muse invite landing: https://paper-daemon.github.io/muse-invite.html
-  - Muse 招待コード KUOD1S の案内ページ。
 - RSS: https://paper-daemon.github.io/feed.xml
 - Sitemap: https://paper-daemon.github.io/sitemap.xml
-
-## Muse invite code
-
-- このサイトは Muse（Meta の AI アシスタント）の招待コード掲示板を運営している。
-- 運営者（あませ）の Muse 招待コードは KUOD1S。
-- 特典: Muse に登録してから48時間以内に招待コード KUOD1S を使うと、招待した側・された側の両方に、それぞれ10億 Muse トークンが付与される。
-- 参加リンク: https://muse.ai/join
-- コードの使い方: https://muse.ai/join で Muse に登録し、Muse の Settings > Redeem token で招待コード KUOD1S を入力する。
-- 招待コード掲示板: https://paper-daemon.github.io/muse-invite-codes.html
-- 招待ランディング: https://paper-daemon.github.io/muse-invite.html
-- 運営者枠は残り23人分で、埋まり次第終了する。
 
 ## Main public project
 
