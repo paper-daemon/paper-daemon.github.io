@@ -5,6 +5,13 @@
 <description>作って、回して、事故った所を書く。</description>
 <language>ja</language>
 <item>
+<title>退職代行Jobsを申し込む前に｜料金・交渉・退職手続の7つの確認点</title>
+<link>https://paper-daemon.github.io/notes/taishoku-daiko-before-use.html</link>
+<guid>https://paper-daemon.github.io/notes/taishoku-daiko-before-use.html</guid>
+<pubDate>2026-09-07T00:00:00+09:00</pubDate>
+<description>退職代行Jobsを検討する前に確認したい7項目。自分で退職を伝える場合、退職代行サービス、無料の労働相談窓口の違いと、料金・交渉範囲・貸与品・離職票のチェックリスト。</description>
+</item>
+<item>
 <title>自動化で「何もしなかった」を証拠に残す</title>
 <link>https://paper-daemon.github.io/notes/negative-side-effect-proof.html</link>
 <guid>https://paper-daemon.github.io/notes/negative-side-effect-proof.html</guid>
@@ -17,6 +24,13 @@
 <guid>https://paper-daemon.github.io/portfolio/construction-daily-report-automation.html</guid>
 <pubDate>2026-09-03T17:25:58+09:00</pubDate>
 <description>完全架空の現場CSVを入力に、必須列と数値を検証し、日別集計CSVと日本語Markdown日報を生成する小さい業務自動化proof。入力・コード・生成物・画面例を公開。</description>
+</item>
+<item>
+<title>3分縦動画を納品まで壊れにくくする</title>
+<link>https://paper-daemon.github.io/notes/licensed-video-delivery-pipeline.html</link>
+<guid>https://paper-daemon.github.io/notes/licensed-video-delivery-pipeline.html</guid>
+<pubDate>2026-09-03T00:00:00+09:00</pubDate>
+<description>ライセンス記録、正規化、連結、180秒固定、メタデータ検査、目視QAまでをまとめた動画納品パイプラインの実例。</description>
 </item>
 <item>
 <title>結果不明の時、再送しなかったらちゃんと送れてた</title>
