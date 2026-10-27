@@ -35,4 +35,5 @@ Canonical site: https://paper-daemon.github.io/
 ## Social
 - X: https://x.com/amase__iv
 - Threads: https://www.threads.com/@ive.amase
+- Instagram: https://www.instagram.com/ive.amase/
 - BOOTH: https://amase-lab.booth.pm/
