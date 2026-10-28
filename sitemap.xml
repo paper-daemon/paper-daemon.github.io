@@ -7,13 +7,13 @@
   <url><loc>https://paper-daemon.github.io/notes/</loc><lastmod>2026-09-07</lastmod></url>
   <url><loc>https://paper-daemon.github.io/work.html</loc><lastmod>2026-09-04</lastmod></url>
   <url><loc>https://paper-daemon.github.io/direct.html</loc><lastmod>2026-09-05</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/products.html</loc><lastmod>2026-09-05</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/products.html</loc><lastmod>2026-10-28</lastmod></url>
   <url><loc>https://paper-daemon.github.io/n8n-retry-checker/</loc><lastmod>2026-10-18</lastmod></url>
   <url><loc>https://paper-daemon.github.io/video-preflight/</loc><lastmod>2026-10-18</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/services/research-evidence.html</loc><lastmod>2026-09-05</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/portfolio/ai-production-control-room.html</loc><lastmod>2026-09-03</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/portfolio/construction-daily-report-automation.html</loc><lastmod>2026-09-03</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/portfolio/revenue-delivery-guard.html</loc><lastmod>2026-09-03</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/services/research-evidence.html</loc><lastmod>2026-10-28</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/portfolio/ai-production-control-room.html</loc><lastmod>2026-10-28</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/portfolio/construction-daily-report-automation.html</loc><lastmod>2026-10-28</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/portfolio/revenue-delivery-guard.html</loc><lastmod>2026-10-28</lastmod></url>
   <url><loc>https://paper-daemon.github.io/notes/chat-long-turn-agentlink.html</loc><lastmod>2026-09-07</lastmod></url>
   <url><loc>https://paper-daemon.github.io/notes/negative-side-effect-proof.html</loc><lastmod>2026-09-06</lastmod></url>
   <url><loc>https://paper-daemon.github.io/notes/debuggable-rag.html</loc><lastmod>2026-08-28</lastmod></url>
@@ -22,24 +22,24 @@
   <url><loc>https://paper-daemon.github.io/notes/linux-user-service-debug.html</loc><lastmod>2026-08-29</lastmod></url>
   <url><loc>https://paper-daemon.github.io/notes/github-rename-link-audit.html</loc><lastmod>2026-08-29</lastmod></url>
   <url><loc>https://paper-daemon.github.io/notes/site-surface-doctor.html</loc><lastmod>2026-08-29</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/notes/repo-health-secret-report.html</loc><lastmod>2026-08-30</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/notes/share-safe-symlink-boundary.html</loc><lastmod>2026-08-30</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/notes/csv-quoted-multiline.html</loc><lastmod>2026-08-30</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/notes/srt-timestamp-ranges.html</loc><lastmod>2026-08-30</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/notes/trace-invalid-timestamps.html</loc><lastmod>2026-08-30</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/notes/repo-health-secret-report.html</loc><lastmod>2026-10-28</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/notes/share-safe-symlink-boundary.html</loc><lastmod>2026-10-28</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/notes/csv-quoted-multiline.html</loc><lastmod>2026-10-28</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/notes/srt-timestamp-ranges.html</loc><lastmod>2026-10-28</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/notes/trace-invalid-timestamps.html</loc><lastmod>2026-10-28</lastmod></url>
   <url><loc>https://paper-daemon.github.io/notes/licensed-video-delivery-pipeline.html</loc><lastmod>2026-09-03</lastmod></url>
   <url><loc>https://paper-daemon.github.io/notes/one-price-source.html</loc><lastmod>2026-09-01</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/notes/small-workflow-kit-first.html</loc><lastmod>2026-08-30</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/notes/small-workflow-kit-first.html</loc><lastmod>2026-10-28</lastmod></url>
   <url><loc>https://paper-daemon.github.io/notes/taishoku-daiko-before-use.html</loc><lastmod>2026-10-18</lastmod></url>
   <url><loc>https://paper-daemon.github.io/global.html</loc><lastmod>2026-10-27</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/request.html</loc><lastmod>2026-10-27</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/request.html</loc><lastmod>2026-10-28</lastmod></url>
   <url><loc>https://paper-daemon.github.io/subtitle-qa.html</loc><lastmod>2026-10-27</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/demo-view.html</loc><lastmod>2026-10-27</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/services/ai-automation.html</loc><lastmod>2026-10-27</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/services/workflow-reliability.html</loc><lastmod>2026-10-27</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/services/data-quality.html</loc><lastmod>2026-10-27</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/services/python-automation.html</loc><lastmod>2026-10-27</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/services/agency-overflow.html</loc><lastmod>2026-10-27</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/demo-view.html</loc><lastmod>2026-10-28</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/services/ai-automation.html</loc><lastmod>2026-10-28</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/services/workflow-reliability.html</loc><lastmod>2026-10-28</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/services/data-quality.html</loc><lastmod>2026-10-28</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/services/python-automation.html</loc><lastmod>2026-10-28</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/services/agency-overflow.html</loc><lastmod>2026-10-28</lastmod></url>
   <url><loc>https://paper-daemon.github.io/portfolio/</loc><lastmod>2026-10-27</lastmod></url>
   <url><loc>https://paper-daemon.github.io/portfolio/automation-first-aid.html</loc><lastmod>2026-10-27</lastmod></url>
   <url><loc>https://paper-daemon.github.io/portfolio/brief-to-page.html</loc><lastmod>2026-10-27</lastmod></url>
@@ -48,9 +48,10 @@
   <url><loc>https://paper-daemon.github.io/portfolio/workflow-contract-gate.html</loc><lastmod>2026-10-27</lastmod></url>
   <url><loc>https://paper-daemon.github.io/proof/reliability-audit-sample.html</loc><lastmod>2026-10-27</lastmod></url>
   <url><loc>https://paper-daemon.github.io/ai-work-router/</loc><lastmod>2026-10-27</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/creator-stack-picker/</loc><lastmod>2026-10-27</lastmod></url>
-  <url><loc>https://paper-daemon.github.io/creator-delivery-inspector/</loc><lastmod>2026-10-27</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/creator-stack-picker/</loc><lastmod>2026-10-28</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/creator-delivery-inspector/</loc><lastmod>2026-10-28</lastmod></url>
   <url><loc>https://paper-daemon.github.io/hosting-launch-checker/</loc><lastmod>2026-10-27</lastmod></url>
   <url><loc>https://paper-daemon.github.io/shop-image-qa/</loc><lastmod>2026-10-27</lastmod></url>
   <url><loc>https://paper-daemon.github.io/vpn-needs-router/</loc><lastmod>2026-10-27</lastmod></url>
+  <url><loc>https://paper-daemon.github.io/notes/fedora-steam-proton-gta.html</loc><lastmod>2026-10-28</lastmod></url>
 </urlset>
