@@ -18,7 +18,7 @@ function briefResult(text){
 }
 function routeResult(kind){
  const map={
-  'ai-production':{title:'AI制作フロー',flow:['brief','素材整理','生成','目視QA','差分修正','納品QA'],risk:'生成を一発で確定せず、QAと差分修正を分ける'},
+  'ai-production':{title:'SI制作フロー',flow:['brief','素材整理','生成','目視QA','差分修正','納品QA'],risk:'生成を一発で確定せず、QAと差分修正を分ける'},
   'automation':{title:'自動化フロー',flow:['現状確認','副作用を分離','dry-run','実装','失敗テスト','receipt'],risk:'二重実行と途中失敗を先に設計する'},
   'web':{title:'Web修正フロー',flow:['症状再現','バックアップ','局所修正','PC確認','mobile確認','公開確認'],risk:'本番を直接触らず、戻し方を先に用意する'},
   'data':{title:'データ整理フロー',flow:['入力確認','schema確認','変換','重複/欠損QA','件数照合','書き出し'],risk:'行数と列型の変化を必ず照合する'}
@@ -28,7 +28,7 @@ function routeResult(kind){
 function resultHTML(r){return `<div class="result-card"><h3>${esc(r.title)}</h3>${r.lines?`<ul>${r.lines.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}${r.flow?`<p><b>FLOW</b></p><code>${esc(r.flow.join('  →  '))}</code>`:''}${r.next?`<p><b>NEXT</b> ${esc(r.next.join(' / '))}</p>`:''}${r.risk?`<p><b>注意：</b>${esc(r.risk)}</p>`:''}</div>`}
 function briefPanel(mobile=false){return `${mobile?'<h3>相談を、作業に変える。</h3><p>雑なメモでもOK。必要な条件だけ拾います。</p>':''}<label>RAW REQUEST</label><textarea id="brief-input">${esc(state.brief)}</textarea><button class="run-btn" id="brief-run">整理する</button>${mobile?'<div id="brief-result"></div>':''}`}
 function filePanel(mobile=false){return `${mobile?'<h3>渡す前に、点検する。</h3><p>ファイル名、サイズ、画像寸法などをブラウザ内で確認します。</p>':''}<label>FILE</label><div class="dropzone" id="dropzone" tabindex="0"><div><strong>ファイルをここへ</strong><span>クリック or ドロップ / 外部送信なし</span></div><input id="file-input" type="file" hidden></div>${mobile?'<div id="file-result"></div>':''}`}
-function routePanel(mobile=false){return `${mobile?'<h3>最初に、進め方を組む。</h3><p>作業タイプから、実装とQAの順番を返します。</p>':''}<label>TASK TYPE</label><select class="field-select" id="route-select"><option value="ai-production">AI画像・動画制作</option><option value="automation">自動化・Agent</option><option value="web">Web修正・公開</option><option value="data">データ整理・変換</option></select><button class="run-btn" id="route-run">ルートを作る</button>${mobile?'<div id="route-result"></div>':''}`}
+function routePanel(mobile=false){return `${mobile?'<h3>最初に、進め方を組む。</h3><p>作業タイプから、実装とQAの順番を返します。</p>':''}<label>TASK TYPE</label><select class="field-select" id="route-select"><option value="ai-production">SI画像・動画制作</option><option value="automation">自動化・Agent</option><option value="web">Web修正・公開</option><option value="data">データ整理・変換</option></select><button class="run-btn" id="route-run">ルートを作る</button>${mobile?'<div id="route-result"></div>':''}`}
 function desktop(){
  mount.innerHTML=`<div class="desk-pc"><aside class="tool-rail">${tools.map(t=>`<button data-tool="${t.id}" class="${t.id===state.tool?'active':''}"><b>${t.n}</b><span>${t.name}<small>${t.sub}</small></span></button>`).join('')}</aside><section class="tool-stage"><header class="stage-head"><p id="stage-title"></p><b>● LOCAL / READY</b></header><div class="stage-body"><div class="stage-input" id="stage-input"></div><div class="stage-output"><label>RESULT</label><div id="stage-result"></div></div></div></section></div><nav class="mobile-bottom"><a href="#desk">使う</a><a href="/showcase.html">見る</a><a href="/work.html">頼む</a></nav>`;
  mount.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{state.tool=b.dataset.tool;desktop(); bind();});

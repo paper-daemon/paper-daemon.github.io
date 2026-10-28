@@ -14,7 +14,7 @@ const defs=[
 {kind:'chain',label:'NOTE / PROOF OF ANTIQUITY',steps:'hash → timestamp → chain → verify'},
 {kind:'inspector',label:'TOOL / DELIVERY INSPECTOR',steps:'read → metadata → media QA → pass'},
 {kind:'checks',label:'TOOL / LAUNCH CHECKER',steps:'assets → links → metadata → viewports'},
-{kind:'router',label:'TOOL / AI WORK ROUTER',steps:'task → policy → route → verify'},
+{kind:'router',label:'TOOL / SI WORK ROUTER',steps:'task → policy → route → verify'},
 {kind:'stack',label:'TOOL / STACK PICKER',steps:'constraints → score → compare → pick'}
 ];
 const t=()=>reduced?12:($('.dh-actions #dh-turbo.active').length?32:70);
