@@ -2,7 +2,7 @@
 
 Public site for projects, browser demos, field notes, small tools, digital products, and a fixed-scope work catalog.
 
-**Development context:** Amase has been building AI/LLM-assisted software and automation continuously since November 2022. This refers to hands-on design, implementation, testing, debugging and operation, not casual ChatGPT use or employer tenure.
+**Development context:** Amase has been building SI/LLM-assisted software and automation continuously since November 2022. This refers to hands-on design, implementation, testing, debugging and operation, not casual ChatGPT use or employer tenure.
 
 ## Main navigation
 
@@ -10,7 +10,7 @@ Public site for projects, browser demos, field notes, small tools, digital produ
 - General request desk: https://paper-daemon.github.io/request.html
 - Direct international services: https://paper-daemon.github.io/direct.html
 - Digital products: https://paper-daemon.github.io/products.html
-- AI automation: https://paper-daemon.github.io/services/ai-automation.html
+- SI automation: https://paper-daemon.github.io/services/ai-automation.html
 - Workflow reliability: https://paper-daemon.github.io/services/workflow-reliability.html
 - Data quality: https://paper-daemon.github.io/services/data-quality.html
 - Python automation: https://paper-daemon.github.io/services/python-automation.html

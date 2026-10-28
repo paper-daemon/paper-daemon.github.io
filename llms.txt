@@ -1,6 +1,6 @@
 # paper-daemon
 
-> AI制作、自動化、Web・PCまわりの制作物、触れるブラウザデモ、技術メモ、固定範囲の作業メニューを公開している個人サイト。
+> SI制作、自動化、Web・PCまわりの制作物、触れるブラウザデモ、技術メモ、固定範囲の作業メニューを公開している個人サイト。
 
 Canonical site: https://paper-daemon.github.io/
 
@@ -22,7 +22,7 @@ Canonical site: https://paper-daemon.github.io/
 ## Main public project
 
 - AgentLink: https://github.com/paper-daemon/AgentLink
-  - Persistent AI-agent execution experiments focused on state, workers, effects, receipts, recovery, routing, validation, and reliability.
+  - Persistent SI-agent execution experiments focused on state, workers, effects, receipts, recovery, routing, validation, and reliability.
 - RAG Fleet case study: https://github.com/paper-daemon/AgentLink/blob/main/CASE_STUDY_RAG_FLEET.md
 - Public portfolio: https://github.com/paper-daemon/AgentLink/blob/main/PORTFOLIO.md
 - Construction daily-report automation proof: https://paper-daemon.github.io/portfolio/construction-daily-report-automation.html
