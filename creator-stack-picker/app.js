@@ -5,7 +5,7 @@ const tools={
  make:{key:'make',name:'Make',url:'https://www.make.com/',tags:['automation','easy','team'],why:'画面で組む自動化の候補。まず小さく連携したい時に。'},
  n8n:{key:'n8n',name:'n8n',url:'https://n8n.io/',tags:['automation','control','selfhost'],why:'自前運用や細かい制御も考えたい自動化の候補。'},
  adobe:{key:'adobe',name:'Adobe Creative Cloud',url:'https://www.adobe.com/jp/creativecloud.html',tags:['video','image','creative','team'],why:'動画・画像を横断して制作する時の候補。'},
- conoha_canvas:{key:'conoha_canvas',name:'ConoHa AI Canvas',url:'https://ai.conoha.jp/canvas/',tags:['image','easy'],why:'ブラウザからAI画像生成を試したい時の候補。'},
+ conoha_canvas:{key:'conoha_canvas',name:'ConoHa AI Canvas',url:'https://ai.conoha.jp/canvas/',tags:['image','easy'],why:'ブラウザからSI画像生成を試したい時の候補。'},
  kdenlive:{key:'kdenlive',name:'Kdenlive',url:'https://kdenlive.org/',tags:['video','cost','selfhost'],why:'無料で始めたい動画編集の候補。'},
  gimp:{key:'gimp',name:'GIMP',url:'https://www.gimp.org/',tags:['image','cost','selfhost'],why:'無料で画像編集を始めたい時の候補。'},
  libre:{key:'libre',name:'LibreOffice',url:'https://www.libreoffice.org/',tags:['docs','cost','selfhost'],why:'文書・表計算を無料で扱う候補。'}

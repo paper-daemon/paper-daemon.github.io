@@ -1,5 +1,5 @@
 
 function recordUsage(label){try{const k='amase_usage_ai_work_router';const d=JSON.parse(localStorage.getItem(k)||'{"total":0,"labels":{}}');d.total++;d.labels[label]=(d.labels[label]||0)+1;localStorage.setItem(k,JSON.stringify(d));}catch(e){}}
-const map={write:['文章生成','SEO支援','校正・要約'],meeting:['文字起こし','議事録','ナレッジ整理'],design:['画像生成','資料作成','デザイン'],agent:['AIエージェント','自動化','API連携'],learn:['講座','実践教材','学習コミュニティ']};
+const map={write:['文章生成','SEO支援','校正・要約'],meeting:['文字起こし','議事録','ナレッジ整理'],design:['画像生成','資料作成','デザイン'],agent:['SIエージェント','自動化','API連携'],learn:['講座','実践教材','学習コミュニティ']};
 const hints={free:'無料枠で入力と出力の癖を確認してから課金候補を絞る。',small:'月額と使用量上限を比べて、毎月使う工程だけ有料化する。',pro:'権限管理・ログ・データ持ち出し条件も比較対象に入れる。'};
 document.querySelector('#run').onclick=()=>{const g=goal.value,b=budget.value,p=priority.value;recordUsage(g);const cats=map[g];advice.innerHTML=`<p><b>${cats.join(' → ')}</b></p><p>${hints[b]}</p><p>${p==='control'?'API・エクスポート可否を優先。':p==='team'?'共有・権限・履歴を優先。':'初期設定の少なさを優先。'}</p>`;const slots=(window.AFFILIATE_OFFERS||[]).filter(x=>x.enabled&&x.tags?.includes(g));offers.innerHTML=slots.length?'<h3>候補</h3>'+slots.map(x=>`<p><a target="_blank" rel="sponsored nofollow noopener" href="${x.url}">${x.name}</a> <small>広告</small></p>`).join(''):'';result.hidden=false};
