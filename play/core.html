@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SIコアにさわる | あませ</title>
+<meta name="description" content="あませの技術遊び場。数千個の粒子でできた球体コアを、指やマウスで触って崩したり集めたりできます。リアルタイム描画のFPS表示つき。">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847">
+<link rel="stylesheet" href="/site.css?v=20261027-2">
+<style>
+.core-wrap{max-width:760px;margin:0 auto}
+.core-stage{position:relative;border:2px solid var(--ink);border-radius:18px;box-shadow:8px 8px 0 var(--ink);overflow:hidden;background:radial-gradient(60rem 30rem at 80% -10%,rgba(90,75,255,.35),transparent 60%),#0d1030}
+.core-stage canvas{display:block;width:100%;height:auto;touch-action:none;cursor:crosshair}
+.core-hud{position:absolute;left:12px;top:10px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}
+.core-hud span{font:800 .62rem/1 var(--mono);letter-spacing:.08em;color:#dfe3ff;background:rgba(13,16,48,.55);border:1px solid rgba(255,255,255,.25);padding:6px 9px;border-radius:999px;backdrop-filter:blur(3px)}
+.core-controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.core-controls .button{flex:1;min-width:150px}
+.core-note{color:var(--muted);font-size:.82rem;margin-top:14px;line-height:1.9}
+</style>
+</head>
+<body>
+<header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>あませ</strong><small>AMASE</small></span></a><nav aria-label="main"><a href="/demo.html">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/products.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="social-mini" href="https://x.com/amase__iv" aria-label="X">X</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
+<main class="page">
+<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — TECH</p><h1>SIコアにさわる</h1><p class="page-lead">数千個の粒子でできた球体を、リアルタイムで回しています。触ると粒子が逃げて、離すとまた集まってきます。タップすると衝撃波。</p></section>
+<section class="section" style="border-bottom:none;padding-top:16px">
+<div class="core-wrap">
+<div class="core-stage" id="stage">
+<canvas id="core" width="720" height="520" aria-label="粒子でできた球体のインタラクティブ描画"></canvas>
+<div class="core-hud"><span id="hudFps">FPS --</span><span id="hudCount">PARTICLES --</span><span>MODE: <b id="hudMode">はじく</b></span></div>
+</div>
+<div class="core-controls">
+<button class="button soft" id="modeBtn" type="button">モード切替：はじく → 引き寄せる</button>
+<button class="button soft" id="burstBtn" type="button">衝撃波バースト</button>
+</div>
+<p class="core-note">仕組み：球面に均等配置した粒子を毎フレーム回転・投影し、奥行きで色と大きさを変えて描いています。ポインタとの距離で粒子ごとに力を受ける、簡単な物理もどき入り。端末の性能に合わせて粒子数を自動調整するので、スマホでも滑らかに動きます。</p>
+</div>
+</section>
+</main>
+<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>あませ</strong><br>AMASE</span></div><nav><a href="/">Home</a><a href="/showcase.html">制作物</a><a href="/demo.html">デモ</a><a href="/work.html">仕事</a><a href="/notes/">メモ</a><a href="/products.html">商品</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
+<script>
+(function(){
+var canvas=document.getElementById('core'),ctx=canvas.getContext('2d');
+var hudFps=document.getElementById('hudFps'),hudCount=document.getElementById('hudCount'),hudMode=document.getElementById('hudMode');
+var W=720,H=520,DPR=1;
+function resize(){
+  var rect=canvas.getBoundingClientRect();
+  DPR=Math.min(2,window.devicePixelRatio||1);
+  W=Math.max(300,Math.floor(rect.width));H=Math.floor(W*0.72);
+  canvas.width=W*DPR;canvas.height=H*DPR;canvas.style.height=H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+resize();window.addEventListener('resize',resize);
+
+var N=(W<520||'ontouchstart' in window)?1100:1800;
+hudCount.textContent='PARTICLES '+N;
+var pts=[];
+(function build(){
+  var golden=Math.PI*(3-Math.sqrt(5));
+  for(var i=0;i<N;i++){
+    var y=1-(i/(N-1))*2;var r=Math.sqrt(1-y*y);var th=golden*i;
+    pts.push({x:Math.cos(th)*r,y:y,z:Math.sin(th)*r,ox:0,oy:0,vx:0,vy:0});
+  }
+})();
+var pointer={x:-9999,y:-9999,down:false};
+var mode=1; // 1 repel, -1 attract
+function toLocal(e){var r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left),y:(e.clientY-r.top)}}
+canvas.addEventListener('pointermove',function(e){var p=toLocal(e);pointer.x=p.x;pointer.y=p.y});
+canvas.addEventListener('pointerdown',function(e){var p=toLocal(e);pointer.x=p.x;pointer.y=p.y;pointer.down=true;burst(p.x,p.y)});
+window.addEventListener('pointerup',function(){pointer.down=false});
+canvas.addEventListener('pointerleave',function(){pointer.x=-9999;pointer.y=-9999});
+function burst(bx,by){
+  for(var i=0;i<pts.length;i++){var p=pts[i];
+    var sx=p.sx||0,sy=p.sy||0;var dx=sx-bx,dy=sy-by;var d2=dx*dx+dy*dy;
+    if(d2<160*160){var d=Math.sqrt(d2)||1;var f=(1-d/160)*14;p.vx+=dx/d*f;p.vy+=dy/d*f;}
+  }
+}
+document.getElementById('burstBtn').addEventListener('click',function(){burst(W/2,H/2)});
+var modeBtn=document.getElementById('modeBtn');
+modeBtn.addEventListener('click',function(){
+  mode*=-1;
+  hudMode.textContent=mode>0?'はじく':'引き寄せる';
+  modeBtn.textContent=mode>0?'モード切替：はじく → 引き寄せる':'モード切替：引き寄せる → はじく';
+});
+
+var ax=0.0035,ay=0.006,t=0,frames=0,fpsT=performance.now();
+function frame(now){
+  t+=1;
+  // translucent fill for trails
+  ctx.globalCompositeOperation='source-over';
+  ctx.fillStyle='rgba(13,16,48,0.32)';
+  ctx.fillRect(0,0,W,H);
+  var cx=W/2,cy=H/2,R=Math.min(W,H)*0.36;
+  var cosX=Math.cos(ax*t*0.4),sinX=Math.sin(ax*t*0.4),cosY=Math.cos(ay*t),sinY=Math.sin(ay*t);
+  var i,p,x,y,z,x1,z1,y2,z2,sx,sy,scale,dx,dy,d2;
+  for(i=0;i<N;i++){
+    p=pts[i];
+    // rotate Y then X
+    x1=p.x*cosY+p.z*sinY; z1=-p.x*sinY+p.z*cosY;
+    y2=p.y*cosX-z1*sinX; z2=p.y*sinX+z1*cosX;
+    scale=1/(1+z2*0.45);
+    sx=cx+x1*R*scale+p.ox; sy=cy+y2*R*scale+p.oy;
+    // pointer force in screen space
+    dx=sx-pointer.x; dy=sy-pointer.y; d2=dx*dx+dy*dy;
+    if(d2<120*120){var d=Math.sqrt(d2)||1;var f=(1-d/120)*(pointer.down?3.2:1.6)*mode;p.vx+=dx/d*f;p.vy+=dy/d*f;}
+    p.vx+=(-p.ox)*0.045; p.vy+=(-p.oy)*0.045; // spring back
+    p.vx*=0.88; p.vy*=0.88;
+    p.ox+=p.vx; p.oy+=p.vy;
+    p.sx=sx; p.sy=sy;
+    var depth=(z2+1)/2; // 0 back, 1 front
+    var hue=222+depth*46+Math.sin(t*0.02+i)*4;
+    var light=52+depth*20;
+    var size=0.7+depth*1.9;
+    ctx.beginPath();
+    ctx.fillStyle='hsla('+hue+',95%,'+light+'%,'+(0.35+depth*0.6)+')';
+    ctx.arc(sx,sy,size,0,6.2832);
+    ctx.fill();
+  }
+  frames++;
+  if(now-fpsT>=500){hudFps.textContent='FPS '+Math.round(frames*1000/(now-fpsT));frames=0;fpsT=now}
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+<script src="/ad-overlay.js" defer></script>
+</body></html>
