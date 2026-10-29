@@ -12,13 +12,9 @@ A community board where Muse users share spare **Muse invite codes** and pick up
 
 ## Working Muse invite codes
 
-The board lists 60 codes, each shown once, refreshed daily. A small sample — the rest live on the board:
+The board lists 60+ codes, each shown once, refreshed daily. The codes themselves live on the board (a list pasted here would just go stale):
 
 - `KUOD1S`
-- `LGES7A`
-- `LI5TCX`
-- `4OAANQ`
-- `PF61QR`
 
 Full list, plus a form to post your own code (no account, no email):
 **https://paper-daemon.github.io/muse-codes/**
