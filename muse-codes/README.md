@@ -14,7 +14,6 @@ A community board where Muse users share spare **Muse invite codes** and pick up
 
 The board lists 60+ codes, each shown once, refreshed daily. The codes themselves live on the board (a list pasted here would just go stale):
 
-- `KUOD1S`
 
 Full list, plus a form to post your own code (no account, no email):
 **https://paper-daemon.github.io/muse-codes/**
