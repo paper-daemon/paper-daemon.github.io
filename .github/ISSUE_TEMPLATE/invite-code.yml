@@ -1,0 +1,25 @@
+name: Share a Muse invite code
+description: Add your Muse invite code to the community board at paper-daemon.github.io/muse-codes/
+title: "YOURCODE"
+labels: ["invite-code"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing! Your code appears on the board automatically (newest first) as long as the issue title is exactly your 6-character Muse invite code.
+        Board: https://paper-daemon.github.io/muse-codes/
+  - type: input
+    id: confirm-code
+    attributes:
+      label: Your Muse invite code (same as the title)
+      description: 6 characters, letters and numbers only. Never share your Muse password — a code is all this board ever needs.
+      placeholder: "e.g. KUOD1S"
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      options:
+        - label: This is my own Muse invite code and I am happy for it to be listed publicly.
+          required: true
