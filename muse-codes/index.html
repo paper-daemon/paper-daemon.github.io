@@ -45,6 +45,7 @@ section{padding:34px 0} h2{font-size:1.35rem;margin:0 0 6px} .sub{color:var(--mu
 .copy{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:10px;font-size:.95rem;font-weight:600;cursor:pointer} .copy:hover{filter:brightness(1.12)} .copy.done{background:var(--accent2);color:#04231c}
 .meta{color:var(--muted);font-size:.78rem;margin:0}
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px} .step{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px} .step b{color:var(--accent2)}
+.share-form{display:flex;flex-direction:column;gap:14px;max-width:520px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px} .share-form label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:.95rem} .share-form input{background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:11px 14px;font-size:1.05rem} .share-form input[name=code]{text-transform:uppercase;letter-spacing:.15em;font-family:ui-monospace,Menlo,monospace}
 .cta{display:inline-block;background:var(--accent2);color:#04231c;font-weight:700;border-radius:12px;padding:13px 22px;text-decoration:none;font-size:1.02rem} .cta:hover{filter:brightness(1.1)}
 .boards{columns:2;column-gap:28px} .boards li{margin:6px 0}
 details{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:8px 0} summary{cursor:pointer;font-weight:600}
@@ -444,18 +445,23 @@ footer{border-top:1px solid var(--line);color:var(--muted);padding:26px 0 44px;f
 
 <section id="share">
 <h2>Share your Muse invite code</h2>
-<p class="sub">自分の Muse 招待コードもここに投稿できます。Post your own code and it appears on this board automatically — newest first. When someone redeems it, you get 1 billion Muse tokens too.</p>
-<div class="steps">
-<div class="step"><b>1</b><p>Click the button below (opens GitHub — a free GitHub account is all you need).</p></div>
-<div class="step"><b>2</b><p>Put <strong>only your 6-character code</strong> as the issue title, e.g. <code>KUOD1S</code>, and submit.</p></div>
-<div class="step"><b>3</b><p>Your code shows up in "Fresh submissions" below within a few minutes. No email, no password, never your Muse login.</p></div>
-</div>
-<p style="margin-top:16px"><a class="cta" href="https://github.com/paper-daemon/paper-daemon.github.io/issues/new?template=invite-code.yml" target="_blank" rel="noopener">＋ Submit your Muse invite code</a></p>
+<p class="sub">自分の Muse 招待コードをこのページから直接投稿できます。No account, no email — just type your code. When someone redeems it, you get 1 billion Muse tokens too.</p>
+<form id="share-form" class="share-form" autocomplete="off">
+  <label>Your Muse invite code
+    <input id="f-code" name="code" maxlength="6" minlength="6" required placeholder="e.g. KUOD1S" pattern="[A-Za-z0-9]{6}">
+  </label>
+  <label>Your name (optional)
+    <input id="f-name" name="name" maxlength="40" placeholder="e.g. Eve">
+  </label>
+  <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
+  <button type="submit" class="cta" id="share-btn">Post my code on this board</button>
+  <p class="meta" id="share-msg">Codes are checked and then appear under "Fresh submissions" — usually within about an hour. Never post anything except your code: this board never asks for a password.</p>
+</form>
 </section>
 <section id="fresh">
 <h2>Fresh submissions from visitors</h2>
-<p class="sub">このページから投稿された最新のコード。Loaded live from the board's submission box.</p>
-<div class="grid" id="fresh-grid"><p class="meta" id="fresh-empty">Loading submissions…</p></div>
+<p class="sub">このページのフォームから投稿された最新のコード。</p>
+<div class="grid" id="fresh-grid"><p class="meta">Loading submissions…</p></div>
 </section>
 <section id="boards">
 <h2>More Muse invite code boards</h2>
@@ -494,23 +500,39 @@ document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',a
   setTimeout(()=>{b.textContent='Copy code';b.classList.remove('done');toast.classList.remove('show');},1800);
 }));
 
-const FRESH_API="https://api.github.com/repos/paper-daemon/paper-daemon.github.io/issues?labels=invite-code&state=open&per_page=100&sort=created&direction=desc";
-fetch(FRESH_API,{headers:{Accept:"application/vnd.github+json"}}).then(r=>r.json()).then(list=>{
+const FRESH_URL="./submissions.json";
+fetch(FRESH_URL).then(r=>r.ok?r.json():[]).then(list=>{
   const grid=document.getElementById('fresh-grid'); if(!Array.isArray(list)) return;
   const seen=new Set([...document.querySelectorAll('#grid .card')].map(c=>c.dataset.code));
   const cards=[];
   for(const it of list){
-    if(it.pull_request) continue;
-    const code=(it.title||"").trim().toUpperCase();
+    const code=(it.code||"").toUpperCase();
     if(!/^[A-Z0-9]{6}$/.test(code)||seen.has(code)) continue;
     seen.add(code);
-    const d=new Date(it.created_at); const when=d.toISOString().slice(0,10);
+    const when=(it.date||"").slice(0,10);
     cards.push(`<article class="card" data-code="${code}"><div class="card-top"><span class="label">Muse invite code</span><span class="fresh">NEW</span></div><div class="code">${code}</div><button class="copy" data-copy="${code}">Copy code</button><p class="meta">Submitted ${when} · via this board</p></article>`);
   }
   grid.innerHTML = cards.length ? cards.join("") :
-    '<p class="meta">No submissions yet — yours could be the first. Hit "Submit your Muse invite code" above.</p>';
+    '<p class="meta">No submissions yet — yours could be the first. Post it with the form above.</p>';
   grid.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);}catch(e){} b.textContent='Copied ✓';b.classList.add('done');setTimeout(()=>{b.textContent='Copy code';b.classList.remove('done');},1800);}));
-}).catch(()=>{const e=document.getElementById('fresh-empty'); if(e) e.textContent='Submissions could not be loaded right now — please reload.';});
+}).catch(()=>{const g=document.getElementById('fresh-grid'); if(g) g.innerHTML='<p class="meta">Submissions could not be loaded right now — please reload.</p>';});
+
+const form=document.getElementById('share-form');
+form.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  const code=document.getElementById('f-code').value.trim().toUpperCase();
+  const name=document.getElementById('f-name').value.trim();
+  const msg=document.getElementById('share-msg'); const btn=document.getElementById('share-btn');
+  if(!/^[A-Z0-9]{6}$/.test(code)){msg.textContent='Please enter a 6-character code (letters and numbers).';return;}
+  btn.disabled=true; btn.textContent='Posting…';
+  try{
+    const r=await fetch('https://formsubmit.co/ajax/aloellljurio@gmail.com',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({code:code,name:name,_subject:'New Muse invite code for the board: '+code,_template:'table',_captcha:'false'})});
+    const j=await r.json();
+    if(j.success){msg.textContent='Thanks! Your code '+code+' was received and will appear under "Fresh submissions" after a quick check — usually within about an hour.';form.reset();}
+    else{msg.textContent='Something went wrong while posting. Please try again in a bit.';}
+  }catch(err){msg.textContent='Network error — please try again.';}
+  btn.disabled=false; btn.textContent='Post my code on this board';
+});
 
 const q=document.getElementById('q');
 q.addEventListener('input',()=>{const v=q.value.trim().toUpperCase();document.querySelectorAll('.card').forEach(c=>{c.style.display=c.dataset.code.includes(v)?'':'none';});});
