@@ -526,7 +526,7 @@ form.addEventListener('submit',async(e)=>{
   if(!/^[A-Z0-9]{6}$/.test(code)){msg.textContent='Please enter a 6-character code (letters and numbers).';return;}
   btn.disabled=true; btn.textContent='Posting…';
   try{
-    const r=await fetch('https://formsubmit.co/ajax/aloellljurio@gmail.com',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({code:code,name:name,_subject:'New Muse invite code for the board: '+code,_template:'table',_captcha:'false'})});
+    const r=await fetch('https://api.staticforms.dev/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({apiKey:'sf_96becca19cb6d0aaaec4e2b1',subject:'New Muse invite code for the board: '+code,code:code,name:name,honeypot:form.querySelector('[name=botcheck]').checked?'x':''})});
     const j=await r.json();
     if(j.success){msg.textContent='Thanks! Your code '+code+' was received and will appear under "Fresh submissions" after a quick check — usually within about an hour.';form.reset();}
     else{msg.textContent='Something went wrong while posting. Please try again in a bit.';}
