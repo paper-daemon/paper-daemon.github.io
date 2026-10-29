@@ -13,7 +13,7 @@
   --paper-3:#eceeff;          /* indigo tint surface / chips */
   --ink:#1b1e3f;              /* primary text / hard borders */
   --ink-dim:#41446c;          /* secondary text */
-  --muted:#6d7099;            /* muted text */
+  --muted:#585c85;            /* muted text */
   --line:#1b1e3f;             /* hard border color */
   --line-soft:#d9dbf2;        /* soft borders */
   --red:#ff4b33;              /* warm accent (flat) */
@@ -394,3 +394,7 @@ a.note-card:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--indi
   html{scroll-behavior:auto}
   *,*:before,*:after{transition:none!important;animation:none!important}
 }
+
+/* 2026-10-29 polish: heading breaks, small-text legibility, footer tap area */
+h1,h2,h3{word-break:keep-all;text-wrap:balance}
+.site-footer nav a{display:inline-block;padding:5px 2px}
