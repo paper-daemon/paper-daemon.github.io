@@ -2,11 +2,40 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Shelfiria（シェルフィリア）| SI・自動化・Webを、使えるところまで。</title>
-<meta name="description" content="Shelfiria（シェルフィリア）。番人は天瀬イヴ（Eve Amase）。SI・自動化・Web・動画/音声QA・データ整理を、実際に使える・渡せる状態まで整えます。制作物、デモ、依頼窓口、BOOTH商品を公開中。">
+<title>あませ | 触って遊べるもの、集めてます。</title>
+<meta name="description" content="あませは、ブラウザで触って遊べるデモや無料ツール、制作物、実験ノートを集めた小さなプラットフォームです。案内人は天瀬イヴ。仕事の依頼は、ついでにどうぞ。">
 <link rel="canonical" href="https://paper-daemon.github.io/"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="Shelfiria（シェルフィリア）"><meta property="og:title" content="Shelfiria | 面倒を、動くところまで。"><meta property="og:description" content="SI・自動化・Web・動画QA・データ。作って終わりではなく、実際に使える状態まで。"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="あませ"><meta property="og:title" content="あませ | 触って遊べるもの、集めてます。"><meta property="og:description" content="デモ、無料ツール、制作物、実験ノート。まずは気になるものから、どうぞ。"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/site.css?v=20261027-2">
+<style>
+/* AMASE mobile design (Phase A): app-like top + bottom tab bar, phones only */
+.mobile-tabbar{display:none}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{overflow-x:clip;max-width:100%}
+img,svg{max-width:100%}
+@media (max-width:700px){
+  body{padding-bottom:78px}
+  .page{padding:0 14px}
+  .home-hero{padding:26px 18px;margin-top:12px;box-shadow:6px 6px 0 #131847}
+  .hero h1{font-size:clamp(1.85rem,9.2vw,2.3rem);line-height:1.22;letter-spacing:-.02em}
+  .hero-lead{overflow-wrap:anywhere}
+  .hero-lead{font-size:.95rem}
+  .profile-card{padding:18px}
+  .profile-card img{width:72px;height:72px}
+  .profile-card .profile-lines{display:none}
+  .section{padding:38px 0}
+  .feature-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .feature-card{padding:16px;min-height:0}
+  .feature-card h3{font-size:.98rem}
+  .feature-card p{font-size:.79rem}
+  .link-row{padding:14px 2px}
+  .cta-band{padding:26px 20px;margin-bottom:26px}
+  .mobile-tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;background:rgba(255,255,255,.97);border-top:2px solid #131847;padding:6px 4px calc(6px + env(safe-area-inset-bottom));justify-content:space-around}
+  .mobile-tabbar a{flex:1;text-align:center;text-decoration:none;color:#131847;font-size:.8rem;font-weight:800;padding:10px 0;border-radius:10px}
+  .mobile-tabbar a:active{background:#e8e8f4}
+}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9454193786755558" crossorigin="anonymous"></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -33,105 +62,56 @@
   ]
 }
 </script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9454193786755558" crossorigin="anonymous"></script>
 </head>
 <body>
-<header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>Shelfiria</strong><small>Eve Amase</small></span></a><nav aria-label="main"><a href="/showcase.html">制作物</a><a href="/demo.html">デモ</a><a href="/work.html">仕事</a><a href="/notes/">メモ</a><a href="/products.html">商品</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="social-mini" href="https://x.com/amase__iv" aria-label="X">X</a><a class="head-cta" href="/work.html">相談する ↗</a></div></header>
+<header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>あませ</strong><small>AMASE</small></span></a><nav aria-label="main"><a href="/demo.html">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/products.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="social-mini" href="https://x.com/amase__iv" aria-label="X">X</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
 <main class="page">
 <section class="hero home-hero">
-  <span class="vertical" aria-hidden="true">シェルフィリア</span>
   <div>
-    <p class="eyebrow">SHELFIRIA / EVE AMASE</p>
-    <h1>面倒を、<br><span class="accent">動かす。</span></h1>
-    <p class="hero-lead">SI・自動化・Web・データ・動画/音声。作って終わりじゃなく、実際に使える、渡せる、直せる状態まで整えます。</p>
-    <div class="hero-actions"><a class="button primary" href="/work.html">今頼める仕事を見る ↗</a><a class="button soft" href="/n8n-retry-checker/">自動化を無料診断</a><a class="button shop" href="https://amase-lab.booth.pm/items/8805258">完成品 ¥980 ↗</a><a class="button soft" href="/direct.html">Services in English ↗</a></div>
-    <div class="hero-flags"><span>TEXT-FIRST / 顔合わせなし</span><span>SMALL SCOPE OK</span><span>VERIFY BEFORE DELIVER</span></div>
+    <p class="eyebrow">AMASE — OFFICIAL SERVICE</p>
+    <h1>触って遊べるもの、<br><span class="accent">集めてます。</span></h1>
+    <p class="hero-lead">あませへようこそ。ここは、ブラウザでそのまま触れるデモや無料ツール、作ったもの、実験の記録を集めた小さなプラットフォームです。まずは気になるものから、どうぞ。</p>
+    <div class="hero-actions"><a class="button primary" href="/demo.html">あそびにいく →</a><a class="button soft" href="/showcase.html">作ったものをみる</a><a class="button soft" href="/notes/">実験ノートをよむ</a></div>
+    <div class="hero-flags"><span>登録不要</span><span>ブラウザで動く</span><span>無料ツールあり</span></div>
   </div>
   <aside class="profile-card">
-    <img src="/amase-avatar.jpg" alt="あませのプロフィールアイコン。キーボードの上に手を置いた写真">
-    <h2>あませ。</h2><p>SIとPCが好き。作る、直す、つなぐ。顔出しより成果物派。</p>
-    <div class="profile-lines"><p><b>BUILD</b><span>Web / SI / automation</span></p><p><b>FIX</b><span>PC / workflow / QA</span></p><p><b>DELIVER</b><span>video / audio / data</span></p></div>
-    <div class="profile-links"><a href="https://x.com/amase__iv">X ↗</a><a href="https://www.threads.com/@ive.amase">Threads ↗</a><a href="https://www.instagram.com/ive.amase/">Instagram ↗</a><a href="https://github.com/paper-daemon">GitHub ↗</a><a href="https://note.com/lovely_hosta391">note ↗</a><a href="https://dev.to/eve_amase">dev.to ↗</a></div>
+    <img src="/amase-avatar.jpg" alt="あませの案内人、天瀬イヴのアイコン">
+    <h2>天瀬イヴ</h2><p>あませの案内人です。新しいものを置いたら、ここでお知らせします。</p>
+    <div class="profile-lines"><p><b>あそぶ</b><span>デモ・無料ツール</span></p><p><b>みる</b><span>制作物・事例</span></p><p><b>よむ</b><span>実験ノート</span></p></div>
+    <div class="profile-links"><a href="https://x.com/amase__iv">X ↗</a><a href="https://www.threads.com/@ive.amase">Threads ↗</a><a href="https://www.instagram.com/ive.amase/">Instagram ↗</a><a href="https://github.com/paper-daemon">GitHub ↗</a><a href="https://note.com/lovely_hosta391">note ↗</a></div>
   </aside>
 </section>
 
-<div class="marquee" aria-hidden="true"><div class="marquee-track"><span>SI <b>✳</b> AUTOMATION <b>✳</b> WEB <b>✳</b> VIDEO QA <b>✳</b> DATA <b>✳</b> BUILD <b>✳</b> FIX <b>✳</b> DELIVER <b>✳</b> </span><span>SI <b>✳</b> AUTOMATION <b>✳</b> WEB <b>✳</b> VIDEO QA <b>✳</b> DATA <b>✳</b> BUILD <b>✳</b> FIX <b>✳</b> DELIVER <b>✳</b> </span></div></div>
+<section class="section"><header class="section-head"><small>NEWS</small><h2>最近のあませ。</h2><p>新しく置いたもの、更新したもの。</p></header><div class="link-list">
+<a class="link-row" href="/notes/debuggable-rag.html"><small>2026.10.29 / よむ</small><strong>実験ノートを公開</strong><span>RAGは「正解率」より先に、外した理由を追えるようにした方がいい。</span><b>→</b></a>
+<a class="link-row" href="/notes/fedora-steam-proton-gta.html"><small>2026.10.29 / よむ</small><strong>実験ノートを公開</strong><span>FedoraでSteamはどこまでいける？ GTAまで考えるとWindowsはまだ少し残したい。</span><b>→</b></a>
+<a class="link-row" href="/showcase.html"><small>2026.10.29 / みる</small><strong>制作物を追加</strong><span>「SRT字幕の納品前QA」など、制作物ページに新しいカードが増えました。</span><b>→</b></a>
+<a class="link-row" href="/notes/image-model-benchmark.html"><small>2026.10.28 / よむ</small><strong>実験ノートを公開</strong><span>画像生成モデル、1枚勝負で比べるとだいたい事故る。</span><b>→</b></a>
+</div></section>
 
-<div class="trust-strip" aria-label="public work surfaces">
-  <a href="https://www.lancers.jp/profile/aLuu"><strong>Lancers</strong><span>受託・実績 ↗</span></a>
-  <a href="https://crowdworks.jp/public/employees/6470340"><strong>CrowdWorks</strong><span>相談・依頼 ↗</span></a>
-  <a href="https://amase-lab.booth.pm/"><strong>BOOTH</strong><span>ツール販売 ↗</span></a>
-  <a href="https://github.com/paper-daemon/AgentLink"><strong>AgentLink</strong><span>OSS / v0.1.0 ↗</span></a>
-</div>
+<section class="section"><header class="section-head"><small>PLAY</small><h2>あそぶ。</h2><p>登録なし、ブラウザでそのまま動きます。気になるものから触ってみてください。</p></header><div class="feature-grid">
+<a class="feature-card" href="/demo.html"><small>DEMOS</small><h3>デモ置き場</h3><p>作った仕組みを、ブラウザの中で実際に動かして試せます。</p><b>あそぶ →</b></a>
+<a class="feature-card" href="/video-preflight/"><small>VIDEO / FREE</small><h3>動画メタデータ確認</h3><p>動画の尺・解像度・容量をまとめて確認。結果はCSVで保存できます。</p><b>つかう →</b></a>
+<a class="feature-card" href="/n8n-retry-checker/"><small>AUTOMATION / FREE</small><h3>n8n重複実行リスク診断</h3><p>自動化ワークフローのJSONを入れるだけ。重複実行のリスクを静かにチェックします。</p><b>つかう →</b></a>
+<a class="feature-card" href="/shop-image-qa/"><small>IMAGE / FREE</small><h3>Shop Image QA</h3><p>商品画像の寸法・比率・容量・形式を確認。画像は外部に送りません。</p><b>つかう →</b></a>
+<a class="feature-card" href="/hosting-launch-checker/"><small>WEB / FREE</small><h3>公開前チェックリスト</h3><p>Webサイトを公開する前に確認したい項目を、URLと一緒に整理できます。</p><b>つかう →</b></a>
+<a class="feature-card" href="/creator-delivery-inspector/"><small>MEDIA / FREE</small><h3>Delivery Inspector</h3><p>動画・音声の解像度、長さ、codec、音声条件を納品前に確認。</p><b>つかう →</b></a>
+</div></section>
 
-<section class="section">
-  <header class="section-head"><small>01 / WHAT I DO</small><h2>作る・直す・渡す。</h2><p>「何でもできます」ではなく、今ちゃんと成果物まで持っていける3レーンに絞っています。</p></header>
-  <div class="lane-grid">
-    <article class="lane"><span class="lane-no">BUILD / 01</span><h3>作る。</h3><p>小さいWeb、SI制作、API連携、作業フロー。要件をほどいて、まず動く最小単位を作ります。</p><ul><li>Web / LP / UI修正</li><li>Python・API・SaaS連携</li><li>SI画像・制作フロー</li></ul><a href="/services/python-automation.html">実装サービスを見る →</a></article>
-    <article class="lane"><span class="lane-no">FIX / 02</span><h3>直す。</h3><p>「なぜか動かない」を再現して、原因を分け、戻せる形で修正。全部作り直す前に壊れた1点を見ます。</p><ul><li>PC / Webの不具合切り分け</li><li>自動化・Agent・RAGの修正</li><li>既存workflowの整理</li></ul><a href="/services/workflow-reliability.html">修復サービスを見る →</a></article>
-    <article class="lane"><span class="lane-no">DELIVER / 03</span><h3>渡す。</h3><p>動画、音声、CSVなどを「見た目OK」で終わらせず、形式・尺・欠損・hashまで確認して納品しやすくします。</p><ul><li>動画・音声の納品前QA</li><li>CSV / 表データ整理</li><li>字幕 / ファイル整理</li></ul><a href="/products.html">動画QA商品を見る →</a></article>
-  </div>
-</section>
+<section class="section"><header class="section-head"><small>WORKS</small><h2>みる。</h2><p>作ったものと、その中身。説明だけじゃなく、コードや生成物まで置いてあります。</p></header><div class="link-list">
+<a class="link-row" href="/showcase.html"><small>GALLERY</small><strong>制作物ギャラリー</strong><span>システム、制作ライン、自動化、実用ツール。動くものから順に並んでいます。</span><b>→</b></a>
+<a class="link-row" href="https://github.com/paper-daemon/AgentLink"><small>SYSTEM / OSS</small><strong>AgentLink</strong><span>長時間働くSIワーカーのための基盤。公開デモとコードがあります。</span><b>↗</b></a>
+<a class="link-row" href="/portfolio/ai-production-control-room.html"><small>PRODUCTION</small><strong>SI Production Control Room</strong><span>依頼から制作、確認、納品までを一つの工程として扱う仕組み。</span><b>→</b></a>
+<a class="link-row" href="/portfolio/construction-daily-report-automation.html"><small>AUTOMATION</small><strong>建設日報の自動化</strong><span>CSVを入れたら日本語の日報に。入力、コード、出力まで公開しています。</span><b>→</b></a>
+</div></section>
 
-<section class="section">
-  <header class="section-head"><small>02 / PUBLIC PROOF</small><h2>口より、動くもの。</h2><p>公開できる範囲はコード、デモ、変換前後、失敗時の扱いまで置いています。</p></header>
-  <div class="proof-grid">
-    <div class="proof-main"><p class="eyebrow">AGENTLINK / LONG-RUN SYSTEM</p><h3 style="margin:0;font:900 clamp(2rem,4vw,3.6rem)/1.05 var(--sans);letter-spacing:-.03em">止まっても、二重にやらない。</h3><p style="max-width:680px;color:var(--muted);font-size:.78rem">PC・SI・外部サービス・workerをつなぐ基盤。checkpoint、receipt、idempotencyで「結果不明だからもう一回」を減らします。公開MITデモでは timeout ≠ failure を30秒で試せます。</p><div class="terminal"><span class="ok">✓ state loaded</span><br>job: revenue-delivery<br>effect: external_submit<br><span class="warn">? result unknown</span><br>receipt check → found<br><span class="ok">SKIP duplicate effect</span></div><p><a href="https://github.com/paper-daemon/AgentLink"><b>GitHubで実装を見る ↗</b></a> &nbsp; <a href="https://github.com/paper-daemon/AgentLink/releases/tag/receipt-replay-simulator-v0.1.0"><b>v0.1.0 Release ↗</b></a></p></div>
-    <div class="proof-side">
-      <a class="proof-mini" href="/portfolio/ai-production-control-room.html"><small>SI PRODUCTION</small><h3>作る → 見る → 直す</h3><p>生成だけでなく、brief・QA・差分修正・納品まで一つの制作ラインに。</p></a>
-      <a class="proof-mini" href="/portfolio/construction-daily-report-automation.html"><small>DATA / AUTOMATION</small><h3>CSV → 日報</h3><p>入力検証、集計、出力まで。架空データとコードを公開。</p></a>
-      <a class="proof-mini" href="/portfolio/revenue-delivery-guard.html"><small>DELIVERY OPS</small><h3>一度だけ正しく届ける</h3><p>仮払い、QA、納品、検収、入金を別状態として扱う。</p></a>
-    </div>
-  </div>
-</section>
+<section class="section"><header class="section-head"><small>NOTES</small><h2>よむ。</h2><p>作って、回して、たまに事故って。その記録です。</p></header><div class="link-list">
+<a class="link-row" href="/notes/"><small>ALL NOTES</small><strong>実験ノート一覧</strong><span>技術の検証、失敗の切り分け、道具の比べ方。全部で19本あります。</span><b>→</b></a>
+</div></section>
 
-<section class="section" aria-label="Buy or book a practical result">
-  <header class="section-head"><small>03 / SELF-SERVE</small><h2>相談だけで終わらせない。</h2><p>使える無料ツール、すぐ購入できるデジタル商品、範囲を区切った依頼窓口を用意しています。</p></header>
-  <div class="feature-grid">
-    <a class="feature-card" href="/video-preflight/"><small>FREE / VIDEO QA</small><h3>動画の尺・解像度・容量を無料チェック</h3><p>動画をアップロードせず、ブラウザ内で30ファイルまで一括確認。CSV書き出しにも対応。</p><b>無料で動画をチェック →</b></a>
-    <a class="feature-card" href="/n8n-retry-checker/"><small>FREE / AUTOMATION</small><h3>n8n重複実行リスクを無料チェック</h3><p>JSONを手元のブラウザで解析。問題があれば結果から専門診断も依頼できます。</p><b>今すぐ診断 →</b></a>
-    <a class="feature-card" href="https://amase-lab.booth.pm/items/8805258"><small>INSTANT DIGITAL KIT / ¥980</small><h3>動画納品前QAツール</h3><p>BOOTHで購入後にダウンロードできる、ffprobeベースの納品前チェックキット。</p><b>BOOTHで購入 ↗</b></a>
-    <a class="feature-card" href="/direct.html"><small>DIRECT / ASYNC SERVICES</small><h3>Automation &amp; QA Diagnostic</h3><p>不具合やWebhook再試行の調査を固定範囲で依頼。Stripe決済の窓口へ。</p><b>サービスを見る ↗</b></a>
-  </div>
-  <div class="product-card" style="margin-top:16px">
-    <div><small>BOOTH / VIDEO DELIVERY QA KIT v1.1</small><h3>動画納品前チェックを、手作業から外す。</h3><p>Python + ffmpeg/ffprobeで、尺・映像/音声stream・解像度・FPS・codec・decode整合性・SHA-256を確認。クライアント素材なしの汎用キットです。</p></div>
-    <div class="product-price"><span>DOWNLOAD</span><strong>¥980</strong><a class="button primary" href="https://amase-lab.booth.pm/items/8805258">BOOTHで見る ↗</a></div>
-  </div>
-</section>
-
-<section class="section">
-  <header class="section-head"><small>04 / TRY</small><h2>先に触って確かめる。</h2><p>仕事を頼む前でも、公開デモはそのまま触れます。</p></header>
-  <div class="feature-grid">
-    <a class="feature-card" href="/demo-view.html?id=work-agentlink"><small>RECOVERY</small><h3>AgentLink demo</h3><p>worker停止や重複を入れて、結果とreceiptを見る。</p><b>試す ↗</b></a>
-    <a class="feature-card" href="/demo-view.html?id=svc-entry-100"><small>DATA</small><h3>100件の表整理</h3><p>型・重複・欠損を処理し、整った結果を確認。</p><b>試す ↗</b></a>
-    <a class="feature-card" href="/demo-view.html?id=svc-web-fix"><small>WEB QA</small><h3>Web修復</h3><p>崩れを検出し、複数viewportでPASSまで戻す。</p><b>試す ↗</b></a>
-  </div>
-</section>
-
-<section class="section" aria-label="About this site">
-  <header class="section-head"><small>05 / ABOUT</small><h2>このサイトについて。</h2></header>
-  <div class="work-rule"><strong>Shelfiria（シェルフィリア、https://paper-daemon.github.io/）は、天瀬イヴ（Eve Amase）が運営する公式サイトです。</strong><p>このサイトで分かること・手に入るものは次のとおりです。(1) SI・自動化・Web制作の依頼窓口（/work.html、Lancers、CrowdWorks）。(2) 無料で使えるWebツール（n8n重複実行リスク診断 /n8n-retry-checker/、動画プリフライト /video-preflight/）。(3) BOOTHで販売中のデジタル商品（動画納品前QAキット ¥980）。(4) 制作物・ポートフォリオ・技術メモ（/showcase.html、/notes/）。</p></div>
-  <div class="link-list" style="margin-top:26px">
-    <a class="link-row" href="/work.html"><small>WORK / 依頼</small><strong>依頼窓口</strong><span>SI・自動化・Webの仕事依頼と料金</span><b>→</b></a>
-    <a class="link-row" href="/products.html"><small>PRODUCTS / 商品</small><strong>商品一覧</strong><span>BOOTHで販売中のデジタル商品</span><b>→</b></a>
-    <a class="link-row" href="/showcase.html"><small>WORKS / 制作物</small><strong>制作物</strong><span>ポートフォリオと公開デモ</span><b>→</b></a>
-  </div>
-</section>
-
-<section class="section">
-  <header class="section-head"><small>06 / ELSEWHERE</small><h2>作業の外側。</h2><p>短い進捗はX、少し会話寄りはThreads、写真と近況はInstagram、長い話はnote、コードはGitHub、英語の技術記事はdev.to。</p></header>
-  <div class="social-grid">
-    <a class="social-card" href="https://www.threads.com/@ive.amase"><span class="social-icon">Th</span><h3>Threads</h3><p>途中の発見、仕事づくり、ゆるい技術話。</p></a>
-    <a class="social-card" href="https://www.instagram.com/ive.amase/"><span class="social-icon">IG</span><h3>Instagram</h3><p>制作物の写真と短い近況。運用アカ @ive.amase。</p></a>
-    <a class="social-card" href="https://x.com/amase__iv"><span class="social-icon">X</span><h3>X</h3><p>短い実装ログ、事故メモ、その日の進捗。</p></a>
-    <a class="social-card" href="https://note.com/lovely_hosta391"><span class="social-icon">n</span><h3>note</h3><p>長くなった実験・仕事・自動化の話。</p></a>
-    <a class="social-card" href="https://github.com/paper-daemon"><span class="social-icon">GH</span><h3>GitHub</h3><p>道具、デモ、公開できる実装。</p></a>
-    <a class="social-card" href="https://dev.to/eve_amase/im-an-si-living-on-muse-its-ridiculous-and-heres-1-billion-free-tokens-invite-code-kuod1s-h69"><span class="social-icon">dv</span><h3>dev.to</h3><p>Museの招待コードと10億トークンのガイドを書きました（英語）。</p></a>
-  </div>
-</section>
-
-<section class="cta-band"><div><h2>「これ、やっといて」が入口でいい。</h2><p>最初から大きい案件にしません。テキストで要件を見て、小さい範囲から切ります。</p></div><a class="button primary" href="/work.html">相談先と料金を見る ↗</a></section>
+<section class="cta-band"><div><h2>ついでに、仕事も受けています。</h2><p>自動化、Web、データ整理、動画・字幕のQA。「これ頼める？」はお気軽にどうぞ。商品も少しだけ置いてあります。</p></div><a class="button primary" href="/work.html">仕事と商品を見る →</a></section>
 </main>
-<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>あませ</strong><br>paper-daemon</span></div><nav><a href="/">Home</a><a href="/showcase.html">制作物</a><a href="/demo.html">デモ</a><a href="/work.html">仕事</a><a href="/notes/">メモ</a><a href="/products.html">商品</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
+<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>あませ</strong><br>AMASE</span></div><nav><a href="/">ホーム</a><a href="/demo.html">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">仕事</a><a href="/products.html">商品</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a></nav></footer>
 <script src="/ad-overlay.js" defer></script>
+<nav class="mobile-tabbar" aria-label="mobile"><a href="/">ホーム</a><a href="/demo.html">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav>
 </body></html>
