@@ -398,3 +398,26 @@ a.note-card:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--indi
 /* 2026-10-29 polish: heading breaks, small-text legibility, footer tap area */
 h1,h2,h3{word-break:keep-all;text-wrap:balance}
 .site-footer nav a{display:inline-block;padding:5px 2px}
+
+/* ---------- enhancement layer (2026-10-30): motion & polish ---------- */
+html{scroll-behavior:smooth}
+::selection{background:var(--yellow);color:var(--ink)}
+.feature-card{transition:transform .22s var(--ease),box-shadow .22s var(--ease),border-color .22s var(--ease)}
+.feature-card:hover{transform:translateY(-4px)}
+.feature-card:active{transform:translateY(-1px) scale(.99)}
+.button{transition:transform .15s var(--ease),box-shadow .15s var(--ease),background .15s var(--ease),color .15s var(--ease)}
+.button:active{transform:translateY(2px);box-shadow:1px 1px 0 var(--ink)}
+.link-row{transition:background .18s var(--ease),padding-left .18s var(--ease)}
+.link-row:hover{padding-left:8px}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s var(--ease),transform .6s var(--ease);transition-delay:var(--d,0s)}
+.reveal.in{opacity:1;transform:none}
+.mobile-tabbar a{position:relative}
+.mobile-tabbar a.active{color:var(--indigo)}
+.mobile-tabbar a.active:before{content:"";position:absolute;top:2px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--red)}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(1.2deg)}50%{transform:translateY(-7px) rotate(1.2deg)}}
+.profile-card{animation:rise .7s var(--ease) .15s both,floaty 6s ease-in-out 1.2s infinite}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .reveal{opacity:1;transform:none}
+}

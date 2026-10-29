@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>止めて！タイミングバー | あませ</title>
+<meta name="description" content="あませの小さな遊び場。動くバーを狙った場所で止めるだけの、シンプルな反射ゲーム。全5ラウンド。">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847">
+<link rel="stylesheet" href="/site.css?v=20261027-2">
+<style>
+.game-stage{max-width:560px;margin:0 auto}
+.track{position:relative;height:64px;background:#fff;border:2px solid var(--ink);border-radius:14px;box-shadow:5px 5px 0 var(--ink);overflow:hidden}
+.zone{position:absolute;top:0;bottom:0;background:rgba(255,210,63,.75);border-left:2px dashed var(--ink);border-right:2px dashed var(--ink)}
+.marker{position:absolute;top:6px;bottom:6px;width:10px;border-radius:5px;background:var(--red,#ff4b33);left:0}
+.track.hit .marker{background:#2fbf71}
+.stop-btn{margin-top:22px;width:100%;font-size:1.1rem;padding:18px}
+.hud{display:flex;justify-content:space-between;gap:10px;margin:18px 2px 0;font:800 .8rem var(--mono);color:var(--ink-dim)}
+.result{margin-top:22px;background:#fff;border:2px solid var(--ink);border-radius:14px;padding:22px;box-shadow:5px 5px 0 var(--line-soft)}
+.result .rank{font:900 1.7rem/1.2 var(--sans)}
+@media (prefers-reduced-motion:reduce){.marker{transition:none}}
+</style>
+</head>
+<body>
+<header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>あませ</strong><small>AMASE</small></span></a><nav aria-label="main"><a href="/demo.html">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/products.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="social-mini" href="https://x.com/amase__iv" aria-label="X">X</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
+<main class="page">
+<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — TIMING</p><h1>止めて！タイミングバー</h1><p class="page-lead">黄色いゾーンの真ん中でバーを止めるだけ。全5ラウンド、中心に近いほど高得点。タップでもスペースキーでも止まります。</p></section>
+<section class="section" style="border-bottom:none;padding-top:16px">
+<div class="game-stage">
+<div class="track" id="track"><div class="zone" id="zone"></div><div class="marker" id="marker"></div></div>
+<div class="hud"><span id="roundLabel">ROUND 1 / 5</span><span id="scoreLabel">SCORE 0</span><span id="bestLabel"></span></div>
+<button class="button primary stop-btn" id="stopBtn" type="button">スタート</button>
+<div class="result" id="resultBox" hidden><p class="rank" id="rankText"></p><p id="resultDetail" style="color:var(--ink-dim);line-height:1.9;margin:8px 0 0"></p></div>
+</div>
+</section>
+</main>
+<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>あませ</strong><br>AMASE</span></div><nav><a href="/">Home</a><a href="/showcase.html">制作物</a><a href="/demo.html">デモ</a><a href="/work.html">仕事</a><a href="/notes/">メモ</a><a href="/products.html">商品</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
+<script>
+const track=document.getElementById('track'),zone=document.getElementById('zone'),marker=document.getElementById('marker'),btn=document.getElementById('stopBtn');
+const roundLabel=document.getElementById('roundLabel'),scoreLabel=document.getElementById('scoreLabel'),bestLabel=document.getElementById('bestLabel');
+const resultBox=document.getElementById('resultBox'),rankText=document.getElementById('rankText'),resultDetail=document.getElementById('resultDetail');
+let round=0,score=0,playing=false,pos=0,dir=1,speed=0.16,zoneStart=40,zoneWidth=14,raf=null,last=0;
+let best=Number(localStorage.getItem('timingBest')||0);
+function showBest(){bestLabel.textContent=best>0?`BEST ${best}`:""}
+showBest();
+function newZone(){zoneWidth=10+Math.random()*8;zoneStart=6+Math.random()*(88-zoneWidth);zone.style.left=zoneStart+'%';zone.style.width=zoneWidth+'%'}
+function frame(t){if(!playing)return;const dt=Math.min(50,t-last);last=t;pos+=dir*speed*dt;if(pos>=98){pos=98;dir=-1}if(pos<=0){pos=0;dir=1}marker.style.left=`calc(${pos}% - 5px)`;raf=requestAnimationFrame(frame)}
+function startRound(){round++;track.classList.remove('hit');newZone();pos=0;dir=1;speed=0.14+round*0.02;playing=true;last=performance.now();raf=requestAnimationFrame(frame);roundLabel.textContent=`ROUND ${round} / 5`;btn.textContent='とめる！'}
+function stopRound(){playing=false;cancelAnimationFrame(raf);const center=zoneStart+zoneWidth/2;const dist=Math.abs((pos+0.5)-center);const pts=Math.max(0,Math.round(100-dist*4));score+=pts;if(dist<=zoneWidth/2)track.classList.add('hit');scoreLabel.textContent=`SCORE ${score}`;if(round>=5){finish()}else{btn.textContent=`次のラウンドへ（${pts}点）`}}
+function finish(){const rank=score>=430?'S — 神の指先':score>=350?'A — かなり正確':score>=250?'B — いい感じ':score>=150?'C — 練習あるのみ':'D — イヴも最初はそんな感じでした';rankText.textContent=`${score}点 / ${rank}`;if(score>best){best=score;localStorage.setItem('timingBest',best);resultDetail.textContent='ベスト更新！ お見事でした。'}else{resultDetail.textContent=`ベストは ${best} 点。もう一回やると感覚つかめます。`}showBest();resultBox.hidden=false;btn.textContent='もう一回遊ぶ';round=0;score=0}
+btn.addEventListener('click',()=>{if(playing){stopRound()}else{resultBox.hidden=true;if(round===0)scoreLabel.textContent='SCORE 0';startRound()}});
+document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();btn.click()}});
+newZone();
+</script>
+<script src="/ad-overlay.js" defer></script>
+</body></html>
