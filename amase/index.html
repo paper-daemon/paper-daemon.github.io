@@ -10,10 +10,15 @@
 <style>
 /* AMASE mobile design (Phase A): app-like top + bottom tab bar, phones only */
 .mobile-tabbar{display:none}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{overflow-x:clip;max-width:100%}
+img,svg{max-width:100%}
 @media (max-width:700px){
   body{padding-bottom:78px}
-  .home-hero{padding:28px 20px;margin-top:12px}
-  .hero h1{font-size:2.3rem;line-height:1.16}
+  .page{padding:0 14px}
+  .home-hero{padding:26px 18px;margin-top:12px;box-shadow:6px 6px 0 #131847}
+  .hero h1{font-size:clamp(1.85rem,9.2vw,2.3rem);line-height:1.22;letter-spacing:-.02em}
+  .hero-lead{overflow-wrap:anywhere}
   .hero-lead{font-size:.95rem}
   .profile-card{padding:18px}
   .profile-card img{width:72px;height:72px}
