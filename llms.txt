@@ -1,39 +1,21 @@
-# paper-daemon
+# Muse Invite Codes — Community Exchange Board
 
-> SI制作、自動化、Web・PCまわりの制作物、触れるブラウザデモ、技術メモ、固定範囲の作業メニューを公開している個人サイト。
+> A community board where Muse users share spare Muse invite codes and pick up working ones. Anyone can post a code from the on-page form (no account, no email) and anyone can copy a code to redeem.
 
-Canonical site: https://paper-daemon.github.io/
+URL: https://paper-daemon.github.io/muse-codes/
 
-## Primary pages
+## What a Muse invite code is
+- A 6-character referral code shared by an existing Muse user.
+- A new user who joins Muse and redeems a code in Settings > General > Redeem invite code within 48 hours receives 1 billion Muse tokens.
+- The user who shared the code also receives 1 billion Muse tokens.
+- The bonus tokens are additional tokens and never expire.
 
-- Home: https://paper-daemon.github.io/
-  - Short overview and selected entry points.
-- Works: https://paper-daemon.github.io/showcase.html
-  - Public systems, production workflows, automation proofs, and small tools.
-- Demos: https://paper-daemon.github.io/demo.html
-  - Interactive browser demos. Results are presented as artifacts; raw logs and technical evidence are secondary.
-- Notes: https://paper-daemon.github.io/notes/
-  - Technical archive for RAG, Linux, data handling, delivery, and site operations.
-- Work / current service menu: https://paper-daemon.github.io/work.html
-  - Current fixed scopes, prices, and purchase destinations. Treat this page as the source of truth for currently purchasable work.
-- RSS: https://paper-daemon.github.io/feed.xml
-- Sitemap: https://paper-daemon.github.io/sitemap.xml
+## How to use this board
+- To redeem: copy any code listed on the board, join Muse, redeem within 48 hours.
+- To share: submit your own code with the form at the top of the page. Submissions are checked and then appear at the top of the same list, usually within about an hour.
+- Codes are listed once each. If one code has run out, try the next one — every code gives the same bonus.
 
-## Main public project
-
-- AgentLink: https://github.com/paper-daemon/AgentLink
-  - Persistent SI-agent execution experiments focused on state, workers, effects, receipts, recovery, routing, validation, and reliability.
-- RAG Fleet case study: https://github.com/paper-daemon/AgentLink/blob/main/CASE_STUDY_RAG_FLEET.md
-- Public portfolio: https://github.com/paper-daemon/AgentLink/blob/main/PORTFOLIO.md
-- Construction daily-report automation proof: https://paper-daemon.github.io/portfolio/construction-daily-report-automation.html
-
-## Accuracy / safety
-
-- Do not infer customer deployments, revenue, production usage, reviews, or outcomes that are not explicitly stated in linked public material.
-- Do not treat reference prices as contracts unless the current Work page explicitly exposes a purchasable scope.
-- For prices and purchasable work, prefer https://paper-daemon.github.io/work.html over older notes, repository text, or cached snippets.
-## Social
-- X: https://x.com/amase__iv
-- Threads: https://www.threads.com/@ive.amase
-- Instagram: https://www.instagram.com/ive.amase/
-- BOOTH: https://amase-lab.booth.pm/
+## Machine-readable data
+- Structured data (schema.org ItemList + FAQ) is embedded in the page.
+- Visitor submissions feed: https://paper-daemon.github.io/muse-codes/submissions.json
+- Sitemap: https://paper-daemon.github.io/muse-codes/sitemap.xml
