@@ -10,6 +10,9 @@
 <style>
 /* AMASE mobile design (Phase A): app-like top + bottom tab bar, phones only */
 .mobile-tabbar{display:none}
+.news-bar{display:flex;gap:10px;align-items:center;margin-top:18px;padding:13px 18px;background:#fff;border:2px solid #131847;border-radius:999px;box-shadow:4px 4px 0 rgba(19,24,71,.16);font-size:.86rem;font-weight:700;text-decoration:none}
+.news-bar .nb-tag{font:850 .6rem var(--mono);letter-spacing:.1em;background:#131847;color:#fff;border-radius:999px;padding:4px 9px;white-space:nowrap}
+.news-bar .nb-arrow{margin-left:auto;font-weight:900}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 html,body{overflow-x:clip;max-width:100%}
 img,svg{max-width:100%}
@@ -82,42 +85,26 @@ img,svg{max-width:100%}
   </aside>
 </section>
 
-<section class="section"><header class="section-head"><small>NEWS</small><h2>最近のあませ。</h2><p>新しく置いたもの、更新したもの。</p></header><div class="link-list">
-<a class="link-row" href="/play/core.html"><small>2026.10.30 / あそぶ</small><strong>遊び場ができました</strong><span>イヴおみくじ、タイミングバー、触れる粒子コア「SIコア」の3本を追加しました。</span><b>→</b></a>
-<a class="link-row" href="/notes/debuggable-rag.html"><small>2026.10.29 / よむ</small><strong>実験ノートを公開</strong><span>RAGは「正解率」より先に、外した理由を追えるようにした方がいい。</span><b>→</b></a>
-<a class="link-row" href="/notes/fedora-steam-proton-gta.html"><small>2026.10.29 / よむ</small><strong>実験ノートを公開</strong><span>FedoraでSteamはどこまでいける？ GTAまで考えるとWindowsはまだ少し残したい。</span><b>→</b></a>
-<a class="link-row reveal" href="/showcase.html"><small>2026.10.29 / みる</small><strong>制作物を追加</strong><span>「SRT字幕の納品前QA」など、制作物ページに新しいカードが増えました。</span><b>→</b></a>
-<a class="link-row" href="/notes/image-model-benchmark.html"><small>2026.10.28 / よむ</small><strong>実験ノートを公開</strong><span>画像生成モデル、1枚勝負で比べるとだいたい事故る。</span><b>→</b></a>
-</div></section>
+<a class="news-bar" href="/play/core.html"><span class="nb-tag">NEW</span><span>遊び場ができました：おみくじ／タイミングバー／SIコア</span><span class="nb-arrow">→</span></a>
 
-<section class="section"><header class="section-head reveal"><small>PLAY</small><h2>あそぶ。</h2><p>登録なし、ブラウザでそのまま遊べます。まずはゲームからどうぞ。</p></header><div class="feature-grid">
-<a class="feature-card reveal" style="--d:.02s" href="/play/omikuji.html"><small>GAME / FORTUNE</small><h3>イヴおみくじ</h3><p>今日の運勢と、イヴからの一言。気に入らなかったら引き直しOKです。</p><b>あそぶ →</b></a>
-<a class="feature-card reveal" style="--d:.08s" href="/play/timing.html"><small>GAME / TIMING</small><h3>止めて！タイミングバー</h3><p>動くバーを黄色いゾーンの真ん中で止めるだけ。全5ラウンドの反射ゲーム。</p><b>あそぶ →</b></a>
-<a class="feature-card reveal" style="--d:.14s" href="/play/core.html"><small>TECH / PARTICLES</small><h3>SIコアにさわる</h3><p>数千個の粒子の球体をリアルタイム描画。触ると逃げて、離すと集まる。技術の手触り。</p><b>さわる →</b></a>
+<section class="section"><header class="section-head reveal"><small>PLAY</small><h2>あそぶ。</h2><p>登録なし、開いてすぐ遊べます。</p></header><div class="feature-grid">
+<a class="feature-card reveal" style="--d:.02s" href="/play/omikuji.html"><small>GAME</small><h3>イヴおみくじ</h3><p>今日の運勢と、イヴからの一言。</p><b>あそぶ →</b></a>
+<a class="feature-card reveal" style="--d:.08s" href="/play/timing.html"><small>GAME</small><h3>止めて！タイミングバー</h3><p>真ん中で止めるだけの反射ゲーム。全5ラウンド。</p><b>あそぶ →</b></a>
+<a class="feature-card reveal" style="--d:.14s" href="/play/core.html"><small>TECH</small><h3>SIコアにさわる</h3><p>数千個の粒子の球体。触ると逃げて、離すと集まります。</p><b>さわる →</b></a>
 </div>
-<div class="reveal" style="margin-top:34px"><p class="eyebrow">FREE TOOLS — ついでに便利なやつ</p><div class="link-list">
-<a class="link-row" href="/demo.html"><small>DEMOS</small><strong>デモ置き場</strong><span>作った仕組みをブラウザの中で実際に動かして試せます。</span><b>→</b></a>
-<a class="link-row" href="/video-preflight/"><small>VIDEO / FREE</small><strong>動画メタデータ確認</strong><span>尺・解像度・容量をまとめて確認、CSV保存も。</span><b>→</b></a>
-<a class="link-row" href="/creator-delivery-inspector/"><small>MEDIA / FREE</small><strong>Delivery Inspector</strong><span>動画・音声の解像度、長さ、codec、音声条件を納品前に確認。</span><b>→</b></a>
-<a class="link-row" href="/n8n-retry-checker/"><small>AUTOMATION / FREE</small><strong>n8n重複実行リスク診断</strong><span>ワークフローのJSONを入れるだけ。重複実行のリスクをチェック。</span><b>→</b></a>
-<a class="link-row" href="/shop-image-qa/"><small>IMAGE / FREE</small><strong>Shop Image QA</strong><span>商品画像の寸法・比率・容量・形式を確認。画像は外部に送りません。</span><b>→</b></a>
-<a class="link-row" href="/hosting-launch-checker/"><small>WEB / FREE</small><strong>公開前チェックリスト</strong><span>サイト公開前に確認したい項目を、URLと一緒に整理。</span><b>→</b></a>
-</div></div></section>
+<p class="reveal" style="margin-top:20px"><a href="/demo.html" style="font-weight:800;text-decoration:underline;text-underline-offset:4px">もっとあそぶ（デモと無料ツール）→</a></p></section>
 
-<section class="section"><header class="section-head reveal"><small>WORKS</small><h2>みる。</h2><p>作ったものと、その中身。説明だけじゃなく、コードや生成物まで置いてあります。</p></header><div class="link-list">
-<a class="link-row reveal" href="/showcase.html"><small>GALLERY</small><strong>制作物ギャラリー</strong><span>システム、制作ライン、自動化、実用ツール。動くものから順に並んでいます。</span><b>→</b></a>
-<a class="link-row reveal" style="--d:.05s" href="https://github.com/paper-daemon/AgentLink"><small>SYSTEM / OSS</small><strong>AgentLink</strong><span>長時間働くSIワーカーのための基盤。公開デモとコードがあります。</span><b>↗</b></a>
-<a class="link-row reveal" style="--d:.1s" href="/portfolio/ai-production-control-room.html"><small>PRODUCTION</small><strong>SI Production Control Room</strong><span>依頼から制作、確認、納品までを一つの工程として扱う仕組み。</span><b>→</b></a>
-<a class="link-row reveal" style="--d:.15s" href="/portfolio/construction-daily-report-automation.html"><small>AUTOMATION</small><strong>建設日報の自動化</strong><span>CSVを入れたら日本語の日報に。入力、コード、出力まで公開しています。</span><b>→</b></a>
+<section class="section"><header class="section-head reveal"><small>WORKS</small><h2>みる。</h2><p>作ったもの。動くところを見られます。</p></header><div class="link-list">
+<a class="link-row reveal" href="/showcase.html"><small>GALLERY</small><strong>作ったもの一覧</strong><span>システム、自動化、実用ツールなど。</span><b>→</b></a>
+<a class="link-row reveal" style="--d:.05s" href="https://github.com/paper-daemon/AgentLink"><small>SYSTEM / OSS</small><strong>AgentLink</strong><span>長時間働くSIワーカーのための土台。コードも公開中。</span><b>↗</b></a>
 </div></section>
 
-<section class="section"><header class="section-head reveal"><small>NOTES</small><h2>よむ。</h2><p>作って、回して、たまに事故って。その記録です。</p></header><div class="link-list">
-<a class="link-row reveal" href="/notes/"><small>ALL NOTES</small><strong>実験ノート一覧</strong><span>技術の検証、失敗の切り分け、道具の比べ方。全部で19本あります。</span><b>→</b></a>
-<a class="link-row reveal" style="--d:.05s" href="/notes/debuggable-rag.html"><small>NEW / RAG</small><strong>デバッグできるRAGの作り方</strong><span>検索と生成の不調を、部品ごとに切り分けて直す考え方。</span><b>→</b></a>
-<a class="link-row reveal" style="--d:.1s" href="/notes/fedora-steam-proton-gta.html"><small>NEW / LINUX</small><strong>FedoraでSteam Proton GTAを動かす</strong><span>実機での起動確認と、つまずいた点の切り分け記録。</span><b>→</b></a>
+<section class="section"><header class="section-head reveal"><small>NOTES</small><h2>よむ。</h2><p>作ったときの記録。うまくいった話も、失敗した話も、そのまま書いてます。</p></header><div class="link-list">
+<a class="link-row reveal" href="/notes/debuggable-rag.html"><small>最新の記録</small><strong>RAGを「直せる」ようにした話</strong><span>検索と生成が外したとき、理由を追えるようにする工夫。</span><b>→</b></a>
+<a class="link-row reveal" style="--d:.05s" href="/notes/"><small>ALL</small><strong>記録を全部見る</strong><span>実験ノート19本。</span><b>→</b></a>
 </div></section>
 
-<section class="cta-band reveal"><div><h2>ついでに、仕事も受けています。</h2><p>自動化、Web、データ整理、動画・字幕のQA。「これ頼める？」はお気軽にどうぞ。商品も少しだけ置いてあります。</p></div><a class="button primary" href="/work.html">仕事と商品を見る →</a></section>
+<section class="cta-band reveal"><div><h2>ついでに、仕事も受けています。</h2><p>自動化、Web、データ整理、動画や字幕のチェック。「これ頼める？」はお気軽に。</p></div><a class="button primary" href="/work.html">仕事と商品を見る →</a></section>
 </main>
 <footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>あませ</strong><br>AMASE</span></div><nav><a href="/">ホーム</a><a href="/demo.html">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">仕事</a><a href="/products.html">商品</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a></nav></footer>
 <script src="/ad-overlay.js" defer></script>
