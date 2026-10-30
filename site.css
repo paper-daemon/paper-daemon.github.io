@@ -433,3 +433,8 @@ html{scroll-behavior:smooth}
 .hero{min-height:0}
 .cta-band{margin-bottom:40px}
 .page-hero{padding:64px 0 44px}
+
+/* === hero fix 2026-10-30c: headings may break; hero size capped === */
+h1,h2,h3{word-break:normal;overflow-wrap:anywhere}
+.hero h1{font-size:clamp(2.6rem,5.2vw,4.4rem);line-height:1.1}
+.profile-card h2{color:var(--ink);position:relative;z-index:1}
