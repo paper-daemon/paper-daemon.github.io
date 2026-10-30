@@ -29,6 +29,15 @@
 .slip.lucky b{background:linear-gradient(transparent 62%,var(--yellow) 62%,var(--yellow) 94%,transparent 94%);padding:0 4px}
 .slip-actions{margin-top:16px}
 .count-note{margin-top:18px;color:var(--muted);font-size:.8rem}
+.meters{margin-top:16px;border-top:1.5px dashed #d8c48f;padding-top:12px;text-align:left}
+.meters p{display:flex;justify-content:space-between;align-items:center;margin:5px 0;font-size:.83rem;color:var(--ink-dim)}
+.meters .dots{letter-spacing:.18em;color:#d23b2a;font-size:.8rem}
+.slip.gold{background:repeating-linear-gradient(180deg,#fffbe8 0 26px,#fdf3c8 26px 27px);border-color:#c9a227;box-shadow:6px 8px 0 rgba(160,120,10,.35)}
+.slip.gold .stamp{border-color:#c9a227;color:#a67c00;background:rgba(201,162,39,.1);width:118px;height:118px;font-size:1.9rem}
+.today-tag{display:inline-block;margin-bottom:10px;font:800 .62rem var(--mono);letter-spacing:.12em;color:#fff;background:#d23b2a;border-radius:999px;padding:4px 10px}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:80}
+.confetti i{position:absolute;top:-4vh;width:9px;height:15px;opacity:.95;animation:cfall linear both}
+@keyframes cfall{to{transform:translateY(110vh) rotate(720deg)}}
 @media (prefers-reduced-motion:reduce){.box.shake,.stick.out,.slip.unfold{animation:none}}
 </style>
 </head>
@@ -41,9 +50,11 @@
 <div class="box-wrap"><div class="stick" id="stick"></div><div class="box" id="box"><span class="box-label">おみくじ</span></div></div>
 <div><button class="button primary draw-btn" id="drawBtn" type="button">おみくじを引く</button></div>
 <div class="slip" id="slip" hidden>
+<span class="today-tag" id="todayTag" hidden>今日の1回目</span>
 <div class="stamp" id="fortuneText">大吉</div>
 <p class="word" id="wordText"></p>
-<p class="lucky">ラッキーアイテム：<b id="luckyText"></b></p>
+<div class="meters" id="meters"></div>
+<p class="lucky">ラッキーアイテム：<b id="luckyText"></b><br>ラッキーカラー：<b id="colorText"></b></p>
 <div class="slip-actions"><button class="button soft" id="copyBtn" type="button" style="padding:10px 18px;font-size:.85rem">結果をコピー</button></div>
 </div>
 <p class="count-note" id="countNote"></p>
@@ -52,7 +63,9 @@
 </main>
 <footer class="site-footer"><div class="footer-brand"><img src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span><strong>シェルフィリア</strong><br>SHELFIRIA</span></div><nav><a href="/">トップ</a><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
 <script>
-const FORTUNES=[["大吉",14],["中吉",22],["小吉",22],["吉",22],["末吉",12],["凶",8]];
+const FORTUNES=[["超大吉",2],["大吉",13],["中吉",22],["小吉",22],["吉",22],["末吉",12],["凶",7]];
+const CATS=["恋愛運","仕事運","金運","健康運"];
+const COLORS=["茜色","群青","若草色","山吹色","藤色","朱色","空色","桃色","金色","銀色"];
 const WORDS=[
 "今日は「とりあえず触ってみる」が当たりの日。考える前に一度開いてみて。",
 "細かいところを一個だけ直すと、全体が急に良くなります。一個だけ、ね。",
@@ -67,7 +80,18 @@ const WORDS=[
 "今日は褒められやすい日。受け取り上手でいきましょ。",
 "「まあいっか」が効く日。完璧じゃなくていいんです。"
 ];
-const LUCKY=["赤いもの","温かい飲み物","片付けた机","新しいタオル","音楽を1曲","窓の外の空","予備の充電ケーブル","短い散歩","お気に入りの文房具","深呼吸3回"];
+const LUCKY=["赤いもの","温かい飲み物","片付けた机","新しいタオル","音楽を1曲","窓の外の空","予備の充電ケーブル","短い散歩","お気に入りの文房具","深呼吸3回","銀色の小物","温かいスープ","懐かしい写真","新しい靴下","観葉植物","手書きのメモ"];
+const WORDS_EXTRA=[
+"超大吉の日は、欲張ってOK。やりたかったやつ、今日やりましょ。",
+"誰かの「ありがとう」が聞こえる日。小さい親切が大きく返ります。",
+"止まってた話が動き出す日。返信は早めが吉。",
+"今日のイヴはちょっと強気。背中を押します、進んで大丈夫。",
+"運の波が来てます。迷ってた買い物、今日は正解寄り。"
+];
+WORDS.push(...WORDS_EXTRA);
+function meter(n){return "●".repeat(n)+"○".repeat(5-n)}
+function fanfare(big){const ac=audio();if(!ac)return;const notes=big?[523,659,784,1047]:[523,784];notes.forEach((f,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=f;const t=ac.currentTime+i*0.09;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.15,t+0.03);g.gain.exponentialRampToValueAtTime(0.001,t+0.35);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+0.4)})}
+function confetti(n){const wrap=document.createElement('div');wrap.className='confetti';const cols=['#d23b2a','#f5b301','#2b50c8','#3aa655','#e86ab0','#f7e3ae'];for(let i=0;i<n;i++){const p=document.createElement('i');p.style.left=Math.random()*100+'vw';p.style.background=cols[i%cols.length];p.style.animationDuration=(1.6+Math.random()*1.6)+'s';p.style.animationDelay=(Math.random()*0.35)+'s';p.style.transform='rotate('+(Math.random()*360)+'deg)';wrap.appendChild(p)}document.body.appendChild(wrap);setTimeout(()=>wrap.remove(),4200)}
 function pickFortune(){let r=Math.random()*100;for(const [n,w] of FORTUNES){if((r-=w)<0)return n}return "吉"}
 let AC=null;
 function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}return AC}
@@ -83,10 +107,18 @@ box.classList.remove('shake');stick.classList.remove('out');void box.offsetWidth
 box.classList.add('shake');
 setTimeout(()=>{stick.classList.add('out');thunk()},650);
 setTimeout(()=>{
-document.getElementById('fortuneText').textContent=pickFortune();
+const f=pickFortune();
+document.getElementById('fortuneText').textContent=f;
 document.getElementById('wordText').textContent=WORDS[Math.floor(Math.random()*WORDS.length)];
 document.getElementById('luckyText').textContent=LUCKY[Math.floor(Math.random()*LUCKY.length)];
+document.getElementById('colorText').textContent=COLORS[Math.floor(Math.random()*COLORS.length)];
+const bias=f==="超大吉"?4:(f==="大吉"?3:(f==="凶"?1:2));
+document.getElementById('meters').innerHTML=CATS.map(c=>{const v=Math.max(1,Math.min(5,bias+Math.floor(Math.random()*3)-1));return `<p><span>${c}</span><span class="dots">${meter(v)}</span></p>`}).join('');
+const today=new Date().toDateString();const isFirst=localStorage.getItem('omikujiDay')!==today;
+document.getElementById('todayTag').hidden=!isFirst;localStorage.setItem('omikujiDay',today);
+slip.classList.toggle('gold',f==="超大吉");
 slip.hidden=false;slip.classList.remove('unfold');void slip.offsetWidth;slip.classList.add('unfold');
+if(f==="超大吉"){confetti(70);fanfare(true)}else if(f==="大吉"){confetti(30);fanfare(false)}
 count++;localStorage.setItem('omikujiCount',count);note();
 btn.textContent='もう一回引く';btn.disabled=false;
 },1250);

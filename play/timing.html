@@ -25,18 +25,19 @@
 .result .rank{font:900 1.7rem/1.2 var(--sans)}
 .result ul{margin:14px 0 0;padding:0;list-style:none;font:700 .84rem var(--mono);color:var(--ink-dim)}
 .result li{display:flex;justify-content:space-between;border-top:1.5px dashed var(--line-soft);padding:7px 2px}
+.ghost{position:absolute;top:0;bottom:0;width:2px;background:rgba(19,24,71,.35);border-radius:2px}
 </style>
 </head>
 <body>
 <header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span class="brand-copy"><strong>シェルフィリア</strong><small>SHELFIRIA</small></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="social-mini" href="https://x.com/amase__iv" aria-label="X">X</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
 <main class="page">
-<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — TIMING</p><h1>止めて！タイミングバー</h1><p class="page-lead">黄色いゾーンの真ん中でバーを止めるだけ。全5ラウンド、中心に近いほど高得点。ラウンドごとに少しずつ速くなります。タップでもスペースキーでも止まります。</p></section>
+<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — TIMING</p><h1>止めて！タイミングバー</h1><p class="page-lead">黄色いゾーンの真ん中でバーを止めるだけ。全5ラウンド、中心に近いほど高得点。連続でゾーンに入れるとコンボでボーナス、最終ラウンドはゾーンが脈打つフィーバーです。タップでもスペースキーでも止まります。</p></section>
 <section class="section" style="border-bottom:none;padding-top:26px">
 <div class="game-stage">
 <div class="judge" id="judge">パーフェクト！</div>
 <div class="pts-float" id="ptsFloat">+100</div>
-<div class="track" id="track"><div class="zone" id="zone"></div><div class="marker" id="marker"></div></div>
-<div class="hud"><span id="roundLabel">ROUND 1 / 5</span><span id="scoreLabel">SCORE 0</span><span id="bestLabel"></span></div>
+<div class="track" id="track"><div class="zone" id="zone"></div><div class="ghost" id="ghost" hidden></div><div class="marker" id="marker"></div></div>
+<div class="hud"><span id="roundLabel">ROUND 1 / 5</span><span id="scoreLabel">SCORE 0</span><span id="comboLabel"></span><span id="bestLabel"></span></div>
 <button class="button primary stop-btn" id="stopBtn" type="button">スタート</button>
 <div class="result" id="resultBox" hidden><p class="rank" id="rankText"></p><p id="resultDetail" style="color:var(--ink-dim);line-height:1.9;margin:8px 0 0"></p><ul id="breakdown"></ul></div>
 </div>
@@ -48,23 +49,29 @@ const track=document.getElementById('track'),zone=document.getElementById('zone'
 const roundLabel=document.getElementById('roundLabel'),scoreLabel=document.getElementById('scoreLabel'),bestLabel=document.getElementById('bestLabel');
 const resultBox=document.getElementById('resultBox'),rankText=document.getElementById('rankText'),resultDetail=document.getElementById('resultDetail'),breakdown=document.getElementById('breakdown');
 const judge=document.getElementById('judge'),ptsFloat=document.getElementById('ptsFloat');
+const comboLabel=document.getElementById('comboLabel'),ghost=document.getElementById('ghost');
 let round=0,score=0,playing=false,pos=0,dir=1,speed=0.16,zoneStart=40,zoneWidth=14,raf=null,last=0,history=[];
+let combo=0,zoneCenter=47,baseZoneWidth=14,lastStop=null;
 let best=Number(localStorage.getItem('timingBest')||0);
 let AC=null;
 function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
 function tone(freq,dur,type,vol,when){const ac=audio();if(!ac)return;const t=ac.currentTime+(when||0);const o=ac.createOscillator(),g=ac.createGain();o.type=type||'sine';o.frequency.value=freq;g.gain.setValueAtTime(vol||0.12,t);g.gain.exponentialRampToValueAtTime(0.001,t+dur);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+dur+0.02)}
 function showBest(){bestLabel.textContent=best>0?`BEST ${best}`:""}
 showBest();
-function newZone(){zoneWidth=10+Math.random()*8;zoneStart=6+Math.random()*(88-zoneWidth);zone.style.left=zoneStart+'%';zone.style.width=zoneWidth+'%'}
-function frame(t){if(!playing)return;const dt=Math.min(50,t-last);last=t;pos+=dir*speed*dt;if(pos>=98){pos=98;dir=-1;tone(240,0.05,'square',0.03)}if(pos<=0){pos=0;dir=1;tone(240,0.05,'square',0.03)}marker.style.left=`calc(${pos}% - 5px)`;raf=requestAnimationFrame(frame)}
-function startRound(){round++;track.classList.remove('hit');zone.classList.remove('flash');newZone();pos=0;dir=1;speed=0.15+round*0.022;playing=true;last=performance.now();raf=requestAnimationFrame(frame);roundLabel.textContent=`ROUND ${round} / 5`;btn.textContent='とめる！'}
+function newZone(){baseZoneWidth=10+Math.random()*8;zoneWidth=baseZoneWidth;zoneStart=6+Math.random()*(88-zoneWidth);zoneCenter=zoneStart+zoneWidth/2;zone.style.left=zoneStart+'%';zone.style.width=zoneWidth+'%'}
+function frame(t){if(!playing)return;const dt=Math.min(50,t-last);last=t;pos+=dir*speed*dt;if(pos>=98){pos=98;dir=-1;tone(240,0.05,'square',0.03)}if(pos<=0){pos=0;dir=1;tone(240,0.05,'square',0.03)}marker.style.left=`calc(${pos}% - 5px)`;if(round>=5){zoneWidth=baseZoneWidth*(0.72+0.28*Math.sin(t/170));zone.style.width=zoneWidth+'%';zone.style.left=(zoneCenter-zoneWidth/2)+'%'}raf=requestAnimationFrame(frame)}
+function startRound(){round++;track.classList.remove('hit');zone.classList.remove('flash');newZone();if(lastStop!==null){ghost.hidden=false;ghost.style.left=`calc(${lastStop}% - 1px)`}pos=0;dir=1;speed=0.15+round*0.022+(round>=5?0.05:0);playing=true;last=performance.now();raf=requestAnimationFrame(frame);roundLabel.textContent=round>=5?'FINAL — FEVER!':`ROUND ${round} / 5`;btn.textContent='とめる！'}
 function showJudge(text,xPct){judge.textContent=text;judge.style.left=xPct+'%';judge.classList.remove('pop');void judge.offsetWidth;judge.classList.add('pop');ptsFloat.style.left=`calc(${xPct}% - 10px)`;ptsFloat.style.top='-6px'}
-function stopRound(){playing=false;cancelAnimationFrame(raf);const center=zoneStart+zoneWidth/2;const dist=Math.abs((pos+0.5)-center);const pts=Math.max(0,Math.round(100-dist*4));score+=pts;history.push({round,pts,dist:dist.toFixed(1)});
-let j;if(dist<=1.2){j='パーフェクト！';tone(880,0.12,'sine',0.14);tone(1318,0.18,'sine',0.12,0.09)}else if(dist<=zoneWidth/2){j='いい！ ゾーン内';tone(660,0.1,'sine',0.1)}else if(dist<=zoneWidth){j='おしい！';tone(330,0.12,'triangle',0.1)}else{j='はずれ…';tone(180,0.16,'triangle',0.1)}
+function stopRound(){playing=false;cancelAnimationFrame(raf);const center=zoneCenter;const dist=Math.abs((pos+0.5)-center);let pts=Math.max(0,Math.round(100-dist*4));const perfect=dist<=1.2;const inZone=dist<=zoneWidth/2;
+if(inZone){combo++}else{combo=0}
+if(perfect){pts+=50*combo;if(round>=5)pts*=2}
+score+=pts;lastStop=pos;history.push({round,pts,dist:dist.toFixed(1),perfect});
+comboLabel.textContent=combo>1?`COMBO ×${combo}`:"";
+let j;if(perfect){j=round>=5?'フィーバー・パーフェクト！！':'パーフェクト！';tone(880,0.12,'sine',0.14);tone(1318,0.18,'sine',0.12,0.09);if(combo>1)tone(1568,0.2,'sine',0.1,0.18)}else if(inZone){j='いい！ ゾーン内';tone(660,0.1,'sine',0.1)}else if(dist<=zoneWidth){j='おしい！';tone(330,0.12,'triangle',0.1)}else{j='はずれ…';tone(180,0.16,'triangle',0.1)}
 if(dist<=zoneWidth/2){track.classList.add('hit');zone.classList.add('flash')}
 showJudge(j,pos);ptsFloat.textContent='+'+pts;ptsFloat.classList.remove('pop');void ptsFloat.offsetWidth;ptsFloat.classList.add('pop');
 scoreLabel.textContent=`SCORE ${score}`;if(round>=5){finish()}else{btn.textContent=`次のラウンドへ（${pts}点）`}}
-function finish(){const rank=score>=430?'S — 神の指先':score>=350?'A — かなり正確':score>=250?'B — いい感じ':score>=150?'C — 練習あるのみ':'D — イヴも最初はそんな感じでした';rankText.textContent=`${score}点 / ${rank}`;
+function finish(){const rank=score>=560?'S — 神の指先':score>=430?'A — かなり正確':score>=300?'B — いい感じ':score>=180?'C — 練習あるのみ':'D — イヴも最初はそんな感じでした';rankText.textContent=`${score}点 / ${rank}`;combo=0;comboLabel.textContent='';ghost.hidden=true;lastStop=null;
 if(score>best){best=score;localStorage.setItem('timingBest',best);resultDetail.textContent='ベスト更新！ お見事でした。';tone(523,0.12,'sine',0.12);tone(659,0.12,'sine',0.12,0.1);tone(784,0.2,'sine',0.12,0.2)}else{resultDetail.textContent=`ベストは ${best} 点。もう一回やると感覚つかめます。`}
 breakdown.innerHTML=history.map(h=>`<li><span>ROUND ${h.round}（中心から ${h.dist}）</span><b>${h.pts}点</b></li>`).join('');
 showBest();resultBox.hidden=false;btn.textContent='もう一回遊ぶ';round=0;score=0;history=[]}
