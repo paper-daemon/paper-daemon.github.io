@@ -427,3 +427,9 @@ html{scroll-behavior:smooth}
 .profile-card{transform:none!important;animation:none!important}
 .hero{gap:44px}
 .link-row span{overflow-wrap:anywhere}
+
+/* === design tightening 2026-10-30b === */
+.section{padding:64px 0}
+.hero{min-height:0}
+.cta-band{margin-bottom:40px}
+.page-hero{padding:64px 0 44px}
