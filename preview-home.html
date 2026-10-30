@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shelfiria（新トップ試作）</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site.css?v=20261030-2">
+<style>
+:root{--disp:"Zen Kaku Gothic New",sans-serif;--grot:"Space Grotesk",monospace}
+body{font-family:var(--disp)}
+.pv{max-width:1120px;margin:0 auto;padding:0 20px 40px}
+.pv-hero{position:relative;margin-top:22px;border-radius:28px;overflow:hidden;background:#0d1030;color:#eef0ff;box-shadow:0 30px 60px -20px rgba(13,16,48,.45)}
+.pv-hero canvas{position:absolute;inset:0;width:100%;height:100%}
+.pv-hero-in{position:relative;padding:64px 40px 52px;max-width:640px}
+.pv-kicker{font:700 .68rem var(--grot);letter-spacing:.34em;color:#9fb0ff;margin:0 0 18px}
+.pv-hero h1{font:900 clamp(2.1rem,5.6vw,3.6rem)/1.22 var(--disp);letter-spacing:.01em;margin:0;color:#fff}
+.pv-hero h1 .grad{background:linear-gradient(92deg,#8ab6ff,#c39bff 55%,#ffb3d1);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pv-lead{margin:20px 0 0;color:#c6ccf5;line-height:2;font-size:.98rem;max-width:30em}
+.pv-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.pv-cta{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:999px;font:700 .92rem var(--disp);text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
+.pv-cta.main{background:#fff;color:#131847;box-shadow:0 10px 24px -8px rgba(0,0,0,.5)}
+.pv-cta.sub{border:1.5px solid rgba(255,255,255,.4);color:#eef0ff}
+.pv-cta:hover{transform:translateY(-2px)}
+.pv-stats{display:flex;gap:0;margin-top:38px;border-top:1px solid rgba(255,255,255,.16);padding-top:20px;flex-wrap:wrap}
+.pv-stats div{padding-right:28px;margin-right:28px;border-right:1px solid rgba(255,255,255,.14)}
+.pv-stats div:last-child{border-right:none}
+.pv-stats b{display:block;font:700 1.5rem var(--grot);color:#fff}
+.pv-stats span{font-size:.72rem;color:#9aa3dd;letter-spacing:.08em}
+.pv-news{display:flex;gap:14px;align-items:center;margin:18px 4px 0;font-size:.84rem;color:var(--ink-dim)}
+.pv-news b{font:700 .62rem var(--grot);letter-spacing:.2em;background:var(--ink);color:#fff;border-radius:6px;padding:4px 8px}
+.pv-sec{margin-top:64px}
+.pv-sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:22px}
+.pv-sec-head .no{font:700 .72rem var(--grot);letter-spacing:.2em;color:#8a90c8}
+.pv-sec-head h2{font:900 1.7rem var(--disp);margin:0}
+.pv-sec-head a{margin-left:auto;font-size:.84rem;color:var(--ink-dim);text-decoration:none}
+.pv-games{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pv-game{border-radius:20px;overflow:hidden;text-decoration:none;color:#fff;box-shadow:0 18px 36px -16px rgba(13,16,48,.4);transition:transform .18s ease,box-shadow .18s ease;display:block}
+.pv-game:hover{transform:translateY(-4px);box-shadow:0 26px 44px -16px rgba(13,16,48,.5)}
+.pv-game .art{height:150px;position:relative}
+.pv-game .art span{position:absolute;right:16px;bottom:10px;font:700 .62rem var(--grot);letter-spacing:.3em;opacity:.85}
+.pv-game .art i{position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.5)}
+.pv-game .txt{padding:18px 20px 20px;background:#fff;color:var(--ink)}
+.pv-game h3{margin:0;font:900 1.12rem var(--disp)}
+.pv-game p{margin:8px 0 0;color:var(--ink-dim);font-size:.86rem;line-height:1.8}
+.g1 .art{background:radial-gradient(120px 80px at 25% 30%,#ffd98a,transparent 60%),linear-gradient(135deg,#8a4b2d,#5d2f16)}
+.g2 .art{background:radial-gradient(140px 90px at 75% 25%,#ffe45e,transparent 60%),linear-gradient(135deg,#131847,#2b50c8)}
+.g3 .art{background:radial-gradient(150px 100px at 50% 60%,#7dd0ff,transparent 62%),linear-gradient(135deg,#101736,#3a2a8f)}
+.pv-rows{border-top:1.5px solid var(--line)}
+.pv-row{display:flex;gap:18px;align-items:center;padding:20px 6px;border-bottom:1.5px solid var(--line);text-decoration:none;color:var(--ink);transition:background .15s}
+.pv-row:hover{background:#f6f5ff}
+.pv-row .tag{font:700 .62rem var(--grot);letter-spacing:.16em;color:#fff;background:#2b50c8;border-radius:6px;padding:5px 9px;white-space:nowrap}
+.pv-row .tag.alt{background:#8a4b2d}
+.pv-row h3{margin:0;font:700 1.02rem var(--disp)}
+.pv-row p{margin:4px 0 0;color:var(--ink-dim);font-size:.85rem;line-height:1.75}
+.pv-row .arr{margin-left:auto;color:#8a90c8;font-size:1.2rem}
+.pv-band{margin-top:64px;border-radius:24px;background:linear-gradient(120deg,#fff8e6,#f3f0ff);border:1.5px solid var(--line);padding:30px}
+.pv-band h2{font:900 1.4rem var(--disp);margin:0 0 6px}
+.pv-band p.lead{color:var(--ink-dim);font-size:.9rem;margin:0 0 20px}
+.pv-prods{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.pv-prod{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:16px;text-decoration:none;color:var(--ink);transition:transform .15s,box-shadow .15s}
+.pv-prod:hover{transform:translateY(-3px);box-shadow:0 14px 26px -14px rgba(13,16,48,.35)}
+.pv-prod h3{margin:0;font:700 .94rem var(--disp);line-height:1.6}
+.pv-prod .price{margin-top:10px;font:700 1.05rem var(--grot)}
+.pv-prod .price small{font-size:.68rem;color:var(--muted);font-family:var(--disp)}
+@media(max-width:860px){.pv-games{grid-template-columns:1fr}.pv-prods{grid-template-columns:1fr 1fr}.pv-hero-in{padding:44px 24px 40px}}
+</style>
+</head>
+<body>
+<header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span class="brand-copy"><strong>シェルフィリア</strong><small>SHELFIRIA</small></span></a><nav aria-label="main"><a href="/demo.html">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
+<main class="pv">
+<section class="pv-hero">
+<canvas id="pvCore" aria-hidden="true"></canvas>
+<div class="pv-hero-in">
+<p class="pv-kicker">SHELFIRIA — A SMALL PLAYGROUND, RUN BY EVE</p>
+<h1>触って遊べるもの、<br><span class="grad">集めてます。</span></h1>
+<p class="pv-lead">ゲーム、無料ツール、制作物、実験の記録。案内人は天瀬イヴ。登録もインストールもなしで、開いたらそのまま遊べます。</p>
+<div class="pv-ctas"><a class="pv-cta main" href="/demo.html">あそぶ →</a><a class="pv-cta sub" href="/showcase.html">作ったものを見る</a></div>
+<div class="pv-stats">
+<div><b>3</b><span>GAMES</span></div>
+<div><b>46</b><span>DEMOS &amp; TOOLS</span></div>
+<div><b>18</b><span>NOTES</span></div>
+<div><b>9</b><span>CASE STUDIES</span></div>
+</div>
+</div>
+</section>
+<p class="pv-news"><b>NEW</b><span>遊ぶの3つを強化しました（おみくじに超大吉、タイミングバーにコンボとフィーバー、SIコアに変形）。</span></p>
+
+<section class="pv-sec">
+<div class="pv-sec-head"><span class="no">01</span><h2>あそぶ</h2><a href="/demo.html">全部のデモへ →</a></div>
+<div class="pv-games">
+<a class="pv-game g1" href="/play/omikuji.html"><div class="art"><i style="width:74px;height:74px;left:26px;top:34px"></i><i style="width:34px;height:34px;left:120px;top:22px"></i><span>OMIKUJI</span></div><div class="txt"><h3>イヴおみくじ</h3><p>木箱を振って引くおみくじ。2%で超大吉、項目別の運勢とラッキーカラーつき。</p></div></a>
+<a class="pv-game g2" href="/play/timing.html"><div class="art"><i style="width:56px;height:56px;left:200px;top:56px"></i><i style="width:22px;height:22px;left:60px;top:30px"></i><span>TIMING</span></div><div class="txt"><h3>止めて！タイミングバー</h3><p>真ん中で止める反射ゲーム。コンボとフィーバーでスコアが伸びます。</p></div></a>
+<a class="pv-game g3" href="/play/core.html"><div class="art"><i style="width:96px;height:96px;left:50%;top:24px;margin-left:-48px"></i><span>SI CORE</span></div><div class="txt"><h3>SIコアにさわる</h3><p>数千の粒子のコア。球体・リング・立方体に変形して、触ると弾けます。</p></div></a>
+</div>
+</section>
+
+<section class="pv-sec">
+<div class="pv-sec-head"><span class="no">02</span><h2>みる</h2><a href="/showcase.html">制作物の一覧へ →</a></div>
+<div class="pv-rows">
+<a class="pv-row" href="/showcase.html"><span class="tag">CORE</span><div><h3>作ったもの、ぜんぶ</h3><p>自動化の基盤、制作事例、小さく使える無料ツールまで。棚の中身をまとめて見られます。</p></div><span class="arr">→</span></a>
+<a class="pv-row" href="/notes/chat-long-turn-agentlink.html"><span class="tag alt">STORY</span><div><h3>チャットが長くなっても切れない仕組み</h3><p>Shelfiriaの裏側で動いている AgentLink の話。長い作業を途切れさせないための工夫です。</p></div><span class="arr">→</span></a>
+</div>
+</section>
+
+<section class="pv-sec">
+<div class="pv-sec-head"><span class="no">03</span><h2>よむ</h2><a href="/notes/">記事の一覧へ →</a></div>
+<div class="pv-rows">
+<a class="pv-row" href="/notes/unwritable-dialogue.html"><div><h3>書けない対話 — 台詞以前の沈黙について</h3><p>キャラクターの「らしさ」は、喋る内容より先に、黙り方で決まる。</p></div><span class="arr">→</span></a>
+<a class="pv-row" href="/notes/proof-by-absence.html"><div><h3>不在の証明 — 「何も起きなかった」を、どう証明するか</h3><p>ログに残らない出来事を、どうやって「起きなかった」と言い切るか。</p></div><span class="arr">→</span></a>
+</div>
+</section>
+
+<section class="pv-band">
+<h2>おまけ：仕事も受けています</h2>
+<p class="lead">制作のご相談と、すぐ使える実務テンプレート。販売はココナラです。</p>
+<div class="pv-prods">
+<a class="pv-prod" href="https://coconala.com/services/4477076"><h3>動画・音声の納品前QAキット</h3><p class="price">¥1,000 <small>ココナラ</small></p></a>
+<a class="pv-prod" href="https://coconala.com/contents_market/pictures/cmvtply2y01yp950iwdran1oi"><h3>実務プロンプト25本＋チェックリスト</h3><p class="price">¥2,000 <small>ココナラ</small></p></a>
+<a class="pv-prod" href="https://coconala.com/contents_market/pictures/cmvtpt156021a8p0iovp6i1lu"><h3>見積・請求かんたんExcel</h3><p class="price">¥3,500 <small>ココナラ</small></p></a>
+<a class="pv-prod" href="https://coconala.com/contents_market/pictures/cmvtpz50s021j8p0iojlaghzo"><h3>提案書・企画書PPTテンプレート</h3><p class="price">¥3,500 <small>ココナラ</small></p></a>
+</div>
+</section>
+</main>
+<footer class="site-footer"><div class="footer-brand"><img src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span><strong>シェルフィリア</strong><br>SHELFIRIA</span></div><nav><a href="/">トップ</a><a href="/demo.html">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
+<script>
+(function(){
+var cv=document.getElementById('pvCore'),ctx=cv.getContext('2d');
+var W=0,H=0;
+function rs(){var r=cv.parentElement.getBoundingClientRect();W=r.width;H=r.height;var d=Math.min(2,window.devicePixelRatio||1);cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0)}
+rs();window.addEventListener('resize',rs);
+var N=520,pts=[],golden=Math.PI*(3-Math.sqrt(5));
+for(var i=0;i<N;i++){var y=1-(i/(N-1))*2,rr=Math.sqrt(1-y*y),th=golden*i;pts.push({x:Math.cos(th)*rr,y:y,z:Math.sin(th)*rr})}
+var t=0;
+function frame(){
+t+=1;ctx.clearRect(0,0,W,H);
+var cx=W*0.78,cy=H*0.46,R=Math.min(W,H)*0.42;
+var cy1=Math.cos(t*0.004),sy1=Math.sin(t*0.004),cx1=Math.cos(t*0.0016),sx1=Math.sin(t*0.0016);
+for(var i=0;i<N;i++){var p=pts[i];
+var x1=p.x*cy1+p.z*sy1,z1=-p.x*sy1+p.z*cy1,y2=p.y*cx1-z1*sx1,z2=p.y*sx1+z1*cx1;
+var sc=1/(1+z2*0.45),sx=cx+x1*R*sc,syy=cy+y2*R*sc,dep=(z2+1)/2;
+ctx.beginPath();ctx.fillStyle='hsla('+(224+dep*50)+',95%,'+(55+dep*22)+'%,'+(0.25+dep*0.65)+')';
+ctx.arc(sx,syy,0.6+dep*1.8,0,6.2832);ctx.fill();}
+requestAnimationFrame(frame)}
+if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)requestAnimationFrame(frame);
+})();
+</script>
+<script src="/enhance.js" defer></script>
+<script src="/ad-overlay.js" defer></script>
+</body></html>
