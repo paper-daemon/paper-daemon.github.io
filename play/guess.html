@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>数あて | Shelfiria</title>
+<meta name="description" content="シェルフィリアの小さな遊び場。1から100の数字を当てるゲーム。大きい小さいのヒントと範囲ゲージつき。">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="シェルフィリア"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/site.css?v=20261030-2">
+<style>.guess-stage{max-width:520px;margin:0 auto;text-align:center}
+.gauge{height:22px;border:2px solid var(--ink);border-radius:999px;position:relative;background:#fff;margin:20px 0 6px}
+.gauge .lo,.gauge .hi{position:absolute;top:0;bottom:0;background:rgba(43,80,200,.22)}
+.gauge .cur{position:absolute;top:-6px;width:4px;height:30px;background:#d23b2a;border-radius:2px}
+input[type=number]{font:700 1.4rem var(--mono);width:130px;padding:10px;border:2px solid var(--ink);border-radius:12px;text-align:center}
+.hint{font-weight:900;font-size:1.25rem;min-height:1.6em;margin:14px 0 4px}
+.sub{color:var(--muted);font-size:.85rem;min-height:1.5em}</style>
+</head>
+<body>
+<header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span class="brand-copy"><strong>シェルフィリア</strong><small>SHELFIRIA</small></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
+<main class="page">
+<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — GUESS</p><h1>数あて</h1><p class="page-lead">イヴが思い浮かべた 1〜100 の数字を当てるゲーム。ヒントは「より大きい／より小さい」と、狭まっていく範囲ゲージ。</p></section>
+<section class="section" style="border-bottom:none;padding-top:16px">
+<div class="guess-stage">
+<p style="font-weight:700">イヴが 1〜100 の数字を1つ思い浮かべました。当ててみて。</p>
+<div class="gauge"><div class="lo" id="gLo" style="left:0;width:0"></div><div class="hi" id="gHi" style="right:0;width:0"></div><div class="cur" id="gCur" style="left:50%" hidden></div></div>
+<p class="sub" id="rangeLabel">範囲：1 〜 100</p>
+<p class="hint" id="hint">数字を入れて「当てる」</p>
+<p class="sub" id="tries">試行 0 回 ｜ ベスト <span id="best">-</span> 回</p>
+<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+<input type="number" id="num" min="1" max="100" inputmode="numeric" placeholder="1-100">
+<button class="button primary" id="goBtn" type="button">当てる</button>
+<button class="button soft" id="resetBtn" type="button">新しい数字</button>
+</div></div>
+</section>
+</main>
+<footer class="site-footer"><div class="footer-brand"><img src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span><strong>シェルフィリア</strong><br>SHELFIRIA</span></div><nav><a href="/">トップ</a><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
+<script>let AC=null;function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function tone(f,d,type,v,when){const ac=audio();if(!ac)return;const t=ac.currentTime+(when||0);const o=ac.createOscillator(),g=ac.createGain();o.type=type||"sine";o.frequency.value=f;g.gain.setValueAtTime(v||0.12,t);g.gain.exponentialRampToValueAtTime(0.001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02)}
+let target=1+Math.floor(Math.random()*100),lo=1,hi=100,tries=0,done=false;
+let best=Number(localStorage.getItem("guessBest")||0);
+const hint=document.getElementById("hint"),triesEl=document.getElementById("tries"),bestEl=document.getElementById("best"),num=document.getElementById("num"),rangeLabel=document.getElementById("rangeLabel"),gLo=document.getElementById("gLo"),gHi=document.getElementById("gHi"),gCur=document.getElementById("gCur");
+function showBest(){bestEl.textContent=best>0?best:"-"}
+function paint(){gLo.style.width=(lo-1)+"%";gHi.style.width=(100-hi)+"%";rangeLabel.textContent="範囲："+lo+" 〜 "+hi;triesEl.innerHTML="試行 "+tries+" 回 ｜ ベスト <span id=\"best\">"+(best>0?best:"-")+"</span> 回"}
+showBest();paint();
+function reset(){target=1+Math.floor(Math.random()*100);lo=1;hi=100;tries=0;done=false;hint.textContent="新しい数字にしました";gCur.hidden=true;paint();num.value="";num.focus()}
+document.getElementById("resetBtn").addEventListener("click",reset);
+function guess(){
+if(done)return;const v=Number(num.value);
+if(!v||v<1||v>100){hint.textContent="1〜100で入れてね";return}
+tries++;gCur.hidden=false;gCur.style.left="calc("+v+"% - 2px)";
+if(v===target){done=true;hint.textContent="正解！ "+target+" でした（"+tries+"回）";tone(784,0.12,"sine",0.12);tone(1047,0.2,"sine",0.12,0.1);
+if(!best||tries<best){best=tries;localStorage.setItem("guessBest",best);hint.textContent+=" ベスト更新！"}
+}else if(v<target){lo=Math.max(lo,v+1);hint.textContent=v+" より大きい";tone(330,0.09,"triangle",0.1)}
+else{hi=Math.min(hi,v-1);hint.textContent=v+" より小さい";tone(262,0.09,"triangle",0.1)}
+paint();num.select();
+}
+document.getElementById("goBtn").addEventListener("click",guess);
+num.addEventListener("keydown",e=>{if(e.key==="Enter")guess()});</script>
+<script src="/ad-overlay.js" defer></script>
+</body></html>

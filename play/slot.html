@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>イヴスロット | Shelfiria</title>
+<meta name="description" content="シェルフィリアの小さな遊び場。3つのリールをそろえるスロット。コインは端末に保存されます。">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="シェルフィリア"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/site.css?v=20261030-2">
+<style>.slot-stage{max-width:520px;margin:0 auto;text-align:center}
+.machine{background:linear-gradient(180deg,#2b2150,#171233);border:3px solid var(--ink);border-radius:22px;box-shadow:8px 8px 0 var(--ink);padding:26px 22px;color:#fff}
+.reels{display:flex;gap:12px;justify-content:center;margin:8px 0 18px}
+.reel{width:96px;height:110px;background:#fffdf4;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:3rem;color:#171233;box-shadow:inset 0 -8px 0 rgba(19,24,71,.12)}
+.reel.spin{animation:reelShake .12s linear infinite}
+@keyframes reelShake{0%{transform:translateY(-2px)}50%{transform:translateY(2px)}100%{transform:translateY(-2px)}}
+.reel.win{outline:4px solid #f5b301}
+.coins{font:700 1rem var(--mono);letter-spacing:.06em}
+.msg{min-height:1.8em;font-weight:700;color:#ffd98a;margin:10px 0 0}
+.pay{margin:18px auto 0;font-size:.8rem;color:var(--muted);line-height:2;text-align:left;max-width:300px}</style>
+</head>
+<body>
+<header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span class="brand-copy"><strong>シェルフィリア</strong><small>SHELFIRIA</small></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
+<main class="page">
+<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — SLOT</p><h1>イヴスロット</h1><p class="page-lead">ボタンを押して3つの絵をそろえるだけ。★3つでジャックポット。</p></section>
+<section class="section" style="border-bottom:none;padding-top:16px">
+<div class="slot-stage"><div class="machine">
+<p class="coins">COINS <span id="coins">100</span> ｜ BET 10</p>
+<div class="reels"><div class="reel" id="r0">★</div><div class="reel" id="r1">◆</div><div class="reel" id="r2">●</div></div>
+<button class="button primary" id="spinBtn" type="button" style="font-size:1.05rem;padding:14px 38px">まわす</button>
+<p class="msg" id="msg">3つそろえば当たり。★は大当たり。</p>
+</div>
+<p class="pay">配当：★★★ 500 ／ ◆◆◆ 200 ／ ●●● 120 ／ ▲▲▲ 100 ／ どれか2つ 15<br>コインはこの端末に保存されます。0になったら100枚もらえます。</p></div>
+</section>
+</main>
+<footer class="site-footer"><div class="footer-brand"><img src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span><strong>シェルフィリア</strong><br>SHELFIRIA</span></div><nav><a href="/">トップ</a><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
+<script>let AC=null;function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function tone(f,d,type,v,when){const ac=audio();if(!ac)return;const t=ac.currentTime+(when||0);const o=ac.createOscillator(),g=ac.createGain();o.type=type||"sine";o.frequency.value=f;g.gain.setValueAtTime(v||0.12,t);g.gain.exponentialRampToValueAtTime(0.001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02)}
+const SYMS=["★","◆","●","▲"],W=[2,4,5,6];
+let coins=Number(localStorage.getItem("slotCoins"));if(!coins&&coins!==0)coins=100;if(coins<=0)coins=100;
+const reels=[0,1,2].map(i=>document.getElementById("r"+i)),msg=document.getElementById("msg"),btn=document.getElementById("spinBtn"),cEl=document.getElementById("coins");
+function draw(){cEl.textContent=coins}
+function pick(){let t=W.reduce((a,b)=>a+b,0),r=Math.random()*t;for(let i=0;i<4;i++){if((r-=W[i])<0)return SYMS[i]}return "●"}
+let spinning=false;
+btn.addEventListener("click",()=>{
+if(spinning)return;if(coins<10){msg.textContent="コイン不足。100枚あげるから「まわす」でもう一回。";coins=100;draw();localStorage.setItem("slotCoins",coins);return}
+spinning=true;coins-=10;draw();msg.textContent="…";
+reels.forEach(r=>{r.classList.add("spin");r.classList.remove("win")});
+const finals=[pick(),pick(),pick()];
+reels.forEach((r,i)=>{
+const iv=setInterval(()=>{r.textContent=SYMS[Math.floor(Math.random()*4)];tone(300+Math.random()*200,0.03,"square",0.03)},70);
+setTimeout(()=>{clearInterval(iv);r.textContent=finals[i];r.classList.remove("spin");tone(520,0.07,"sine",0.1);
+if(i===2){judge()}},700+i*350);
+});
+});
+function judge(){
+const[a,b,c]=finals;let win=0,label="";
+if(a===b&&b===c){win=a==="★"?500:a==="◆"?200:a==="●"?120:100;label=a==="★"?"★★★ JACKPOT!!":"3つそろった！ +"+win}
+else if(a===b||b===c||a===c){win=15;label="2つそろった +15"}
+if(win>0){coins+=win;reels.forEach(r=>r.classList.add("win"));tone(784,0.12,"sine",0.12);tone(988,0.12,"sine",0.12,0.1);tone(1318,0.22,"sine",0.12,0.2)}
+else{label="はずれ。またどうぞ。"}
+msg.textContent=label;draw();localStorage.setItem("slotCoins",coins);spinning=false;
+}
+draw();</script>
+<script src="/ad-overlay.js" defer></script>
+</body></html>
