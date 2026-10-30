@@ -154,7 +154,7 @@ button,input,textarea,select{font:inherit}
 /* profile card */
 .profile-card{position:relative;padding:24px;background:#fff;border:2px solid var(--ink);border-radius:var(--radius);box-shadow:var(--shadow-hard);transform:rotate(1.2deg);animation:rise .7s var(--ease) .15s both;transition:transform .25s var(--ease)}
 .profile-card:hover{transform:rotate(0)}
-.profile-card:before{content:"AMASE / ACTIVE";position:absolute;right:18px;top:16px;color:var(--red-dark);font:800 .52rem/1 var(--mono);letter-spacing:.12em}
+.profile-card:before{content:"SHELFIRIA / ACTIVE";position:absolute;right:18px;top:16px;color:var(--red-dark);font:800 .52rem/1 var(--mono);letter-spacing:.12em}
 .profile-card img{width:124px;height:124px;object-fit:cover;border-radius:14px;border:2px solid var(--ink);margin:16px 0 20px}
 .profile-card h2{margin:0;font:900 2.1rem/1 var(--sans);letter-spacing:-.02em}
 .profile-card>p{margin:10px 0 22px;color:var(--muted);font-size:.8rem}
