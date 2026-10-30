@@ -421,3 +421,9 @@ html{scroll-behavior:smooth}
   *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .reveal{opacity:1;transform:none}
 }
+
+/* === unification pass 2026-10-30 (audit fixes) === */
+.section-head{grid-template-columns:1fr;gap:8px}
+.profile-card{transform:none!important;animation:none!important}
+.hero{gap:44px}
+.link-row span{overflow-wrap:anywhere}
