@@ -20,18 +20,20 @@
 <body>
 <header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span class="brand-copy"><strong>シェルフィリア</strong><small>SHELFIRIA</small></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="social-mini" href="https://x.com/amase__iv" aria-label="X">X</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
 <main class="page">
-<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — TECH</p><h1>SIコアにさわる</h1><p class="page-lead">数千個の粒子でできた球体を、リアルタイムで回しています。触ると粒子が逃げて、離すとまた集まってきます。タップすると衝撃波。</p></section>
+<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — TECH</p><h1>SIコアにさわる</h1><p class="page-lead">数千個の粒子でできたコアを、リアルタイムで回しています。形は球体・リング・立方体に変形。触ると粒子が逃げて、離すとまた集まってきます。タップで衝撃波、ドラッグで回転に勢いがつきます。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
 <div class="core-wrap">
 <div class="core-stage" id="stage">
 <canvas id="core" width="720" height="520" aria-label="粒子でできた球体のインタラクティブ描画"></canvas>
-<div class="core-hud"><span id="hudFps">FPS --</span><span id="hudCount">PARTICLES --</span><span>MODE: <b id="hudMode">はじく</b></span></div>
+<div class="core-hud"><span id="hudFps">FPS --</span><span id="hudCount">PARTICLES --</span><span>MODE: <b id="hudMode">はじく</b></span><span>SHAPE: <b id="hudShape">球体</b></span></div>
 </div>
 <div class="core-controls">
 <button class="button soft" id="modeBtn" type="button">モード切替：はじく → 引き寄せる</button>
+<button class="button soft" id="shapeBtn" type="button">形を変える</button>
+<button class="button soft" id="colorBtn" type="button">色を変える</button>
 <button class="button soft" id="burstBtn" type="button">衝撃波バースト</button>
 </div>
-<p class="core-note">仕組み：球面に均等配置した粒子を毎フレーム回転・投影し、奥行きで色と大きさを変えて描いています。ポインタとの距離で粒子ごとに力を受ける、簡単な物理もどき入り。端末の性能に合わせて粒子数を自動調整するので、スマホでも滑らかに動きます。</p>
+<p class="core-note">仕組み：粒子を球体・リング・立方体へ形を変えながら毎フレーム回転・投影し、奥行きで色と大きさを変えて描いています。ドラッグで回転に勢いがつき、ポインタとの距離で粒子ごとに力を受ける、簡単な物理もどき入り。FPSを見て粒子数を自動調整するので、スマホでも滑らかに動きます。</p>
 </div>
 </section>
 </main>
@@ -39,7 +41,7 @@
 <script>
 (function(){
 var canvas=document.getElementById('core'),ctx=canvas.getContext('2d');
-var hudFps=document.getElementById('hudFps'),hudCount=document.getElementById('hudCount'),hudMode=document.getElementById('hudMode');
+var hudFps=document.getElementById('hudFps'),hudCount=document.getElementById('hudCount'),hudMode=document.getElementById('hudMode'),hudShape=document.getElementById('hudShape');
 var W=720,H=520,DPR=1;
 function resize(){
   var rect=canvas.getBoundingClientRect();
@@ -50,27 +52,40 @@ function resize(){
 }
 resize();window.addEventListener('resize',resize);
 
-var N=(W<520||'ontouchstart' in window)?1100:1800;
-hudCount.textContent='PARTICLES '+N;
+var MAXN=(W<520||'ontouchstart' in window)?1600:2600;
+var active=MAXN;
 var pts=[];
+var SHAPES=['sphere','ring','cube'],shapeNames={sphere:'球体',ring:'リング',cube:'立方体'},shapeIdx=0;
+var PALS=[{base:222,range:46,name:'インディゴ'},{base:330,range:60,name:'サンセット'},{base:130,range:70,name:'ミント'}],palIdx=0;
 (function build(){
   var golden=Math.PI*(3-Math.sqrt(5));
-  for(var i=0;i<N;i++){
-    var y=1-(i/(N-1))*2;var r=Math.sqrt(1-y*y);var th=golden*i;
-    pts.push({x:Math.cos(th)*r,y:y,z:Math.sin(th)*r,ox:0,oy:0,vx:0,vy:0});
+  for(var i=0;i<MAXN;i++){
+    var y=1-(i/(MAXN-1))*2;var r=Math.sqrt(1-y*y);var th=golden*i;
+    var sphere={x:Math.cos(th)*r,y:y,z:Math.sin(th)*r};
+    var u=th,v=(i%64)/64*Math.PI*2,R1=0.82,r2=0.20;
+    var ring={x:(R1+r2*Math.cos(v))*Math.cos(u),y:r2*Math.sin(v)*0.9,z:(R1+r2*Math.cos(v))*Math.sin(u)};
+    var face=i%6,g1=((i*37)%97)/97*2-1,g2=((i*53)%89)/89*2-1,cube={x:0,y:0,z:0};
+    if(face===0){cube={x:1,y:g1,z:g2}}else if(face===1){cube={x:-1,y:g1,z:g2}}else if(face===2){cube={x:g1,y:1,z:g2}}else if(face===3){cube={x:g1,y:-1,z:g2}}else if(face===4){cube={x:g1,y:g2,z:1}}else{cube={x:g1,y:g2,z:-1}}
+    var s=0.78;cube={x:cube.x*s,y:cube.y*s,z:cube.z*s};
+    pts.push({cur:{x:sphere.x,y:sphere.y,z:sphere.z},targets:{sphere:sphere,ring:ring,cube:cube},ox:0,oy:0,vx:0,vy:0,sx:0,sy:0});
   }
 })();
-var pointer={x:-9999,y:-9999,down:false};
-var mode=1; // 1 repel, -1 attract
+function setCount(){hudCount.textContent='PARTICLES '+active}
+setCount();
+var pointer={x:-9999,y:-9999,down:false,lastX:0};
+var spin=0;
+var mode=1;
+var waves=[];
 function toLocal(e){var r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left),y:(e.clientY-r.top)}}
-canvas.addEventListener('pointermove',function(e){var p=toLocal(e);pointer.x=p.x;pointer.y=p.y});
-canvas.addEventListener('pointerdown',function(e){var p=toLocal(e);pointer.x=p.x;pointer.y=p.y;pointer.down=true;burst(p.x,p.y)});
+canvas.addEventListener('pointermove',function(e){var p=toLocal(e);if(pointer.down){spin+= (p.x-pointer.lastX)*0.00035}pointer.lastX=p.x;pointer.x=p.x;pointer.y=p.y});
+canvas.addEventListener('pointerdown',function(e){var p=toLocal(e);pointer.x=p.x;pointer.y=p.y;pointer.lastX=p.x;pointer.down=true;burst(p.x,p.y)});
 window.addEventListener('pointerup',function(){pointer.down=false});
 canvas.addEventListener('pointerleave',function(){pointer.x=-9999;pointer.y=-9999});
 function burst(bx,by){
-  for(var i=0;i<pts.length;i++){var p=pts[i];
-    var sx=p.sx||0,sy=p.sy||0;var dx=sx-bx,dy=sy-by;var d2=dx*dx+dy*dy;
-    if(d2<160*160){var d=Math.sqrt(d2)||1;var f=(1-d/160)*14;p.vx+=dx/d*f;p.vy+=dy/d*f;}
+  waves.push({x:bx,y:by,r:6,a:0.85});
+  for(var i=0;i<active;i++){var p=pts[i];
+    var dx=p.sx-bx,dy=p.sy-by;var d2=dx*dx+dy*dy;
+    if(d2<170*170){var d=Math.sqrt(d2)||1;var f=(1-d/170)*15;p.vx+=dx/d*f;p.vy+=dy/d*f;}
   }
 }
 document.getElementById('burstBtn').addEventListener('click',function(){burst(W/2,H/2)});
@@ -80,33 +95,40 @@ modeBtn.addEventListener('click',function(){
   hudMode.textContent=mode>0?'はじく':'引き寄せる';
   modeBtn.textContent=mode>0?'モード切替：はじく → 引き寄せる':'モード切替：引き寄せる → はじく';
 });
+document.getElementById('shapeBtn').addEventListener('click',function(){
+  shapeIdx=(shapeIdx+1)%SHAPES.length;hudShape.textContent=shapeNames[SHAPES[shapeIdx]];
+});
+document.getElementById('colorBtn').addEventListener('click',function(){
+  palIdx=(palIdx+1)%PALS.length;this.textContent='色を変える（今：'+PALS[palIdx].name+'）';
+});
 
-var ax=0.0035,ay=0.006,t=0,frames=0,fpsT=performance.now();
+var ax=0.0035,ay=0.006,t=0,frames=0,fpsT=performance.now(),rotY=0;
 function frame(now){
   t+=1;
-  // translucent fill for trails
   ctx.globalCompositeOperation='source-over';
   ctx.fillStyle='rgba(13,16,48,0.32)';
   ctx.fillRect(0,0,W,H);
   var cx=W/2,cy=H/2,R=Math.min(W,H)*0.36;
-  var cosX=Math.cos(ax*t*0.4),sinX=Math.sin(ax*t*0.4),cosY=Math.cos(ay*t),sinY=Math.sin(ay*t);
-  var i,p,x,y,z,x1,z1,y2,z2,sx,sy,scale,dx,dy,d2;
-  for(i=0;i<N;i++){
-    p=pts[i];
-    // rotate Y then X
-    x1=p.x*cosY+p.z*sinY; z1=-p.x*sinY+p.z*cosY;
-    y2=p.y*cosX-z1*sinX; z2=p.y*sinX+z1*cosX;
+  rotY+=ay+spin;spin*=0.95;
+  var angX=ax*t*0.4;
+  var cosX=Math.cos(angX),sinX=Math.sin(angX),cosY=Math.cos(rotY),sinY=Math.sin(rotY);
+  var shape=SHAPES[shapeIdx],pal=PALS[palIdx];
+  var i,p,x1,z1,y2,z2,sx,sy,scale,dx,dy,d2,tg;
+  for(i=0;i<active;i++){
+    p=pts[i];tg=p.targets[shape];
+    p.cur.x+=(tg.x-p.cur.x)*0.055;p.cur.y+=(tg.y-p.cur.y)*0.055;p.cur.z+=(tg.z-p.cur.z)*0.055;
+    x1=p.cur.x*cosY+p.cur.z*sinY; z1=-p.cur.x*sinY+p.cur.z*cosY;
+    y2=p.cur.y*cosX-z1*sinX; z2=p.cur.y*sinX+z1*cosX;
     scale=1/(1+z2*0.45);
     sx=cx+x1*R*scale+p.ox; sy=cy+y2*R*scale+p.oy;
-    // pointer force in screen space
     dx=sx-pointer.x; dy=sy-pointer.y; d2=dx*dx+dy*dy;
     if(d2<120*120){var d=Math.sqrt(d2)||1;var f=(1-d/120)*(pointer.down?3.2:1.6)*mode;p.vx+=dx/d*f;p.vy+=dy/d*f;}
-    p.vx+=(-p.ox)*0.045; p.vy+=(-p.oy)*0.045; // spring back
+    p.vx+=(-p.ox)*0.045; p.vy+=(-p.oy)*0.045;
     p.vx*=0.88; p.vy*=0.88;
     p.ox+=p.vx; p.oy+=p.vy;
     p.sx=sx; p.sy=sy;
-    var depth=(z2+1)/2; // 0 back, 1 front
-    var hue=222+depth*46+Math.sin(t*0.02+i)*4;
+    var depth=(z2+1)/2;
+    var hue=pal.base+depth*pal.range+Math.sin(t*0.02+i)*4;
     var light=52+depth*20;
     var size=0.7+depth*1.9;
     ctx.beginPath();
@@ -114,8 +136,16 @@ function frame(now){
     ctx.arc(sx,sy,size,0,6.2832);
     ctx.fill();
   }
+  for(var w=waves.length-1;w>=0;w--){var wv=waves[w];wv.r+=7;wv.a-=0.03;
+    if(wv.a<=0){waves.splice(w,1);continue}
+    ctx.beginPath();ctx.strokeStyle='rgba(180,200,255,'+wv.a+')';ctx.lineWidth=2;ctx.arc(wv.x,wv.y,wv.r,0,6.2832);ctx.stroke();}
   frames++;
-  if(now-fpsT>=500){hudFps.textContent='FPS '+Math.round(frames*1000/(now-fpsT));frames=0;fpsT=now}
+  if(now-fpsT>=500){
+    var fps=Math.round(frames*1000/(now-fpsT));
+    hudFps.textContent='FPS '+fps;frames=0;fpsT=now;
+    if(fps<42&&active>700){active=Math.max(700,Math.floor(active*0.75));setCount()}
+    else if(fps>57&&active<MAXN){active=Math.min(MAXN,Math.floor(active*1.2));setCount()}
+  }
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
