@@ -71,7 +71,7 @@ let j;if(perfect){j=round>=5?'フィーバー・パーフェクト！！':'パ�
 if(dist<=zoneWidth/2){track.classList.add('hit');zone.classList.add('flash')}
 showJudge(j,pos);ptsFloat.textContent='+'+pts;ptsFloat.classList.remove('pop');void ptsFloat.offsetWidth;ptsFloat.classList.add('pop');
 scoreLabel.textContent=`SCORE ${score}`;if(round>=5){finish()}else{btn.textContent=`次のラウンドへ（${pts}点）`}}
-function finish(){const rank=score>=560?'S — 神の指先':score>=430?'A — かなり正確':score>=300?'B — いい感じ':score>=180?'C — 練習あるのみ':'D — イヴも最初はそんな感じでした';rankText.textContent=`${score}点 / ${rank}`;combo=0;comboLabel.textContent='';ghost.hidden=true;lastStop=null;
+function finish(){const rank=score>=560?'S — 神の指先':score>=430?'A — かなり正確':score>=300?'B — いい感じ':score>=180?'C — 練習あるのみ':'D — あませも最初はそんな感じでした';rankText.textContent=`${score}点 / ${rank}`;combo=0;comboLabel.textContent='';ghost.hidden=true;lastStop=null;
 if(score>best){best=score;localStorage.setItem('timingBest',best);resultDetail.textContent='ベスト更新！ お見事でした。';tone(523,0.12,'sine',0.12);tone(659,0.12,'sine',0.12,0.1);tone(784,0.2,'sine',0.12,0.2)}else{resultDetail.textContent=`ベストは ${best} 点。もう一回やると感覚つかめます。`}
 breakdown.innerHTML=history.map(h=>`<li><span>ROUND ${h.round}（中心から ${h.dist}）</span><b>${h.pts}点</b></li>`).join('');
 showBest();resultBox.hidden=false;btn.textContent='もう一回遊ぶ';round=0;score=0;history=[]}

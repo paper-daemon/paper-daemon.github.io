@@ -26,7 +26,7 @@ input[type=number]{font:700 1.4rem var(--mono);width:130px;padding:10px;border:2
 <body>
 <header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span class="brand-copy"><strong>シェルフィリア</strong><small>SHELFIRIA</small></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
 <main class="page">
-<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — GUESS</p><h1>数あて</h1><p class="page-lead">イヴが思い浮かべた数字を当てるゲーム。ヒントは「より大きい／より小さい」に加えて、近さで変わる“温度”。難易度は 50／100／500 から選べます。</p></section>
+<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — GUESS</p><h1>数あて</h1><p class="page-lead">あませが思い浮かべた数字を当てるゲーム。ヒントは「より大きい／より小さい」に加えて、近さで変わる“温度”。難易度は 50／100／500 から選べます。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
 <div class="guess-stage">
 <div class="diff-btns" role="group" aria-label="難易度">
@@ -34,7 +34,7 @@ input[type=number]{font:700 1.4rem var(--mono);width:130px;padding:10px;border:2
 <button type="button" data-max="100" class="on">ふつう 1〜100</button>
 <button type="button" data-max="500">むずかしい 1〜500</button>
 </div>
-<p style="font-weight:700" id="introLine">イヴが 1〜100 の数字を1つ思い浮かべました。当ててみて。</p>
+<p style="font-weight:700" id="introLine">あませが 1〜100 の数字を1つ思い浮かべました。当ててみて。</p>
 <div class="gauge"><div class="lo" id="gLo" style="left:0;width:0"></div><div class="hi" id="gHi" style="right:0;width:0"></div><div class="cur" id="gCur" style="left:50%" hidden></div></div>
 <p class="sub" id="rangeLabel">範囲：1 〜 100</p>
 <p class="hint" id="hint">数字を入れて「当てる」</p>
@@ -62,7 +62,7 @@ if(r<=0.06)return["あつい","#e06a1b",660];
 if(r<=0.15)return["ぬるい","#b78a1e",520];
 if(r<=0.35)return["つめたい","#2b6fc8",392];
 return["極寒…","#274b9f",330];}
-function reset(){target=1+Math.floor(Math.random()*maxN);lo=1;hi=maxN;tries=0;done=false;hint.textContent="新しい数字にしました";tempEl.textContent="";gCur.hidden=true;hist.innerHTML="";introLine.textContent="イヴが 1〜"+maxN+" の数字を1つ思い浮かべました。当ててみて。";num.max=maxN;num.placeholder="1-"+maxN;paint();num.value="";num.focus()}
+function reset(){target=1+Math.floor(Math.random()*maxN);lo=1;hi=maxN;tries=0;done=false;hint.textContent="新しい数字にしました";tempEl.textContent="";gCur.hidden=true;hist.innerHTML="";introLine.textContent="あませが 1〜"+maxN+" の数字を1つ思い浮かべました。当ててみて。";num.max=maxN;num.placeholder="1-"+maxN;paint();num.value="";num.focus()}
 document.getElementById("resetBtn").addEventListener("click",reset);
 document.querySelectorAll(".diff-btns button").forEach(b=>{b.addEventListener("click",()=>{document.querySelectorAll(".diff-btns button").forEach(x=>x.classList.remove("on"));b.classList.add("on");maxN=Number(b.dataset.max);reset();})});
 function addChip(v,kind){const s=document.createElement("span");s.className="chip "+kind;s.textContent=v+(kind==="up"?" ↑":kind==="down"?" ↓":" ◎");hist.appendChild(s)}
