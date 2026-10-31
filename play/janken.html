@@ -14,12 +14,15 @@
 .vs{font:700 .7rem var(--mono);color:var(--muted)}
 .result{font-weight:900;font-size:1.3rem;min-height:1.7em;margin:12px 0 2px}
 .eve-line{color:var(--ink-dim);line-height:1.9;min-height:1.9em}
-.score{font:700 .85rem var(--mono);color:var(--muted);margin-top:12px}</style>
+.score{font:700 .85rem var(--mono);color:var(--muted);margin-top:12px}
+.match{display:flex;gap:16px;justify-content:center;margin-top:8px;font:700 .8rem var(--mono);color:var(--ink-dim)}
+.pips{letter-spacing:.18em}
+.prev{font-size:.8rem;color:var(--muted);min-height:1.4em;margin-top:2px}</style>
 </head>
 <body>
 <header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span class="brand-copy"><strong>シェルフィリア</strong><small>SHELFIRIA</small></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
 <main class="page">
-<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — JANKEN</p><h1>イヴとじゃんけん</h1><p class="page-lead">あませとじゃんけん。勝つとちょっと悔しがります。連勝が伸びるかは運しだい。</p></section>
+<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — JANKEN</p><h1>イヴとじゃんけん</h1><p class="page-lead">あませとじゃんけん。5本先取でマッチ勝利です。イヴは負けず嫌いなので、負けた次はあなたの前の手を狩りに来るクセがあります。前の手を読んで裏をかくのがコツ。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
 <div class="jk-stage">
 <div class="duel"><span id="eveHand">？</span><span class="vs">EVE VS YOU</span><span id="youHand">？</span></div>
@@ -30,6 +33,8 @@
 <button class="hand" data-h="1" type="button">チョキ</button>
 <button class="hand" data-h="2" type="button">パー</button>
 </div>
+<div class="match"><span>YOU <span class="pips" id="pipsYou">○○○○○</span></span><span>先取5本でマッチ</span><span><span class="pips" id="pipsEve">○○○○○</span> EVE</span></div>
+<p class="prev" id="prevLine"></p>
 <p class="score" id="score">0勝 0敗 0分 ｜ 連勝 0</p>
 </div>
 </section>
@@ -38,19 +43,38 @@
 <script>let AC=null;function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC}
 function tone(f,d,type,v,when){const ac=audio();if(!ac)return;const t=ac.currentTime+(when||0);const o=ac.createOscillator(),g=ac.createGain();o.type=type||"sine";o.frequency.value=f;g.gain.setValueAtTime(v||0.12,t);g.gain.exponentialRampToValueAtTime(0.001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02)}
 const NAMES=["グー","チョキ","パー"];
-let w=0,l=0,d=0,streak=0;
-const LINES={win:["イヴ「むむ…やるね」","イヴ「次は勝つから」","イヴ「今のは運。たぶん」"],lose:["イヴ「はい、私の勝ち」","イヴ「読み通りでした」","イヴ「もう一回来る？」"],draw:["イヴ「気が合うね」","イヴ「あいこ。次で決めよ」"]};
-const result=document.getElementById("result"),line=document.getElementById("eveLine"),score=document.getElementById("score");
+let w=0,l=0,d=0,streak=0,mpYou=0,mpEve=0,lastYou=-1,lastOut="";
+let matchYou=Number(localStorage.getItem("jkMatchYou")||0),matchEve=Number(localStorage.getItem("jkMatchEve")||0);
+const LINES={win:["イヴ「むむ…やるね」","イヴ「次は勝つから」","イヴ「今のは運。たぶん」"],lose:["イヴ「はい、私の勝ち」","イヴ「読み通りでした」","イヴ「もう一回来る？」"],draw:["イヴ「気が合うね」","イヴ「あいこ。次で決めよ」"],
+matchWin:["イヴ「マッチ取られた…くやしい。もう1マッチ！」"],matchLose:["イヴ「マッチは私のもの。はい、次いこ」"]};
+const result=document.getElementById("result"),line=document.getElementById("eveLine"),score=document.getElementById("score"),prevLine=document.getElementById("prevLine");
+function pips(n){return "●".repeat(n)+"○".repeat(5-n)}
+function paintScore(){
+document.getElementById("pipsYou").textContent=pips(mpYou);
+document.getElementById("pipsEve").textContent=pips(mpEve);
+let st="";if(streak>=8)st="【無双】";else if(streak>=5)st="【絶好調】";else if(streak>=3)st="【好調】";
+score.textContent=w+"勝 "+l+"敗 "+d+"分 ｜ 連勝 "+streak+st+" ｜ マッチ あなた"+matchYou+" — イヴ"+matchEve;
+prevLine.textContent=lastYou>=0?("イヴの狙いメモ：あなたは前回「"+NAMES[lastYou]+"」。負けた次のイヴは、それに勝つ手を出しがち"):"";
+}
+function pickEve(){
+if(lastOut==="win"&&lastYou>=0&&Math.random()<0.55)return (lastYou+2)%3;
+return Math.floor(Math.random()*3);
+}
 document.querySelectorAll(".hand").forEach(b=>b.addEventListener("click",()=>{
-const you=Number(b.dataset.h);const eve=Math.floor(Math.random()*3);
+const you=Number(b.dataset.h);const eve=pickEve();
 document.getElementById("youHand").textContent=NAMES[you];
 document.getElementById("eveHand").textContent=NAMES[eve];
 let out;
 if(you===eve){out="draw";d++;streak=0;result.textContent="あいこ"}
-else if((you-eve+3)%3===2){out="win";w++;streak++;result.textContent="あなたの勝ち！";tone(784,0.12,"sine",0.12);tone(1047,0.18,"sine",0.12,0.1)}
-else{out="lose";l++;streak=0;result.textContent="イヴの勝ち";tone(262,0.14,"triangle",0.1)}
-const arr=LINES[out];line.textContent=arr[Math.floor(Math.random()*arr.length)];
-score.textContent=w+"勝 "+l+"敗 "+d+"分 ｜ 連勝 "+streak;
-}));</script>
+else if((you-eve+3)%3===2){out="win";w++;streak++;mpYou++;result.textContent="あなたの勝ち！";tone(784,0.12,"sine",0.12);tone(1047,0.18,"sine",0.12,0.1)}
+else{out="lose";l++;streak=0;mpEve++;result.textContent="イヴの勝ち";tone(262,0.14,"triangle",0.1)}
+let lineArr=LINES[out];
+if(mpYou>=5){matchYou++;localStorage.setItem("jkMatchYou",matchYou);result.textContent="マッチ獲得！！ あなたの勝ち";lineArr=LINES.matchWin;mpYou=0;mpEve=0;tone(784,0.12,"sine",0.12);tone(988,0.12,"sine",0.12,0.1);tone(1318,0.26,"sine",0.12,0.2)}
+else if(mpEve>=5){matchEve++;localStorage.setItem("jkMatchEve",matchEve);result.textContent="マッチはイヴのもの…";lineArr=LINES.matchLose;mpYou=0;mpEve=0}
+line.textContent=lineArr[Math.floor(Math.random()*lineArr.length)];
+lastYou=you;lastOut=out;
+paintScore();
+}));
+paintScore();</script>
 <script src="/ad-overlay.js" defer></script>
 </body></html>

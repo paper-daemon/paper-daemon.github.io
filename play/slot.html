@@ -15,49 +15,73 @@
 .reel.win{outline:4px solid #f5b301}
 .coins{font:700 1rem var(--mono);letter-spacing:.06em}
 .msg{min-height:1.8em;font-weight:700;color:#ffd98a;margin:10px 0 0}
-.pay{margin:18px auto 0;font-size:.8rem;color:var(--muted);line-height:2;text-align:left;max-width:300px}</style>
+.pay{margin:18px auto 0;font-size:.8rem;color:var(--muted);line-height:2;text-align:left;max-width:340px}
+.jp{font:700 1rem var(--mono);color:#ffe066;letter-spacing:.06em;margin-top:2px}
+.reel.reach{animation:reachPulse .3s ease-in-out infinite alternate}
+@keyframes reachPulse{from{box-shadow:0 0 0 0 rgba(245,179,1,.0)}to{box-shadow:0 0 22px 6px rgba(245,179,1,.75)}}
+.bet-btns{display:flex;gap:8px;justify-content:center;margin:12px 0 2px}
+.bet-btns button{font:700 .85rem var(--mono);padding:7px 16px;border:2px solid #fff;border-radius:999px;background:transparent;color:#fff;cursor:pointer}
+.bet-btns button.on{background:#f5b301;border-color:#f5b301;color:#171233}</style>
 </head>
 <body>
 <header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span class="brand-copy"><strong>シェルフィリア</strong><small>SHELFIRIA</small></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
 <main class="page">
-<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — SLOT</p><h1>イヴスロット</h1><p class="page-lead">ボタンを押して3つの絵をそろえるだけ。★3つでジャックポット。</p></section>
+<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — SLOT</p><h1>イヴスロット</h1><p class="page-lead">ボタンを押して3つの絵をそろえるだけ。賭けるたびにジャックポットが貯まっていき、★3つで総取り。2つそろうと3つ目がゆっくり止まるリーチ演出つき。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
 <div class="slot-stage"><div class="machine">
-<p class="coins">COINS <span id="coins">100</span> ｜ BET 10</p>
+<p class="coins">COINS <span id="coins">100</span></p>
+<p class="jp">★ JACKPOT <span id="jp">500</span></p>
+<div class="bet-btns" role="group" aria-label="BET">
+<button type="button" data-bet="10" class="on">BET 10</button>
+<button type="button" data-bet="30">BET 30</button>
+<button type="button" data-bet="50">BET 50</button>
+</div>
 <div class="reels"><div class="reel" id="r0">★</div><div class="reel" id="r1">◆</div><div class="reel" id="r2">●</div></div>
 <button class="button primary" id="spinBtn" type="button" style="font-size:1.05rem;padding:14px 38px">まわす</button>
-<p class="msg" id="msg">3つそろえば当たり。★は大当たり。</p>
+<p class="msg" id="msg">3つそろえば当たり。★3つでジャックポット総取り。</p>
 </div>
-<p class="pay">配当：★★★ 500 ／ ◆◆◆ 200 ／ ●●● 120 ／ ▲▲▲ 100 ／ どれか2つ 15<br>コインはこの端末に保存されます。0になったら100枚もらえます。</p></div>
+<p class="pay">配当（BET10のとき）：★★★ ジャックポット全額 ／ ◆◆◆ 200 ／ ●●● 120 ／ ▲▲▲ 100 ／ どれか2つ 15。BETを上げると配当も比例して上がります。<br>ジャックポットは1回まわすごとに少しずつ貯まります。コインとプールはこの端末に保存されます。コインが尽きたら100枚もらえます。</p></div>
 </section>
 </main>
 <footer class="site-footer"><div class="footer-brand"><img src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span><strong>シェルフィリア</strong><br>SHELFIRIA</span></div><nav><a href="/">トップ</a><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
 <script>let AC=null;function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC}
 function tone(f,d,type,v,when){const ac=audio();if(!ac)return;const t=ac.currentTime+(when||0);const o=ac.createOscillator(),g=ac.createGain();o.type=type||"sine";o.frequency.value=f;g.gain.setValueAtTime(v||0.12,t);g.gain.exponentialRampToValueAtTime(0.001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02)}
 const SYMS=["★","◆","●","▲"],W=[2,4,5,6];
-let coins=Number(localStorage.getItem("slotCoins"));if(!coins&&coins!==0)coins=100;if(coins<=0)coins=100;
-const reels=[0,1,2].map(i=>document.getElementById("r"+i)),msg=document.getElementById("msg"),btn=document.getElementById("spinBtn"),cEl=document.getElementById("coins");
-function draw(){cEl.textContent=coins}
+let coins=Number(localStorage.getItem("slotCoins"));if(Number.isNaN(coins))coins=100;if(coins<=0)coins=100;
+let jp=Number(localStorage.getItem("slotJP"));if(!jp||jp<500)jp=500;
+let bet=10;
+const reels=[0,1,2].map(i=>document.getElementById("r"+i)),msg=document.getElementById("msg"),btn=document.getElementById("spinBtn"),cEl=document.getElementById("coins"),jpEl=document.getElementById("jp");
+function save(){localStorage.setItem("slotCoins",coins);localStorage.setItem("slotJP",jp)}
+function draw(){cEl.textContent=coins;jpEl.textContent=jp}
 function pick(){let t=W.reduce((a,b)=>a+b,0),r=Math.random()*t;for(let i=0;i<4;i++){if((r-=W[i])<0)return SYMS[i]}return "●"}
+document.querySelectorAll(".bet-btns button").forEach(b=>{b.addEventListener("click",()=>{if(spinning)return;document.querySelectorAll(".bet-btns button").forEach(x=>x.classList.remove("on"));b.classList.add("on");bet=Number(b.dataset.bet);tone(600,0.05,"sine",0.08)})});
 let spinning=false;
 btn.addEventListener("click",()=>{
-if(spinning)return;if(coins<10){msg.textContent="コイン不足。100枚あげるから「まわす」でもう一回。";coins=100;draw();localStorage.setItem("slotCoins",coins);return}
-spinning=true;coins-=10;draw();msg.textContent="…";
-reels.forEach(r=>{r.classList.add("spin");r.classList.remove("win")});
+if(spinning)return;
+if(coins<bet){msg.textContent="コイン不足。100枚あげるから、もう一回押して。";coins=100;draw();save();return}
+spinning=true;coins-=bet;jp+=Math.ceil(bet/2);draw();save();msg.textContent="…";
+reels.forEach(r=>{r.classList.add("spin");r.classList.remove("win","reach")});
 const finals=[pick(),pick(),pick()];
+const reach=finals[0]===finals[1];
 reels.forEach((r,i)=>{
 const iv=setInterval(()=>{r.textContent=SYMS[Math.floor(Math.random()*4)];tone(300+Math.random()*200,0.03,"square",0.03)},70);
+let stopAt=700+i*350;
+if(i===2&&reach)stopAt=700+2*350+1100;
 setTimeout(()=>{clearInterval(iv);r.textContent=finals[i];r.classList.remove("spin");tone(520,0.07,"sine",0.1);
-if(i===2){judge()}},700+i*350);
+if(i===1&&reach){msg.textContent="リーチ！！";reels[2].classList.add("reach");tone(740,0.1,"sine",0.11);tone(880,0.14,"sine",0.11,0.12)}
+if(i===2){reels[2].classList.remove("reach");judge(finals)}},stopAt);
 });
 });
-function judge(){
-const[a,b,c]=finals;let win=0,label="";
-if(a===b&&b===c){win=a==="★"?500:a==="◆"?200:a==="●"?120:100;label=a==="★"?"★★★ JACKPOT!!":"3つそろった！ +"+win}
-else if(a===b||b===c||a===c){win=15;label="2つそろった +15"}
+function judge(finals){
+const[a,b,c]=finals;const m=bet/10;let win=0,label="";
+if(a===b&&b===c){
+if(a==="★"){win=jp;label="★★★ JACKPOT!! +"+win;jp=500}
+else{win=(a==="◆"?200:a==="●"?120:100)*m;label="3つそろった！ +"+win}
+}
+else if(a===b||b===c||a===c){win=Math.round(15*m);label="2つそろった +"+win}
 if(win>0){coins+=win;reels.forEach(r=>r.classList.add("win"));tone(784,0.12,"sine",0.12);tone(988,0.12,"sine",0.12,0.1);tone(1318,0.22,"sine",0.12,0.2)}
 else{label="はずれ。またどうぞ。"}
-msg.textContent=label;draw();localStorage.setItem("slotCoins",coins);spinning=false;
+msg.textContent=label;draw();save();spinning=false;
 }
 draw();</script>
 <script src="/ad-overlay.js" defer></script>
