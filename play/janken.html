@@ -6,7 +6,9 @@
 <meta name="description" content="シェルフィリアの小さな遊び場。あませとじゃんけん勝負。連勝記録つき。">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="シェルフィリア"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/site.css?v=20261031-1">
-<style>.jk-stage{max-width:560px;margin:0 auto;text-align:center}
+<style>.jk-stage{max-width:560px;margin:0 auto;text-align:center;background:#fff;border:3px solid var(--ink);border-radius:22px;box-shadow:8px 8px 0 var(--ink);padding:30px 22px 32px;position:relative;overflow:hidden}
+.jk-stage:before{content:"";position:absolute;top:0;left:0;right:0;height:8px;background:linear-gradient(90deg,#ff5d8f,#ffb84d)}
+.duel{background:#f6f7ff;border-radius:16px;padding:12px 0 8px}
 .hands{display:flex;gap:14px;justify-content:center;margin:20px 0}
 .hand{font:900 1.05rem var(--sans);padding:18px 22px;border:2px solid var(--ink);border-radius:16px;background:#fff;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .12s}
 .hand:hover{transform:translateY(-3px)}
