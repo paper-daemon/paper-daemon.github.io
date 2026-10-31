@@ -47,48 +47,8 @@
 <p class="page-lead">自動化・Webhook・API・データ処理の「壊れる境界」を、実装・検証・引き継ぎまで。商品を増やすより、今ちゃんと提供できる仕事に絞りました。</p>
 <div class="page-meta"><span>公開コードから実装を確認</span><span>明示した範囲内で作業</span><span>メール・テキスト中心</span></div>
 </section>
-<section aria-label="固定範囲の技術サービス" id="services">
-<div class="offer-head"><p class="eyebrow">01 / VERIFIED BUILDING BLOCKS</p><h2>最初は、この3つ。</h2>
-<p>各サービスの下に公開ソースとテスト記録を置いています。決める前に、中身を見て確かめられます。</p></div>
-<div class="curated-grid">
-<article class="curated-card">
-<small>RELIABILITY / WEBHOOK</small><h3>二重実行・再試行の事故を防ぐ</h3>
-<p>再試行でメールや外部書込みが二重化するフロー1本に、冪等性キー・receipt・重複/競合判定を組み込む定額作業。</p>
-<ul><li>対象：既存の1ワークフロー</li><li>実装範囲を事前に限定</li><li>再試行・競合・復旧動作を確認</li></ul>
-<div class="card-bottom">
-<span class="proof-label">Python / SQLite / regression tests</span>
-<a href="https://github.com/paper-daemon/idempotency-receipt-ledger">公開ソースとテストを見る ↗</a>
-<a href="https://github.com/paper-daemon/idempotency-receipt-ledger/actions/runs/39091607754">直近のCI成功履歴 ↗</a>
-<div class="amount">$119 <small>USD / ONE-TIME</small></div>
-<a class="button primary compact" href="https://book.stripe.com/00w8wO6986EKdYZ05ZgEg2b" rel="noopener noreferrer">Stripeで対象範囲と決済を確認 ↗</a>
-</div></article>
-<article class="curated-card">
-<small>API / WEBHOOK CONTRACT</small><h3>APIの仕様ズレをテストで捕まえる</h3>
-<p>代表的なJSON API・Webhookの契約を記述し、保存した入力例を検証。CIに接続可能なチェックと結果を渡す。</p>
-<ul><li>対象：代表的な1契約境界</li><li>必須項目・型・列挙値のチェック</li><li>テスト用fixture・使用メモ</li></ul>
-<div class="card-bottom">
-<span class="proof-label">CLI / fixtures / CI tests</span>
-<a href="https://github.com/paper-daemon/workflow-contract-gate">公開ソースとテストを見る ↗</a>
-<a href="https://github.com/paper-daemon/workflow-contract-gate/actions/runs/33941115143">CI成功履歴 ↗</a>
-<div class="amount">$89 <small>USD / ONE-TIME</small></div>
-<a class="button primary compact" href="https://book.stripe.com/bJefZggNM1kq9IJbOHgEg2a" rel="noopener noreferrer">Stripeで対象範囲と決済を確認 ↗</a>
-</div></article>
-<article class="curated-card">
-<small>DATA PIPELINE / QUALITY</small><h3>CSV・JSONのデータ崩れを検出する</h3>
-<p>1つのデータフローの構造・欠損・型の変化をチェックする検証器とレポートを準備。元データは勝手に書き換えません。</p>
-<ul><li>対象：CSVまたはJSONの1フロー</li><li>型・フィールド・構造変化</li><li>機械判定と人が読めるレポート</li></ul>
-<div class="card-bottom">
-<span class="proof-label">Python / standard library / CI tests</span>
-<a href="https://github.com/paper-daemon/data-shape-guard">公開ソースとテストを見る ↗</a>
-<a href="https://github.com/paper-daemon/data-shape-guard/actions/runs/33957739426">CI成功履歴 ↗</a>
-<div class="amount">$99 <small>USD / ONE-TIME</small></div>
-<a class="button primary compact" href="https://book.stripe.com/5kQaEWdBAgfkf33f0TgEg28" rel="noopener noreferrer">Stripeで対象範囲と決済を確認 ↗</a>
-</div></article>
-</div>
-<p class="limit-note">※ 上の3件は受託サービスです。対象・納期・入力資料を確認してから着手します。価格は各決済ページの表示が正本です。</p>
-</section>
 <section aria-label="完成済みのデジタル商品" id="ready">
-<div class="offer-head"><p class="eyebrow">02 / SELF-SERVE</p><h2>買って、そのまま使う。</h2><p>完成品はココナラで販売しています。価格も内容もココナラ側が正本です。</p></div>
+<div class="offer-head"><p class="eyebrow">01 / SELF-SERVE</p><h2>買って、そのまま使う。</h2><p>完成品はココナラで販売しています。価格も内容もココナラ側が正本です。</p></div>
 <div class="link-list">
 <a class="link-row" href="https://coconala.com/services/4479466"><small>SERVICE / ¥5,000</small><strong>YouTube動画の編集を行います</strong><span>字幕・テロップ・フック設計まで。お届け3日／無料修正1回／サムネイル作成はオプション。</span><b>↗</b></a>
 <a class="link-row" href="https://coconala.com/services/3914156"><small>SERVICE / ¥3,000</small><strong>動画・音声の納品前QA（代行）</strong><span>尺・解像度・codec・デコード整合性を代わりに検査。お届け2日。</span><b>↗</b></a>
@@ -102,7 +62,7 @@
 <a class="link-row" href="https://coconala.com/contents_market/pictures/cmvtpz50s021j8p0iojlaghzo"><small>DOWNLOAD / ¥3,500</small><strong>提案書 PowerPointテンプレート</strong><span>提案の骨格が組んであるスライド一式。</span><b>↗</b></a>
 </div>
 </section>
-<section aria-label="無料ダウンロード"><div class="offer-head"><p class="eyebrow">03 / FREE DOWNLOADS</p><h2>無料で持ち帰る。</h2><p>販売中の商品のお試し版や、単体で使えるチェックリストを無料で配っています。ダウンロードして、そのまま使ってください。</p></div>
+<section aria-label="無料ダウンロード"><div class="offer-head"><p class="eyebrow">02 / FREE DOWNLOADS</p><h2>無料で持ち帰る。</h2><p>販売中の商品のお試し版や、単体で使えるチェックリストを無料で配っています。ダウンロードして、そのまま使ってください。</p></div>
 <div class="link-list">
 <a class="link-row" href="/downloads/prompt-sample.md" download><small>FREE / DOWNLOAD</small><strong>実務プロンプト集【お試し版】</strong><span>完全版のプロンプト25本から、見積・請求カテゴリの5本を抜粋。Markdown形式、そのままAIに貼れます。</span><b>↓</b></a>
 <a class="link-row" href="/downloads/checklist-sample.md" download><small>FREE / DOWNLOAD</small><strong>業務チェックリスト【お試し版】</strong><span>見積→請求の抜け漏れ防止チェックリスト1本分。印刷・転記して使えます。</span><b>↓</b></a>
@@ -111,14 +71,14 @@
 <a class="link-row" href="/downloads/subtitle-check-sheet.md" download><small>FREE / DOWNLOAD</small><strong>字幕（SRT）納品前チェックシート</strong><span>時刻の重なり・逆転、文字数や表記ゆれを納品前に確認するリスト。</span><b>↓</b></a>
 <a class="link-row" href="/downloads/proposal-outline.md" download><small>FREE / DOWNLOAD</small><strong>提案書の骨格テンプレート</strong><span>提案スライドの並びと、各枚に書くことの型。抜け漏れ防止に。</span><b>↓</b></a>
 </div></section>
-<section aria-label="無料の技術デモ"><div class="offer-head"><p class="eyebrow">04 / TRY BEFORE BUY</p><h2>頼む前に、無料で試す。</h2></div>
+<section aria-label="無料の技術デモ"><div class="offer-head"><p class="eyebrow">03 / TRY BEFORE BUY</p><h2>頼む前に、無料で試す。</h2></div>
 <div class="feature-grid">
 <a class="feature-card" href="/n8n-retry-checker/"><small>FREE / AUTOMATION</small><h3>n8nの重複実行リスクを見る</h3><p>ワークフローJSONをブラウザで静的診断。アップロードなし。完全な安全性の保証ではありません。</p><b>無料診断 →</b></a>
 <a class="feature-card" href="/video-preflight/"><small>FREE / VIDEO</small><h3>動画の尺・画角・容量を見る</h3><p>メタデータの一括確認とCSV保存。音声や全編デコードの検査までは行いません。</p><b>無料チェック →</b></a>
 <a class="feature-card" href="https://github.com/paper-daemon"><small>OPEN SOURCE</small><h3>先にコードとテストを見る</h3><p>公開した小さなツール、使用例、回帰テスト、CIを確認してから相談できます。</p><b>GitHubで確認 ↗</b></a>
 </div>
 </section>
-<section id="contact"><div class="offer-head"><p class="eyebrow">05 / DISCUSS FIRST</p><h2>依頼の前に相談したいとき。</h2>
+<section id="contact"><div class="offer-head"><p class="eyebrow">04 / DISCUSS FIRST</p><h2>依頼の前に相談したいとき。</h2>
 <p>環境や対象フローが合うか分からない場合は、決済前に要件を確認。価格だけで無理な作業範囲を約束しません。</p></div>
 <div class="contactrow">
 <a href="https://www.lancers.jp/profile/aLuu">Lancers<span>国内の案件相談・見積もり ↗</span></a>
