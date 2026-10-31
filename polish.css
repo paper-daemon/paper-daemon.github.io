@@ -96,3 +96,8 @@ body[data-page='missing'] [data-reveal]{opacity:1!important;transform:none!impor
 .shelf-preview strong{display:block;margin-bottom:18px;font:600 1.35rem/1.2 var(--serif);letter-spacing:-.025em}
 .shelf-preview code{display:block;padding:13px 0 0;border-top:1px solid rgba(78,60,46,.22);background:none;color:#5c4f45;font:600 .72rem/1.7 var(--mono);white-space:normal}
 @media(max-width:899px),(pointer:coarse){.shelf-preview{display:none}}
+
+.note-foot{display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin-top:46px;padding:18px 0 8px;border-top:1px solid var(--line);font-size:.82rem}
+.note-foot span{font-weight:800;letter-spacing:.12em;color:var(--ink);font-size:.7rem}
+.note-foot a{color:var(--muted);text-decoration:none;font-weight:700}
+.note-foot a:hover{color:var(--rust);text-decoration:underline}
