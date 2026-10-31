@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700;900&family=Sora:wght@600;800&display=swap");
 /* ============================================================
    シェルフィリア — site.css
    Design system: "Indigo Shelf" (インディゴの棚) — 2026-10-27 rebuild
@@ -8,34 +9,35 @@
    ============================================================ */
 :root{
   /* palette */
-  --paper:#fbfbfe;            /* page background (bluish white) */
+  --paper:#fff8f2;            /* page background (bluish white) */
   --paper-2:#ffffff;          /* card surface */
-  --paper-3:#eceeff;          /* indigo tint surface / chips */
+  --paper-3:#ffefe3;          /* indigo tint surface / chips */
   --ink:#1b1e3f;              /* primary text / hard borders */
   --ink-dim:#41446c;          /* secondary text */
   --muted:#585c85;            /* muted text */
   --line:#1b1e3f;             /* hard border color */
-  --line-soft:#d9dbf2;        /* soft borders */
+  --line-soft:#f0ddd0;        /* soft borders */
   --red:#ff4b33;              /* warm accent (flat) */
   --red-dark:#d92e14;         /* accent for small labels on light */
   --amber:#ffb300;            /* amber (shop / highlights) */
-  --violet:#5a4bff;           /* Muse zone accent */
+  --violet:#4a4fd8;           /* Muse zone accent */
   --green:#1d9e75;
   --blue:#2e7cd6;
-  --indigo:#2e3ad0;           /* primary brand color */
+  --indigo:#2b2e6e;           /* primary brand color */
   --indigo-deep:#131847;      /* hero / cta / terminal */
   --yellow:#ffc531;           /* star yellow highlight */
   /* type */
-  --sans:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Yu Gothic","Noto Sans JP",system-ui,-apple-system,sans-serif;
+  --sans:"Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Yu Gothic",system-ui,-apple-system,sans-serif;
+  --disp:"Sora","Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
   --serif:"Yu Mincho","Hiragino Mincho ProN","Noto Serif JP",serif;
   --mono:"SFMono-Regular","Cascadia Code",ui-monospace,Menlo,monospace;
   /* shape & motion */
-  --max:1220px;--radius:14px;--radius-s:9px;
-  --shadow:7px 7px 0 #d5d8ff;
+  --max:1220px;--radius:20px;--radius-s:14px;
+  --shadow:7px 7px 0 #ffd9c9;
   --shadow-hard:8px 8px 0 var(--ink);
   --glow-red:9px 9px 0 var(--ink);
   --ease:cubic-bezier(.22,.9,.28,1);
-  --grad-accent:linear-gradient(120deg,var(--indigo) 0%,var(--violet) 60%,var(--red) 130%);
+  --grad-accent:linear-gradient(120deg,var(--red) 0%,#ff7a3d 100%);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;background:var(--paper);overflow-x:clip}
@@ -446,3 +448,18 @@ h1,h2,h3{word-break:normal;overflow-wrap:anywhere}
 .note-card,.proof-mini,.service-card,.market-panel a,.social-card,.trust-strip a{transition:transform .18s var(--ease),box-shadow .18s var(--ease),background .18s var(--ease)}
 .note-card:active,.proof-mini:active,.service-card:active,.social-card:active{transform:translate(1px,1px)}
 img{user-select:none}
+
+/* ============================================================
+   v2 design layer — 「あそぶ棚」 (2026-11-01, WEB_DESIGN_PLAYBOOK)
+   面ごとの階調／アクセント1色（レッド）／書体分担／ピルボタン／角丸統一
+   ============================================================ */
+.button{border-radius:999px}
+.hero h1,.page-hero h1,.section-head h2,.cta-band h2{font-family:var(--disp)}
+.brand strong{font-family:var(--disp)}
+.tone-warm{background:#ffefe3}
+.tone-white{background:#fff}
+.tone-dark{background:radial-gradient(40rem 18rem at 85% -10%,rgba(255,75,51,.28),transparent 60%),var(--indigo-deep);color:#fff}
+.tone-dark .section-head h2,.tone-dark h2,.tone-dark h3{color:#fff}
+.tone-dark .eyebrow{color:#ffb59d}
+::selection{background:#ffd9c9}
+a:focus-visible,button:focus-visible{outline:3px solid var(--red);outline-offset:2px}

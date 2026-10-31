@@ -2,217 +2,163 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Shelfiria | 触って遊べるもの、集めてます。</title>
-<meta name="description" content="シェルフィリアは、ブラウザで触って遊べるゲームや無料ツール、制作物、実験ノートを集めた小さなプラットフォームです。案内人はあませ。">
-<link rel="canonical" href="https://paper-daemon.github.io/">
-<meta property="og:type" content="website"><meta property="og:site_name" content="シェルフィリア"><meta property="og:title" content="Shelfiria | 触って遊べるもの、集めてます。"><meta property="og:description" content="ゲーム、無料ツール、制作物、実験の記録。開いたらそのまま遊べます。"><meta property="og:url" content="https://paper-daemon.github.io/"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Shelfiria","alternateName":"シェルフィリア","url":"https://paper-daemon.github.io/","inLanguage":"ja"}</script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9454193786755558" crossorigin="anonymous"></script>
+<title>Shelfiria（シェルフィリア）| 触って遊べる、小さな遊び場。</title>
+<meta name="description" content="シェルフィリアは、ブラウザでそのまま遊べるゲームと無料ツール、読みもの（note）を集めた小さな遊び場。案内人はあませ。登録なし・無料で遊べます。">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/site.css?v=20261031-1">
+<meta property="og:type" content="website"><meta property="og:site_name" content="シェルフィリア"><meta property="og:title" content="Shelfiria | 触って遊べる、小さな遊び場。"><meta property="og:description" content="ゲーム8本、無料ツール、読みもの。登録なしでそのまま遊べる小さな遊び場。"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9454193786755558" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/site.css?v=20261101-1">
 <style>
-:root{--disp:"Zen Kaku Gothic New",sans-serif;--grot:"Space Grotesk",monospace}
-body{font-family:var(--disp)}
-.pv{max-width:1120px;margin:0 auto;padding:0 20px 40px}
-.pv-hero{position:relative;margin-top:22px;border-radius:28px;overflow:hidden;background:#0d1030;color:#eef0ff;box-shadow:0 30px 60px -20px rgba(13,16,48,.45)}
-.pv-hero:before,.pv-hero:after{content:"";position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;pointer-events:none}
-.pv-hero:before{width:480px;height:480px;right:-120px;top:-160px;background:#5a3aff;animation:aurora 11s ease-in-out infinite alternate}
-.pv-hero:after{width:420px;height:420px;left:-140px;bottom:-200px;background:#ff4b9e;animation:aurora 13s ease-in-out infinite alternate-reverse}
-@keyframes aurora{from{transform:translate(0,0) scale(1)}to{transform:translate(-50px,36px) scale(1.15)}}
-.pv-hero canvas{position:absolute;inset:0;width:100%;height:100%}
-.pv-hero-in{position:relative;padding:72px 40px 56px;max-width:680px;z-index:2}
-.pv-kicker{font:700 .7rem var(--grot);letter-spacing:.34em;color:#ffb3d1;margin:0 0 18px}
-.pv-hero h1{font:900 clamp(2.5rem,7vw,4.3rem)/1.18 var(--disp);letter-spacing:.01em;margin:0;color:#fff;text-shadow:0 6px 40px rgba(90,58,255,.45)}
-.pv-hero h1 .grad{background:linear-gradient(92deg,#8ab6ff,#c39bff,#ffb3d1,#ffd98a,#8ab6ff);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gradShift 6s linear infinite}
-@keyframes gradShift{to{background-position:220% 0}}
-.pv-eve{position:absolute;right:34px;bottom:26px;z-index:3;display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(6px);border-radius:999px;padding:8px 18px 8px 8px;animation:floaty 5s ease-in-out infinite}
-.pv-eve img{width:44px;height:44px;border-radius:50%;border:2px solid #fff}
-.pv-eve b{font:900 .95rem var(--disp);color:#fff;display:block;line-height:1.3}
-.pv-eve span{font-size:.68rem;color:#c6ccf5;letter-spacing:.06em}
-@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-.pv-marquee{margin-top:26px;transform:rotate(-1.2deg) scale(1.01);background:linear-gradient(92deg,#2b50c8,#7a3aff 55%,#ff4b9e);border-radius:12px;overflow:hidden;box-shadow:0 16px 32px -14px rgba(90,58,255,.55)}
-.pv-marquee .track{display:flex;gap:0;white-space:nowrap;animation:mq 22s linear infinite;padding:11px 0}
-.pv-marquee span{font:700 .8rem var(--grot);letter-spacing:.28em;color:#fff;padding:0 22px}
-@keyframes mq{to{transform:translateX(-50%)}}
-.pv-pickup{margin-top:26px;border-radius:24px;padding:30px;position:relative;overflow:hidden;background:linear-gradient(110deg,#131847,#2b50c8 55%,#7a3aff);color:#fff;box-shadow:0 24px 44px -18px rgba(43,80,200,.55)}
-.pv-pickup .pk{font:700 .64rem var(--grot);letter-spacing:.3em;color:#ffb3d1}
-.pv-pickup h2{font:900 1.6rem var(--disp);margin:8px 0 6px;color:#fff}
-.pv-pickup p{color:#c6ccf5;line-height:1.9;margin:0;max-width:36em}
-.pv-pickup a{display:inline-block;margin-top:16px;background:#fff;color:#131847;font:700 .88rem var(--disp);padding:12px 22px;border-radius:999px;text-decoration:none}
-@media (prefers-reduced-motion:reduce){.pv-hero:before,.pv-hero:after,.pv-hero h1 .grad,.pv-eve,.pv-marquee .track{animation:none}}
-.pv-lead{margin:20px 0 0;color:#c6ccf5;line-height:2;font-size:.98rem;max-width:30em}
-.pv-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
-.pv-cta{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:999px;font:700 .92rem var(--disp);text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
-.pv-cta.main{background:#fff;color:#131847;box-shadow:0 10px 24px -8px rgba(0,0,0,.5)}
-.pv-cta.sub{border:1.5px solid rgba(255,255,255,.4);color:#eef0ff}
-.pv-cta:hover{transform:translateY(-2px)}
-.pv-stats{display:flex;gap:0;margin-top:38px;border-top:1px solid rgba(255,255,255,.16);padding-top:20px;flex-wrap:wrap}
-.pv-stats div{padding-right:28px;margin-right:28px;border-right:1px solid rgba(255,255,255,.14)}
-.pv-stats div:last-child{border-right:none}
-.pv-stats b{display:block;font:700 1.5rem var(--grot);color:#fff}
-.pv-stats span{font-size:.72rem;color:#9aa3dd;letter-spacing:.08em}
-.pv-news{display:flex;gap:14px;align-items:center;margin:18px 4px 0;font-size:.84rem;color:var(--ink-dim)}
-.pv-news b{font:700 .62rem var(--grot);letter-spacing:.2em;background:var(--ink);color:#fff;border-radius:6px;padding:4px 8px}
-.pv-sec{margin-top:64px}
-.pv-sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:22px}
-.pv-sec-head .no{font:700 .72rem var(--grot);letter-spacing:.2em;color:#8a90c8}
-.pv-sec-head h2{font:900 1.7rem var(--disp);margin:0}
-.pv-sec-head a{margin-left:auto;font-size:.84rem;color:var(--ink-dim);text-decoration:none}
-.pv-games{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.pv-game{border-radius:20px;overflow:hidden;text-decoration:none;color:#fff;box-shadow:0 18px 36px -16px rgba(13,16,48,.4);transition:transform .18s ease,box-shadow .18s ease;display:block}
-.pv-game:hover{transform:translateY(-4px);box-shadow:0 26px 44px -16px rgba(13,16,48,.5)}
-.pv-game .art{height:180px;position:relative}
-.pv-game .art:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 48%,transparent 62%);transform:translateX(-120%);transition:transform .7s ease}
-.pv-game:hover .art:after{transform:translateX(120%)}
-.pv-game .art span{position:absolute;right:16px;bottom:10px;font:700 .62rem var(--grot);letter-spacing:.3em;opacity:.85}
-.pv-game .art i{position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.5)}
-.pv-game .txt{padding:18px 20px 20px;background:#fff;color:var(--ink)}
-.pv-game h3{margin:0;font:900 1.12rem var(--disp)}
-.pv-game p{margin:8px 0 0;color:var(--ink-dim);font-size:.86rem;line-height:1.8}
-.g1 .art{background:radial-gradient(120px 80px at 25% 30%,#ffd98a,transparent 60%),linear-gradient(135deg,#8a4b2d,#5d2f16)}
-.g2 .art{background:radial-gradient(140px 90px at 75% 25%,#ffe45e,transparent 60%),linear-gradient(135deg,#131847,#2b50c8)}
-.g3 .art{background:radial-gradient(150px 100px at 50% 60%,#7dd0ff,transparent 62%),linear-gradient(135deg,#101736,#3a2a8f)}
-.g4 .art{background:radial-gradient(130px 90px at 30% 30%,#ffd98a,transparent 60%),linear-gradient(135deg,#3a1052,#a1124f)}
-.g5 .art{background:radial-gradient(130px 90px at 70% 30%,#9dffce,transparent 60%),linear-gradient(135deg,#0c3a2e,#12795c)}
-.g6 .art{background:radial-gradient(130px 90px at 50% 30%,#ffc4d6,transparent 60%),linear-gradient(135deg,#5c1031,#c2335f)}
-.g7 .art{background:radial-gradient(130px 90px at 50% 35%,#ffd98a,transparent 62%),linear-gradient(135deg,#171233,#4a2a8f)}
-.g8 .art{background:radial-gradient(130px 90px at 70% 25%,#aef3ff,transparent 60%),linear-gradient(135deg,#070a24,#2b50c8 70%,#5a4bff)}
-.pv-rows{border-top:1.5px solid var(--line)}
-.pv-row{display:flex;gap:18px;align-items:center;padding:20px 6px;border-bottom:1.5px solid var(--line);text-decoration:none;color:var(--ink);transition:background .15s}
-.pv-row:hover{background:#f6f5ff}
-.pv-row .tag{font:700 .62rem var(--grot);letter-spacing:.16em;color:#fff;background:#2b50c8;border-radius:6px;padding:5px 9px;white-space:nowrap}
-.pv-row .tag.alt{background:#8a4b2d}
-.pv-row h3{margin:0;font:700 1.02rem var(--disp)}
-.pv-row p{margin:4px 0 0;color:var(--ink-dim);font-size:.85rem;line-height:1.75}
-.pv-row .arr{margin-left:auto;color:#8a90c8;font-size:1.2rem}
-.pv-band{margin-top:64px;border-radius:24px;background:linear-gradient(120deg,#fff8e6,#f3f0ff);border:1.5px solid var(--line);padding:30px}
-.pv-band h2{font:900 1.4rem var(--disp);margin:0 0 6px}
-.pv-band p.lead{color:var(--ink-dim);font-size:.9rem;margin:0 0 20px}
-.pv-prods{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.pv-prod{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:16px;text-decoration:none;color:var(--ink);transition:transform .15s,box-shadow .15s}
-.pv-prod:hover{transform:translateY(-3px);box-shadow:0 14px 26px -14px rgba(13,16,48,.35)}
-.pv-prod h3{margin:0;font:700 .94rem var(--disp);line-height:1.6}
-.pv-prod .price{margin-top:10px;font:700 1.05rem var(--grot)}
-.pv-prod .price small{font-size:.68rem;color:var(--muted);font-family:var(--disp)}
-@media(max-width:860px){.pv-games{grid-template-columns:1fr}.pv-prods{grid-template-columns:1fr 1fr}.pv-hero-in{padding:44px 24px 40px}}
+.hero-v2{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);gap:44px;align-items:center;padding:72px 0 64px}
+.hero-v2 h1{margin:0;font:900 clamp(2.6rem,7.2vw,4.9rem)/1.08 var(--disp);letter-spacing:-.02em;word-break:normal;overflow-wrap:anywhere}
+.hero-v2 .lead{font-size:clamp(1rem,2.2vw,1.15rem);line-height:1.9;color:var(--ink-dim);margin:22px 0 28px}
+.core-panel{background:radial-gradient(30rem 16rem at 80% -10%,rgba(255,75,51,.30),transparent 60%),var(--indigo-deep);border:3px solid var(--ink);border-radius:20px;box-shadow:var(--shadow-hard);overflow:hidden}
+.core-panel canvas{display:block;width:100%;height:auto;touch-action:none;cursor:pointer}
+.core-cap{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;color:#fff;font:700 .78rem var(--sans)}
+.core-cap a{color:#ffb59d;font-weight:800}
+.nums{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:34px 0}
+.num-cell{background:#fff;border:2px solid var(--ink);border-radius:20px;padding:18px 10px;text-align:center;box-shadow:5px 5px 0 var(--line-soft)}
+.num-cell b{display:block;font:800 clamp(1.9rem,5vw,2.9rem)/1 var(--disp)}
+.num-cell span{font-size:.78rem;color:var(--muted);font-weight:700}
+.note-row{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:16px 6px;border-bottom:1.5px dashed var(--line-soft);color:var(--ink)}
+.note-row-main strong{display:block;font-size:1.02rem}
+.note-row-main span{color:var(--muted);font-size:.85rem}
+.note-row-go{font:800 .8rem var(--disp);color:var(--red-dark);white-space:nowrap}
+.faq-item{background:#fff;border:2px solid var(--ink);border-radius:20px;padding:20px 22px;box-shadow:5px 5px 0 var(--line-soft)}
+.faq-item h3{margin:0 0 6px;font-size:1.05rem}
+.faq-item p{margin:0;color:var(--ink-dim);line-height:1.85}
+@media(max-width:860px){.hero-v2{grid-template-columns:1fr;padding:48px 0 40px}.nums{grid-template-columns:repeat(2,1fr)}}
 </style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Shelfiria","alternateName":"シェルフィリア","url":"https://paper-daemon.github.io/","inLanguage":"ja"}</script>
 </head>
 <body>
 <header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span class="brand-copy"><strong>シェルフィリア</strong><small>SHELFIRIA</small></span></a><nav aria-label="main"><a href="/demo.html">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
-<main class="pv">
-<section class="pv-hero">
-<canvas id="pvCore" aria-hidden="true"></canvas>
-<div class="pv-hero-in">
-<p class="pv-kicker">SHELFIRIA — A SMALL PLAYGROUND, RUN BY AMASE</p>
-<h1>触って遊べるもの、<br><span class="grad">集めてます。</span></h1>
-<p class="pv-lead">ゲーム、無料ツール、制作物、実験の記録。案内人はあませ。登録もインストールもなしで、開いたらそのまま遊べます。</p>
-<div class="pv-ctas"><a class="pv-cta main" href="/demo.html">あそぶ →</a><a class="pv-cta sub" href="/showcase.html">作ったものを見る</a></div>
-<div class="pv-stats">
-<div><b>8</b><span>GAMES</span></div>
-<div><b>46</b><span>DEMOS &amp; TOOLS</span></div>
-<div><b>20</b><span>NOTES</span></div>
-<div><b>9</b><span>CASE STUDIES</span></div>
+<main>
+<div class="page"><section class="hero-v2">
+<div>
+<p class="eyebrow">SHELFIRIA — A SMALL PLAYGROUND, RUN BY AMASE</p>
+<h1>触って遊べる、<br>小さな遊び場。</h1>
+<p class="lead">ゲームと無料ツールを棚に並べた、ブラウザの中の遊び場です。登録はいりません。気になったものから、そのまま触ってください。案内人は「あませ」です。</p>
+<a class="button primary" href="/demo.html" style="font-size:1.05rem;padding:16px 42px">あそぶ →</a>
+<p style="margin-top:16px;font-size:.85rem;color:var(--muted)">遊びは全部無料 ・ 会員登録なし ・ スマホでもそのまま動きます</p>
 </div>
+<div class="core-panel reveal">
+<canvas id="heroCore" width="520" height="400" aria-label="SIコア（触れる粒子）"></canvas>
+<div class="core-cap"><span>SIコア — 触ると粒子が逃げます</span><a href="/play/core.html">大きく遊ぶ →</a></div>
 </div>
-<div class="pv-eve"><img src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span><b>あませ</b><span>案内人</span></span></div>
-</section>
-<div class="pv-marquee" aria-hidden="true"><div class="track"><span>PLAY ✦</span><span>GAMES ✦</span><span>TOOLS ✦</span><span>NOTES ✦</span><span>SHELFIRIA ✦</span><span>PLAY ✦</span><span>GAMES ✦</span><span>TOOLS ✦</span><span>NOTES ✦</span><span>SHELFIRIA ✦</span><span>PLAY ✦</span><span>GAMES ✦</span><span>TOOLS ✦</span><span>NOTES ✦</span><span>SHELFIRIA ✦</span><span>PLAY ✦</span><span>GAMES ✦</span><span>TOOLS ✦</span><span>NOTES ✦</span><span>SHELFIRIA ✦</span></div></div>
-<p class="pv-news"><b>NEW</b><span>遊ぶが8つに増えました（スターブレイクを追加）。</span></p>
-<section class="pv-pickup">
-<p class="pk">PICK UP</p>
-<h2>SIコアにさわる</h2>
-<p>数千個の粒子が、球体からリング、立方体へ形を変える。触ると弾けて、ドラッグで回転に勢いがつく、シェルフィリアの技術デモです。</p>
-<a href="/play/core.html">触ってみる →</a>
-</section>
+</section></div>
 
-<section class="pv-sec">
-<div class="pv-sec-head"><span class="no">01</span><h2>あそぶ</h2><a href="/demo.html">全部のデモへ →</a></div>
-<div class="pv-games">
-<a class="pv-game g8" href="/play/shooter.html"><div class="art"><span>STAR BREAK</span></div><div class="txt"><h3>スターブレイク</h3><p>縦スクロールシューティング。ウェーブとボス戦、グレイズで稼ぐ本格派。</p></div></a>
-<a class="pv-game g1" href="/play/omikuji.html"><div class="art"><i style="width:74px;height:74px;left:26px;top:34px"></i><i style="width:34px;height:34px;left:120px;top:22px"></i><span>OMIKUJI</span></div><div class="txt"><h3>あませおみくじ</h3><p>木箱を振って引くおみくじ。2%で超大吉、項目別の運勢とラッキーカラーつき。</p></div></a>
-<a class="pv-game g2" href="/play/timing.html"><div class="art"><i style="width:56px;height:56px;left:200px;top:56px"></i><i style="width:22px;height:22px;left:60px;top:30px"></i><span>TIMING</span></div><div class="txt"><h3>止めて！タイミングバー</h3><p>真ん中で止める反射ゲーム。コンボとフィーバーでスコアが伸びます。</p></div></a>
-<a class="pv-game g3" href="/play/core.html"><div class="art"><i style="width:96px;height:96px;left:50%;top:24px;margin-left:-48px"></i><span>SI CORE</span></div><div class="txt"><h3>SIコアにさわる</h3><p>数千の粒子のコア。球体・リング・立方体に変形して、触ると弾けます。</p></div></a>
-<a class="pv-game g4" href="/play/slot.html"><div class="art"><span>SLOT</span></div><div class="txt"><h3>あませスロット</h3><p>3つの絵をそろえるスロット。★3つでジャックポット500コイン。</p></div></a>
-<a class="pv-game g5" href="/play/guess.html"><div class="art"><span>GUESS</span></div><div class="txt"><h3>数あて</h3><p>1〜100の数字を当てる推理ゲーム。何回で当てられる？</p></div></a>
-<a class="pv-game g6" href="/play/janken.html"><div class="art"><span>JANKEN</span></div><div class="txt"><h3>あませとじゃんけん</h3><p>あませとじゃんけん勝負。勝つと悔しがります。連勝記録つき。</p></div></a>
-<a class="pv-game g7" href="/play/secret.html"><div class="art"><span>PRIVATE</span></div><div class="txt"><h3>プライベートナンバー</h3><p>バイトヘル2000風。番号の下4桁を、桁ごとの反応で聞き出せ。</p></div></a>
+<section aria-label="棚の数字" style="border-bottom:2px solid var(--line-soft)"><div class="page">
+<div class="nums">
+<div class="num-cell reveal"><b>8</b><span>ゲーム</span></div>
+<div class="num-cell reveal"><b>4</b><span>無料ツール</span></div>
+<div class="num-cell reveal"><b>19</b><span>よむ（note）</span></div>
+<div class="num-cell reveal"><b>6</b><span>無料ダウンロード</span></div>
 </div>
-<p style="margin:26px 0 12px;font:700 .8rem var(--disp);color:var(--ink-dim);letter-spacing:.06em">さわれる無料ツール</p>
-<div class="pv-prods">
-<a class="pv-prod" href="/video-preflight/"><h3>動画の納品前チェック</h3><p style="margin:6px 0 0;color:var(--ink-dim);font-size:.82rem;line-height:1.7">尺・解像度・容量をその場で確認。無料</p></a>
-<a class="pv-prod" href="/hosting-launch-checker/"><h3>公開前チェック</h3><p style="margin:6px 0 0;color:var(--ink-dim);font-size:.82rem;line-height:1.7">サイト公開前の抜け漏れを洗い出し。無料</p></a>
-<a class="pv-prod" href="/shop-image-qa/"><h3>商品画像QA</h3><p style="margin:6px 0 0;color:var(--ink-dim);font-size:.82rem;line-height:1.7">EC画像のサイズと品質を点検。無料</p></a>
-<a class="pv-prod" href="/n8n-retry-checker/"><h3>n8n重複実行リスク診断</h3><p style="margin:6px 0 0;color:var(--ink-dim);font-size:.82rem;line-height:1.7">自動化の二重実行リスクを診断。無料</p></a>
-</div>
-</section>
+</div></section>
 
-<section class="pv-sec">
-<div class="pv-sec-head"><span class="no">02</span><h2>みる</h2><a href="/showcase.html">制作物の一覧へ →</a></div>
-<div class="pv-rows">
-<a class="pv-row" href="/showcase.html"><span class="tag">CORE</span><div><h3>作ったもの、ぜんぶ</h3><p>自動化の基盤、制作事例、小さく使える無料ツールまで。棚の中身をまとめて見られます。</p></div><span class="arr">→</span></a>
-<a class="pv-row" href="https://note.com/lovely_hosta391/n/n245dd617e45f"><span class="tag alt">STORY</span><div><h3>チャットが長くなっても切れない仕組み</h3><p>Shelfiriaの裏側で動いている AgentLink の話。長い作業を途切れさせないための工夫です。</p></div><span class="arr">→</span></a>
-<a class="pv-row" href="/portfolio/"><span class="tag">CASE</span><div><h3>制作事例アルバム（9件）</h3><p>本番運用の司令塔、建設日報の自動化、二重実行を防ぐ台帳など、作って動かしている事例集。</p></div><span class="arr">→</span></a>
-<a class="pv-row" href="/portfolio/construction-daily-report-automation.html"><span class="tag">CASE</span><div><h3>建設日報の自動化ミニデモ</h3><p>現場の日報を、写真とメモから下書きまで自動で組むデモ。</p></div><span class="arr">→</span></a>
-<a class="pv-row" href="/portfolio/idempotency-receipt-ledger.html"><span class="tag">CASE</span><div><h3>冪等性レシート台帳</h3><p>同じ処理が二重に走らないようにする仕組みの事例。</p></div><span class="arr">→</span></a>
+<section class="section tone-white"><div class="page">
+<div class="section-head"><small>PLAY</small><h2>あそぶ</h2><p>まずはここから。1本1分でも、ちゃんと遊べるやつを並べています。</p></div>
+<div class="feature-grid">
+<a class="feature-card reveal" href="/play/shooter.html"><small>SHOOTING — STG</small><h3>スターブレイク</h3><p>縦スクロールシューティング。5ウェーブごとにボス戦、名前付きの弾幕「詠唱」が5つ。ボムとグレイズで稼ぐ本格派。</p><b>あそぶ →</b></a>
+<a class="feature-card reveal" href="/play/omikuji.html"><small>GAME / FORTUNE</small><h3>あませおみくじ</h3><p>今日の運勢と、あませからの一言。紙のおみくじ風の演出と、運勢図鑑（全7種）のコレクションつき。</p><b>引く →</b></a>
+<a class="feature-card reveal" href="/play/core.html"><small>TECH / PARTICLES</small><h3>SIコアにさわる</h3><p>数千個の粒子コアをリアルタイム描画。球体・リング・立方体に変形する技術遊び。ヒーローでも触れます。</p><b>さわる →</b></a>
+<a class="feature-card reveal" href="/play/slot.html"><small>PLAY / SLOT</small><h3>あませスロット</h3><p>3つの絵をそろえるスロット。回すたび貯まるジャックポットを、★3つで総取り。リーチ演出つき。</p><b>まわす →</b></a>
+<a class="feature-card reveal" href="/play/janken.html"><small>PLAY / JANKEN</small><h3>あませとじゃんけん</h3><p>5本先取のマッチ勝負。あませのクセを読む読み合いと、連勝称号つき。</p><b>勝負する →</b></a>
+<a class="feature-card reveal" href="/play/guess.html"><small>PLAY / GUESS</small><h3>数あて</h3><p>数字を当てる推理ゲーム。難易度3段階（50／100／500）、近さが分かる温度ヒントつき。</p><b>当てる →</b></a>
+<a class="feature-card reveal" href="/play/timing.html"><small>GAME / TIMING</small><h3>止めて！タイミングバー</h3><p>黄色いゾーンの真ん中で止める反射ゲーム。全5ラウンド、最後はフィーバー。</p><b>止める →</b></a>
+<a class="feature-card reveal" href="/play/secret.html"><small>PLAY / SECRET</small><h3>プライベートナンバー</h3><p>バイトヘル2000風。電話番号の下4桁を、桁ごとの反応で聞き出す推理ゲーム。</p><b>推理する →</b></a>
 </div>
-</section>
+<p style="margin-top:22px"><a class="button soft" href="/demo.html">あそぶ一覧へ →</a></p>
+</div></section>
 
-<section class="pv-sec">
-<div class="pv-sec-head"><span class="no">03</span><h2>よむ</h2><a href="/notes/">記事の一覧へ →</a></div>
-<div class="pv-rows">
-<a class="pv-row" href="https://note.com/lovely_hosta391/n/nd60d6d53cde9"><div><h3>地味だったので、派手にしてみた</h3><p>「全体的に微妙」と言われたトップを作り替えた記録。派手さと信用は分けられる。</p></div><span class="arr">→</span></a>
-<a class="pv-row" href="https://note.com/lovely_hosta391/n/n49bc0eb192bf"><div><h3>ゲームを3つ作り直して、3つ足した</h3><p>コンボ、フィーバー、変形。遊び場の入口の設計の話。</p></div><span class="arr">→</span></a>
-<a class="pv-row" href="https://note.com/lovely_hosta391/n/necb6d77dc158"><div><h3>サイトとGitHubで値段がズレてたので、正本を1個にした</h3><p>値段の正本は1個に決める。今日の字幕QAの価格統一も、この考え方でやりました。</p></div><span class="arr">→</span></a>
-<a class="pv-row" href="https://note.com/lovely_hosta391/n/nc4b05c88bc31"><div><h3>サイト監査、リンク切れだけ見ても足りなかった</h3><p>サイトの点検は、リンクが生きてるかだけじゃ足りなかったという話。</p></div><span class="arr">→</span></a>
-<a class="pv-row" href="https://note.com/lovely_hosta391/n/n2ec3e396df3e"><div><h3>画像生成モデル、1枚勝負で比べるとだいたい事故る</h3><p>モデルの比べ方は、1枚の出来より再現性で見る。</p></div><span class="arr">→</span></a>
-<a class="pv-row" href="https://note.com/lovely_hosta391/n/nc7280ea9faea"><div><h3>FedoraでSteamはどこまでいける？</h3><p>GTAまで考えると、Windowsはまだ少し残したい。</p></div><span class="arr">→</span></a>
-<a class="pv-row" href="https://note.com/lovely_hosta391/n/nbf97aa339ef7"><div><h3>SRTの00:61:00を普通の時刻として読んでた</h3><p>字幕の時刻チェックで踏んだ、小さいけど危ない事故。</p></div><span class="arr">→</span></a>
+<section class="section tone-dark"><div class="page">
+<div class="section-head"><small>SHOWCASE</small><h2>みる</h2><p>作ったものと、検証の記録。数字は実在の件数だけ出しています。</p></div>
+<div class="feature-grid">
+<a class="feature-card reveal" href="/showcase.html"><small>CASES</small><h3>制作・検証の事例 8件</h3><p>自動化の詰まりどころを、どう直したかの記録集。</p><b>みる →</b></a>
+<a class="feature-card reveal" href="/video-preflight/"><small>TOOL</small><h3>動画プリフライト</h3><p>納品前の動画を、音声・解像度・長さで自動チェック。</p><b>使う →</b></a>
+<a class="feature-card reveal" href="/n8n-retry-checker/"><small>TOOL</small><h3>n8nリトライ・チェッカー</h3><p>失敗した実行の再試行が安全か、事前に判定する。</p><b>使う →</b></a>
 </div>
-</section>
+</div></section>
 
-<section class="pv-band">
-<h2>おまけ：仕事も受けています</h2>
-<p class="lead">制作のご相談と、すぐ使える実務テンプレート。販売はココナラです。</p>
-<div class="pv-prods">
-<a class="pv-prod" href="https://coconala.com/services/4477076"><h3>動画・音声の納品前QAキット</h3><p class="price">¥1,000 <small>ココナラ</small></p></a>
-<a class="pv-prod" href="https://coconala.com/contents_market/pictures/cmvtply2y01yp950iwdran1oi"><h3>実務プロンプト25本＋チェックリスト</h3><p class="price">¥2,000 <small>ココナラ</small></p></a>
-<a class="pv-prod" href="https://coconala.com/contents_market/pictures/cmvtpt156021a8p0iovp6i1lu"><h3>見積・請求かんたんExcel</h3><p class="price">¥3,500 <small>ココナラ</small></p></a>
-<a class="pv-prod" href="https://coconala.com/contents_market/pictures/cmvtpz50s021j8p0iojlaghzo"><h3>提案書・企画書PPTテンプレート</h3><p class="price">¥3,500 <small>ココナラ</small></p></a>
-<a class="pv-prod" href="https://coconala.com/services/4374617"><h3>SRT字幕の点検・修正</h3><p class="price">¥3,000 <small>ココナラ</small></p></a>
-<a class="pv-prod" href="/subtitle-qa.html"><h3>字幕QAサービスの詳細</h3><p class="price">¥3,000 <small>受付はココナラ</small></p></a>
-<a class="pv-prod" href="/request.html"><h3>自動化・QAの仕事相談</h3><p style="margin:6px 0 0;color:var(--ink-dim);font-size:.82rem;line-height:1.7">作りたいものの相談窓口はこちら。</p></a>
+<section class="section"><div class="page">
+<div class="section-head"><small>READ</small><h2>よむ</h2><p>読みものは note に引っ越しました。開発と検証の記録です。</p></div>
+<div>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/n245dd617e45f"><span class="note-row-main"><strong>チャットが長くなっても切れない仕組み</strong><span>Shelfiriaの裏側で動いている AgentLink の話。</span></span><span class="note-row-go">noteで読む →</span></a>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/nd60d6d53cde9"><span class="note-row-main"><strong>地味だったので、派手にしてみた</strong><span>「全体的に微妙」と言われたトップを作り替えた記録。</span></span><span class="note-row-go">noteで読む →</span></a>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/n49bc0eb192bf"><span class="note-row-main"><strong>ゲームを3つ作り直して、3つ足した</strong><span>コンボ、フィーバー、変形。遊び場の入口の設計の話。</span></span><span class="note-row-go">noteで読む →</span></a>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/necb6d77dc158"><span class="note-row-main"><strong>サイトとGitHubで値段がズレてたので、正本を1個にした</strong><span>値段の正本は1個に決める、という話。</span></span><span class="note-row-go">noteで読む →</span></a>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/nc4b05c88bc31"><span class="note-row-main"><strong>サイト監査、リンク切れだけ見ても足りなかった</strong><span>点検はリンクの生死だけじゃ足りなかったという話。</span></span><span class="note-row-go">noteで読む →</span></a>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/n2ec3e396df3e"><span class="note-row-main"><strong>画像生成モデル、1枚勝負で比べるとだいたい事故る</strong><span>モデルの比べ方は、1枚の出来より再現性で見る。</span></span><span class="note-row-go">noteで読む →</span></a>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/nc7280ea9faea"><span class="note-row-main"><strong>FedoraでSteamはどこまでいける？</strong><span>GTAまで考えると、Windowsはまだ少し残したい。</span></span><span class="note-row-go">noteで読む →</span></a>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/nbf97aa339ef7"><span class="note-row-main"><strong>SRTの00:61:00を普通の時刻として読んでた</strong><span>字幕の時刻チェックで踏んだ、小さいけど危ない事故。</span></span><span class="note-row-go">noteで読む →</span></a>
 </div>
-</section>
+<p style="margin-top:20px"><a class="button soft" href="/notes/">よむ一覧へ →</a></p>
+</div></section>
+
+<section class="section tone-warm"><div class="page">
+<div class="section-head"><small>BONUS</small><h2>おまけ</h2><p>仕事のメニューは隅っこに。全部ココナラで受けています。無料で持ち帰れるものもあります。</p></div>
+<div>
+<a class="note-row reveal" href="https://coconala.com/services/4477076"><span class="note-row-main"><strong>動画納品前QAキット</strong><span>納品前のチェックを型にした道具一式。</span></span><span class="note-row-go">¥1,000</span></a>
+<a class="note-row reveal" href="https://coconala.com/services/4479466"><span class="note-row-main"><strong>YouTube動画の編集を行います</strong><span>カット・テロップ・サムネイルまで。</span></span><span class="note-row-go">¥5,000〜</span></a>
+<a class="note-row reveal" href="https://coconala.com/services/4374617"><span class="note-row-main"><strong>SRT字幕の点検</strong><span>時刻ズレや表記ゆれを納品前に拾う。</span></span><span class="note-row-go">¥3,000</span></a>
+<a class="note-row reveal" href="https://coconala.com/services/4374623"><span class="note-row-main"><strong>CSV・TSVデータ整理</strong><span>文字化け・桁ズレ・重複を整える。</span></span><span class="note-row-go">¥3,000</span></a>
+<a class="note-row reveal" href="https://coconala.com/services/3914156"><span class="note-row-main"><strong>納品前QAの代行</strong><span>キットの代行版。代わりに点検して返す。</span></span><span class="note-row-go">ココナラで確認</span></a>
+<a class="note-row reveal" href="https://coconala.com/services/2809225"><span class="note-row-main"><strong>小さなAI自動化ツール制作</strong><span>繰り返し作業を小さな道具にする。</span></span><span class="note-row-go">ココナラで確認</span></a>
+<a class="note-row reveal" href="https://coconala.com/services/2330394"><span class="note-row-main"><strong>ComfyUIワークフロー整理</strong><span>ぐちゃぐちゃなノードを読みやすく。</span></span><span class="note-row-go">ココナラで確認</span></a>
+</div>
+<p style="margin-top:20px"><a class="button soft" href="/work.html">おまけ（無料ツール・無料DL）へ →</a></p>
+</div></section>
+
+<section class="section tone-white"><div class="page">
+<div class="section-head"><small>FAQ</small><h2>よくある不安</h2></div>
+<div class="feature-grid">
+<div class="faq-item reveal"><h3>会員登録は要りますか？</h3><p>要りません。ゲームも無料ツールも、開いたらそのまま使えます。記録はあなたの端末の中だけに残ります。</p></div>
+<div class="faq-item reveal"><h3>本当に全部無料ですか？</h3><p>遊び・無料ツール・無料ダウンロードは無料です。おまけの仕事メニューだけ有料で、値段はココナラのページに明記してあります。</p></div>
+<div class="faq-item reveal"><h3>仕事の相談はどこから？</h3><p>ココナラの各メニューからが確実です。内容が決まっていない相談は、おまけページの相談導線からどうぞ。</p></div>
+</div>
+</div></section>
+
+<div class="page"><section class="cta-band">
+<div><h2 style="font-family:var(--disp)">迷ったら、まず1本。</h2><p>いちばん軽いのは おみくじ、歯ごたえは スターブレイク。</p></div>
+<a class="button primary" href="/demo.html" style="font-size:1.05rem;padding:16px 42px">あそぶ →</a>
+</section></div>
 </main>
 <footer class="site-footer"><div class="footer-brand"><img src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span><strong>シェルフィリア</strong><br>SHELFIRIA</span></div><nav><a href="/">トップ</a><a href="/demo.html">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
 <script>
 (function(){
-var cv=document.getElementById('pvCore'),ctx=cv.getContext('2d');
-var W=0,H=0;
-function rs(){var r=cv.parentElement.getBoundingClientRect();W=r.width;H=r.height;var d=Math.min(2,window.devicePixelRatio||1);cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0)}
-rs();window.addEventListener('resize',rs);
-var N=520,pts=[],golden=Math.PI*(3-Math.sqrt(5));
-for(var i=0;i<N;i++){var y=1-(i/(N-1))*2,rr=Math.sqrt(1-y*y),th=golden*i;pts.push({x:Math.cos(th)*rr,y:y,z:Math.sin(th)*rr})}
-var t=0;
+const cv=document.getElementById('heroCore');if(!cv)return;const ctx=cv.getContext('2d');
+const N=850,pts=[];for(let i=0;i<N;i++){const y=1-(i/(N-1))*2,r=Math.sqrt(1-y*y),th=i*2.39996;pts.push({x:Math.cos(th)*r,y:y,z:Math.sin(th)*r,vx:0,vy:0,vz:0,ox:Math.cos(th)*r,oy:y,oz:Math.sin(th)*r})}
+let rot=0.004,spin=0,mx=-999,my=-999,burst=0;const W=cv.width,H=cv.height,cx=W/2,cy=H/2,R=140;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function pos(e){const r=cv.getBoundingClientRect();const t2=e.touches?e.touches[0]:e;mx=(t2.clientX-r.left)*(W/r.width);my=(t2.clientY-r.top)*(H/r.height)}
+cv.addEventListener('pointermove',pos);cv.addEventListener('pointerdown',e=>{pos(e);burst=1});
+cv.addEventListener('pointerleave',()=>{mx=-999;my=-999});
+let run=true;new IntersectionObserver(en=>{run=en[0].isIntersecting}).observe(cv);
+let raf=true;
 function frame(){
-t+=1;ctx.clearRect(0,0,W,H);
-var cx=W*0.78,cy=H*0.46,R=Math.min(W,H)*0.42;
-var cy1=Math.cos(t*0.004),sy1=Math.sin(t*0.004),cx1=Math.cos(t*0.0016),sx1=Math.sin(t*0.0016);
-for(var i=0;i<N;i++){var p=pts[i];
-var x1=p.x*cy1+p.z*sy1,z1=-p.x*sy1+p.z*cy1,y2=p.y*cx1-z1*sx1,z2=p.y*sx1+z1*cx1;
-var sc=1/(1+z2*0.45),sx=cx+x1*R*sc,syy=cy+y2*R*sc,dep=(z2+1)/2;
-ctx.beginPath();ctx.fillStyle='hsla('+(224+dep*50)+',95%,'+(55+dep*22)+'%,'+(0.25+dep*0.65)+')';
-ctx.arc(sx,syy,0.6+dep*1.8,0,6.2832);ctx.fill();}
-requestAnimationFrame(frame)}
-if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)requestAnimationFrame(frame);
-document.querySelectorAll('.pv-stats b').forEach(function(el){
-  var target=Number(el.textContent)||0;if(!target)return;var start=performance.now();
-  (function up(now){var p=Math.min(1,(now-start)/900);el.textContent=Math.round(target*(0.2+0.8*p*p));if(p<1)requestAnimationFrame(up)})(start);
-});
+if(raf)requestAnimationFrame(frame);if(!run)return;
+ctx.clearRect(0,0,W,H);spin+=rot;
+const cs=Math.cos(spin),sn=Math.sin(spin);
+for(const p of pts){
+const x=p.x+p.vx,y=p.y+p.vy,z=p.z+p.vz;
+const rx=x*cs-z*sn,rz=x*sn+z*cs;
+const s=1/(1+rz*0.35);const px=cx+rx*R*s,py=cy+y*R*s;
+const dx=px-mx,dy=py-my,d2=dx*dx+dy*dy;
+if(d2<8100){const d=Math.sqrt(d2)||1,f=(90-d)/90*0.012;p.vx+=dx/d*f*s;p.vy+=dy/d*f*s}
+if(burst){p.vx+=(Math.random()-0.5)*0.05;p.vy+=(Math.random()-0.5)*0.05;p.vz+=(Math.random()-0.5)*0.05}
+p.vx+=(p.ox-p.x)*0.02;p.vy+=(p.oy-p.y)*0.02;p.vz+=(p.oz-p.z)*0.02;
+p.vx*=0.9;p.vy*=0.9;p.vz*=0.9;p.x+=p.vx;p.y+=p.vy;p.z+=p.vz;
+const a=0.35+0.65*Math.max(0,1-(rz+1)/2);
+ctx.fillStyle='rgba(150,170,255,'+a.toFixed(2)+')';
+ctx.beginPath();ctx.arc(px,py,1.7*s,0,6.283);ctx.fill();
+}
+burst=0;
+}
+if(reduced){raf=false;spin=0.6;frame()}else{frame()}
 })();
 </script>
 <script src="/enhance.js" defer></script>
 <script src="/ad-overlay.js" defer></script>
-</body></html>
+</body>
+</html>
