@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>スターブレイク | Shelfiria</title>
+<meta name="description" content="シェルフィリアの縦スクロールシューティング。ウェーブを抜けて、ボスを撃ち落とせ。">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="シェルフィリア"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/site.css?v=20261031-1">
+<style>
+.sb-stage{max-width:480px;margin:0 auto;text-align:center}
+.sb-wrap{position:relative;border:3px solid var(--ink);border-radius:18px;box-shadow:8px 8px 0 var(--ink);overflow:hidden;background:#070a24;line-height:0}
+canvas#sb{width:100%;height:auto;display:block;touch-action:none}
+.sb-hud{display:flex;justify-content:space-between;gap:8px;margin-top:12px;font:700 .8rem var(--mono);color:var(--ink-dim);flex-wrap:wrap}
+.sb-btns{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.legend{color:var(--muted);font-size:.82rem;line-height:2;margin-top:14px}
+</style>
+</head>
+<body>
+<header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span class="brand-copy"><strong>シェルフィリア</strong><small>SHELFIRIA</small></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
+<main class="page">
+<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — STAR BREAK</p><h1>スターブレイク</h1><p class="page-lead">縦スクロールシューティング。ウェーブごとに押し寄せる敵を撃ち落とし、5ウェーブごとのボスを倒せ。かすり（グレイズ）でもスコアが入る、本格派のつくりです。</p></section>
+<section class="section" style="border-bottom:none;padding-top:16px">
+<div class="sb-stage">
+<div class="sb-wrap"><canvas id="sb" width="420" height="620"></canvas></div>
+<div class="sb-hud"><span>SCORE <b id="hudScore">0</b></span><span>HI <b id="hudHi">0</b></span><span>WAVE <b id="hudWave">-</b></span><span>❤ <b id="hudLife">3</b> ／ 💣 <b id="hudBomb">2</b></span></div>
+<div class="sb-btns"><button class="button primary" id="startBtn" type="button">スタート</button><button class="button soft" id="bombBtn" type="button">ボム（X）</button><button class="button soft" id="pauseBtn" type="button">一時停止</button></div>
+<p class="legend">PC：矢印キー／WASDで移動（ショットは自動）｜スマホ：ドラッグで移動<br>ボム：Xキー or ボタン（画面の敵弾を消して全体攻撃）｜ポーズ：Esc<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化、<b style="color:#d23b2a">B</b>=ボム追加</p>
+</div>
+</section>
+</main>
+<footer class="site-footer"><div class="footer-brand"><img src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span><strong>シェルフィリア</strong><br>SHELFIRIA</span></div><nav><a href="/">トップ</a><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
+<script>
+let AC=null;function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function tone(f,d,type,v,when,slide){const ac=audio();if(!ac)return;const t=ac.currentTime+(when||0);const o=ac.createOscillator(),g=ac.createGain();o.type=type||"square";o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v||0.05,t);g.gain.exponentialRampToValueAtTime(0.001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02)}
+const cv=document.getElementById('sb'),ctx=cv.getContext('2d');
+const W=420,H=620;
+let hi=Number(localStorage.getItem('sbBest')||0);
+let state='title',score=0,wave=0,lives=3,bombs=2,power=1,shake=0,time=0;
+let player={x:W/2,y:H-90,r:5,inv:0,fireT:0};
+let shots=[],eshots=[],foes=[],parts=[],items=[],stars=[];
+for(let i=0;i<90;i++)stars.push({x:Math.random()*W,y:Math.random()*H,s:Math.random()*2+0.4,v:Math.random()*40+18});
+let waveT=0,spawnQ=[],boss=null,keys={};
+const hud={s:document.getElementById('hudScore'),h:document.getElementById('hudHi'),w:document.getElementById('hudWave'),l:document.getElementById('hudLife'),b:document.getElementById('hudBomb')};
+function syncHud(){hud.s.textContent=score.toLocaleString();hud.h.textContent=hi.toLocaleString();hud.w.textContent=wave>0?wave:'-';hud.l.textContent=lives;hud.b.textContent=bombs}
+function reset(){score=0;wave=0;lives=3;bombs=2;power=1;shots=[];eshots=[];foes=[];parts=[];items=[];boss=null;player={x:W/2,y:H-90,r:5,inv:0,fireT:0};nextWave()}
+function nextWave(){wave++;waveT=0;spawnQ=[];const n=6+wave*2;
+  if(wave%5===0){spawnBoss();return}
+  for(let i=0;i<n;i++){const kind=Math.random()<0.55?'drone':(Math.random()<0.6?'weaver':'gunner');spawnQ.push({t:0.5+i*0.55,kind,x:40+Math.random()*(W-80)})}
+}
+function spawnBoss(){boss={x:W/2,y:-60,r:34,hp:220+wave*40,max:220+wave*40,t:0,fireT:1.2,dir:1};foes.push(boss);tone(196,0.4,'sawtooth',0.07,0,98)}
+function spawnFoe(kind,x){const base={x:x,y:-24,t:0,fireT:1+Math.random()*1.4};
+  if(kind==='drone')return Object.assign(base,{kind,r:13,hp:1,vy:120+wave*6,score:100});
+  if(kind==='weaver')return Object.assign(base,{kind,r:13,hp:3,vy:88+wave*4,amp:50+Math.random()*40,ph:Math.random()*6.28,score:200});
+  return Object.assign(base,{kind:'gunner',r:15,hp:6+Math.floor(wave/2),vy:60,stopY:110+Math.random()*90,score:300});}
+function boom(x,y,c,n){for(let i=0;i<(n||14);i++){const a=Math.random()*6.28,v=40+Math.random()*160;parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:0.5+Math.random()*0.4,t:0,c})}}
+function dropItem(x,y){const r=Math.random();if(r<0.16)items.push({x,y,vy:70,kind:'P'});else if(r<0.24)items.push({x,y,vy:70,kind:'B'})}
+function useBomb(){if(state!=='play'||bombs<=0)return;bombs--;eshots=[];shake=10;foes.forEach(f=>{hurt(f,6)});boom(player.x,player.y,'#ffd98a',30);tone(120,0.4,'sawtooth',0.1,0,40);syncHud()}
+function hurt(f,dmg){f.hp-=dmg;if(f.hp<=0&&!f.dead){f.dead=true;score+=f.score||100;boom(f.x,f.y,f.kind==='gunner'?'#ff9d5c':'#9fb0ff',f===boss?46:14);if(f===boss){boss=null;shake=12;score+=3000;dropItem(f.x-20,f.y);items.push({x:f.x+20,y:f.y,vy:70,kind:'P'});tone(80,0.6,'sawtooth',0.12,0,30);setTimeout(()=>{if(state==='play')nextWave()},900)}else dropItem(f.x,f.y);if(score>hi){hi=score;localStorage.setItem('sbBest',hi)}syncHud()}}
+function hitPlayer(){if(player.inv>0)return;lives--;boom(player.x,player.y,'#ff6b5e',22);shake=8;tone(160,0.3,'sawtooth',0.1,0,50);power=Math.max(1,power-1);if(lives<=0){state='over';if(score>hi){hi=score;localStorage.setItem('sbBest',hi)}}else{player.inv=2.2;eshots=[]}syncHud()}
+let last=0;
+function loop(ts){requestAnimationFrame(loop);const dt=Math.min(0.033,(ts-last)/1000||0.016);last=ts;if(state==='play')step(dt);draw()}
+requestAnimationFrame(loop);
+function step(dt){time+=dt;waveT+=dt;
+  stars.forEach(s=>{s.y+=s.v*dt*(state==='play'?2.2:1);if(s.y>H){s.y=-2;s.x=Math.random()*W}});
+  // spawn
+  spawnQ=spawnQ.filter(q=>{if(waveT>=q.t){foes.push(spawnFoe(q.kind,q.x));return false}return true});
+  if(!boss&&spawnQ.length===0&&foes.length===0&&state==='play')nextWave();
+  // player move
+  const sp=300;let dx=0,dy=0;
+  if(keys.ArrowLeft||keys.a)dx-=1;if(keys.ArrowRight||keys.d)dx+=1;if(keys.ArrowUp||keys.w)dy-=1;if(keys.ArrowDown||keys.s)dy+=1;
+  if(dx||dy){const m=Math.hypot(dx,dy);player.x+=dx/m*sp*dt;player.y+=dy/m*sp*dt}
+  player.x=Math.max(16,Math.min(W-16,player.x));player.y=Math.max(16,Math.min(H-16,player.y));
+  if(player.inv>0)player.inv-=dt;
+  // fire
+  player.fireT-=dt;
+  if(player.fireT<=0){player.fireT=0.13;const offs=power===1?[0]:power===2?[-6,6]:power===3?[-11,0,11]:power===4?[-14,-5,5,14]:[-18,-9,0,9,18];offs.forEach((o,i)=>{shots.push({x:player.x+o,y:player.y-14,vy:-560,vx:(power>=4?(i-(offs.length-1)/2)*22:0)})});if(power>=3)tone(880,0.04,'square',0.015)}
+  shots=shots.filter(s=>{s.x+=s.vx*dt;s.y+=s.vy*dt;return s.y>-16&&s.x>-8&&s.x<W+8});
+  // foes
+  foes.forEach(f=>{if(f===boss){f.t+=dt;if(f.y<96)f.y+=52*dt;else{f.x+=Math.sin(f.t*0.7)*46*dt;f.fireT-=dt;if(f.fireT<=0){f.fireT=1.05;for(let i=0;i<10;i++){const a=i/10*6.28+f.t;eshots.push({x:f.x,y:f.y+18,vx:Math.cos(a)*128,vy:Math.sin(a)*128+40,r:4,grazed:false})}tone(300,0.08,'square',0.03)}}return}
+    f.t+=dt;
+    if(f.kind==='drone')f.y+=f.vy*dt;
+    else if(f.kind==='weaver'){f.y+=f.vy*dt;f.x+=Math.sin(f.t*3.4+f.ph)*f.amp*dt}
+    else if(f.kind==='gunner'){if(f.y<f.stopY)f.y+=f.vy*dt;else{f.fireT-=dt;if(f.fireT<=0){f.fireT=1.5+Math.random()*0.7;const a=Math.atan2(player.y-f.y,player.x-f.x);eshots.push({x:f.x,y:f.y+12,vx:Math.cos(a)*172,vy:Math.sin(a)*172,r:4,grazed:false});tone(420,0.05,'square',0.02)}}}
+  });
+  foes=foes.filter(f=>!f.dead&&f.y<H+50);
+  // eshots
+  eshots=eshots.filter(s=>{s.x+=s.vx*dt;s.y+=s.vy*dt;
+    const d=Math.hypot(s.x-player.x,s.y-player.y);
+    if(d<26&&!s.grazed){s.grazed=true;score+=10;syncHud()}
+    if(d<s.r+player.r){hitPlayer();return false}
+    return s.y>-20&&s.y<H+20&&s.x>-20&&s.x<W+20});
+  // shots vs foes
+  shots=shots.filter(s=>{let hit=false;for(const f of foes){if(Math.hypot(s.x-f.x,s.y-f.y)<f.r+4){hurt(f,1);hit=true;break}}return !hit});
+  // foes vs player
+  for(const f of foes){if(Math.hypot(f.x-player.x,f.y-player.y)<f.r+player.r+2){hurt(f,3);hitPlayer();break}}
+  // items
+  items=items.filter(it=>{it.y+=it.vy*dt;if(Math.hypot(it.x-player.x,it.y-player.y)<26){if(it.kind==='P'){power=Math.min(5,power+1);tone(1040,0.1,'sine',0.08)}else{bombs=Math.min(6,bombs+1);tone(740,0.1,'sine',0.08)}syncHud();return false}return it.y<H+20});
+  parts=parts.filter(p=>{p.t+=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;return p.t<p.life});
+  if(shake>0)shake=Math.max(0,shake-dt*22);
+}
+function draw(){ctx.save();ctx.clearRect(0,0,W,H);
+  if(shake>0)ctx.translate((Math.random()-0.5)*shake,(Math.random()-0.5)*shake);
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#070a24');g.addColorStop(1,'#131847');ctx.fillStyle=g;ctx.fillRect(-14,-14,W+28,H+28);
+  ctx.fillStyle='#c6ccf5';stars.forEach(s=>{ctx.globalAlpha=0.35+s.s*0.3;ctx.fillRect(s.x,s.y,s.s,s.s*2.4)});ctx.globalAlpha=1;
+  // items
+  items.forEach(it=>{ctx.beginPath();ctx.arc(it.x,it.y,10,0,6.29);ctx.fillStyle=it.kind==='P'?'#2b50c8':'#d23b2a';ctx.fill();ctx.fillStyle='#fff';ctx.font='900 12px sans-serif';ctx.textAlign='center';ctx.fillText(it.kind,it.x,it.y+4)});
+  // foes
+  foes.forEach(f=>{ctx.save();ctx.translate(f.x,f.y);
+    if(f===boss){ctx.fillStyle='#5a1f6e';ctx.strokeStyle='#e8b6ff';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-34,10);ctx.lineTo(-18,-16);ctx.lineTo(18,-16);ctx.lineTo(34,10);ctx.lineTo(16,20);ctx.lineTo(-16,20);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#ff4b33';ctx.beginPath();ctx.arc(0,0,7,0,6.29);ctx.fill()}
+    else{ctx.fillStyle=f.kind==='drone'?'#8f9bff':f.kind==='weaver'?'#ffb300':'#ff7a59';ctx.strokeStyle='rgba(255,255,255,.75)';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(0,14);ctx.lineTo(-12,-8);ctx.lineTo(0,-3);ctx.lineTo(12,-8);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#131847';ctx.beginPath();ctx.arc(0,2,3.4,0,6.29);ctx.fill()}
+    ctx.restore()});
+  if(boss){ctx.fillStyle='rgba(255,255,255,.22)';ctx.fillRect(30,14,W-60,7);ctx.fillStyle='#ff4b33';ctx.fillRect(30,14,(W-60)*Math.max(0,boss.hp/boss.max),7);ctx.fillStyle='#fff';ctx.font='700 10px monospace';ctx.textAlign='center';ctx.fillText('BOSS',W/2,11)}
+  // eshots
+  ctx.fillStyle='#ff5d8f';eshots.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,6.29);ctx.fill()});
+  // shots
+  ctx.fillStyle='#aef3ff';shots.forEach(s=>{ctx.fillRect(s.x-2,s.y-8,4,12)});
+  // player
+  if(state!=='over'){if(!(player.inv>0&&Math.floor(time*14)%2===0)){ctx.save();ctx.translate(player.x,player.y);ctx.fillStyle='#2e7cd6';ctx.strokeStyle='#fff';ctx.lineWidth=1.8;ctx.beginPath();ctx.moveTo(0,-16);ctx.lineTo(11,10);ctx.lineTo(4,6);ctx.lineTo(-4,6);ctx.lineTo(-11,10);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#ffd98a';ctx.beginPath();ctx.arc(0,0,4,0,6.29);ctx.fill();ctx.restore()}
+    ctx.strokeStyle='rgba(174,243,255,.5)';ctx.beginPath();ctx.arc(player.x,player.y,player.r+1.5,0,6.29);ctx.stroke()}
+  // particles
+  parts.forEach(p=>{ctx.globalAlpha=1-p.t/p.life;ctx.fillStyle=p.c;ctx.fillRect(p.x-2,p.y-2,4,4)});ctx.globalAlpha=1;
+  ctx.restore();
+  // overlays
+  ctx.textAlign='center';
+  if(state==='title'){ctx.fillStyle='rgba(7,10,36,.72)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#fff';ctx.font='900 40px sans-serif';ctx.fillText('STAR BREAK',W/2,H/2-56);ctx.font='600 15px sans-serif';ctx.fillStyle='#c6ccf5';ctx.fillText('縦スクロールシューティング',W/2,H/2-22);ctx.fillText('スタートボタン or スペースキーで出撃',W/2,H/2+16);ctx.fillText('HI-SCORE  '+hi.toLocaleString(),W/2,H/2+52)}
+  if(state==='pause'){ctx.fillStyle='rgba(7,10,36,.6)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#fff';ctx.font='900 30px sans-serif';ctx.fillText('PAUSE',W/2,H/2)}
+  if(state==='over'){ctx.fillStyle='rgba(7,10,36,.74)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#ff6b5e';ctx.font='900 38px sans-serif';ctx.fillText('GAME OVER',W/2,H/2-40);ctx.fillStyle='#fff';ctx.font='700 19px monospace';ctx.fillText('SCORE  '+score.toLocaleString(),W/2,H/2+4);ctx.fillText('WAVE  '+wave,W/2,H/2+34);if(score>=hi&&score>0){ctx.fillStyle='#ffd98a';ctx.font='700 15px sans-serif';ctx.fillText('★ NEW RECORD ★',W/2,H/2+66)}ctx.fillStyle='#c6ccf5';ctx.font='600 14px sans-serif';ctx.fillText('スタートボタン or スペースキーでもう一度',W/2,H/2+100)}
+  if(state==='play'&&waveT<2.2&&!boss){ctx.fillStyle='rgba(255,255,255,.9)';ctx.font='900 26px sans-serif';ctx.fillText('WAVE '+wave,W/2,120)}
+  if(state==='play'&&boss){ctx.fillStyle='rgba(255,75,51,.95)';ctx.font='900 20px sans-serif';if(waveT<2.4)ctx.fillText('⚠ WARNING ⚠',W/2,120)}
+}
+function startGame(){audio();reset();state='play';syncHud()}
+document.getElementById('startBtn').addEventListener('click',startGame);
+document.getElementById('bombBtn').addEventListener('click',useBomb);
+document.getElementById('pauseBtn').addEventListener('click',()=>{if(state==='play')state='pause';else if(state==='pause')state='play'});
+window.addEventListener('keydown',e=>{keys[e.key]=true;if(e.key===' '){e.preventDefault();if(state==='title'||state==='over')startGame()}if(e.key==='x'||e.key==='X')useBomb();if(e.key==='Escape'){if(state==='play')state='pause';else if(state==='pause')state='play'}if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))e.preventDefault()});
+window.addEventListener('keyup',e=>{keys[e.key]=false});
+let touchId=null;
+function posFromEvent(e){const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*W/r.width,y:(t.clientY-r.top)*H/r.height}}
+cv.addEventListener('touchstart',e=>{e.preventDefault();const p=posFromEvent(e);player.x=p.x;player.y=p.y-40},{passive:false});
+cv.addEventListener('touchmove',e=>{e.preventDefault();const p=posFromEvent(e);player.x=p.x;player.y=p.y-40},{passive:false});
+cv.addEventListener('mousedown',e=>{const p=posFromEvent(e);player.x=p.x;player.y=p.y-30});
+cv.addEventListener('mousemove',e=>{if(e.buttons>0){const p=posFromEvent(e);player.x=p.x;player.y=p.y-30}});
+syncHud();
+</script>
+<script src="/ad-overlay.js" defer></script>
+</body></html>
