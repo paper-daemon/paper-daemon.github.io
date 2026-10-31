@@ -1,5 +1,5 @@
 /* ============================================================
-   あませの棚 — site.css
+   シェルフィリア — site.css
    Design system: "Indigo Shelf" (インディゴの棚) — 2026-10-27 rebuild
    Bright graphic theme: bluish-white paper, deep indigo ink,
    hard offset shadows, chunky borders, bold sans display type.
@@ -38,9 +38,10 @@
   --grad-accent:linear-gradient(120deg,var(--indigo) 0%,var(--violet) 60%,var(--red) 130%);
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;background:var(--paper)}
+html{scroll-behavior:smooth;background:var(--paper);overflow-x:clip}
 body{
-  margin:0;color:var(--ink);font-family:var(--sans);line-height:1.75;
+  margin:0;color:var(--ink);font-family:var(--sans);line-height:1.75;overflow-x:clip;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;
   background:
     linear-gradient(rgba(46,58,208,.05) 1px,transparent 1px),
     linear-gradient(90deg,rgba(46,58,208,.05) 1px,transparent 1px),
@@ -70,7 +71,7 @@ button,input,textarea,select{font:inherit}
 .brand strong{font:900 1.08rem/1 var(--sans);letter-spacing:.02em}
 .brand small{margin-top:5px;color:var(--muted);font:700 .5rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase}
 .site-head nav{display:flex;justify-content:center;gap:4px;flex-wrap:wrap}
-.site-head nav a{position:relative;padding:7px 11px;border-radius:8px;font-size:.72rem;font-weight:800;color:var(--ink-dim);transition:.16s var(--ease)}
+.site-head nav a{position:relative;display:inline-flex;align-items:center;min-height:36px;padding:7px 11px;border-radius:8px;font-size:.72rem;font-weight:800;color:var(--ink-dim);transition:.16s var(--ease)}
 .site-head nav a:hover{color:var(--indigo);background:var(--paper-3)}
 .site-head nav a[aria-current="page"]{color:#fff;background:var(--indigo)}
 .head-actions{display:flex;align-items:center;gap:9px}
@@ -334,6 +335,7 @@ a.note-card:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--indi
 @media(max-width:980px){
   .site-head{grid-template-columns:1fr auto;padding:12px 18px;gap:10px}
   .site-head nav{grid-column:1/-1;grid-row:2;justify-content:flex-start;gap:4px;overflow:auto;padding:2px 0}
+  .site-head nav a{min-height:42px;padding:9px 12px}
   .head-actions{grid-column:2;grid-row:1}
   .head-actions .social-mini{display:none}
   .brand small{display:none}
@@ -372,7 +374,7 @@ a.note-card:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--indi
 }
 @media(max-width:560px){
   .brand-avatar{width:34px;height:34px}
-  .head-cta{min-height:38px;padding:0 14px}
+  .head-cta{min-height:42px;padding:0 14px}
   .hero-actions .button{width:100%}
   .hero{padding-top:46px}
   .home-hero{padding:36px 20px}
@@ -438,3 +440,9 @@ html{scroll-behavior:smooth}
 h1,h2,h3{word-break:normal;overflow-wrap:anywhere}
 .hero h1{font-size:clamp(2.6rem,5.2vw,4.4rem);line-height:1.1}
 .profile-card h2{color:var(--ink);position:relative;z-index:1}
+
+/* === design foundation pass 2026-10-31: rhythm & press feedback === */
+.archive-group{padding:56px 0}
+.note-card,.proof-mini,.service-card,.market-panel a,.social-card,.trust-strip a{transition:transform .18s var(--ease),box-shadow .18s var(--ease),background .18s var(--ease)}
+.note-card:active,.proof-mini:active,.service-card:active,.social-card:active{transform:translate(1px,1px)}
+img{user-select:none}
