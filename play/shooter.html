@@ -21,12 +21,12 @@ canvas#sb{width:100%;height:auto;display:block;touch-action:none}
 <body>
 <header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>Shelfiria</strong></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
 <main class="page">
-<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — STAR BREAK</p><h1>スターブレイク</h1><p class="page-lead">縦スクロールの弾幕シューティング。全3ステージ——ステージごとに編隊ウェーブを抜けた先にボスがいて、ボスごとに名前付きの「詠唱」を5つ、弾幕のパターンごと切り替えて放ってきます。クリアすると次のステージが開きます。Shiftの低速移動では当たり判定が中心の点だけになり、弾をかするグレイズでもスコアが入ります。</p></section>
+<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — STAR BREAK</p><h1>スターブレイク</h1><p class="page-lead">縦スクロールの弾幕シューティング。全3ステージ——ステージごとに編隊ウェーブを抜けた先にボスがいて、ボスごとに名前付きの「詠唱」を5つ、弾幕のパターンごと切り替えて放ってきます。進むほど先のスタート地点（次のステージや中間地点）が開いていき、奥の地点から始めるほど難易度も上がります。Shiftの低速移動では当たり判定が中心の点だけになり、弾をかするグレイズでもスコアが入ります。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
 <div class="sb-stage">
 <div class="sb-wrap"><canvas id="sb" width="420" height="620"></canvas></div>
 <div class="sb-hud"><span>SCORE <b id="hudScore">0</b></span><span>HI <b id="hudHi">0</b></span><span>WAVE <b id="hudWave">-</b></span><span>❤ <b id="hudLife">3</b> ／ 💣 <b id="hudBomb">3</b></span><span>GRAZE <b id="hudGraze">0</b></span></div>
-<div class="sb-stages" id="stageRow"><button class="button soft" type="button" data-stage="1">ステージ1 星屑海域</button><button class="button soft" type="button" data-stage="2">ステージ2 双星回廊</button><button class="button soft" type="button" data-stage="3">ステージ3 葬送星域</button></div>
+<div class="sb-stages" id="stageRow"><button class="button soft" type="button" data-point="0">ステージ1 最初から</button><button class="button soft" type="button" data-point="1">ステージ1 中間から</button><button class="button soft" type="button" data-point="2">ステージ2 最初から</button><button class="button soft" type="button" data-point="3">ステージ2 中間から</button><button class="button soft" type="button" data-point="4">ステージ3 最初から</button><button class="button soft" type="button" data-point="5">ステージ3 中間から</button></div>
 <div class="sb-btns"><button class="button primary" id="startBtn" type="button">スタート</button><button class="button soft" id="bombBtn" type="button">ボム（X）</button><button class="button soft" id="pauseBtn" type="button">一時停止</button><button class="button soft" id="focusBtn" type="button">低速（タッチ用）</button></div>
 <p class="legend">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or ボタン（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加</p>
 </div>
@@ -42,6 +42,13 @@ const hudScore=$('hudScore'),hudHi=$('hudHi'),hudWave=$('hudWave'),hudLife=$('hu
 let hi=+(localStorage.getItem('sbBest')||0);
 let mode='title'; // title | play | over | clear
 let stage=1,selStage=1,clearedMax=+(localStorage.getItem('sbClear')||0);
+// start points: index = (stage-1)*2 + (0=start / 1=midpoint). unlockMax = highest unlocked point.
+let selPoint=0,unlockMax=+(localStorage.getItem('sbUnlock')||0),startWave=1;
+let bossSpd=1,bossFiring=false;
+selPoint=unlockMax;
+function midWave(st){return Math.floor(STAGES[st-1].waves/2)+1;}
+function pointStage(pi){return Math.floor(pi/2)+1;}
+function pointWave(pi){return pi%2===1?midWave(pointStage(pi)):1;}
 let score=0,wave=0,lives=3,bombs=3,power=1,graze=0,frame=0,shake=0;
 let player,pshots,ebullets,enemies,items,parts,stars,boss,waveT,spawnQ,bombT,bannerT,bannerText,focusTouch=false;
 let flashT=0,slowmo=0,vigT=0,frameCost=16,lowQ=false;
@@ -109,6 +116,7 @@ function spark(x,y,c,n,sp){if(lowQ)n=Math.ceil(n/2);for(let i=0;i<n;i++){const a
 function ringFx(x,y,c,maxR,lw){parts.push({x,y,vx:0,vy:0,life:20,c,r:4,maxR:maxR||44,lw:lw||2.4,kind:'ring'});}
 function fire(x,y,vx,vy,color,r,opt){
   if(ebullets.length>=1600)return;
+  if(bossFiring){vx*=bossSpd;vy*=bossSpd;}
   const b={x,y,vx,vy,color:color||'#ff5d8f',r:r||5,grazed:false,curve:0,delayT:0,drag:0};
   if(opt){if(opt.curve)b.curve=opt.curve;if(opt.delay)b.delayT=opt.delay;if(opt.drag)b.drag=opt.drag;}
   ebullets.push(b);
@@ -125,7 +133,7 @@ const STAGES=[
  {id:2,name:'双星回廊',waves:7,boss:1},
  {id:3,name:'葬送星域',waves:8,boss:2},
 ];
-function hpScale(){return 1+(stage-1)*0.3;}
+function hpScale(){return 1+(stage-1)*0.3+(startWave>1?0.15:0);}
 function F(t,kind,o){spawnQ.push(Object.assign({t,kind},o||{}));}
 function dartRow(t,n,gap,fl){F(t,'dart',{n:n||5,gap:gap||29,fromLeft:!!fl});}
 function weaverRow(t,n,gap,fl){F(t,'weaver',{n:n||4,gap:gap||46,fromLeft:!!fl});}
@@ -194,7 +202,8 @@ function BPH(){return BOSSES[boss.id].phases;}
 function startBoss(){
   spawnQ=[];
   const id=STAGES[stage-1].boss;
-  const scale=1+(stage-1)*0.3;
+  const scale=1+(stage-1)*0.3+(startWave>1?0.1:0);
+  bossSpd=1+(stage-1)*0.08+(startWave>1?0.04:0);
   boss={id,x:W/2,y:-50,ty:104,t:0,phase:0,pt:0,ang:0,ang2:0,dt:0,tx:W/2,hp:BOSSES[id].phases[0].hp*scale,maxhp:BOSSES[id].phases[0].hp*scale,num:stage};
   banner('WARNING',90);vigT=90;spark(W/2,104,BOSSES[id].tint,30,3);se('spell',0.4);
 }
@@ -331,18 +340,27 @@ function killBoss(withBonus){
   // stage clear!
   mode='clear';stopBgm();
   if(stage>clearedMax){clearedMax=stage;localStorage.setItem('sbClear',clearedMax);}
+  const nu=Math.min(5,stage*2+1); // clearing stage N unlocks stage N+1 start AND midpoint
+  if(nu>unlockMax){unlockMax=nu;localStorage.setItem('sbUnlock',unlockMax);}
   if(typeof updateStageUI==='function')updateStageUI();
   hud();
 }
 // ---------- flow ----------
 function nextWave(){
   wave++;
+  if(wave>=midWave(stage)){
+    const mp=(stage-1)*2+1;
+    if(mp>unlockMax){unlockMax=mp;localStorage.setItem('sbUnlock',unlockMax);if(typeof updateStageUI==='function')updateStageUI();}
+  }
   if(wave>STAGES[stage-1].waves){startBoss();}
   else buildWave(stage,wave);
 }
-function startGame(st){
-  stage=st||selStage||1;selStage=stage;
-  reset(true);mode='play';nextWave();hud();playBgm();
+function startGame(pi){
+  if(pi===undefined)pi=selPoint;
+  selPoint=pi;stage=pointStage(pi);selStage=stage;startWave=pointWave(pi);
+  reset(true);wave=startWave-1;
+  if(startWave>1)power=2; // midpoint start compensation
+  mode='play';nextWave();hud();playBgm();
 }
 function hud(){
   hudScore.textContent=score;hudHi.textContent=hi;
@@ -394,20 +412,21 @@ function step(){
     boss.t++;
     if(boss.y<boss.ty)boss.y+=1.1;
     else bossMove();
-    bossPattern();
+    bossFiring=true;bossPattern();bossFiring=false;
   }
   // player shots
   for(let i=pshots.length-1;i>=0;i--){const s=pshots[i];s.x+=s.vx;s.y+=s.vy;if(s.y<-16||s.x<-8||s.x>W+8){pshots.splice(i,1);}}
   // enemies
   for(let i=enemies.length-1;i>=0;i--){
     const e=enemies[i];e.t++;
-    const D=(stage-1)*10+wave;
+    const D=(stage-1)*10+wave+(startWave>1?2:0);
     if(e.kind==='dart'){e.y+=e.vy;e.x+=Math.sin(e.t*0.05+e.ph)*0.7;if(D>=3&&e.t===90)aimed(e.x,e.y,1.95,'#ffb84d');if(D>=6&&e.t===104)aimed(e.x,e.y,1.95,'#ffb84d');}
     else if(e.kind==='weaver'){e.y+=e.vy;e.x+=Math.sin(e.t*0.03+e.ph)*1.6;if(e.t%110===60){if(D>=5)aimed(e.x,e.y,2.0,'#ff5d8f',5,0.44,3);else aimed(e.x,e.y,2.0,'#ff5d8f');}if(D>=8&&e.t%110===74)aimed(e.x,e.y,2.0,'#ff5d8f',5,0.44,3);}
     else if(e.kind==='carrier'){e.y+=e.vy;if(e.t===120)ring(e.x,e.y,14,1.3,'#6ee7ff',e.t*0.02);if(D>=7&&e.t===210)aimed(e.x,e.y,2.0,'#ffb84d',5,0.5,3);if(e.y>150)e.vy=0.25;}
     else if(e.kind==='orb'){
       e.y+=e.vy;if(e.y>96)e.vy=0.16;e.x+=Math.sin(e.t*0.02+e.ph)*0.5;
-      if(e.t>50&&e.t<240&&e.t%8===0){for(let k=0;k<3;k++){const a=e.ang+k*Math.PI*2/3;fire(e.x,e.y,Math.cos(a)*1.25,Math.sin(a)*1.25,'#7dffb0');}e.ang+=0.34;}
+      const oi=Math.max(5,8-(stage-1));
+      if(e.t>50&&e.t<240&&e.t%oi===0){for(let k=0;k<3;k++){const a=e.ang+k*Math.PI*2/3;fire(e.x,e.y,Math.cos(a)*(1.25+(stage-1)*0.08),Math.sin(a)*(1.25+(stage-1)*0.08),'#7dffb0');}e.ang+=0.34;}
       if(e.t>=300)e.vy=1.4;
     }
     else if(e.kind==='splitter'){
@@ -618,9 +637,10 @@ function draw(){
     ctx.fillStyle='#6ee7ff';ctx.font='700 15px sans-serif';ctx.fillText('― 弾幕編 ―',W/2,244);
     ctx.fillStyle='#dfe8ff';ctx.font='14px sans-serif';
     ctx.fillText('全3ステージ／ステージごとにボス（全5詠唱）',W/2,300);
-    ctx.fillText('Shiftで低速：判定は中心の点だけ',W/2,326);
-    ctx.fillText('弾をかすってグレイズ +300点',W/2,352);
-    ctx.fillText('ボムはXキー。弾を消して得点化',W/2,378);
+    ctx.fillText('進むほど先のスタート地点が開いていく',W/2,326);
+    ctx.fillText('Shiftで低速：判定は中心の点だけ',W/2,352);
+    ctx.fillText('弾をかすってグレイズ +300点',W/2,378);
+    ctx.fillText('ボムはXキー。弾を消して得点化',W/2,404);
     ctx.fillStyle='#ffe066';ctx.font='700 16px sans-serif';ctx.fillText('スタートボタン or Enterで開始',W/2,428);
     ctx.fillStyle='#9fb4ff';ctx.font='13px sans-serif';ctx.fillText('HI-SCORE '+hi,W/2,462);
   }
@@ -640,7 +660,7 @@ function draw(){
     ctx.fillStyle='#7dffb0';ctx.font='700 15px sans-serif';
     if(stage<3)ctx.fillText('スタート or Enterで ステージ'+(stage+1)+'「'+STAGES[stage].name+'」へ',W/2,368);
     else ctx.fillText('全ステージクリア！ おつかれさま',W/2,368);
-    ctx.fillStyle='#9fb4ff';ctx.font='13px sans-serif';ctx.fillText('ステージを選び直すときは下のボタンから',W/2,398);
+    ctx.fillStyle='#9fb4ff';ctx.font='13px sans-serif';ctx.fillText('開いたスタート地点は下のボタンから選べます',W/2,398);
   }
   ctx.restore();
 }
@@ -662,7 +682,7 @@ addEventListener('keydown',e=>{
   if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key))e.preventDefault();
   keys[e.key]=true;keys[e.key.length===1?e.key.toLowerCase():e.key]=true;
   if(e.key==='x'||e.key==='X')useBomb();
-  if(e.key==='Enter'&&mode!=='play'){if(mode==='clear'&&stage<3)startGame(stage+1);else startGame(selStage);}
+  if(e.key==='Enter'&&mode!=='play'){if(mode==='clear'&&stage<3)startGame(stage*2);else startGame(selPoint);}
   if(e.key==='Escape'&&mode==='play')togglePause();
 });
 addEventListener('keyup',e=>{keys[e.key]=false;keys[e.key.length===1?e.key.toLowerCase():e.key]=false;});
@@ -682,18 +702,18 @@ function moveTouch(t){
   player.x=Math.max(14,Math.min(W-14,(t.clientX-r.left)/r.width*W));
   player.y=Math.max(20,Math.min(H-16,(t.clientY-r.top)/r.height*H-46));
 }
-$('startBtn').addEventListener('click',()=>{if(mode==='clear'&&stage<3)startGame(stage+1);else startGame(selStage);});
-// stage select
+$('startBtn').addEventListener('click',()=>{if(mode==='clear'&&stage<3)startGame(stage*2);else startGame(selPoint);});
+// start-point select (stage start / midpoint, unlocked by progress)
 const stageBtns=[...document.querySelectorAll('#stageRow button')];
 function updateStageUI(){
   for(const b of stageBtns){
-    const n=+b.dataset.stage;
-    b.disabled=n>clearedMax+1;
-    b.textContent='ステージ'+n+' '+STAGES[n-1].name+(n<=clearedMax?' ✓':(b.disabled?' 🔒':''));
-    b.classList.toggle('sel',n===selStage);
+    const pi=+b.dataset.point,st=pointStage(pi),mid=pi%2===1;
+    b.disabled=pi>unlockMax;
+    b.textContent='ステージ'+st+' '+(mid?'中間（W'+midWave(st)+'）から':'最初から')+(!mid&&st<=clearedMax?' ✓':(b.disabled?' 🔒':''));
+    b.classList.toggle('sel',pi===selPoint);
   }
 }
-for(const b of stageBtns)b.addEventListener('click',()=>{if(b.disabled)return;selStage=+b.dataset.stage;updateStageUI();});
+for(const b of stageBtns)b.addEventListener('click',()=>{if(b.disabled)return;selPoint=+b.dataset.point;selStage=pointStage(selPoint);updateStageUI();});
 updateStageUI();
 $('bombBtn').addEventListener('click',()=>{useBomb();});
 $('pauseBtn').addEventListener('click',()=>{if(mode==='play')togglePause();});
