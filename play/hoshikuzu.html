@@ -80,10 +80,9 @@ const makeLabel = () => canvasTex(512, 256, (g, w, h) => {
   g.closePath(); g.fill();
 });
 
-// sand surface height (contents-frame local coords)
-const moundY = (x, z) => 80 + 2.0 * Math.sin(x * .045 + 1.7) * Math.cos(z * .05) + 1.4 * Math.sin(x * .11) * Math.sin(z * .09);
-// bottle inner radius by height (mesh-local y)
+// bottle inner radius by height (lathe local y)
 const innerR = y => y < 96 ? 56 : y < 118 ? 56 - (y - 96) * .9 : y < 134 ? 36 - (y - 118) * 1.1 : 17;
+const FILL_Y = 76; // sand fill level in bottle local coords
 
 function init(){
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -117,22 +116,21 @@ function init(){
 
   const backdrop = new THREE.Mesh(new THREE.PlaneGeometry(1700, 1060), new THREE.MeshBasicMaterial({ map: makeBackdrop() }));
   backdrop.position.set(0, 230, -360); scene.add(backdrop);
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.ShadowMaterial({ opacity: .22 }));
-  floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+  const floorShadow = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.ShadowMaterial({ opacity: .22 }));
+  floorShadow.rotation.x = -Math.PI / 2; floorShadow.receiveShadow = true; scene.add(floorShadow);
 
-  // ---- bottle (tilts) ----
+  // ---- bottle ----
   const tilt = new THREE.Group(); tilt.position.y = 10; scene.add(tilt);
   const body = new THREE.Group(); body.position.y = -10; tilt.add(body);
   const profile = [[0,0],[38,0],[55,3],[61,14],[62,40],[62,84],[59,104],[48,120],[30,131],[22,137],[21,142],[21,164],[26,164],[26,174],[20,174],[20,158]]
     .map(p => new THREE.Vector2(p[0], p[1]));
-  const glassMat = new THREE.MeshPhysicalMaterial({
+  const glass = new THREE.Mesh(new THREE.LatheGeometry(profile, 96), new THREE.MeshPhysicalMaterial({
     color: 0xffffff, metalness: 0, roughness: .055,
     transmission: 1, thickness: 13, ior: 1.52, dispersion: 3,
     iridescence: .5, iridescenceIOR: 1.3,
     attenuationColor: new THREE.Color(0xd8f2f0), attenuationDistance: 190,
     clearcoat: .55, clearcoatRoughness: .28, envMapIntensity: 1.25, specularIntensity: 1.1
-  });
-  const glass = new THREE.Mesh(new THREE.LatheGeometry(profile, 96), glassMat);
+  }));
   glass.castShadow = true; body.add(glass);
   const cork = new THREE.Mesh(new THREE.CylinderGeometry(19.5, 21.5, 36, 48),
     new THREE.MeshStandardMaterial({ map: makeCork(), roughness: .88 }));
@@ -142,20 +140,46 @@ function init(){
     new THREE.MeshStandardMaterial({ map: makeLabel(), roughness: .85, side: THREE.DoubleSide }));
   label.position.y = 44; body.add(label);
 
-  // ---- contents (counter-tilts with lag; simulated in this frame) ----
-  const contents = new THREE.Group(); scene.add(contents);
+  // ---- sand column (child of bottle; its top surface stays world-level) ----
   const sandTex = makeSandTex();
-  const discGeo = new THREE.CircleGeometry(50, 48);
-  { const pos = discGeo.attributes.position;
-    for (let i = 0; i < pos.count; i++){ const x = pos.getX(i), y = pos.getY(i); pos.setZ(i, moundY(x, -y) - 80); }
-    discGeo.computeVertexNormals(); }
-  const disc = new THREE.Mesh(discGeo, new THREE.MeshStandardMaterial({ map: sandTex, roughness: .95 }));
-  disc.rotation.x = -Math.PI / 2; disc.position.y = 80; contents.add(disc);
-  const skirt = new THREE.Mesh(new THREE.CylinderGeometry(50, 44, 76, 48, 1, true),
-    new THREE.MeshStandardMaterial({ map: sandTex, roughness: .95, side: THREE.DoubleSide }));
-  skirt.position.y = 42; contents.add(skirt);
+  const SEG = 64;
+  const rings = [ { y: 2, r: 44 }, { y: 26, r: 52 }, { y: 52, r: 54 }, { y: FILL_Y, r: 54 } ];
+  const colPos = [], colUv = [], colIdx = [];
+  rings.forEach((ring, ri) => {
+    for (let s = 0; s <= SEG; s++){
+      const a = s / SEG * Math.PI * 2;
+      colPos.push(Math.cos(a) * ring.r, ring.y, Math.sin(a) * ring.r);
+      colUv.push(s / SEG * 3, ri / (rings.length - 1));
+    }
+  });
+  for (let ri = 0; ri < rings.length - 1; ri++){
+    for (let s = 0; s < SEG; s++){
+      const a = ri * (SEG + 1) + s, b = a + SEG + 1;
+      colIdx.push(a, b, a + 1, b, b + 1, a + 1);
+    }
+  }
+  const colGeo = new THREE.BufferGeometry();
+  colGeo.setAttribute('position', new THREE.Float32BufferAttribute(colPos, 3));
+  colGeo.setAttribute('uv', new THREE.Float32BufferAttribute(colUv, 2));
+  colGeo.setIndex(colIdx); colGeo.computeVertexNormals();
+  const column = new THREE.Mesh(colGeo, new THREE.MeshStandardMaterial({ map: sandTex, roughness: .95 }));
+  body.add(column);
+  // surface fan (center + top ring), positions updated per-frame
+  const surfPos = [0, FILL_Y, 0], surfUv = [.5, .5], surfIdx = [];
+  for (let s = 0; s <= SEG; s++){
+    const a = s / SEG * Math.PI * 2, x = Math.cos(a) * 54, z = Math.sin(a) * 54;
+    surfPos.push(x, FILL_Y, z); surfUv.push(x / 108 + .5, z / 108 + .5);
+    if (s < SEG) surfIdx.push(0, s + 2, s + 1);
+  }
+  const surfGeo = new THREE.BufferGeometry();
+  surfGeo.setAttribute('position', new THREE.Float32BufferAttribute(surfPos, 3));
+  surfGeo.setAttribute('uv', new THREE.Float32BufferAttribute(surfUv, 2));
+  surfGeo.setIndex(surfIdx); surfGeo.computeVertexNormals();
+  const surface = new THREE.Mesh(surfGeo, new THREE.MeshStandardMaterial({ map: sandTex, roughness: .95 }));
+  body.add(surface);
+  const colTopStart = (rings.length - 1) * (SEG + 1); // first vertex of top ring in column geometry
 
-  // particles
+  // ---- particles (grains + stars), simulated in WORLD frame ----
   let seed = 5; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const NG = 380, NS = 24, N = NG + NS;
   const P = [];
@@ -165,28 +189,27 @@ function init(){
     P.push({
       star, r: star ? 5 : 1.3 + rnd() * 1.5,
       x: Math.cos(a) * rr, z: Math.sin(a) * rr * .8, y: 0,
-      vx: 0, vy: 0, vz: 0, rot: rnd() * 6.28, vr: 0, sleep: false
+      vx: 0, vy: 0, vz: 0, rot: rnd() * 6.28
     });
-    P[i].y = moundY(P[i].x, P[i].z) + P[i].r + rnd() * (star ? 26 : 12);
+    P[i].y = FILL_Y + 6 + P[i].r + rnd() * (star ? 26 : 12);
   }
   const grainMesh = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 6, 5),
     new THREE.MeshStandardMaterial({ roughness: .55 }), NG);
-  const palette = ['#f6c9d8', '#fdeecb', '#bfe3f2', '#f9d9b8', '#e7c8ee', '#ffffff', '#ffd76e'].map(h => new THREE.Color(h));
+  const palette = ['#f2a7c3', '#fbd98a', '#8ecfeb', '#f5b183', '#cf9fe8', '#ffffff', '#ffd76e'].map(h => new THREE.Color(h));
   for (let i = 0; i < NG; i++) grainMesh.setColorAt(i, palette[i % palette.length]);
-  grainMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); contents.add(grainMesh);
+  grainMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); scene.add(grainMesh);
   const starShape = new THREE.Shape();
   for (let k = 0; k < 10; k++){ const rr = k % 2 ? 4.2 : 9.5, a = k * Math.PI / 5 - Math.PI / 2; const px = Math.cos(a) * rr, py = Math.sin(a) * rr; k ? starShape.lineTo(px, py) : starShape.moveTo(px, py); }
   starShape.closePath();
-  const starGeo = new THREE.ExtrudeGeometry(starShape, { depth: 3, bevelEnabled: true, bevelSize: 1, bevelThickness: 1 });
-  const starMesh = new THREE.InstancedMesh(starGeo,
+  const starMesh = new THREE.InstancedMesh(
+    new THREE.ExtrudeGeometry(starShape, { depth: 3, bevelEnabled: true, bevelSize: 1, bevelThickness: 1 }),
     new THREE.MeshPhysicalMaterial({ metalness: .9, roughness: .32, envMapIntensity: 1.5 }), NS);
   const starCols = ['#ffc84d', '#ff9ecb', '#9ed8ff'].map(h => new THREE.Color(h));
   for (let i = 0; i < NS; i++) starMesh.setColorAt(i, starCols[i % 3]);
-  starMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); contents.add(starMesh);
+  starMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); scene.add(starMesh);
 
   // interaction
   let angZ = 0, angX = 0, velZ = 0, velX = 0, tgtZ = 0, tgtX = .02;
-  let phi = 0, phiVel = 0;               // contents angle (counter-tilt, laggy)
   let dragging = false, lastX = 0, lastY = 0, lastInteract = 0, interacted = false;
   const el = renderer.domElement;
   el.addEventListener('pointerdown', e => { dragging = true; interacted = true; lastX = e.clientX; lastY = e.clientY; lastInteract = performance.now(); el.setPointerCapture(e.pointerId); el.style.cursor = 'grabbing'; });
@@ -203,8 +226,6 @@ function init(){
     const w = wrap.clientWidth, h = wrap.clientHeight;
     renderer.setSize(w, h);
     camera.aspect = w / h;
-    // framing: keep the whole bottle (incl. tilt swing + shadow) inside the stage.
-    // portrait screens lose horizontal FOV, so pull back as aspect shrinks.
     const dist = camera.aspect >= 1 ? 560 : 560 / Math.pow(camera.aspect, 0.85);
     camera.position.set(0, 118, dist);
     camera.lookAt(0, 96, 0);
@@ -212,18 +233,20 @@ function init(){
   }
   new ResizeObserver(resize).observe(wrap); resize();
 
+  // slosh state: extra tilt of the sand plane (world frame), spring-driven
+  let slX = 0, slZ = 0, slVX = 0, slVZ = 0;
   const dummy = new THREE.Object3D();
-  const qC = new THREE.Quaternion(), qB = new THREE.Quaternion(), qRel = new THREE.Quaternion();
-  const v3 = new THREE.Vector3(), gLocal = new THREE.Vector3();
+  const v = new THREE.Vector3(), nB = new THREE.Vector3(), nW = new THREE.Vector3(), anchorW = new THREE.Vector3();
+  const qBodyInv = new THREE.Quaternion();
   const t0 = performance.now();
-  let first = true;
+  let prevNow = performance.now(), first = true;
 
   renderer.setAnimationLoop(() => {
     const now = performance.now();
     const t = now / 1000, elapsed = (now - t0) / 1000;
-    const dt = Math.min(.033, .016 + 0); // fixed-ish step for stability
+    const dt = Math.min(.033, Math.max(.001, (now - prevNow) / 1000)); prevNow = now;
+    const step = dt * 60; // normalize per-frame coefficients to 60fps units
 
-    // bottle target: auto demo (first seconds / idle), then gentle sway
     if (!interacted && elapsed < 7){
       const k = Math.max(0, 1 - elapsed / 7);
       tgtZ = Math.sin(elapsed * 1.5) * .34 * k + Math.sin(t * .55) * .05;
@@ -231,28 +254,42 @@ function init(){
     } else if (!dragging && now - lastInteract > 1600){
       tgtZ = Math.sin(t * .55) * .07; tgtX = .03 + Math.sin(t * .42) * .02;
     }
-    velZ += (tgtZ - angZ) * .05; velZ *= .90; angZ += velZ;
-    velX += (tgtX - angX) * .05; velX *= .90; angX += velX;
+    const prevVelZ = velZ, prevVelX = velX;
+    velZ += (tgtZ - angZ) * .05 * step; velZ *= Math.pow(.90, step); angZ += velZ * step;
+    velX += (tgtX - angX) * .05 * step; velX *= Math.pow(.90, step); angX += velX * step;
     tilt.rotation.z = angZ; tilt.rotation.x = angX; tilt.rotation.y = angZ * .35;
     scene.environmentRotation.y = Math.sin(t * .25) * .25;
 
-    // contents counter-tilt (spring, slower = lag & overshoot)
-    phiVel += ((-angZ * .85) - phi) * .028; phiVel *= .93; phi += phiVel;
-    contents.rotation.z = phi;
-    contents.rotation.x = -angX * .8;
+    // slosh: plane tilt chases bottle angular velocity (inertia), springs back to level
+    const accZ = (velZ - prevVelZ) / Math.max(dt, .001), accX = (velX - prevVelX) / Math.max(dt, .001);
+    slVZ += (THREE.MathUtils.clamp(accZ * .05, -.25, .25) - slZ * 42 - slVZ * 9) * dt;
+    slVX += (THREE.MathUtils.clamp(accX * .05, -.25, .25) - slX * 42 - slVX * 9) * dt;
+    slZ += slVZ * dt; slX += slVX * dt;
 
-    // gravity expressed in contents frame
-    contents.getWorldQuaternion(qC);
-    gLocal.set(0, -300, 0).applyQuaternion(qC.clone().invert());
-    const shake = Math.min(2.2, Math.abs(velZ) * 26 + Math.abs(phiVel) * 30);
-    tilt.getWorldQuaternion(qB);
-    qRel.copy(qC).invert().multiply(qB);
+    tilt.updateMatrixWorld(true);
+    // sand plane: normal in world = up tilted by slosh; anchor = bottle fill point in world
+    nW.set(slZ, 1, -slX).normalize();
+    anchorW.set(0, FILL_Y, 0); body.localToWorld(anchorW);
+    // same plane in bottle frame, for the column/surface vertices
+    body.getWorldQuaternion(qBodyInv).invert();
+    nB.copy(nW).applyQuaternion(qBodyInv);
+    const dB = nB.x * 0 + nB.y * FILL_Y + nB.z * 0;
+    const colAttr = colGeo.attributes.position, surfAttr = surfGeo.attributes.position;
+    for (let s = 0; s <= SEG; s++){
+      const x = colAttr.getX(colTopStart + s), z = colAttr.getZ(colTopStart + s);
+      const y = THREE.MathUtils.clamp((dB - nB.x * x - nB.z * z) / nB.y, 34, 102);
+      colAttr.setY(colTopStart + s, y);
+      surfAttr.setY(s + 1, y);
+    }
+    surfAttr.setY(0, THREE.MathUtils.clamp(dB / nB.y, 34, 102));
+    colAttr.needsUpdate = true; surfAttr.needsUpdate = true;
+    colGeo.computeVertexNormals(); surfGeo.computeVertexNormals();
 
+    // particles
+    const shake = Math.min(2.2, Math.abs(velZ) * 26 * step + Math.abs(velX) * 20 * step);
     for (let i = 0; i < N; i++){
       const p = P[i];
-      if (p.sleep && shake < .25){ continue; }
-      p.sleep = false;
-      p.vx += gLocal.x * dt; p.vy += gLocal.y * dt; p.vz += gLocal.z * dt;
+      p.vy += -300 * dt;
       if (shake > .3){
         p.vx += (rnd() - .5) * shake * 130 * dt;
         p.vy += rnd() * shake * 90 * dt;
@@ -260,31 +297,26 @@ function init(){
       }
       p.vx *= .992; p.vy *= .995; p.vz *= .992;
       p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
-      // floor = sand surface
-      const fy = moundY(p.x, p.z) + p.r;
+      // floor = sand plane (world)
+      const fy = anchorW.y - (nW.x * (p.x - anchorW.x) + nW.z * (p.z - anchorW.z)) / nW.y + p.r;
       if (p.y < fy){
         p.y = fy;
         if (p.vy < 0) p.vy = -p.vy * (p.star ? .22 : .1);
         p.vx *= .84; p.vz *= .84;
-        // roll downhill on the mound slope
-        p.vx += (moundY(p.x - 2, p.z) - moundY(p.x + 2, p.z)) * 2.4 * dt * 10;
-        p.vz += (moundY(p.x, p.z - 2) - moundY(p.x, p.z + 2)) * 2.4 * dt * 10;
-        if (Math.abs(p.vx) + Math.abs(p.vy) + Math.abs(p.vz) < 5 && shake < .2) p.sleep = true;
       }
-      // bottle wall clamp (via bottle frame)
-      v3.set(p.x, p.y, p.z).applyQuaternion(qRel);
-      const ly = v3.y + 10; // mesh-local y (body offset)
-      const rr2 = Math.hypot(v3.x, v3.z), maxR = innerR(ly) - p.r - 1;
+      // containment in bottle (lathe) frame — exact matrix round trip, every frame, no exceptions
+      v.set(p.x, p.y, p.z); body.worldToLocal(v);
+      const rad = Math.hypot(v.x, v.z), maxR = innerR(v.y) - p.r - 1;
       let clamped = false;
-      if (rr2 > maxR && ly < 150){ const s = maxR / rr2; v3.x *= s; v3.z *= s; clamped = true; }
-      if (ly > 122){ v3.y = 112; clamped = true; }
-      if (ly < 3){ v3.y = -7; clamped = true; }
+      if (rad > maxR){ const s = maxR / Math.max(rad, .001); v.x *= s; v.z *= s; clamped = true; }
+      if (v.y > 128){ v.y = 128; clamped = true; }
+      if (v.y < 3){ v.y = 3; clamped = true; }
       if (clamped){
-        v3.applyQuaternion(qRel.clone().invert());
-        p.x = v3.x; p.y = v3.y; p.z = v3.z;
+        body.localToWorld(v);
+        p.x = v.x; p.y = v.y; p.z = v.z;
         p.vx *= .45; p.vy *= .45; p.vz *= .45;
       }
-      p.rot += (p.vx * .012 + p.vr) * dt * 8;
+      p.rot += p.vx * .1 * dt;
     }
     for (let i = 0; i < NG; i++){
       const p = P[i];
