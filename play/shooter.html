@@ -344,7 +344,7 @@ function killBoss(withBonus){
   items.push({x:W/2-30,y:120,vy:1,kind:'P'});items.push({x:W/2+30,y:120,vy:1,kind:'B'});
   spawnQ=[];
   // stage clear!
-  mode='clear';stopBgm();
+  mode='clear';syncChrome();stopBgm();
   if(stage>clearedMax){clearedMax=stage;localStorage.setItem('sbClear',clearedMax);}
   const nu=Math.min(5,stage*2+1); // clearing stage N unlocks stage N+1 start AND midpoint
   if(nu>unlockMax){unlockMax=nu;localStorage.setItem('sbUnlock',unlockMax);}
@@ -361,12 +361,17 @@ function nextWave(){
   if(wave>STAGES[stage-1].waves){startBoss();}
   else buildWave(stage,wave);
 }
+function syncChrome(){
+  // stage select belongs to the pre-game screens only; it must never crowd the play field
+  const row=$('stageRow');
+  if(row)row.style.display=mode==='play'?'none':'flex';
+}
 function startGame(pi){
   if(pi===undefined)pi=selPoint;
   selPoint=pi;stage=pointStage(pi);selStage=stage;startWave=pointWave(pi);
   reset(true);wave=startWave-1;
   if(startWave>1)power=2; // midpoint start compensation
-  mode='play';nextWave();hud();playBgm();
+  mode='play';syncChrome();nextWave();hud();playBgm();
 }
 function hud(){
   hudScore.textContent=score;hudHi.textContent=hi;
@@ -511,7 +516,7 @@ function die(){
   lives--;shake=10;
   for(const b of ebullets)spark(b.x,b.y,b.color,1,1);
   ebullets=[];
-  if(lives<0){mode='over';stopBgm();if(score>hi){hi=score;localStorage.setItem('sbBest',hi);}hud();return;}
+  if(lives<0){mode='over';syncChrome();stopBgm();if(score>hi){hi=score;localStorage.setItem('sbBest',hi);}hud();return;}
   power=Math.max(1,power-1);bombs=3;player.x=W/2;player.y=H-90;player.invuln=200;
   hud();
 }
@@ -733,6 +738,7 @@ function updateStageUI(){
 }
 for(const b of stageBtns)b.addEventListener('click',()=>{if(b.disabled)return;selPoint=+b.dataset.point;selStage=pointStage(selPoint);updateStageUI();});
 updateStageUI();
+syncChrome();
 $('bombBtn').addEventListener('click',()=>{useBomb();});
 $('pauseBtn').addEventListener('click',()=>{if(mode==='play')togglePause();});
 $('focusBtn').addEventListener('click',()=>{focusTouch=!focusTouch;$('focusBtn').textContent=focusTouch?'低速：ON':'低速（タッチ用）';});
