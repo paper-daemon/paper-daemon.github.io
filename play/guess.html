@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>数あて | Shelfiria</title>
-<meta name="description" content="シェルフィリアの小さな遊び場。1から100の数字を当てるおもちゃ。大きい小さいのヒントと範囲ゲージつき。">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="シェルフィリア"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="Shelfiriaの小さな遊び場。1から100の数字を当てるおもちゃ。大きい小さいのヒントと範囲ゲージつき。">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="Shelfiria"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/site.css?v=20261101-1">
 <style>.guess-stage{max-width:520px;margin:0 auto;text-align:center;background:#fff;border:3px solid var(--ink);border-radius:22px;box-shadow:8px 8px 0 var(--ink);padding:30px 22px 32px;position:relative;overflow:hidden}
 .guess-stage:before{content:"";position:absolute;top:0;left:0;right:0;height:8px;background:linear-gradient(90deg,#2b50c8,#6ee7ff)}
@@ -24,7 +24,7 @@ input[type=number]{font:700 1.4rem var(--mono);width:130px;padding:10px;border:2
 </style>
 </head>
 <body>
-<header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span class="brand-copy"><strong>シェルフィリア</strong><small>SHELFIRIA</small></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
+<header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span class="brand-copy"><strong>Shelfiria</strong></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
 <main class="page">
 <section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — GUESS</p><h1>数あて</h1><p class="page-lead">あませが思い浮かべた数字を当てるおもちゃ。ヒントは「より大きい／より小さい」に加えて、近さで変わる“温度”。難易度は 50／100／500 から選べます。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
@@ -48,7 +48,7 @@ input[type=number]{font:700 1.4rem var(--mono);width:130px;padding:10px;border:2
 <div class="hist" id="hist" aria-label="これまでの予想"></div></div>
 </section>
 </main>
-<footer class="site-footer"><div class="footer-brand"><img src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span><strong>シェルフィリア</strong><br>SHELFIRIA</span></div><nav><a href="/">トップ</a><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
+<footer class="site-footer"><div class="footer-brand"><img src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span><strong>Shelfiria</strong></span></div><nav><a href="/">トップ</a><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
 <script>let AC=null;function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC}
 function tone(f,d,type,v,when){const ac=audio();if(!ac)return;const t=ac.currentTime+(when||0);const o=ac.createOscillator(),g=ac.createGain();o.type=type||"sine";o.frequency.value=f;g.gain.setValueAtTime(v||0.12,t);g.gain.exponentialRampToValueAtTime(0.001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02)}
 let maxN=100,target=1+Math.floor(Math.random()*100),lo=1,hi=100,tries=0,done=false;
