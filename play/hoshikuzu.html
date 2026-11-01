@@ -9,7 +9,7 @@
 <style>
 .hoshi-stage{max-width:460px;margin:0 auto;text-align:center}
 #stage3d{position:relative;width:100%;height:min(54vh,460px);border-radius:20px;overflow:hidden;background:radial-gradient(120% 90% at 50% 30%,#fffdf8 0%,#ffefe3 55%,#f7ddc8 100%);box-shadow:inset 0 0 0 2px rgba(19,24,71,.08)}
-#stage3d canvas{display:block}
+#stage3d canvas{display:block;width:100%;height:100%}
 #gl-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#8a6a45;font-size:.9rem;pointer-events:none}
 .hoshi-note{color:var(--ink2,#555);font-size:.92rem;line-height:1.8}
 </style>
@@ -57,7 +57,7 @@ const makeBackdrop = () => canvasTex(1024, 640, (g, w, h) => {
   blob(520, 330, 240, 'rgba(190,165,255,.40)'); blob(430, 90, 150, 'rgba(160,240,215,.45)');
 });
 const makeSandTex = () => canvasTex(512, 512, (g, w, h) => {
-  const bands = ['#f6c9d8', '#fdeecb', '#bfe3f2', '#f9d9b8', '#e7c8ee', '#cdeeda', '#f6c9d8'];
+  const bands = ['#f2a7c3', '#fbd98a', '#8ecfeb', '#f5b183', '#cf9fe8', '#93dcb4', '#f2a7c3'];
   bands.forEach((col, i) => { g.fillStyle = col; g.fillRect(0, i * h / bands.length, w, h / bands.length + 2); });
   let s = 11; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
   for (let i = 0; i < 2600; i++){ g.fillStyle = `rgba(255,255,255,${.2 + rnd() * .6})`; g.fillRect(rnd() * w, rnd() * h, 1.7, 1.7); }
@@ -81,7 +81,7 @@ const makeLabel = () => canvasTex(512, 256, (g, w, h) => {
 });
 
 // sand surface height (contents-frame local coords)
-const moundY = (x, z) => 60 + 2.0 * Math.sin(x * .045 + 1.7) * Math.cos(z * .05) + 1.4 * Math.sin(x * .11) * Math.sin(z * .09);
+const moundY = (x, z) => 80 + 2.0 * Math.sin(x * .045 + 1.7) * Math.cos(z * .05) + 1.4 * Math.sin(x * .11) * Math.sin(z * .09);
 // bottle inner radius by height (mesh-local y)
 const innerR = y => y < 96 ? 56 : y < 118 ? 56 - (y - 96) * .9 : y < 134 ? 36 - (y - 118) * 1.1 : 17;
 
@@ -138,22 +138,22 @@ function init(){
     new THREE.MeshStandardMaterial({ map: makeCork(), roughness: .88 }));
   cork.position.y = 178; cork.castShadow = true; body.add(cork);
   const label = new THREE.Mesh(
-    new THREE.CylinderGeometry(62.9, 62.9, 36, 48, 1, true, -0.78, 1.56),
+    new THREE.CylinderGeometry(62.9, 62.9, 26, 48, 1, true, -0.78, 1.56),
     new THREE.MeshStandardMaterial({ map: makeLabel(), roughness: .85, side: THREE.DoubleSide }));
-  label.position.y = 50; body.add(label);
+  label.position.y = 44; body.add(label);
 
   // ---- contents (counter-tilts with lag; simulated in this frame) ----
   const contents = new THREE.Group(); scene.add(contents);
   const sandTex = makeSandTex();
   const discGeo = new THREE.CircleGeometry(50, 48);
   { const pos = discGeo.attributes.position;
-    for (let i = 0; i < pos.count; i++){ const x = pos.getX(i), y = pos.getY(i); pos.setZ(i, moundY(x, -y) - 60); }
+    for (let i = 0; i < pos.count; i++){ const x = pos.getX(i), y = pos.getY(i); pos.setZ(i, moundY(x, -y) - 80); }
     discGeo.computeVertexNormals(); }
   const disc = new THREE.Mesh(discGeo, new THREE.MeshStandardMaterial({ map: sandTex, roughness: .95 }));
-  disc.rotation.x = -Math.PI / 2; disc.position.y = 60; contents.add(disc);
-  const skirt = new THREE.Mesh(new THREE.CylinderGeometry(50, 43, 24, 48, 1, true),
-    new THREE.MeshStandardMaterial({ color: 0xe9c39a, roughness: .95, side: THREE.DoubleSide }));
-  skirt.position.y = 47; contents.add(skirt);
+  disc.rotation.x = -Math.PI / 2; disc.position.y = 80; contents.add(disc);
+  const skirt = new THREE.Mesh(new THREE.CylinderGeometry(50, 44, 76, 48, 1, true),
+    new THREE.MeshStandardMaterial({ map: sandTex, roughness: .95, side: THREE.DoubleSide }));
+  skirt.position.y = 42; contents.add(skirt);
 
   // particles
   let seed = 5; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
@@ -201,11 +201,11 @@ function init(){
 
   function resize(){
     const w = wrap.clientWidth, h = wrap.clientHeight;
-    renderer.setSize(w, h, false);
+    renderer.setSize(w, h);
     camera.aspect = w / h;
     // framing: keep the whole bottle (incl. tilt swing + shadow) inside the stage.
     // portrait screens lose horizontal FOV, so pull back as aspect shrinks.
-    const dist = camera.aspect >= 1 ? 600 : 600 / Math.pow(camera.aspect, 0.85);
+    const dist = camera.aspect >= 1 ? 560 : 560 / Math.pow(camera.aspect, 0.85);
     camera.position.set(0, 118, dist);
     camera.lookAt(0, 96, 0);
     camera.updateProjectionMatrix();
