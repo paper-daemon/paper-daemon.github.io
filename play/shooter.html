@@ -19,9 +19,6 @@ canvas#sb{width:100%;height:auto;display:block;touch-action:none}
 .sb-stages .button{min-height:48px;padding:10px 14px}
 .sb-btns .button{min-height:52px;padding:12px 18px;font-size:.95rem}
 #bombBtn{order:-1;flex:1 1 100%;min-height:64px;font-size:1.15rem;font-weight:900;background:var(--red);color:#fff;border-color:var(--ink)}
-#bombPad{position:absolute;right:12px;bottom:12px;width:78px;height:78px;border-radius:50%;border:3px solid rgba(255,255,255,.75);background:rgba(255,75,51,.55);color:#fff;font-size:32px;line-height:1;z-index:5;touch-action:none;cursor:pointer}
-#bombPad:active{background:rgba(255,75,51,.9)}
-#bombPad small{display:block;font-size:10px;font-weight:700;letter-spacing:.08em}
 </style>
 </head>
 <body>
@@ -30,11 +27,11 @@ canvas#sb{width:100%;height:auto;display:block;touch-action:none}
 <section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — STAR BREAK</p><h1>スターブレイク</h1><p class="page-lead">縦スクロールの弾幕シューティング。全3ステージ——ステージごとに編隊ウェーブを抜けた先にボスがいて、ボスごとに名前付きの「詠唱」を5つ、弾幕のパターンごと切り替えて放ってきます。進むほど先のスタート地点（次のステージや中間地点）が開いていき、奥の地点から始めるほど難易度も上がります。Shiftの低速移動では当たり判定が中心の点だけになり、弾をかするグレイズでもスコアが入ります。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
 <div class="sb-stage">
-<div class="sb-wrap"><canvas id="sb" width="420" height="620"></canvas><button id="bombPad" type="button" aria-label="ボム">💣<small>BOMB</small></button></div>
+<div class="sb-wrap"><canvas id="sb" width="420" height="620"></canvas></div>
 <div class="sb-hud"><span>SCORE <b id="hudScore">0</b></span><span>HI <b id="hudHi">0</b></span><span>WAVE <b id="hudWave">-</b></span><span>❤ <b id="hudLife">3</b> ／ 💣 <b id="hudBomb">3</b></span><span>GRAZE <b id="hudGraze">0</b></span></div>
 <div class="sb-stages" id="stageRow"><button class="button soft" type="button" data-point="0">ステージ1 最初から</button><button class="button soft" type="button" data-point="1">ステージ1 中間から</button><button class="button soft" type="button" data-point="2">ステージ2 最初から</button><button class="button soft" type="button" data-point="3">ステージ2 中間から</button><button class="button soft" type="button" data-point="4">ステージ3 最初から</button><button class="button soft" type="button" data-point="5">ステージ3 中間から</button></div>
 <div class="sb-btns"><button class="button primary" id="startBtn" type="button">スタート</button><button class="button soft" id="bombBtn" type="button">ボム（X）</button><button class="button soft" id="pauseBtn" type="button">一時停止</button><button class="button soft" id="focusBtn" type="button">低速（タッチ用）</button></div>
-<p class="legend">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or 画面右下の💣ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加</p>
+<p class="legend">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加</p>
 </div>
 </section>
 </main>
@@ -651,7 +648,7 @@ function draw(){
     ctx.fillText('進むほど先のスタート地点が開いていく',W/2,326);
     ctx.fillText('Shiftで低速：判定は中心の点だけ',W/2,352);
     ctx.fillText('弾をかすってグレイズ +300点',W/2,378);
-    ctx.fillText('ボム：Xキー／💣ボタン／ダブルタップ',W/2,404);
+    ctx.fillText('ボム：Xキー／大ボタン／ダブルタップ',W/2,404);
     ctx.fillStyle='#ffe066';ctx.font='700 16px sans-serif';ctx.fillText('スタートボタン or Enterで開始',W/2,428);
     ctx.fillStyle='#9fb4ff';ctx.font='13px sans-serif';ctx.fillText('HI-SCORE '+hi,W/2,462);
   }
@@ -715,10 +712,6 @@ cv.addEventListener('touchend',e=>{
   }
   tapStart=null;
 });
-// big on-canvas bomb pad (bottom-right thumb zone)
-const bombPad=$('bombPad');
-bombPad.addEventListener('touchstart',e=>{e.preventDefault();e.stopPropagation();useBomb();},{passive:false});
-bombPad.addEventListener('click',e=>{e.preventDefault();useBomb();});
 function moveTouch(t){
   if(mode!=='play')return;
   const r=cv.getBoundingClientRect();
