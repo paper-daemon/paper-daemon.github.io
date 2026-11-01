@@ -187,7 +187,7 @@ function init(){
     const star = i >= NG;
     const a = rnd() * 6.283, rr = Math.sqrt(rnd()) * 42;
     P.push({
-      star, r: star ? 5 : 1.3 + rnd() * 1.5,
+      star, r: star ? 5 : 1.3 + rnd() * 1.5, rx: 0, rz: 0, asleep: 0,
       x: Math.cos(a) * rr, z: Math.sin(a) * rr * .8, y: 0,
       vx: 0, vy: 0, vz: 0, rot: rnd() * 6.28
     });
@@ -197,7 +197,7 @@ function init(){
     new THREE.MeshStandardMaterial({ roughness: .55 }), NG);
   const palette = ['#f2a7c3', '#fbd98a', '#8ecfeb', '#f5b183', '#cf9fe8', '#ffffff', '#ffd76e'].map(h => new THREE.Color(h));
   for (let i = 0; i < NG; i++) grainMesh.setColorAt(i, palette[i % palette.length]);
-  grainMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); scene.add(grainMesh);
+  grainMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); body.add(grainMesh);
   const starShape = new THREE.Shape();
   for (let k = 0; k < 10; k++){ const rr = k % 2 ? 4.2 : 9.5, a = k * Math.PI / 5 - Math.PI / 2; const px = Math.cos(a) * rr, py = Math.sin(a) * rr; k ? starShape.lineTo(px, py) : starShape.moveTo(px, py); }
   starShape.closePath();
@@ -206,7 +206,7 @@ function init(){
     new THREE.MeshPhysicalMaterial({ metalness: .9, roughness: .32, envMapIntensity: 1.5 }), NS);
   const starCols = ['#ffc84d', '#ff9ecb', '#9ed8ff'].map(h => new THREE.Color(h));
   for (let i = 0; i < NS; i++) starMesh.setColorAt(i, starCols[i % 3]);
-  starMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); scene.add(starMesh);
+  starMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); body.add(starMesh);
 
   // interaction
   let angZ = 0, angX = 0, velZ = 0, velX = 0, tgtZ = 0, tgtX = .02;
@@ -233,6 +233,19 @@ function init(){
   }
   new ResizeObserver(resize).observe(wrap); resize();
 
+  // sand surface in BOTTLE frame: world-level plane + a pile toward the low side.
+  // One function shared by the column mesh, the surface fan and every particle.
+  let plNx = 0, plNy = 1, plNz = 0, plD = FILL_Y, pileX = 0, pileZ = 0, pileAmt = 0;
+  const surfY = (x, z) => {
+    let y = (plD - plNx * x - plNz * z) / plNy;
+    if (pileAmt > .1){
+      const dx = x - pileX * 20, dz = z - pileZ * 20;
+      y += pileAmt * Math.exp(-(dx * dx + dz * dz) / 480);
+    }
+    return THREE.MathUtils.clamp(y, 30, 104);
+  };
+  const gB = new THREE.Vector3();
+
   // slosh state: extra tilt of the sand plane (world frame), spring-driven
   let slX = 0, slZ = 0, slVX = 0, slVZ = 0;
   const dummy = new THREE.Object3D();
@@ -247,9 +260,13 @@ function init(){
     const dt = Math.min(.033, Math.max(.001, (now - prevNow) / 1000)); prevNow = now;
     const step = dt * 60; // normalize per-frame coefficients to 60fps units
 
-    if (!interacted && elapsed < 7){
-      const k = Math.max(0, 1 - elapsed / 7);
-      tgtZ = Math.sin(elapsed * 1.5) * .34 * k + Math.sin(t * .55) * .05;
+    if (!interacted && elapsed < 9){
+      if (elapsed < 2) tgtZ = .5 * (elapsed / 2);
+      else if (elapsed < 3) tgtZ = .5;
+      else if (elapsed < 5.2) tgtZ = .5 - (elapsed - 3) / 2.2;
+      else if (elapsed < 6.4) tgtZ = -.5 + (elapsed - 5.2) / 1.2 * .5;
+      else if (elapsed < 7.6) tgtZ = Math.sin(elapsed * 20) * .1;
+      else tgtZ = Math.sin(t * .55) * .05;
       tgtX = .03;
     } else if (!dragging && now - lastInteract > 1600){
       tgtZ = Math.sin(t * .55) * .07; tgtX = .03 + Math.sin(t * .42) * .02;
@@ -274,48 +291,72 @@ function init(){
     body.getWorldQuaternion(qBodyInv).invert();
     nB.copy(nW).applyQuaternion(qBodyInv);
     const dB = nB.x * 0 + nB.y * FILL_Y + nB.z * 0;
+    plNx = nB.x; plNy = nB.y; plNz = nB.z; plD = dB;
+    gB.set(0, -300, 0).applyQuaternion(qBodyInv);
+    { const gh = Math.hypot(gB.x, gB.z);
+      if (gh > 4){ pileX = gB.x / gh; pileZ = gB.z / gh; }
+      pileAmt = THREE.MathUtils.clamp(gh / 300, 0, 1) * 6; }
     const colAttr = colGeo.attributes.position, surfAttr = surfGeo.attributes.position;
     for (let s = 0; s <= SEG; s++){
       const x = colAttr.getX(colTopStart + s), z = colAttr.getZ(colTopStart + s);
-      const y = THREE.MathUtils.clamp((dB - nB.x * x - nB.z * z) / nB.y, 34, 102);
+      const y = surfY(x, z);
       colAttr.setY(colTopStart + s, y);
       surfAttr.setY(s + 1, y);
     }
-    surfAttr.setY(0, THREE.MathUtils.clamp(dB / nB.y, 34, 102));
+    surfAttr.setY(0, surfY(0, 0));
     colAttr.needsUpdate = true; surfAttr.needsUpdate = true;
     colGeo.computeVertexNormals(); surfGeo.computeVertexNormals();
 
-    // particles
+    // particles — simulated in the BOTTLE frame: gravity rotates inside the
+    // bottle as it tilts, so grains slide down the surface slope, stars roll,
+    // and shaking flings them with the bottle's own angular motion.
     const shake = Math.min(2.2, Math.abs(velZ) * 26 * step + Math.abs(velX) * 20 * step);
+    const omZ = velZ * 60, omX = velX * 60;              // angular velocity, rad/s
     for (let i = 0; i < N; i++){
       const p = P[i];
-      p.vy += -300 * dt;
+      const fy = surfY(p.x, p.z) + p.r;
+      const onFloor = p.y <= fy + .6;
+      // tangential gravity along the surface (decides hold vs avalanche)
+      const gdn = gB.x * plNx + gB.y * plNy + gB.z * plNz;
+      const gtx = gB.x - plNx * gdn, gtz = gB.z - plNz * gdn;
+      const gtMag = Math.hypot(gtx, gtz);
+      if (p.asleep > 4 && shake < .35 && gtMag < 170){
+        // resting: keep the containment clamp, skip integration
+        const rad0 = Math.hypot(p.x, p.z), maxR0 = innerR(p.y) - p.r - 1;
+        if (rad0 > maxR0){ const s = maxR0 / rad0; p.x *= s; p.z *= s; }
+        continue;
+      }
+      p.asleep = 0;
+      // gravity (bottle frame) + Euler & centrifugal terms from the bottle's swing
+      let ax = gB.x, ay = gB.y, az = gB.z;
+      const rx = p.x, ry = p.y - 10, rz = p.z;
+      ax += (-accZ * ry) * .55 + (-(omZ * omZ) * rx - omZ * omX * rz) * .5;
+      ay += (accZ * rx - accX * rz) * .55 + (-(omX * omX + omZ * omZ) * ry) * .5;
+      az += (accX * ry) * .55 + (-(omX * omX) * rz - omX * omZ * rx) * .5;
+      p.vx += ax * dt; p.vy += ay * dt; p.vz += az * dt;
       if (shake > .3){
-        p.vx += (rnd() - .5) * shake * 130 * dt;
-        p.vy += rnd() * shake * 90 * dt;
-        p.vz += (rnd() - .5) * shake * 90 * dt;
+        p.vx += (rnd() - .5) * shake * 150 * dt;
+        p.vy += rnd() * shake * 110 * dt;
+        p.vz += (rnd() - .5) * shake * 110 * dt;
       }
       p.vx *= .992; p.vy *= .995; p.vz *= .992;
       p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
-      // floor = sand plane (world)
-      const fy = anchorW.y - (nW.x * (p.x - anchorW.x) + nW.z * (p.z - anchorW.z)) / nW.y + p.r;
       if (p.y < fy){
         p.y = fy;
-        if (p.vy < 0) p.vy = -p.vy * (p.star ? .22 : .1);
-        p.vx *= .84; p.vz *= .84;
+        if (p.vy < 0) p.vy = -p.vy * (p.star ? .22 : .08);
+        if (gtMag > 170){ p.vx += gtx * dt * .85; p.vz += gtz * dt * .85; p.vx *= .93; p.vz *= .93; }
+        else { p.vx *= .68; p.vz *= .68; }
       }
-      // containment in bottle (lathe) frame — exact matrix round trip, every frame, no exceptions
-      v.set(p.x, p.y, p.z); body.worldToLocal(v);
-      const rad = Math.hypot(v.x, v.z), maxR = innerR(v.y) - p.r - 1;
-      let clamped = false;
-      if (rad > maxR){ const s = maxR / Math.max(rad, .001); v.x *= s; v.z *= s; clamped = true; }
-      if (v.y > 128){ v.y = 128; clamped = true; }
-      if (v.y < 3){ v.y = 3; clamped = true; }
-      if (clamped){
-        body.localToWorld(v);
-        p.x = v.x; p.y = v.y; p.z = v.z;
-        p.vx *= .45; p.vy *= .45; p.vz *= .45;
-      }
+      // containment in bottle (lathe) frame — native here; every frame, no exceptions
+      const rad = Math.hypot(p.x, p.z), maxR = innerR(p.y) - p.r - 1;
+      if (rad > maxR){ const s = maxR / Math.max(rad, .001); p.x *= s; p.z *= s; p.vx *= .45; p.vy *= .45; p.vz *= .45; }
+      if (p.y > 128){ p.y = 128; p.vy *= .45; }
+      if (p.y < 3){ p.y = 3; p.vy *= .45; }
+      // rest bookkeeping + rolling
+      const spd = Math.abs(p.vx) + Math.abs(p.vy) + Math.abs(p.vz);
+      if (onFloor && spd < 7 && gtMag < 170) p.asleep++; else if (spd >= 7) p.asleep = 0;
+      p.rx += p.vz * dt * (p.star ? 1.1 : .3);
+      p.rz -= p.vx * dt * (p.star ? 1.1 : .3);
       p.rot += p.vx * .1 * dt;
     }
     for (let i = 0; i < NG; i++){
@@ -330,7 +371,7 @@ function init(){
       const p = P[NG + i];
       dummy.position.set(p.x, p.y, p.z);
       dummy.scale.setScalar(.62);
-      dummy.rotation.set(p.rot * .7, p.rot, p.rot * .4);
+      dummy.rotation.set(p.rx, p.rot, p.rz);
       dummy.updateMatrix();
       starMesh.setMatrixAt(i, dummy.matrix);
     }
