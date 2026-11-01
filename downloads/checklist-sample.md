@@ -38,4 +38,4 @@
 このお試し版は、完全版「実務プロンプト集＋チェックリスト」（プロンプト25本＋業務チェックリスト6本）から、チェックリスト1本を抜き出したものです。
 完全版はココナラで販売しています：https://coconala.com/contents_market/pictures/cmvtply2y01yp950iwdran1oi
 
-Shelfiria（シェルフィリア）／あませ
+Shelfiria／あませ

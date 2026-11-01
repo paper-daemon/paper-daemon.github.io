@@ -29,4 +29,4 @@
 
 機械で一括検査できる完全版「動画・音声の納品前QAキット」はココナラで販売しています：https://coconala.com/services/4477076
 
-Shelfiria（シェルフィリア）／あませ
+Shelfiria／あませ

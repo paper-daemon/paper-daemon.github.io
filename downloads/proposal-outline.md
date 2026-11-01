@@ -22,4 +22,4 @@
 
 スライドの形まで組んである完全版「提案書PowerPointテンプレート」はココナラで販売しています：https://coconala.com/contents_market/pictures/cmvtpz50s021j8p0iojlaghzo
 
-Shelfiria（シェルフィリア）／あませ
+Shelfiria／あませ
