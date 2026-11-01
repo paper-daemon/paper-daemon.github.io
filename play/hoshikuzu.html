@@ -101,8 +101,8 @@ function init(){
   scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
   scene.environmentIntensity = .8;
 
-  const camera = new THREE.PerspectiveCamera(34, 1, 1, 3000);
-  camera.position.set(0, 122, 452); camera.lookAt(0, 92, 0);
+  const camera = new THREE.PerspectiveCamera(34, 1, 1, 4000);
+  camera.position.set(0, 118, 660); camera.lookAt(0, 96, 0);
 
   const key = new THREE.DirectionalLight(0xffffff, 2.4);
   key.position.set(150, 320, 230); key.castShadow = true;
@@ -202,7 +202,13 @@ function init(){
   function resize(){
     const w = wrap.clientWidth, h = wrap.clientHeight;
     renderer.setSize(w, h, false);
-    camera.aspect = w / h; camera.updateProjectionMatrix();
+    camera.aspect = w / h;
+    // framing: keep the whole bottle (incl. tilt swing + shadow) inside the stage.
+    // portrait screens lose horizontal FOV, so pull back as aspect shrinks.
+    const dist = camera.aspect >= 1 ? 600 : 600 / Math.pow(camera.aspect, 0.85);
+    camera.position.set(0, 118, dist);
+    camera.lookAt(0, 96, 0);
+    camera.updateProjectionMatrix();
   }
   new ResizeObserver(resize).observe(wrap); resize();
 
