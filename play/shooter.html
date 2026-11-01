@@ -88,9 +88,9 @@ function loadSheet(name,frames,div,pingpong){
   SHEETS[name]=sh;
 }
 loadSheet('dart',10,4);loadSheet('weaver',10,4);loadSheet('carrier',10,5);
-loadSheet('orb',10,4,true);loadSheet('lancer',1,4);loadSheet('splitter',1,4);
+loadSheet('orb',10,4,true);loadSheet('lancer',10,4);loadSheet('splitter',10,4,true);
 loadSheet('player',8,5,true);
-loadSheet('boss',1,4);loadSheet('boss2',1,4);loadSheet('boss3',1,4);
+loadSheet('boss',12,5);loadSheet('boss2',12,5,true);loadSheet('boss3',12,5);
 function sheetFrame(sh){
   if(sh.frames<=1)return 0;
   const period=sh.pingpong?(sh.frames*2-2):sh.frames;
