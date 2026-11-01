@@ -104,8 +104,11 @@ function drawSheet(name,x,y,s){
   ctx.drawImage(sh.img,sheetFrame(sh)*cell,0,cell,cell,x-s/2,y-s/2,s,s);
   return true;
 }
+// player hit point: only the engine-flame glow of the sprite (measured on the art:
+// brightest cluster sits ~9px below centre at draw size 50). Graze stays wide/centre-based.
+const PHIT={dx:0,dy:8.8,r:3};
 // ---------- audio assets (2 BGM tracks + SE set; format picked by browser support) ----------
-const AU={bgmStage:null,bgmBoss:null,cur:null,se:{}};
+const AU={bgmStage:null,bgmBoss:null,bgmBoss2:null,bgmBoss3:null,cur:null,se:{}};
 const SE_MAP={boomS:'enemy_down',boomL:'player_down',die:'player_down',bomb:'enemy_down',spell:'boss_spell',power:'item',graze:'graze',warning:'warning',shot:'shot',hit:'enemy_hit'};
 function loadAudio(){
   try{
@@ -115,13 +118,21 @@ function loadAudio(){
     const mk=(src,vol)=>{const a=new Audio(src);a.loop=true;a.volume=vol;return a;};
     AU.bgmStage=mk('/play/assets/bgm_stage_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
     AU.bgmBoss=mk('/play/assets/bgm_boss_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
+    AU.bgmBoss2=mk('/play/assets/bgm_boss2_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
+    AU.bgmBoss3=mk('/play/assets/bgm_boss3_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
     for(const k in SE_MAP){const a=new Audio('/play/assets/se-'+SE_MAP[k]+'.'+bext);a.volume=0.5;AU.se[k]=a;}
   }catch(e){/* assets not present yet */}
 }
 loadAudio();
-function playBgm(track){
+function bgmUsable(a){return !!a&&a.networkState!==3;}
+function playBgm(track,bossId){
   try{
-    const want=track==='boss'?AU.bgmBoss:AU.bgmStage;
+    let want;
+    if(track==='boss'){
+      want=AU.bgmBoss;
+      if(bossId===2&&bgmUsable(AU.bgmBoss2))want=AU.bgmBoss2;
+      if(bossId===3&&bgmUsable(AU.bgmBoss3))want=AU.bgmBoss3;
+    }else want=AU.bgmStage;
     if(!want)return;
     if(AU.cur===want){if(want.paused)want.play().catch(()=>{});return;}
     stopBgm();AU.cur=want;
@@ -129,7 +140,7 @@ function playBgm(track){
     else want.addEventListener('canplay',()=>{if(AU.cur===want)want.play().catch(()=>{});},{once:true});
   }catch(e){}
 }
-function stopBgm(){try{if(AU.bgmStage)AU.bgmStage.pause();if(AU.bgmBoss)AU.bgmBoss.pause();AU.cur=null;}catch(e){}}
+function stopBgm(){try{for(const k of ['bgmStage','bgmBoss','bgmBoss2','bgmBoss3'])if(AU[k])AU[k].pause();AU.cur=null;}catch(e){}}
 function se(name,vol){
   try{const a=AU.se[name];if(!a||a.readyState<2)return;const c=a.cloneNode();c.volume=vol||0.5;c.play().catch(()=>{});}catch(e){}
 }
@@ -234,7 +245,7 @@ function startBoss(){
   const scale=1+(stage-1)*0.3+(startWave>1?0.1:0);
   bossSpd=1+(stage-1)*0.08+(startWave>1?0.04:0);
   boss={id,x:W/2,y:-50,ty:104,t:0,phase:0,pt:0,ang:0,ang2:0,dt:0,tx:W/2,hp:BOSSES[id].phases[0].hp*scale,maxhp:BOSSES[id].phases[0].hp*scale,num:stage};
-  banner('WARNING',90);vigT=90;spark(W/2,104,BOSSES[id].tint,30,3);se('warning',0.55);playBgm('boss');
+  banner('WARNING',90);vigT=90;spark(W/2,104,BOSSES[id].tint,30,3);se('warning',0.55);playBgm('boss',id);
 }
 function banner(t,f){bannerText=t;bannerT=f;}
 function bossPhaseStart(){
@@ -512,7 +523,8 @@ function step(){
     if(b.x<-14||b.x>W+14||b.y<-16||b.y>H+14){ebullets.splice(i,1);continue;}
     const dx=b.x-player.x,dy=b.y-player.y,d2=dx*dx+dy*dy;
     if(!b.grazed&&d2<30*30&&d2>=8*8){b.grazed=true;graze++;addScore(300);spark(player.x,player.y-8,'#a0fff0',2,1);if(frame%3===0)se('graze',0.16);}
-    if(player.invuln<=0&&bombT<=0&&d2<(b.r+2.5)*(b.r+2.5)){die();break;}
+    const hx=b.x-(player.x+PHIT.dx),hy=b.y-(player.y+PHIT.dy);
+    if(player.invuln<=0&&bombT<=0&&(hx*hx+hy*hy)<(b.r+PHIT.r)*(b.r+PHIT.r)){die();break;}
   }
   // items
   for(let i=items.length-1;i>=0;i--){
@@ -646,8 +658,8 @@ function draw(){
       ctx.shadowBlur=0;ctx.fillStyle='#2b50c8';ctx.beginPath();ctx.moveTo(0,-9);ctx.lineTo(3,4);ctx.lineTo(-3,4);ctx.closePath();ctx.fill();
       }
       const focus=(keys['Shift']||focusTouch);
-      ctx.fillStyle=focus?'#ff3b30':'rgba(255,80,80,.75)';ctx.beginPath();ctx.arc(0,0,focus?3.4:2.4,0,7);ctx.fill();
-      if(focus){ctx.strokeStyle='rgba(255,255,255,.5)';ctx.beginPath();ctx.arc(0,0,7,0,7);ctx.stroke();}
+      ctx.fillStyle=focus?'#ff3b30':'rgba(255,80,80,.75)';ctx.beginPath();ctx.arc(PHIT.dx,PHIT.dy,focus?3.4:2.4,0,7);ctx.fill();
+      if(focus){ctx.strokeStyle='rgba(255,255,255,.5)';ctx.beginPath();ctx.arc(PHIT.dx,PHIT.dy,7,0,7);ctx.stroke();}
       ctx.restore();
     }
   }
