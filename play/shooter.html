@@ -78,32 +78,58 @@ function makeBlob(r,g,b){
 const nebulaNormal=[makeBlob(52,64,160),makeBlob(96,44,140),makeBlob(30,90,140)];
 const nebulaFinal=[makeBlob(150,40,90),makeBlob(80,30,140),makeBlob(200,60,80)];
 const vigSpr=(()=>{const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');const g=x.createRadialGradient(W/2,H/2,H*0.32,W/2,H/2,H*0.72);g.addColorStop(0,'rgba(255,30,40,0)');g.addColorStop(1,'rgba(255,30,40,.34)');x.fillStyle=g;x.fillRect(0,0,W,H);return c;})();
-// ---------- image assets (generated sprites drop in here; vector fallback until loaded) ----------
-const SPR={};
-function loadSpr(name,src){const i=new Image();i.onload=()=>{SPR[name]=i;};i.src=src;}
-loadSpr('dart','/play/assets/enemy-dart.png');
-loadSpr('weaver','/play/assets/enemy-weaver.png');
-loadSpr('carrier','/play/assets/enemy-carrier.png');
-loadSpr('orb','/play/assets/enemy-orb.png');
-loadSpr('lancer','/play/assets/enemy-lancer.png');
-loadSpr('splitter','/play/assets/enemy-splitter.png');
-loadSpr('boss','/play/assets/boss.png');
-loadSpr('boss2','/play/assets/boss2.png');
-loadSpr('boss3','/play/assets/boss3.png');
-loadSpr('player','/play/assets/player.png');
-// ---------- audio assets (BGM / SE drop in here; silent until files exist) ----------
-const AU={bgm:null,se:{}};
+// ---------- sprite sheets (generated art; vector fallback until loaded) ----------
+const SHEETS={};
+function loadSheet(name,frames,div,pingpong){
+  const img=new Image();
+  const sh={img,frames,div:div||4,pingpong:!!pingpong,ready:false};
+  img.onload=()=>{sh.ready=true;};
+  img.src='/play/assets/'+(name==='player'?'player':(name.startsWith('boss')?name:'enemy-'+name))+'.png';
+  SHEETS[name]=sh;
+}
+loadSheet('dart',10,4);loadSheet('weaver',10,4);loadSheet('carrier',10,5);
+loadSheet('orb',10,4,true);loadSheet('lancer',1,4);loadSheet('splitter',1,4);
+loadSheet('player',8,5,true);
+loadSheet('boss',1,4);loadSheet('boss2',1,4);loadSheet('boss3',1,4);
+function sheetFrame(sh){
+  if(sh.frames<=1)return 0;
+  const period=sh.pingpong?(sh.frames*2-2):sh.frames;
+  let f=Math.floor(frame/sh.div)%period;
+  if(sh.pingpong&&f>=sh.frames)f=period-f;
+  return f;
+}
+function drawSheet(name,x,y,s){
+  const sh=SHEETS[name];if(!sh||!sh.ready)return false;
+  const cell=sh.img.height;
+  ctx.drawImage(sh.img,sheetFrame(sh)*cell,0,cell,cell,x-s/2,y-s/2,s,s);
+  return true;
+}
+// ---------- audio assets (2 BGM tracks + SE set; format picked by browser support) ----------
+const AU={bgmStage:null,bgmBoss:null,cur:null,se:{}};
+const SE_MAP={boomS:'enemy_down',boomL:'player_down',die:'player_down',bomb:'enemy_down',spell:'boss_spell',power:'item',graze:'graze',warning:'warning',shot:'shot',hit:'enemy_hit'};
 function loadAudio(){
   try{
-    const bgm=new Audio('/play/assets/bgm.mp3');bgm.loop=true;bgm.volume=0.42;AU.bgm=bgm;
-    for(const n of ['shot','boomS','boomL','graze','bomb','spell','power','die']){
-      const a=new Audio('/play/assets/se-'+n+'.mp3');a.volume=0.5;AU.se[n]=a;
-    }
+    const probe=new Audio();
+    const oggOk=!!(probe.canPlayType&&probe.canPlayType('audio/ogg; codecs="vorbis"'));
+    const bext=oggOk?'ogg':'mp3';
+    const mk=(src,vol)=>{const a=new Audio(src);a.loop=true;a.volume=vol;return a;};
+    AU.bgmStage=mk('/play/assets/bgm_stage_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
+    AU.bgmBoss=mk('/play/assets/bgm_boss_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
+    for(const k in SE_MAP){const a=new Audio('/play/assets/se-'+SE_MAP[k]+'.'+bext);a.volume=0.5;AU.se[k]=a;}
   }catch(e){/* assets not present yet */}
 }
 loadAudio();
-function playBgm(){try{if(AU.bgm&&AU.bgm.readyState>=2){AU.bgm.currentTime=0;AU.bgm.play().catch(()=>{});}}catch(e){}}
-function stopBgm(){try{if(AU.bgm)AU.bgm.pause();}catch(e){}}
+function playBgm(track){
+  try{
+    const want=track==='boss'?AU.bgmBoss:AU.bgmStage;
+    if(!want)return;
+    if(AU.cur===want){if(want.paused)want.play().catch(()=>{});return;}
+    stopBgm();AU.cur=want;
+    if(want.readyState>=2){want.currentTime=0;want.play().catch(()=>{});}
+    else want.addEventListener('canplay',()=>{if(AU.cur===want)want.play().catch(()=>{});},{once:true});
+  }catch(e){}
+}
+function stopBgm(){try{if(AU.bgmStage)AU.bgmStage.pause();if(AU.bgmBoss)AU.bgmBoss.pause();AU.cur=null;}catch(e){}}
 function se(name,vol){
   try{const a=AU.se[name];if(!a||a.readyState<2)return;const c=a.cloneNode();c.volume=vol||0.5;c.play().catch(()=>{});}catch(e){}
 }
@@ -208,7 +234,7 @@ function startBoss(){
   const scale=1+(stage-1)*0.3+(startWave>1?0.1:0);
   bossSpd=1+(stage-1)*0.08+(startWave>1?0.04:0);
   boss={id,x:W/2,y:-50,ty:104,t:0,phase:0,pt:0,ang:0,ang2:0,dt:0,tx:W/2,hp:BOSSES[id].phases[0].hp*scale,maxhp:BOSSES[id].phases[0].hp*scale,num:stage};
-  banner('WARNING',90);vigT=90;spark(W/2,104,BOSSES[id].tint,30,3);se('spell',0.4);
+  banner('WARNING',90);vigT=90;spark(W/2,104,BOSSES[id].tint,30,3);se('warning',0.55);playBgm('boss');
 }
 function banner(t,f){bannerText=t;bannerT=f;}
 function bossPhaseStart(){
@@ -368,7 +394,7 @@ function startGame(pi){
   selPoint=pi;stage=pointStage(pi);selStage=stage;startWave=pointWave(pi);
   reset(true);wave=startWave-1;
   if(startWave>1)power=2; // midpoint start compensation
-  mode='play';syncChrome();nextWave();hud();playBgm();
+  mode='play';syncChrome();nextWave();hud();playBgm('stage');
 }
 function hud(){
   hudScore.textContent=score;hudHi.textContent=hi;
@@ -551,8 +577,9 @@ function draw(){
   // enemies
   for(const e of enemies){
     ctx.save();ctx.translate(e.x,e.y);
-    const spr=SPR[e.kind];
-    if(spr){const s=e.r*2.7;ctx.drawImage(spr,-s/2,-s/2,s,s);ctx.restore();continue;}
+    if(e.kind==='lancer'&&e.st===2){ctx.save();ctx.strokeStyle='rgba(255,60,60,'+(0.35+0.3*Math.sin(frame*0.6))+')';ctx.lineWidth=1.4;ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(e.tx-e.x,e.ty-e.y);ctx.stroke();ctx.restore();}
+    const ESZ={dart:3.8,weaver:4.2,carrier:4.4,orb:3.8,lancer:3.8,splitter:3.6};
+    if(drawSheet(e.kind,0,0,e.r*(ESZ[e.kind]||3))){ctx.restore();continue;}
     if(e.kind==='dart'){ctx.fillStyle='#ff8fa8';ctx.beginPath();ctx.moveTo(0,12);ctx.lineTo(9,-8);ctx.lineTo(0,-3);ctx.lineTo(-9,-8);ctx.closePath();ctx.fill();}
     else if(e.kind==='weaver'){ctx.fillStyle='#c39bff';ctx.beginPath();ctx.arc(0,0,10,0,7);ctx.fill();ctx.fillStyle='#8f6fe8';ctx.fillRect(-15,-3,7,6);ctx.fillRect(8,-3,7,6);ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(0,0,4,0,7);ctx.fill();}
     else if(e.kind==='orb'){const og=ctx.createRadialGradient(0,0,1,0,0,14);og.addColorStop(0,'#eafff3');og.addColorStop(0.4,'#7dffb0');og.addColorStop(1,'#0d5c33');ctx.fillStyle=og;ctx.beginPath();ctx.arc(0,0,12,0,7);ctx.fill();ctx.save();ctx.rotate(e.t*0.03);ctx.strokeStyle='rgba(125,255,176,.7)';ctx.lineWidth=1.6;for(let k=0;k<3;k++){const a=k/3*Math.PI*2;ctx.beginPath();ctx.moveTo(Math.cos(a)*10,Math.sin(a)*10);ctx.lineTo(Math.cos(a)*17,Math.sin(a)*17);ctx.stroke();}ctx.restore();}
@@ -575,8 +602,9 @@ function draw(){
     ctx.setLineDash([]);
     ctx.strokeStyle=BOSSES[b.id].tint;ctx.globalAlpha=0.7;ctx.lineWidth=2;
     ctx.beginPath();ctx.arc(0,0,40+Math.sin(b.t*0.05)*2,0,7);ctx.stroke();ctx.globalAlpha=1;
-    const bspr=SPR[BOSSES[boss.id].sprite];
-    if(bspr){ctx.drawImage(bspr,-47,-47,94,94);}
+    if(drawSheet(BOSSES[boss.id].sprite,0,0,118)){
+      // sprite drawn
+    }
     else{
       const bg=ctx.createRadialGradient(0,0,2,0,0,30);bg.addColorStop(0,'#fff');bg.addColorStop(0.35,BOSSES[boss.id].tint);bg.addColorStop(1,'#2a0a30');
       ctx.fillStyle=bg;ctx.beginPath();ctx.arc(0,0,28,0,7);ctx.fill();
@@ -609,7 +637,9 @@ function draw(){
     const p=player;
     if(!(p.invuln>0&&Math.floor(frame/3)%2===0)){
       ctx.save();ctx.translate(p.x,p.y);
-      if(SPR.player){ctx.drawImage(SPR.player,-19,-19,38,38);}
+      if(drawSheet('player',0,0,50)){
+        // sprite drawn
+      }
       else{
       ctx.shadowColor='#6ee7ff';ctx.shadowBlur=14;
       ctx.fillStyle='#eaf6ff';ctx.beginPath();ctx.moveTo(0,-15);ctx.lineTo(5,-2);ctx.lineTo(13,9);ctx.lineTo(5,6);ctx.lineTo(2,11);ctx.lineTo(-2,11);ctx.lineTo(-5,6);ctx.lineTo(-13,9);ctx.lineTo(-5,-2);ctx.closePath();ctx.fill();
