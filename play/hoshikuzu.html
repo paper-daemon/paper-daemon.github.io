@@ -8,8 +8,9 @@
 <link rel="stylesheet" href="/site.css?v=20261101-1">
 <style>
 .hoshi-stage{max-width:460px;margin:0 auto;text-align:center}
-#stage{width:100%;height:min(54vh,460px);display:block;touch-action:none;cursor:grab;border-radius:20px;background:radial-gradient(120% 90% at 50% 30%,#fffdf8 0%,#ffefe3 55%,#f7ddc8 100%);box-shadow:inset 0 0 0 2px rgba(19,24,71,.08)}
-#stage:active{cursor:grabbing}
+#stage3d{position:relative;width:100%;height:min(54vh,460px);border-radius:20px;overflow:hidden;background:radial-gradient(120% 90% at 50% 30%,#fffdf8 0%,#ffefe3 55%,#f7ddc8 100%);box-shadow:inset 0 0 0 2px rgba(19,24,71,.08)}
+#stage3d canvas{display:block}
+#gl-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#8a6a45;font-size:.9rem;pointer-events:none}
 .hoshi-note{color:var(--ink2,#555);font-size:.92rem;line-height:1.8}
 </style>
 </head>
@@ -19,245 +20,207 @@
 <header class="page-hero">
 <p class="eyebrow">EXHIBIT 01 / PROTOTYPE</p>
 <h1>星屑の小瓶。</h1>
-<p class="page-lead">星の砂が入った、小さなガラス瓶。まずは「見た目と光」だけの試作です。ドラッグで傾けてみてください。</p>
+<p class="page-lead">星の砂が入った、小さなガラス瓶。見た目だけの試作、第2版（WebGL）です。ドラッグで傾けてみてください。</p>
 </header>
 <section class="section tone-white">
 <div class="hoshi-stage">
-<canvas id="stage" width="560" height="520"></canvas>
-<p class="hoshi-note">試作メモ：いまは瓶と中身が一緒に傾くだけ。揺れる水面と星屑の動き（段2）、砕けて戻る仕掛け（段3）はこれから足します。</p>
+<div id="stage3d"><p id="gl-loading">ガラスを磨いています…</p></div>
+<p class="hoshi-note">試作メモ（段1・作り直し版）：描画を WebGL＋物理マテリアルに替えた試作です。ガラスの屈折と、傾けたときの虹色の反射が「本物らしく」見えるかだけを見てください。中身の動き（段2）と、砕けて戻る仕掛け（段3）は、まだ入っていません。</p>
 </div>
 </section>
 </main>
 <footer class="site-footer"><div class="footer-brand"><img src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span><strong>シェルフィリア</strong><br>SHELFIRIA</span></div><nav><a href="/">トップ</a><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
-<script>
-(() => {
-const cv = document.getElementById('stage');
-const ctx = cv.getContext('2d');
-let W = 0, H = 0, DPR = 1;
-function resize(){
-  DPR = Math.min(2, window.devicePixelRatio || 1);
-  const r = cv.getBoundingClientRect();
-  W = r.width; H = r.height;
-  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
-  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.170.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.170.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const wrap = document.getElementById('stage3d');
+const loading = document.getElementById('gl-loading');
+
+function canvasTex(w, h, draw){
+  const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+  draw(cv.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(cv);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
 }
-new ResizeObserver(resize).observe(cv); resize();
-
-// ---- bottle geometry (local coords, pivot = bottom center) ----
-const BW = 156;          // body width
-const BH = 168;          // body height
-const NW = 56, NH = 36;  // neck
-const LIP = 10;          // lip height
-const CORK = 30;         // cork height
-const TOTAL = BH + NH + LIP + CORK;
-
-function bodyPath(c){
-  const r = 46, x0 = -BW/2, y0 = -BH;
-  c.beginPath();
-  c.moveTo(x0 + r, 0);
-  c.lineTo(BW/2 - r, 0);
-  c.arc(BW/2 - r, -r, r, Math.PI/2, 0, true);
-  // right side up to shoulder
-  c.lineTo(BW/2, y0 + 44);
-  c.bezierCurveTo(BW/2, y0 + 12, NW/2 + 16, y0 + 4, NW/2, y0);
-  c.lineTo(-NW/2, y0);
-  c.bezierCurveTo(-NW/2 - 16, y0 + 4, -BW/2, y0 + 12, -BW/2, y0 + 44);
-  c.lineTo(-BW/2, -r);
-  c.arc(x0 + r, -r, r, Math.PI, Math.PI/2, true);
-  c.closePath();
+function makeBackdrop(){
+  return canvasTex(1024, 640, (g, w, h) => {
+    const base = g.createLinearGradient(0, 0, 0, h);
+    base.addColorStop(0, '#fff9ee'); base.addColorStop(.6, '#ffeedd'); base.addColorStop(1, '#f8dcc2');
+    g.fillStyle = base; g.fillRect(0, 0, w, h);
+    const blob = (x, y, r, col) => { const rg = g.createRadialGradient(x, y, 0, x, y, r); rg.addColorStop(0, col); rg.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = rg; g.fillRect(x - r, y - r, r * 2, r * 2); };
+    blob(240, 150, 210, 'rgba(255,255,255,.95)');
+    blob(700, 130, 260, 'rgba(150,205,255,.50)');
+    blob(850, 420, 300, 'rgba(255,170,205,.48)');
+    blob(180, 470, 260, 'rgba(255,205,110,.52)');
+    blob(520, 330, 240, 'rgba(190,165,255,.40)');
+    blob(430, 90, 150, 'rgba(160,240,215,.45)');
+  });
 }
-function innerPath(c){
-  c.save(); c.translate(0, -4); c.scale(0.93, 0.965); bodyPath(c); c.restore();
+function makeSand(){
+  return canvasTex(512, 512, (g, w, h) => {
+    const bands = ['#e7c8ee', '#f9d9b8', '#bfe3f2', '#fdeecb', '#f6c9d8', '#cdeeda', '#f6c9d8'];
+    let y = 0;
+    bands.forEach((col, i) => {
+      const bh = h / bands.length + 14;
+      g.fillStyle = col; g.beginPath(); g.moveTo(0, y);
+      for (let x = 0; x <= w; x += 16) g.lineTo(x, y + Math.sin(x * .02 + i * 2.1) * 7);
+      g.lineTo(w, y + bh + 16); g.lineTo(0, y + bh + 16); g.closePath(); g.fill();
+      y += h / bands.length;
+    });
+    let s = 11; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+    for (let i = 0; i < 700; i++){ g.fillStyle = `rgba(255,255,255,${.25 + rnd() * .55})`; g.fillRect(rnd() * w, rnd() * h, 1.6, 1.6); }
+    for (let i = 0; i < 46; i++){
+      const x = rnd() * w, yy = rnd() * h, r = 3 + rnd() * 4;
+      g.fillStyle = 'rgba(255,176,32,.95)'; g.beginPath();
+      for (let k = 0; k < 10; k++){ const rr = k % 2 ? r * .45 : r, a = k * Math.PI / 5 - Math.PI / 2; const px = x + Math.cos(a) * rr, py = yy + Math.sin(a) * rr; k ? g.lineTo(px, py) : g.moveTo(px, py); }
+      g.closePath(); g.fill();
+    }
+  });
+}
+function makeCork(){
+  return canvasTex(256, 256, (g, w, h) => {
+    g.fillStyle = '#d9a05e'; g.fillRect(0, 0, w, h);
+    let s = 23; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+    for (let i = 0; i < 260; i++){ g.fillStyle = `rgba(122,72,26,${.12 + rnd() * .3})`; g.beginPath(); g.ellipse(rnd() * w, rnd() * h, 1 + rnd() * 3.4, .8 + rnd() * 1.8, rnd() * 3, 0, 6.29); g.fill(); }
+    for (let i = 0; i < 26; i++){ g.fillStyle = `rgba(255,230,180,${.10 + rnd() * .16})`; g.fillRect(rnd() * w, 0, 1.4, h); }
+  });
+}
+function makeLabel(){
+  return canvasTex(512, 256, (g, w, h) => {
+    g.fillStyle = '#fffbee'; g.fillRect(0, 0, w, h);
+    g.strokeStyle = 'rgba(150,110,60,.65)'; g.lineWidth = 5; g.strokeRect(14, 14, w - 28, h - 28);
+    g.fillStyle = '#7a4b21'; g.font = '700 92px "Hiragino Maru Gothic ProN","Hiragino Sans",sans-serif';
+    g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('ほしくず', w / 2, h / 2 - 18);
+    g.fillStyle = '#e8a13a'; const x = w / 2, y = h - 52, r = 17;
+    g.beginPath();
+    for (let k = 0; k < 10; k++){ const rr = k % 2 ? r * .45 : r, a = k * Math.PI / 5 - Math.PI / 2; const px = x + Math.cos(a) * rr, py = y + Math.sin(a) * rr; k ? g.lineTo(px, py) : g.moveTo(px, py); }
+    g.closePath(); g.fill();
+  });
 }
 
-// ---- seeded specks (star sand glitter + stars) ----
-let seed = 7;
-const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-const specks = [];
-for (let i = 0; i < 130; i++){
-  const a = rnd() * Math.PI * 2, rr = Math.sqrt(rnd());
-  specks.push({ x: Math.cos(a) * rr * (BW/2 - 14), y: -6 - (1 - rr) * 0 - rnd() * 74 - (Math.abs(Math.cos(a)) * 6), s: .8 + rnd() * 1.9, tw: rnd() * 6.28 });
-}
-const stars = [];
-for (let i = 0; i < 16; i++) stars.push({ x: (rnd() * 2 - 1) * (BW/2 - 22), y: -14 - rnd() * 62, s: 3 + rnd() * 4, tw: rnd() * 6.28 });
-const airStars = [];
-for (let i = 0; i < 9; i++) airStars.push({ x: (rnd() * 2 - 1) * 210, y: -60 - rnd() * 220, s: 2.4 + rnd() * 3.6, tw: rnd() * 6.28 });
+function init(){
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.06;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.domElement.style.touchAction = 'none';
+  renderer.domElement.style.cursor = 'grab';
+  wrap.appendChild(renderer.domElement);
 
-function star4(c, x, y, s, rot){
-  c.beginPath();
-  for (let i = 0; i < 8; i++){
-    const r = i % 2 ? s * .34 : s, a = rot + i * Math.PI / 4;
-    const px = x + Math.cos(a) * r, py = y + Math.sin(a) * r;
-    i ? c.lineTo(px, py) : c.moveTo(px, py);
-  }
-  c.closePath();
-}
+  const scene = new THREE.Scene();
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
+  scene.environmentIntensity = .8;
 
-// ---- tilt state ----
-let angle = 0, vel = 0, target = 0, dragging = false, lastX = 0, lastInteract = 0;
-cv.addEventListener('pointerdown', e => { dragging = true; lastX = e.clientX; lastInteract = performance.now(); cv.setPointerCapture(e.pointerId); });
-cv.addEventListener('pointermove', e => {
-  if (!dragging) return;
-  const dx = e.clientX - lastX; lastX = e.clientX; lastInteract = performance.now();
-  target = Math.max(-.62, Math.min(.62, target + dx * .005));
-});
-const endDrag = () => { dragging = false; };
-cv.addEventListener('pointerup', endDrag); cv.addEventListener('pointercancel', endDrag);
+  const camera = new THREE.PerspectiveCamera(34, 1, 1, 3000);
+  camera.position.set(0, 122, 452);
+  camera.lookAt(0, 92, 0);
 
-function draw(t){
-  const time = t / 1000;
-  // idle sway
-  if (!dragging && performance.now() - lastInteract > 1600) target = Math.sin(time * .55) * .07;
-  // spring (weighty, slight overshoot)
-  vel += (target - angle) * .045;
-  vel *= .90;
-  angle += vel;
-  const cx = W / 2, floorY = H * .88;
+  const key = new THREE.DirectionalLight(0xffffff, 2.4);
+  key.position.set(150, 320, 230);
+  key.castShadow = true;
+  key.shadow.mapSize.set(1024, 1024);
+  key.shadow.camera.left = -170; key.shadow.camera.right = 170;
+  key.shadow.camera.top = 240; key.shadow.camera.bottom = -60;
+  key.shadow.camera.near = 60; key.shadow.camera.far = 1000;
+  key.shadow.bias = -0.0004; key.shadow.radius = 6;
+  scene.add(key);
+  const rim = new THREE.DirectionalLight(0xbfd9ff, 1.2); rim.position.set(-240, 150, -180); scene.add(rim);
+  scene.add(new THREE.AmbientLight(0xfff1de, .35));
 
-  ctx.clearRect(0, 0, W, H);
+  const backdrop = new THREE.Mesh(new THREE.PlaneGeometry(1700, 1060), new THREE.MeshBasicMaterial({ map: makeBackdrop() }));
+  backdrop.position.set(0, 230, -360); scene.add(backdrop);
 
-  // floor shadow
-  const shW = BW * .78 * (1 - Math.abs(angle) * .18);
-  const shX = cx + angle * 26;
-  const g0 = ctx.createRadialGradient(shX, floorY + 10, 6, shX, floorY + 10, shW);
-  g0.addColorStop(0, 'rgba(58,38,20,.34)'); g0.addColorStop(1, 'rgba(58,38,20,0)');
-  ctx.fillStyle = g0;
-  ctx.save(); ctx.translate(shX, floorY + 10); ctx.scale(1, .22); ctx.translate(-shX, -(floorY + 10));
-  ctx.beginPath(); ctx.arc(shX, floorY + 10, shW, 0, 6.29); ctx.fill(); ctx.restore();
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.ShadowMaterial({ opacity: .22 }));
+  floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
 
-  ctx.save();
-  ctx.translate(cx, floorY);
-  ctx.rotate(angle);
-  const scale = Math.min(1.15, (H * .78) / TOTAL);
-  ctx.scale(scale, scale);
+  const tilt = new THREE.Group(); tilt.position.y = 52; scene.add(tilt);
+  const body = new THREE.Group(); body.position.y = -52; tilt.add(body);
 
-  // glass back tint
-  bodyPath(ctx);
-  const gb = ctx.createLinearGradient(0, -BH - NH, 0, 0);
-  gb.addColorStop(0, 'rgba(214,240,244,.55)');
-  gb.addColorStop(.55, 'rgba(196,232,238,.34)');
-  gb.addColorStop(1, 'rgba(168,214,226,.48)');
-  ctx.fillStyle = gb; ctx.fill();
+  // glass bottle (lathe)
+  const profile = [[0,0],[38,0],[55,3],[61,14],[62,40],[62,84],[59,104],[48,120],[30,131],[22,137],[21,142],[21,164],[26,164],[26,174],[20,174],[20,158]]
+    .map(p => new THREE.Vector2(p[0], p[1]));
+  const glassMat = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff, metalness: 0, roughness: .055,
+    transmission: 1, thickness: 13, ior: 1.52, dispersion: 3,
+    iridescence: .5, iridescenceIOR: 1.3,
+    attenuationColor: new THREE.Color(0xd8f2f0), attenuationDistance: 190,
+    clearcoat: .55, clearcoatRoughness: .28,
+    envMapIntensity: 1.25, specularIntensity: 1.1
+  });
+  const glass = new THREE.Mesh(new THREE.LatheGeometry(profile, 96), glassMat);
+  glass.castShadow = true; body.add(glass);
 
-  // contents (static in stage 1: rotates with the bottle)
-  ctx.save(); innerPath(ctx); ctx.clip();
-  // star sand: layered bands with a mound top
-  const sandTop = -78;
-  const bands = [ ['#f6c9d8', 0], ['#fdeecb', 14], ['#bfe3f2', 28], ['#f9d9b8', 42], ['#e7c8ee', 56] ];
-  for (const [col, off] of bands){
-    ctx.beginPath();
-    ctx.moveTo(-BW/2, 0); ctx.lineTo(BW/2, 0); ctx.lineTo(BW/2, sandTop + off + 10);
-    ctx.bezierCurveTo(BW/4, sandTop + off - 12, -BW/4, sandTop + off + 16, -BW/2, sandTop + off + 2);
-    ctx.closePath(); ctx.fillStyle = col; ctx.fill();
-  }
-  // glitter specks
-  for (const s of specks){
-    const tw = .55 + .45 * Math.sin(time * 2 + s.tw);
-    ctx.fillStyle = `rgba(255,255,255,${.5 * tw})`;
-    ctx.fillRect(s.x, s.y, s.s, s.s);
-  }
-  // tiny stars in the sand
-  for (const s of stars){
-    const tw = .6 + .4 * Math.sin(time * 1.6 + s.tw);
-    ctx.fillStyle = `rgba(255,214,90,${.9 * tw})`;
-    star4(ctx, s.x, s.y, s.s, s.tw); ctx.fill();
-  }
-  // contents shading (depth)
-  const gs = ctx.createLinearGradient(-BW/2, 0, BW/2, 0);
-  gs.addColorStop(0, 'rgba(90,60,90,.18)'); gs.addColorStop(.28, 'rgba(90,60,90,0)');
-  gs.addColorStop(.75, 'rgba(90,60,90,0)'); gs.addColorStop(1, 'rgba(90,60,90,.22)');
-  ctx.fillStyle = gs; ctx.fillRect(-BW/2, -BH, BW, BH);
-  ctx.restore();
+  // star sand (static in this stage)
+  const sandProfile = [[0,2],[36,2],[53,5],[57,16],[57,44],[52,56],[38,63],[18,67],[0,68]].map(p => new THREE.Vector2(p[0], p[1]));
+  const sand = new THREE.Mesh(new THREE.LatheGeometry(sandProfile, 72),
+    new THREE.MeshStandardMaterial({ map: makeSand(), roughness: .92, metalness: 0 }));
+  body.add(sand);
 
-  // bottle silhouette outline (soft)
-  bodyPath(ctx);
-  ctx.strokeStyle = 'rgba(84,120,138,.5)'; ctx.lineWidth = 1.6; ctx.stroke();
-
-  // rainbow rim: hue follows tilt angle
-  const hue = ((angle * 340) % 360 + 360) % 360;
-  ctx.save(); bodyPath(ctx); ctx.clip();
-  const rim = ctx.createLinearGradient(-BW/2, 0, BW/2, 0);
-  rim.addColorStop(0, `hsla(${hue},95%,68%,.85)`);
-  rim.addColorStop(.16, `hsla(${(hue + 60) % 360},95%,70%,.12)`);
-  rim.addColorStop(.84, `hsla(${(hue + 180) % 360},95%,70%,.10)`);
-  rim.addColorStop(1, `hsla(${(hue + 240) % 360},95%,68%,.8)`);
-  ctx.strokeStyle = rim; ctx.lineWidth = 7;
-  bodyPath(ctx); ctx.stroke();
-  ctx.restore();
-
-  // glass thickness at base
-  ctx.beginPath(); ctx.ellipse(0, -5, BW/2 - 8, 9, 0, 0, 6.29);
-  ctx.fillStyle = 'rgba(120,180,198,.35)'; ctx.fill();
-
-  // specular streaks (move against tilt, flare with velocity)
-  const sweep = Math.max(-1, Math.min(1, vel * 14));
-  const sx = -angle * 46 - sweep * 10;
-  ctx.save(); bodyPath(ctx); ctx.clip();
-  ctx.translate(sx, 0); ctx.rotate(-.10 - angle * .3);
-  const sp = ctx.createLinearGradient(-BW * .42, 0, -BW * .10, 0);
-  const aMain = .55 + Math.min(.3, Math.abs(vel) * 3);
-  sp.addColorStop(0, 'rgba(255,255,255,0)');
-  sp.addColorStop(.5, `rgba(255,255,255,${aMain})`);
-  sp.addColorStop(1, 'rgba(255,255,255,0)');
-  ctx.fillStyle = sp; ctx.fillRect(-BW * .42, -BH - NH, BW * .32, BH + NH);
-  const sp2 = ctx.createLinearGradient(BW * .18, 0, BW * .34, 0);
-  sp2.addColorStop(0, 'rgba(255,255,255,0)');
-  sp2.addColorStop(.5, 'rgba(255,255,255,.30)');
-  sp2.addColorStop(1, 'rgba(255,255,255,0)');
-  ctx.fillStyle = sp2; ctx.fillRect(BW * .18, -BH - NH, BW * .16, BH + NH);
-  ctx.restore();
-
-  // neck + lip
-  ctx.fillStyle = 'rgba(205,238,244,.66)';
-  ctx.fillRect(-NW/2, -BH - NH, NW, NH + 2);
-  ctx.fillStyle = 'rgba(255,255,255,.5)';
-  ctx.fillRect(-NW/2 - 4, -BH - NH - LIP, NW + 8, LIP);
-  ctx.strokeStyle = 'rgba(84,120,138,.45)'; ctx.lineWidth = 1.4;
-  ctx.strokeRect(-NW/2 - 4, -BH - NH - LIP, NW + 8, LIP);
-  // neck highlight follows tilt too
-  ctx.fillStyle = `rgba(255,255,255,${.5 + Math.min(.25, Math.abs(vel) * 2)})`;
-  ctx.fillRect(-NW/2 + 6 + sx * .3, -BH - NH + 3, 7, NH - 6);
+  // loose gold stars floating above the sand
+  const starShape = new THREE.Shape();
+  for (let k = 0; k < 10; k++){ const rr = k % 2 ? 4.2 : 9.5, a = k * Math.PI / 5 - Math.PI / 2; const px = Math.cos(a) * rr, py = Math.sin(a) * rr; k ? starShape.lineTo(px, py) : starShape.moveTo(px, py); }
+  starShape.closePath();
+  const starGeo = new THREE.ExtrudeGeometry(starShape, { depth: 3, bevelEnabled: true, bevelSize: 1, bevelThickness: 1 });
+  const gold = new THREE.MeshPhysicalMaterial({ color: 0xffc84d, metalness: 1, roughness: .3, envMapIntensity: 1.4 });
+  [[-24, 96, 8, .5], [16, 108, -6, 2.2], [2, 88, 20, 1.2], [-6, 118, 10, 2.8], [28, 94, 14, .9]].forEach(p => {
+    const m = new THREE.Mesh(starGeo, gold);
+    m.position.set(p[0], p[1], p[2]); m.rotation.set(p[3], p[3] * 1.7, p[3] * .6);
+    m.castShadow = true; body.add(m);
+  });
 
   // cork
-  const cg = ctx.createLinearGradient(-16, 0, 16, 0);
-  cg.addColorStop(0, '#b57e42'); cg.addColorStop(.45, '#e0aa68'); cg.addColorStop(1, '#a06a34');
-  ctx.fillStyle = cg;
-  ctx.beginPath();
-  ctx.moveTo(-15, -BH - NH - LIP); ctx.lineTo(15, -BH - NH - LIP);
-  ctx.lineTo(18, -BH - NH - LIP - CORK + 6); ctx.quadraticCurveTo(18, -BH - NH - LIP - CORK, 10, -BH - NH - LIP - CORK);
-  ctx.lineTo(-10, -BH - NH - LIP - CORK);
-  ctx.quadraticCurveTo(-18, -BH - NH - LIP - CORK, -18, -BH - NH - LIP - CORK + 6);
-  ctx.closePath(); ctx.fill();
-  ctx.fillStyle = 'rgba(120,72,26,.35)';
-  for (let i = 0; i < 7; i++) ctx.fillRect(-13 + ((i * 53) % 24), -BH - NH - LIP - CORK + 5 + ((i * 37) % 18), 2.2, 2.2);
-  ctx.beginPath(); ctx.ellipse(0, -BH - NH - LIP - CORK, 13, 4.4, 0, 0, 6.29);
-  ctx.fillStyle = '#eec088'; ctx.fill();
+  const cork = new THREE.Mesh(new THREE.CylinderGeometry(19.5, 21.5, 36, 48),
+    new THREE.MeshStandardMaterial({ map: makeCork(), roughness: .88 }));
+  cork.position.y = 178; cork.castShadow = true; body.add(cork);
 
-  // paper label
-  ctx.save();
-  ctx.translate(0, -BH * .46); ctx.rotate(-.03);
-  ctx.fillStyle = 'rgba(255,251,238,.96)';
-  ctx.beginPath(); ctx.roundRect(-37, -21, 74, 42, 6); ctx.fill();
-  ctx.strokeStyle = 'rgba(150,110,60,.5)'; ctx.lineWidth = 1; ctx.stroke();
-  ctx.fillStyle = '#7a4b21';
-  ctx.font = '700 15px "Hiragino Maru Gothic ProN","Hiragino Sans",sans-serif';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText('ほしくず', 0, -3);
-  ctx.fillStyle = '#e8a13a'; star4(ctx, 0, 11, 4.4, .4); ctx.fill();
-  ctx.restore();
+  // paper label wrapped on the body
+  const label = new THREE.Mesh(
+    new THREE.CylinderGeometry(62.9, 62.9, 36, 48, 1, true, -0.78, 1.56),
+    new THREE.MeshStandardMaterial({ map: makeLabel(), roughness: .85, side: THREE.DoubleSide }));
+  label.position.y = 50; body.add(label);
 
-  ctx.restore();
+  // interaction: drag to tilt, spring back feel
+  let angZ = 0, angX = 0, velZ = 0, velX = 0, tgtZ = 0, tgtX = .02;
+  let dragging = false, lastX = 0, lastY = 0, lastInteract = 0;
+  const el = renderer.domElement;
+  el.addEventListener('pointerdown', e => { dragging = true; lastX = e.clientX; lastY = e.clientY; lastInteract = performance.now(); el.setPointerCapture(e.pointerId); el.style.cursor = 'grabbing'; });
+  el.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    tgtZ = THREE.MathUtils.clamp(tgtZ - (e.clientX - lastX) * .005, -.58, .58);
+    tgtX = THREE.MathUtils.clamp(tgtX + (e.clientY - lastY) * .003, -.12, .42);
+    lastX = e.clientX; lastY = e.clientY; lastInteract = performance.now();
+  });
+  const end = () => { dragging = false; el.style.cursor = 'grab'; };
+  el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
 
-  // floating sparkles around the bottle
-  for (const s of airStars){
-    const tw = .25 + .55 * Math.abs(Math.sin(time * .9 + s.tw));
-    ctx.fillStyle = `rgba(255,196,64,${tw})`;
-    star4(ctx, cx + s.x, floorY + s.y, s.s, time * .3 + s.tw); ctx.fill();
+  function resize(){
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
   }
-  requestAnimationFrame(draw);
+  new ResizeObserver(resize).observe(wrap); resize();
+
+  let first = true;
+  renderer.setAnimationLoop(() => {
+    const t = performance.now() / 1000;
+    if (!dragging && performance.now() - lastInteract > 1600){ tgtZ = Math.sin(t * .55) * .07; tgtX = .03 + Math.sin(t * .42) * .02; }
+    velZ += (tgtZ - angZ) * .05; velZ *= .90; angZ += velZ;
+    velX += (tgtX - angX) * .05; velX *= .90; angX += velX;
+    tilt.rotation.z = angZ; tilt.rotation.x = angX; tilt.rotation.y = angZ * .35;
+    scene.environmentRotation.y = Math.sin(t * .25) * .25;
+    renderer.render(scene, camera);
+    if (first){ first = false; loading.style.display = 'none'; }
+  });
 }
-requestAnimationFrame(draw);
-})();
+try { init(); } catch (e) { console.error(e); loading.textContent = 'この端末では3D表示が使えませんでした。'; }
 </script>
 </body>
 </html>
