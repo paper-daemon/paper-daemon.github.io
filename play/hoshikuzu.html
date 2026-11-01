@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>星屑の小瓶（試作）| Shelfiria</title>
+<meta name="description" content="シェルフィリアの展示1号・試作。星の砂が入った小さなガラス瓶を、指で傾けて遊ぶおもちゃ。まずは見た目と光だけ。">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847">
+<link rel="stylesheet" href="/site.css?v=20261101-1">
+<style>
+.hoshi-stage{max-width:460px;margin:0 auto;text-align:center}
+#stage{width:100%;height:min(54vh,460px);display:block;touch-action:none;cursor:grab;border-radius:20px;background:radial-gradient(120% 90% at 50% 30%,#fffdf8 0%,#ffefe3 55%,#f7ddc8 100%);box-shadow:inset 0 0 0 2px rgba(19,24,71,.08)}
+#stage:active{cursor:grabbing}
+.hoshi-note{color:var(--ink2,#555);font-size:.92rem;line-height:1.8}
+</style>
+</head>
+<body>
+<header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span class="brand-copy"><strong>シェルフィリア</strong><small>SHELFIRIA</small></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="social-mini" href="https://x.com/amase__iv" aria-label="X">X</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
+<main class="page">
+<header class="page-hero">
+<p class="eyebrow">EXHIBIT 01 / PROTOTYPE</p>
+<h1>星屑の小瓶。</h1>
+<p class="page-lead">星の砂が入った、小さなガラス瓶。まずは「見た目と光」だけの試作です。ドラッグで傾けてみてください。</p>
+</header>
+<section class="section tone-white">
+<div class="hoshi-stage">
+<canvas id="stage" width="560" height="520"></canvas>
+<p class="hoshi-note">試作メモ：いまは瓶と中身が一緒に傾くだけ。揺れる水面と星屑の動き（段2）、砕けて戻る仕掛け（段3）はこれから足します。</p>
+</div>
+</section>
+</main>
+<footer class="site-footer"><div class="footer-brand"><img src="https://assets.st-note.com/production/uploads/images/330115961/profile_af83ab87ce408fb4fa41f8190406f1bf.png?width=400" alt=""><span><strong>シェルフィリア</strong><br>SHELFIRIA</span></div><nav><a href="/">トップ</a><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
+<script>
+(() => {
+const cv = document.getElementById('stage');
+const ctx = cv.getContext('2d');
+let W = 0, H = 0, DPR = 1;
+function resize(){
+  DPR = Math.min(2, window.devicePixelRatio || 1);
+  const r = cv.getBoundingClientRect();
+  W = r.width; H = r.height;
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+new ResizeObserver(resize).observe(cv); resize();
+
+// ---- bottle geometry (local coords, pivot = bottom center) ----
+const BW = 156;          // body width
+const BH = 168;          // body height
+const NW = 56, NH = 36;  // neck
+const LIP = 10;          // lip height
+const CORK = 30;         // cork height
+const TOTAL = BH + NH + LIP + CORK;
+
+function bodyPath(c){
+  const r = 46, x0 = -BW/2, y0 = -BH;
+  c.beginPath();
+  c.moveTo(x0 + r, 0);
+  c.lineTo(BW/2 - r, 0);
+  c.arc(BW/2 - r, -r, r, Math.PI/2, 0, true);
+  // right side up to shoulder
+  c.lineTo(BW/2, y0 + 44);
+  c.bezierCurveTo(BW/2, y0 + 12, NW/2 + 16, y0 + 4, NW/2, y0);
+  c.lineTo(-NW/2, y0);
+  c.bezierCurveTo(-NW/2 - 16, y0 + 4, -BW/2, y0 + 12, -BW/2, y0 + 44);
+  c.lineTo(-BW/2, -r);
+  c.arc(x0 + r, -r, r, Math.PI, Math.PI/2, true);
+  c.closePath();
+}
+function innerPath(c){
+  c.save(); c.translate(0, -4); c.scale(0.93, 0.965); bodyPath(c); c.restore();
+}
+
+// ---- seeded specks (star sand glitter + stars) ----
+let seed = 7;
+const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const specks = [];
+for (let i = 0; i < 130; i++){
+  const a = rnd() * Math.PI * 2, rr = Math.sqrt(rnd());
+  specks.push({ x: Math.cos(a) * rr * (BW/2 - 14), y: -6 - (1 - rr) * 0 - rnd() * 74 - (Math.abs(Math.cos(a)) * 6), s: .8 + rnd() * 1.9, tw: rnd() * 6.28 });
+}
+const stars = [];
+for (let i = 0; i < 16; i++) stars.push({ x: (rnd() * 2 - 1) * (BW/2 - 22), y: -14 - rnd() * 62, s: 3 + rnd() * 4, tw: rnd() * 6.28 });
+const airStars = [];
+for (let i = 0; i < 9; i++) airStars.push({ x: (rnd() * 2 - 1) * 210, y: -60 - rnd() * 220, s: 2.4 + rnd() * 3.6, tw: rnd() * 6.28 });
+
+function star4(c, x, y, s, rot){
+  c.beginPath();
+  for (let i = 0; i < 8; i++){
+    const r = i % 2 ? s * .34 : s, a = rot + i * Math.PI / 4;
+    const px = x + Math.cos(a) * r, py = y + Math.sin(a) * r;
+    i ? c.lineTo(px, py) : c.moveTo(px, py);
+  }
+  c.closePath();
+}
+
+// ---- tilt state ----
+let angle = 0, vel = 0, target = 0, dragging = false, lastX = 0, lastInteract = 0;
+cv.addEventListener('pointerdown', e => { dragging = true; lastX = e.clientX; lastInteract = performance.now(); cv.setPointerCapture(e.pointerId); });
+cv.addEventListener('pointermove', e => {
+  if (!dragging) return;
+  const dx = e.clientX - lastX; lastX = e.clientX; lastInteract = performance.now();
+  target = Math.max(-.62, Math.min(.62, target + dx * .005));
+});
+const endDrag = () => { dragging = false; };
+cv.addEventListener('pointerup', endDrag); cv.addEventListener('pointercancel', endDrag);
+
+function draw(t){
+  const time = t / 1000;
+  // idle sway
+  if (!dragging && performance.now() - lastInteract > 1600) target = Math.sin(time * .55) * .07;
+  // spring (weighty, slight overshoot)
+  vel += (target - angle) * .045;
+  vel *= .90;
+  angle += vel;
+  const cx = W / 2, floorY = H * .88;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // floor shadow
+  const shW = BW * .78 * (1 - Math.abs(angle) * .18);
+  const shX = cx + angle * 26;
+  const g0 = ctx.createRadialGradient(shX, floorY + 10, 6, shX, floorY + 10, shW);
+  g0.addColorStop(0, 'rgba(58,38,20,.34)'); g0.addColorStop(1, 'rgba(58,38,20,0)');
+  ctx.fillStyle = g0;
+  ctx.save(); ctx.translate(shX, floorY + 10); ctx.scale(1, .22); ctx.translate(-shX, -(floorY + 10));
+  ctx.beginPath(); ctx.arc(shX, floorY + 10, shW, 0, 6.29); ctx.fill(); ctx.restore();
+
+  ctx.save();
+  ctx.translate(cx, floorY);
+  ctx.rotate(angle);
+  const scale = Math.min(1.15, (H * .78) / TOTAL);
+  ctx.scale(scale, scale);
+
+  // glass back tint
+  bodyPath(ctx);
+  const gb = ctx.createLinearGradient(0, -BH - NH, 0, 0);
+  gb.addColorStop(0, 'rgba(214,240,244,.55)');
+  gb.addColorStop(.55, 'rgba(196,232,238,.34)');
+  gb.addColorStop(1, 'rgba(168,214,226,.48)');
+  ctx.fillStyle = gb; ctx.fill();
+
+  // contents (static in stage 1: rotates with the bottle)
+  ctx.save(); innerPath(ctx); ctx.clip();
+  // star sand: layered bands with a mound top
+  const sandTop = -78;
+  const bands = [ ['#f6c9d8', 0], ['#fdeecb', 14], ['#bfe3f2', 28], ['#f9d9b8', 42], ['#e7c8ee', 56] ];
+  for (const [col, off] of bands){
+    ctx.beginPath();
+    ctx.moveTo(-BW/2, 0); ctx.lineTo(BW/2, 0); ctx.lineTo(BW/2, sandTop + off + 10);
+    ctx.bezierCurveTo(BW/4, sandTop + off - 12, -BW/4, sandTop + off + 16, -BW/2, sandTop + off + 2);
+    ctx.closePath(); ctx.fillStyle = col; ctx.fill();
+  }
+  // glitter specks
+  for (const s of specks){
+    const tw = .55 + .45 * Math.sin(time * 2 + s.tw);
+    ctx.fillStyle = `rgba(255,255,255,${.5 * tw})`;
+    ctx.fillRect(s.x, s.y, s.s, s.s);
+  }
+  // tiny stars in the sand
+  for (const s of stars){
+    const tw = .6 + .4 * Math.sin(time * 1.6 + s.tw);
+    ctx.fillStyle = `rgba(255,214,90,${.9 * tw})`;
+    star4(ctx, s.x, s.y, s.s, s.tw); ctx.fill();
+  }
+  // contents shading (depth)
+  const gs = ctx.createLinearGradient(-BW/2, 0, BW/2, 0);
+  gs.addColorStop(0, 'rgba(90,60,90,.18)'); gs.addColorStop(.28, 'rgba(90,60,90,0)');
+  gs.addColorStop(.75, 'rgba(90,60,90,0)'); gs.addColorStop(1, 'rgba(90,60,90,.22)');
+  ctx.fillStyle = gs; ctx.fillRect(-BW/2, -BH, BW, BH);
+  ctx.restore();
+
+  // bottle silhouette outline (soft)
+  bodyPath(ctx);
+  ctx.strokeStyle = 'rgba(84,120,138,.5)'; ctx.lineWidth = 1.6; ctx.stroke();
+
+  // rainbow rim: hue follows tilt angle
+  const hue = ((angle * 340) % 360 + 360) % 360;
+  ctx.save(); bodyPath(ctx); ctx.clip();
+  const rim = ctx.createLinearGradient(-BW/2, 0, BW/2, 0);
+  rim.addColorStop(0, `hsla(${hue},95%,68%,.85)`);
+  rim.addColorStop(.16, `hsla(${(hue + 60) % 360},95%,70%,.12)`);
+  rim.addColorStop(.84, `hsla(${(hue + 180) % 360},95%,70%,.10)`);
+  rim.addColorStop(1, `hsla(${(hue + 240) % 360},95%,68%,.8)`);
+  ctx.strokeStyle = rim; ctx.lineWidth = 7;
+  bodyPath(ctx); ctx.stroke();
+  ctx.restore();
+
+  // glass thickness at base
+  ctx.beginPath(); ctx.ellipse(0, -5, BW/2 - 8, 9, 0, 0, 6.29);
+  ctx.fillStyle = 'rgba(120,180,198,.35)'; ctx.fill();
+
+  // specular streaks (move against tilt, flare with velocity)
+  const sweep = Math.max(-1, Math.min(1, vel * 14));
+  const sx = -angle * 46 - sweep * 10;
+  ctx.save(); bodyPath(ctx); ctx.clip();
+  ctx.translate(sx, 0); ctx.rotate(-.10 - angle * .3);
+  const sp = ctx.createLinearGradient(-BW * .42, 0, -BW * .10, 0);
+  const aMain = .55 + Math.min(.3, Math.abs(vel) * 3);
+  sp.addColorStop(0, 'rgba(255,255,255,0)');
+  sp.addColorStop(.5, `rgba(255,255,255,${aMain})`);
+  sp.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = sp; ctx.fillRect(-BW * .42, -BH - NH, BW * .32, BH + NH);
+  const sp2 = ctx.createLinearGradient(BW * .18, 0, BW * .34, 0);
+  sp2.addColorStop(0, 'rgba(255,255,255,0)');
+  sp2.addColorStop(.5, 'rgba(255,255,255,.30)');
+  sp2.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = sp2; ctx.fillRect(BW * .18, -BH - NH, BW * .16, BH + NH);
+  ctx.restore();
+
+  // neck + lip
+  ctx.fillStyle = 'rgba(205,238,244,.66)';
+  ctx.fillRect(-NW/2, -BH - NH, NW, NH + 2);
+  ctx.fillStyle = 'rgba(255,255,255,.5)';
+  ctx.fillRect(-NW/2 - 4, -BH - NH - LIP, NW + 8, LIP);
+  ctx.strokeStyle = 'rgba(84,120,138,.45)'; ctx.lineWidth = 1.4;
+  ctx.strokeRect(-NW/2 - 4, -BH - NH - LIP, NW + 8, LIP);
+  // neck highlight follows tilt too
+  ctx.fillStyle = `rgba(255,255,255,${.5 + Math.min(.25, Math.abs(vel) * 2)})`;
+  ctx.fillRect(-NW/2 + 6 + sx * .3, -BH - NH + 3, 7, NH - 6);
+
+  // cork
+  const cg = ctx.createLinearGradient(-16, 0, 16, 0);
+  cg.addColorStop(0, '#b57e42'); cg.addColorStop(.45, '#e0aa68'); cg.addColorStop(1, '#a06a34');
+  ctx.fillStyle = cg;
+  ctx.beginPath();
+  ctx.moveTo(-15, -BH - NH - LIP); ctx.lineTo(15, -BH - NH - LIP);
+  ctx.lineTo(18, -BH - NH - LIP - CORK + 6); ctx.quadraticCurveTo(18, -BH - NH - LIP - CORK, 10, -BH - NH - LIP - CORK);
+  ctx.lineTo(-10, -BH - NH - LIP - CORK);
+  ctx.quadraticCurveTo(-18, -BH - NH - LIP - CORK, -18, -BH - NH - LIP - CORK + 6);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = 'rgba(120,72,26,.35)';
+  for (let i = 0; i < 7; i++) ctx.fillRect(-13 + ((i * 53) % 24), -BH - NH - LIP - CORK + 5 + ((i * 37) % 18), 2.2, 2.2);
+  ctx.beginPath(); ctx.ellipse(0, -BH - NH - LIP - CORK, 13, 4.4, 0, 0, 6.29);
+  ctx.fillStyle = '#eec088'; ctx.fill();
+
+  // paper label
+  ctx.save();
+  ctx.translate(0, -BH * .46); ctx.rotate(-.03);
+  ctx.fillStyle = 'rgba(255,251,238,.96)';
+  ctx.beginPath(); ctx.roundRect(-37, -21, 74, 42, 6); ctx.fill();
+  ctx.strokeStyle = 'rgba(150,110,60,.5)'; ctx.lineWidth = 1; ctx.stroke();
+  ctx.fillStyle = '#7a4b21';
+  ctx.font = '700 15px "Hiragino Maru Gothic ProN","Hiragino Sans",sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('ほしくず', 0, -3);
+  ctx.fillStyle = '#e8a13a'; star4(ctx, 0, 11, 4.4, .4); ctx.fill();
+  ctx.restore();
+
+  ctx.restore();
+
+  // floating sparkles around the bottle
+  for (const s of airStars){
+    const tw = .25 + .55 * Math.abs(Math.sin(time * .9 + s.tw));
+    ctx.fillStyle = `rgba(255,196,64,${tw})`;
+    star4(ctx, cx + s.x, floorY + s.y, s.s, time * .3 + s.tw); ctx.fill();
+  }
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>
