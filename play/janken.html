@@ -24,7 +24,7 @@
 .fighter{width:42%;max-width:190px;text-align:center}
 .fighter .who{font:700 .68rem var(--mono);color:var(--muted);letter-spacing:.14em}
 .handview{position:relative;height:168px;display:flex;align-items:center;justify-content:center}
-.handview img{max-height:168px;max-width:100%;filter:drop-shadow(0 8px 12px rgba(20,20,60,.25))}
+.handview img{height:148px;width:auto;max-width:44vw;object-fit:contain;filter:drop-shadow(0 8px 12px rgba(20,20,60,.25))}
 .handview .emo{font-size:5.2rem;line-height:1}
 #eveView img,#eveView .emo{transform:rotate(180deg)}
 .handview.shaking{animation:jkshake .26s ease-in-out infinite}
@@ -146,6 +146,7 @@ paintScore();
 const THROW={0:[["a",2700],["b",5250]],1:[["a",4500],["b",4300]],2:[["b",4400]]};
 const stageVid=document.getElementById("stageVid");
 function toIdle(){if(!stageVid)return;stageVid.loop=true;if(!stageVid.src.includes("stage-idle3"))stageVid.src="/play/assets/stage-idle3.mp4";const p=stageVid.play();if(p)p.catch(()=>{});}
+setHand(youView,youImg,youEmo,0,YOUIMG);setHand(eveView,eveImg,eveEmo,0);
 const jkStart=document.getElementById("jkStart");
 let chant=null;
 function setHandsEnabled(on){document.querySelectorAll(".handbtn").forEach(x=>x.disabled=!on);}
