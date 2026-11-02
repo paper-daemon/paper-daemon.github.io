@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="ja">
+<head><base href="/preview/retro-holo-v4/index.html">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shelfiria| 触って遊べる、小さな遊び場。</title>
+<meta name="description" content="Shelfiriaは、ブラウザでそのまま遊べるおもちゃと無料ツール、読みもの（note）を集めた小さな遊び場。案内人はあませ。登録なし・無料で遊べます。">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#0b1024">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Shelfiria"><meta property="og:title" content="Shelfiria | 触って遊べる、小さな遊び場。"><meta property="og:description" content="おもちゃ8本、無料ツール、読みもの。登録なしでそのまま遊べる小さな遊び場。"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9454193786755558" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/site.css?v=20261101-1">
+<style>
+.hero-v2{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);gap:44px;align-items:center;padding:72px 0 64px}
+.hero-v2 h1{margin:0;font:900 clamp(2.6rem,7.2vw,4.9rem)/1.08 var(--disp);letter-spacing:-.02em;word-break:normal;overflow-wrap:anywhere}
+.hero-v2 .lead{font-size:clamp(1rem,2.2vw,1.15rem);line-height:1.9;color:var(--ink-dim);margin:22px 0 28px}
+.core-panel{background:radial-gradient(17rem 15rem at 50% 44%,rgba(96,118,255,.42),transparent 65%),radial-gradient(30rem 16rem at 80% -10%,rgba(255,75,51,.30),transparent 60%),var(--indigo-deep);border:3px solid var(--ink);border-radius:20px;box-shadow:var(--shadow-hard);overflow:hidden;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.core-panel canvas{display:block;width:100%;height:auto;touch-action:none;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+.core-cap{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;color:#fff;font:700 .78rem var(--sans)}
+.core-cap a{color:#ffb59d;font-weight:800}
+.hero-v2 .button.primary,.cta-band .button.primary{box-shadow:4px 4px 0 var(--ink)}
+.nums{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:34px 0}
+.num-cell{background:#fff;border:2px solid var(--ink);border-radius:20px;padding:18px 10px;text-align:center;box-shadow:5px 5px 0 var(--line-soft)}
+.num-cell b{display:block;font:800 clamp(1.9rem,5vw,2.9rem)/1 var(--disp)}
+.num-cell span{font-size:.78rem;color:var(--muted);font-weight:700}
+.note-row{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:16px 6px;border-bottom:1.5px dashed var(--line-soft);color:var(--ink)}
+.note-row-main strong{display:block;font-size:1.02rem}
+.note-row-main span{color:var(--muted);font-size:.85rem}
+.note-row-go{font:800 .8rem var(--disp);color:var(--red-dark);white-space:nowrap}
+.faq-item{background:#fff;border:2px solid var(--ink);border-radius:20px;padding:20px 22px;box-shadow:5px 5px 0 var(--line-soft)}
+.faq-item h3{margin:0 0 6px;font-size:1.05rem}
+.faq-item p{margin:0;color:var(--ink-dim);line-height:1.85}
+@media(max-width:860px){.hero-v2{grid-template-columns:1fr;padding:48px 0 40px}.nums{grid-template-columns:repeat(2,1fr)}}
+/* --- compact 2026-11-01: ジャンルごとに小さく締める --- */
+.hero-v2{padding:40px 0 34px;gap:28px}
+.hero-v2 h1{font-size:clamp(2rem,5.4vw,3.3rem)}
+.hero-v2 .lead{margin:14px 0 18px;line-height:1.75}
+.nums{padding:20px 0;gap:10px}
+.num-cell{padding:10px 6px;border-radius:14px;box-shadow:4px 4px 0 var(--line-soft)}
+.num-cell b{font-size:clamp(1.4rem,3.6vw,2rem)}
+.section{padding:42px 0}
+.section-head{margin-bottom:22px;gap:22px}
+.section-head h2{font-size:clamp(1.55rem,3.4vw,2.3rem)}
+.section-head p{margin-top:8px}
+.feature-grid{gap:12px}
+.feature-card{min-height:0;padding:16px;border-radius:16px}
+.feature-card h3{margin:10px 0 6px;font-size:1.15rem}
+.feature-card b{padding-top:12px}
+.link-row{min-height:0;padding:12px 8px;gap:16px}
+.note-row{padding:10px 4px}
+.note-row-main strong{font-size:.95rem}
+.cta-band{padding:26px 22px;margin:0 0 34px}
+.cta-band h2{font-size:clamp(1.3rem,3vw,1.85rem)}
+.core-cap{padding:8px 14px}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Shelfiria","url":"https://paper-daemon.github.io/","inLanguage":"ja"}</script>
+<script data-goatcounter="https://shelfiria.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script><script src="/analytics-out.js" defer></script>
+<meta name="google-site-verification" content="WXbPXNs5qdlz3yXM6fm96WJEKEorR4piia3lRLUaYKc">
+<meta name="robots" content="noindex,nofollow"><link rel="stylesheet" href="/preview/retro-holo-v4.css?v=4.0.0"></head>
+<body class="holo-home">
+<header class="site-head"><a class="brand" href="/preview/retro-holo-v4/index.html"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>Shelfiria</strong></span></a><nav aria-label="main"><a href="/preview/retro-holo-v4/demo.html">あそぶ</a><a href="/preview/retro-holo-v4/showcase.html">みる</a><a href="/preview/retro-holo-v4/notes/">よむ</a><a href="/preview/retro-holo-v4/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/preview/retro-holo-v4/demo.html">あそぶ →</a></div></header>
+<main>
+<div class="page"><section class="hero-v2">
+<div>
+<p class="eyebrow">SHELFIRIA — A SMALL PLAYGROUND, RUN BY AMASE</p>
+<h1>触って遊べる、<br>小さな遊び場。</h1>
+<p class="lead">おもちゃと無料ツールを棚に並べた、ブラウザの中の遊び場です。登録はいりません。気になったものから、そのまま触ってください。案内人は「あませ」です。</p>
+<a class="button primary" href="/preview/retro-holo-v4/demo.html" style="font-size:1.05rem;padding:16px 42px">あそぶ →</a>
+<p style="margin-top:16px;font-size:.85rem;color:var(--muted)">遊びは全部無料 ・ 会員登録なし ・ スマホでもそのまま動きます</p>
+</div>
+<div class="core-panel reveal">
+<canvas id="heroCore" width="520" height="400" aria-label="SIコア（触れる粒子）"></canvas>
+<div class="core-cap"><span>SIコア — 触ると粒子が逃げます</span><a href="/play/core.html">大きく遊ぶ →</a></div>
+</div>
+</section></div>
+
+<section aria-label="棚の数字" style="border-bottom:2px solid var(--line-soft)"><div class="page">
+<div class="nums">
+<div class="num-cell reveal"><b>8</b><span>おもちゃ</span></div>
+<div class="num-cell reveal"><b>4</b><span>無料ツール</span></div>
+<div class="num-cell reveal"><b>19</b><span>よむ（note）</span></div>
+<div class="num-cell reveal"><b>6</b><span>無料ダウンロード</span></div>
+</div>
+</div></section>
+
+<section class="section tone-white"><div class="page">
+<div class="section-head"><small>PLAY</small><h2>あそぶ</h2><p>まずはここから。1本1分でも、ちゃんと遊べるやつを並べています。</p></div>
+<div class="feature-grid">
+<a class="feature-card reveal" href="/play/shooter.html"><small>SHOOTING — STG</small><h3>スターブレイク</h3><p>縦スクロールシューティング。5ウェーブごとにボス戦、名前付きの弾幕「詠唱」が5つ。ボムとグレイズで稼ぐ本格派。</p><b>あそぶ →</b></a>
+<a class="feature-card reveal" href="/play/omikuji.html"><small>TOY / FORTUNE</small><h3>あませおみくじ</h3><p>今日の運勢と、あませからの一言。紙のおみくじ風の演出と、運勢図鑑（全7種）のコレクションつき。</p><b>引く →</b></a>
+<a class="feature-card reveal" href="/play/core.html"><small>TECH / PARTICLES</small><h3>SIコアにさわる</h3><p>数千個の粒子コアをリアルタイム描画。球体・リング・立方体に変形する技術遊び。ヒーローでも触れます。</p><b>さわる →</b></a>
+<a class="feature-card reveal" href="/play/slot.html"><small>PLAY / SLOT</small><h3>あませスロット</h3><p>3つの絵をそろえるスロット。回すたび貯まるジャックポットを、★3つで総取り。リーチ演出つき。</p><b>まわす →</b></a>
+<a class="feature-card reveal" href="/play/janken.html"><small>PLAY / JANKEN</small><h3>あませとじゃんけん</h3><p>5本先取のマッチ勝負。あませのクセを読む読み合いと、連勝称号つき。</p><b>勝負する →</b></a>
+<a class="feature-card reveal" href="/play/guess.html"><small>PLAY / GUESS</small><h3>数あて</h3><p>数字を当てる推理のおもちゃ。難易度3段階（50／100／500）、近さが分かる温度ヒントつき。</p><b>当てる →</b></a>
+<a class="feature-card reveal" href="/play/timing.html"><small>TOY / TIMING</small><h3>止めて！タイミングバー</h3><p>黄色いゾーンの真ん中で止める反射のおもちゃ。全5ラウンド、最後はフィーバー。</p><b>止める →</b></a>
+<a class="feature-card reveal" href="/play/secret.html"><small>PLAY / SECRET</small><h3>プライベートナンバー</h3><p>バイトヘル2000風。電話番号の下4桁を、桁ごとの反応で聞き出す推理のおもちゃ。</p><b>推理する →</b></a>
+</div>
+<p style="margin-top:22px"><a class="button soft" href="/preview/retro-holo-v4/demo.html">あそぶ一覧へ →</a></p>
+</div></section>
+
+<section class="section tone-dark"><div class="page">
+<div class="section-head"><small>SHOWCASE</small><h2>みる</h2><p>作ったものと、検証の記録。数字は実在の件数だけ出しています。</p></div>
+<div class="feature-grid">
+<a class="feature-card reveal" href="/preview/retro-holo-v4/showcase.html"><small>CASES</small><h3>制作・検証の事例 8件</h3><p>自動化の詰まりどころを、どう直したかの記録集。</p><b>みる →</b></a>
+<a class="feature-card reveal" href="/video-preflight/"><small>TOOL</small><h3>動画プリフライト</h3><p>納品前の動画を、音声・解像度・長さで自動チェック。</p><b>使う →</b></a>
+<a class="feature-card reveal" href="/n8n-retry-checker/"><small>TOOL</small><h3>n8nリトライ・チェッカー</h3><p>失敗した実行の再試行が安全か、事前に判定する。</p><b>使う →</b></a>
+</div>
+</div></section>
+
+<section class="section"><div class="page">
+<div class="section-head"><small>READ</small><h2>よむ</h2><p>読みものは note に引っ越しました。開発と検証の記録です。</p></div>
+<div>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/n245dd617e45f"><span class="note-row-main"><strong>チャットが長くなっても切れない仕組み</strong><span>Shelfiriaの裏側で動いている AgentLink の話。</span></span><span class="note-row-go">noteで読む →</span></a>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/nd60d6d53cde9"><span class="note-row-main"><strong>地味だったので、派手にしてみた</strong><span>「全体的に微妙」と言われたトップを作り替えた記録。</span></span><span class="note-row-go">noteで読む →</span></a>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/n49bc0eb192bf"><span class="note-row-main"><strong>ゲームを3つ作り直して、3つ足した</strong><span>コンボ、フィーバー、変形。遊び場の入口の設計の話。</span></span><span class="note-row-go">noteで読む →</span></a>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/necb6d77dc158"><span class="note-row-main"><strong>サイトとGitHubで値段がズレてたので、正本を1個にした</strong><span>値段の正本は1個に決める、という話。</span></span><span class="note-row-go">noteで読む →</span></a>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/nc4b05c88bc31"><span class="note-row-main"><strong>サイト監査、リンク切れだけ見ても足りなかった</strong><span>点検はリンクの生死だけじゃ足りなかったという話。</span></span><span class="note-row-go">noteで読む →</span></a>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/n2ec3e396df3e"><span class="note-row-main"><strong>画像生成モデル、1枚勝負で比べるとだいたい事故る</strong><span>モデルの比べ方は、1枚の出来より再現性で見る。</span></span><span class="note-row-go">noteで読む →</span></a>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/nc7280ea9faea"><span class="note-row-main"><strong>FedoraでSteamはどこまでいける？</strong><span>GTAまで考えると、Windowsはまだ少し残したい。</span></span><span class="note-row-go">noteで読む →</span></a>
+<a class="note-row reveal" href="https://note.com/lovely_hosta391/n/nbf97aa339ef7"><span class="note-row-main"><strong>SRTの00:61:00を普通の時刻として読んでた</strong><span>字幕の時刻チェックで踏んだ、小さいけど危ない事故。</span></span><span class="note-row-go">noteで読む →</span></a>
+</div>
+<p style="margin-top:20px"><a class="button soft" href="/preview/retro-holo-v4/notes/">よむ一覧へ →</a></p>
+</div></section>
+
+<section class="section tone-warm"><div class="page">
+<div class="section-head"><small>BONUS</small><h2>おまけ</h2><p>仕事のメニューは隅っこに。全部ココナラで受けています。無料で持ち帰れるものもあります。</p></div>
+<div>
+<a class="note-row reveal" href="https://coconala.com/services/4477076"><span class="note-row-main"><strong>動画納品前QAキット</strong><span>納品前のチェックを型にした道具一式。</span></span><span class="note-row-go">¥1,000</span></a>
+<a class="note-row reveal" href="https://coconala.com/services/4479466"><span class="note-row-main"><strong>YouTube動画の編集を行います</strong><span>カット・テロップ・サムネイルまで。</span></span><span class="note-row-go">¥5,000〜</span></a>
+<a class="note-row reveal" href="https://coconala.com/services/4374617"><span class="note-row-main"><strong>SRT字幕の点検</strong><span>時刻ズレや表記ゆれを納品前に拾う。</span></span><span class="note-row-go">¥3,000</span></a>
+<a class="note-row reveal" href="https://coconala.com/services/4374623"><span class="note-row-main"><strong>CSV・TSVデータ整理</strong><span>文字化け・桁ズレ・重複を整える。</span></span><span class="note-row-go">¥3,000</span></a>
+<a class="note-row reveal" href="https://coconala.com/services/3914156"><span class="note-row-main"><strong>納品前QAの代行</strong><span>キットの代行版。代わりに点検して返す。</span></span><span class="note-row-go">ココナラで確認</span></a>
+<a class="note-row reveal" href="https://coconala.com/services/2809225"><span class="note-row-main"><strong>小さなAI自動化ツール制作</strong><span>繰り返し作業を小さな道具にする。</span></span><span class="note-row-go">ココナラで確認</span></a>
+<a class="note-row reveal" href="https://coconala.com/services/2330394"><span class="note-row-main"><strong>ComfyUIワークフロー整理</strong><span>ぐちゃぐちゃなノードを読みやすく。</span></span><span class="note-row-go">ココナラで確認</span></a>
+</div>
+<p style="margin-top:20px"><a class="button soft" href="/preview/retro-holo-v4/work.html">おまけ（無料ツール・無料DL）へ →</a></p>
+</div></section>
+
+<section class="section tone-white"><div class="page">
+<div class="section-head"><small>FAQ</small><h2>よくある不安</h2></div>
+<div class="feature-grid">
+<div class="faq-item reveal"><h3>会員登録は要りますか？</h3><p>要りません。おもちゃも無料ツールも、開いたらそのまま使えます。記録はあなたの端末の中だけに残ります。</p></div>
+<div class="faq-item reveal"><h3>本当に全部無料ですか？</h3><p>遊び・無料ツール・無料ダウンロードは無料です。おまけの仕事メニューだけ有料で、値段はココナラのページに明記してあります。</p></div>
+<div class="faq-item reveal"><h3>仕事の相談はどこから？</h3><p>ココナラの各メニューからが確実です。内容が決まっていない相談は、おまけページの相談導線からどうぞ。</p></div>
+</div>
+</div></section>
+
+<div class="page"><section class="cta-band">
+<div><h2 style="font-family:var(--disp)">迷ったら、まず1本。</h2><p>いちばん軽いのは おみくじ、歯ごたえは スターブレイク。</p></div>
+<a class="button primary" href="/preview/retro-holo-v4/demo.html" style="font-size:1.05rem;padding:16px 42px">あそぶ →</a>
+</section></div>
+</main>
+<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>Shelfiria</strong></span></div><nav><a href="/preview/retro-holo-v4/index.html">トップ</a><a href="/preview/retro-holo-v4/demo.html">あそぶ</a><a href="/preview/retro-holo-v4/showcase.html">みる</a><a href="/preview/retro-holo-v4/notes/">よむ</a><a href="/preview/retro-holo-v4/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a><a href="https://coconala.com/users/3185601">ココナラ</a></nav></footer>
+<script>
+(function(){
+const cv=document.getElementById('heroCore');if(!cv)return;const ctx=cv.getContext('2d');
+/* 連打・長押しでブラウザのテキスト選択／コールアウトを出さない（実機FB対処） */
+cv.addEventListener('contextmenu',e=>{e.preventDefault()});
+cv.addEventListener('selectstart',e=>{e.preventDefault()});
+cv.addEventListener('dragstart',e=>{e.preventDefault()});
+const panelEl=cv.closest('.core-panel');if(panelEl)panelEl.addEventListener('selectstart',e=>{e.preventDefault()});
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W=520,H=374;
+function resize(){const r=cv.getBoundingClientRect();const dpr=Math.min(2,window.devicePixelRatio||1);W=Math.max(280,r.width||520);H=Math.round(W*0.72);cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cv.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0)}
+resize();addEventListener('resize',resize);
+function makeSprite(rgb){const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');const gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(0.22,'rgba('+rgb+',0.95)');gr.addColorStop(0.55,'rgba('+rgb+',0.30)');gr.addColorStop(1,'rgba('+rgb+',0)');g.fillStyle=gr;g.fillRect(0,0,64,64);return c}
+const SPR=[makeSprite('148,178,255'),makeSprite('110,214,255'),makeSprite('255,178,120'),makeSprite('255,150,190')];
+const N=(W<420||innerWidth<760)?760:1150,pts=[];
+for(let i=0;i<N;i++){const y=1-(i/(N-1))*2,r=Math.sqrt(Math.max(0,1-y*y)),th=i*2.39996;const rnd=Math.random;pts.push({ox:Math.cos(th)*r,oy:y,oz:Math.sin(th)*r,ang:Math.atan2(y,Math.cos(th)*r),dx:0,dy:0,dz:0,vx:0,vy:0,vz:0,px:-999,py:-999,ps:1,spr:rnd()<0.62?0:(rnd()<0.78?1:2),sz:0.8+rnd()*1.5+(rnd()<0.06?1.3:0),twp:rnd()*6.28,tws:0.6+rnd()*1.6})}
+const sparks=[];for(let i=0;i<26;i++)sparks.push({a:Math.random()*6.28,r:0.16+Math.random()*0.26,sp:0.004+Math.random()*0.010,sz:1+Math.random()*1.6});
+/* ============ 訪問者メモリ（localStorage） ============ */
+const MEMKEY='amaseCore.v1';
+let MEM={v:0,last:0,t:0,gap:0,m100:0};
+try{const raw=localStorage.getItem(MEMKEY);if(raw)MEM=Object.assign(MEM,JSON.parse(raw))}catch(e){}
+(function(){const now=Date.now();if(!MEM.last||now-MEM.last>30*60*1000){MEM.gap=MEM.last?(now-MEM.last)/86400000:0;MEM.v++;MEM.last=now;saveMem()}})();
+function saveMem(){try{localStorage.setItem(MEMKEY,JSON.stringify({v:MEM.v,last:MEM.last,t:MEM.t,m100:MEM.m100}))}catch(e){}}
+/* ============ 台詞テーブル（正本 shelf-core-voice-lines.md・番号→タグ/プール/条件） ============ */
+const LT={1:{t:'happy',p:'greet'},2:{t:'warm',p:'greet'},3:{t:'shy',p:'greet'},
+4:{t:'normal',p:'tap'},5:{t:'ticklish',p:'tap'},6:{t:'normal',p:'tap'},7:{t:'happy',p:'tap'},8:{t:'shy',p:'tap'},9:{t:'happy',p:'tap'},10:{t:'ticklish',p:'tap'},11:{t:'normal',p:'tap'},12:{t:'warm',p:'tap'},13:{t:'normal',p:'tap'},14:{t:'shy',p:'tap'},15:{t:'happy',p:'tap'},16:{t:'warm',p:'tap'},17:{t:'shy',p:'tap'},18:{t:'happy',p:'tap'},
+19:{t:'panic',p:'rapid'},20:{t:'panic',p:'rapid'},21:{t:'flee',p:'rapid'},22:{t:'flee',p:'rapid'},23:{t:'ticklish',p:'rapid'},24:{t:'panic',p:'rapid'},25:{t:'flee',p:'rapid'},
+26:{t:'rare',p:'rare'},27:{t:'rare',p:'rare'},28:{t:'rare',p:'rare'},29:{t:'rare',p:'rare'},30:{t:'rare',p:'rare'},
+31:{t:'happy',p:'morning'},32:{t:'happy',p:'morning'},33:{t:'sleepy',p:'morning'},
+34:{t:'normal',p:'noon'},35:{t:'warm',p:'noon'},36:{t:'happy',p:'noon'},
+37:{t:'warm',p:'evening'},38:{t:'happy',p:'evening'},39:{t:'warm',p:'evening'},
+40:{t:'shy',p:'night'},41:{t:'sleepy',p:'night'},42:{t:'shy',p:'night'},43:{t:'warm',p:'night'},44:{t:'sleepy',p:'night'},
+45:{t:'happy',p:'return'},46:{t:'sad',p:'return'},47:{t:'warm',p:'return'},
+48:{t:'happy',p:'rep',c:'v2'},49:{t:'warm',p:'rep',c:'v2'},50:{t:'happy',p:'rep',c:'v3'},51:{t:'happy',p:'rep',c:'gap2'},52:{t:'sad',p:'rep',c:'gap7'},53:{t:'warm',p:'rep',c:'v5'},54:{t:'shy',p:'rep',c:'v5'},
+55:{t:'rare',p:'milestone'},
+56:{t:'ticklish',p:'stroke'},57:{t:'warm',p:'stroke'},58:{t:'shy',p:'stroke'},59:{t:'warm',p:'stroke'},
+60:{t:'happy',p:'press'},61:{t:'panic',p:'press'},62:{t:'happy',p:'press'},63:{t:'shy',p:'press'}};
+function condOk(c){if(!c)return true;if(c==='v2')return MEM.v>=2;if(c==='v3')return MEM.v>=3;if(c==='v5')return MEM.v>=5;if(c==='gap2')return MEM.gap>=2&&MEM.gap<7;if(c==='gap7')return MEM.gap>=7;return true}
+function timePool(){const h=new Date().getHours();return h>=5&&h<11?'morning':h>=11&&h<17?'noon':h>=17&&h<23?'evening':'night'}
+/* ============ ボイス受け口（manifest方式） ============ */
+const VOICE_BASE='/play/assets/amase-core/';
+const voice={byNum:{},byCat:{},unlocked:false,playing:false,cat:null,lastN:0,el:null,actx:null,analyser:null,env:0,lastSpeak:0};
+fetch(VOICE_BASE+'manifest.json').then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{
+  for(const cat of Object.keys(j)){const arr=j[cat];if(!Array.isArray(arr))continue;voice.byCat[cat]=[];
+    for(const e of arr){let f=null,n=0,t=null;
+      if(typeof e==='string')f=e;else if(e&&typeof e==='object'){f=e.f||e.file;n=e.n||e.num||0;t=e.t||e.tag||null}
+      if(!f)continue;
+      if(!n){const m=String(f).match(/(\d{1,2})(?=\.[a-z0-9]+$)/i);if(m)n=parseInt(m[1],10)}
+      const meta=n&&LT[n]?LT[n]:null;
+      const item={f:f,n:n,tag:t||(meta?meta.t:'normal'),pool:meta?meta.p:cat,cond:meta?meta.c:null};
+      voice.byCat[cat].push(item);if(n)voice.byNum[n]=item;
+    }}
+}).catch(()=>{});
+function poolItems(pool){const out=[];for(const n of Object.keys(voice.byNum)){const it=voice.byNum[n];if(it.pool===pool&&condOk(it.cond))out.push(it)}
+  if(!out.length&&voice.byCat[pool])return voice.byCat[pool].slice();return out}
+function pickFrom(items){if(!items.length)return null;let c=items.filter(i=>i.n!==voice.lastN);if(!c.length)c=items;return c[Math.floor(Math.random()*c.length)]}
+const tagFx={name:'normal',until:0,from:0};
+function fireTag(tag,durMs){tagFx.name=tag;tagFx.from=performance.now();tagFx.until=tagFx.from+(durMs||2200)}
+function voiceUnlock(){
+  if(voice.unlocked)return;voice.unlocked=true;
+  try{
+    voice.el=new Audio();voice.el.preload='auto';
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(AC){voice.actx=new AC();const src=voice.actx.createMediaElementSource(voice.el);voice.analyser=voice.actx.createAnalyser();voice.analyser.fftSize=512;src.connect(voice.analyser);voice.analyser.connect(voice.actx.destination)}
+    voice.el.addEventListener('ended',()=>{voice.playing=false});
+    voice.el.addEventListener('error',()=>{voice.playing=false});
+  }catch(e){voice.el=null}
+}
+function playItem(it,catLabel){
+  if(!it||voice.playing)return false;
+  if(!voice.el)voiceUnlock();if(!voice.el)return false;
+  if(voice.actx&&voice.actx.state==='suspended')voice.actx.resume();
+  voice.el.src=it.f.charAt(0)==='/'?it.f:VOICE_BASE+it.f;
+  voice.playing=true;voice.cat=catLabel;voice.lastN=it.n||0;voice.lastSpeak=performance.now();
+  fireTag(it.tag,2600);
+  const pr=voice.el.play();if(pr&&pr.catch)pr.catch(()=>{voice.playing=false});
+  voice.el.onloadedmetadata=()=>{if(voice.el&&isFinite(voice.el.duration))fireTag(it.tag,voice.el.duration*1000+350)};
+  return true;
+}
+let lastTouchAt=performance.now(),hadReturnGap=false;
+function speak(trigger){
+  if(!voice.unlocked||(voice.playing&&trigger!=='rapid'))return false;
+  if(trigger==='greet'){
+    if(MEM.v<=1)return playItem(pickFrom(poolItems('greet')),'greet');
+    const reps=poolItems('rep');if(reps.length){reps.sort((a,b)=>(b.cond?1:0)-(a.cond?1:0));return playItem(pickFrom(reps.slice(0,3)),'greet')}
+    return playItem(pickFrom(poolItems('tap')),'tap');
+  }
+  if(trigger==='tap'){
+    if(!MEM.m100&&MEM.t>=100){const ms=poolItems('milestone');if(ms.length){MEM.m100=1;saveMem();return playItem(pickFrom(ms),'rare')}}
+    if(hadReturnGap){hadReturnGap=false;if(Math.random()<0.6){const rp=poolItems('return');if(rp.length)return playItem(pickFrom(rp),'tap')}}
+    if(Math.random()<0.06){const rr=poolItems('rare');if(rr.length)return playItem(pickFrom(rr),'rare')}
+    let pool=poolItems('tap');const tp=poolItems(timePool());
+    if(tp.length&&Math.random()<0.45)return playItem(pickFrom(tp),'tap');
+    return playItem(pickFrom(pool),'tap');
+  }
+  if(trigger==='rapid'){
+    if(voice.playing&&voice.cat==='tap'&&performance.now()-voice.lastSpeak<800){try{voice.el.pause()}catch(e){}voice.playing=false}
+    if(voice.playing)return false;
+    return playItem(pickFrom(poolItems('rapid')),'rapid');
+  }
+  return playItem(pickFrom(poolItems(trigger)),trigger);
+}
+const tbuf=new Uint8Array(256);
+function voiceRMS(){
+  if(!voice.playing)return 0;
+  if(voice.analyser){voice.analyser.getByteTimeDomainData(tbuf);let s=0;for(let i=0;i<tbuf.length;i+=4){const v=(tbuf[i]-128)/128;s+=v*v}return Math.min(1,Math.sqrt(s/(tbuf.length/4))*2.6)}
+  return 0.45+0.35*Math.sin(performance.now()*0.021)+0.2*Math.sin(performance.now()*0.0073);
+}
+/* ============ 触り方の分類と気分 ============ */
+const ptrs=new Map();let hover=null,lastPtr=null;
+let mood={excite:0,warm:0,squash:0,squashV:0,purr:0};
+let taps=[],lastIdleVoiceAt=0,greeted=false,nextShiver=4000,shiverAt=-9999,lookTilt=0,lookTarget=0,nextLook=7000;
+const gestures=new Map();
+function ptrPos(e){const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+cv.addEventListener('pointermove',e=>{
+  const p=ptrPos(e);lastPtr=p;
+  if(e.pointerType==='mouse'&&e.buttons===0){hover=p;const g=gestures.get(e.pointerId);if(!g)ptrs.set(e.pointerId,p)}
+  else{ptrs.set(e.pointerId,p);hover=null}
+  const g=gestures.get(e.pointerId);
+  if(g){const dx=p.x-g.lx,dy=p.y-g.ly;g.path+=Math.sqrt(dx*dx+dy*dy);g.lx=p.x;g.ly=p.y;
+    if(!g.kind&&g.path>110&&performance.now()-g.t0>300){g.kind='stroke';speak('stroke')}
+    if(g.kind==='stroke')mood.purr=1}
+});
+cv.addEventListener('pointerdown',e=>{
+  voiceUnlock();
+  const p=ptrPos(e);ptrs.set(e.pointerId,p);hover=null;lastPtr=p;
+  gestures.set(e.pointerId,{t0:performance.now(),lx:p.x,ly:p.y,path:0,kind:null});
+  if(performance.now()-lastTouchAt>90000)hadReturnGap=true;
+  lastTouchAt=performance.now();
+  MEM.t++;saveMem();
+  pop=1.08;squashKick(0.7);
+  rings.push({r:10,a:0.55});
+  for(const pt of pts){if(pt.px<0)continue;const ddx=pt.px-p.x,ddy=pt.py-p.y,d=Math.sqrt(ddx*ddx+ddy*ddy);if(d<170&&d>0.1){const f=(1-d/170);const s=f*f*0.24/(pt.ps);pt.vx+=ddx/d*s;pt.vy+=ddy/d*s}}
+  if(!greeted){greeted=true;if(speak('greet'))return}
+});
+function endPtr(e){
+  const g=gestures.get(e.pointerId);gestures.delete(e.pointerId);ptrs.delete(e.pointerId);mood.purr=0;
+  if(!g)return;const dur=performance.now()-g.t0,now=performance.now();lastTouchAt=now;
+  if(g.kind==='stroke')return;
+  if(dur>=600&&g.path<36){squashKick(1.4);burstAt(e);speak('press');return}
+  if(dur<320&&g.path<28){
+    taps=taps.filter(t=>now-t<1150);taps.push(now);
+    if(taps.length>=3){mood.excite=1;speak('rapid')}
+    else speak('tap');
+  }
+}
+function burstAt(e){const p=ptrPos(e);for(const pt of pts){if(pt.px<0)continue;const ddx=pt.px-p.x,ddy=pt.py-p.y,d=Math.sqrt(ddx*ddx+ddy*ddy);if(d<190&&d>0.1){const f=(1-d/190);const s=f*f*0.34/(pt.ps);pt.vx+=ddx/d*s;pt.vy+=ddy/d*s}}}
+function squashKick(v){mood.squashV+=v*0.16}
+cv.addEventListener('pointerup',endPtr);cv.addEventListener('pointercancel',endPtr);
+cv.addEventListener('pointerleave',e=>{ptrs.delete(e.pointerId);gestures.delete(e.pointerId);if(e.pointerType==='mouse')hover=null});
+const rings=[];
+let run=true;new IntersectionObserver(en=>{run=en[0].isIntersecting}).observe(cv);
+let spin=0.6,pop=1,t=0,last=0,ema=16,step=1,adapted=false,peakCool=0,offX=0,offY=0;
+function frame(now){
+if(!reduced)requestAnimationFrame(frame);
+if(!run||document.hidden)return;
+const dt=last?Math.min(50,now-last):16;last=now;t+=dt;ema=ema*0.96+dt*0.04;
+if(!adapted&&t>2500&&ema>26){step=1.45;adapted=true}
+mood.excite*=Math.pow(0.55,dt/1000);mood.warm+=(((mood.excite>0.25||mood.purr>0)?1:0)-mood.warm)*Math.min(1,dt/300);mood.purr*=Math.pow(0.4,dt/1000);
+mood.squashV+=(0-mood.squash)*0.045*dt/16.7;mood.squashV*=Math.pow(0.86,dt/16.7);mood.squash+=mood.squashV;
+if(t>nextShiver){shiverAt=t;nextShiver=t+6000+Math.random()*7000}
+if(t>nextLook){lookTarget=(Math.random()-0.5)*0.5;nextLook=t+8000+Math.random()*9000}
+lookTilt+=(lookTarget-lookTilt)*Math.min(1,dt/900);if(Math.abs(lookTarget)>0.01&&Math.random()<dt/4000)lookTarget=0;
+const shiver=(t-shiverAt>=0&&t-shiverAt<420)?Math.sin((t-shiverAt)/420*3.14)*0.012:0;
+spin+=reduced?0:0.0032*(1+1.7*mood.excite);pop+=(1-pop)*0.06;
+const ve=voiceRMS();voice.env+=(ve-voice.env)*Math.min(1,dt/60);
+if(voice.playing&&voice.env>0.52&&t>peakCool){rings.push({r:14,a:0.4});peakCool=t+150}
+/* 感情タグ演出パラメータ */
+const fxA=(now<tagFx.until)?Math.min(1,(now-tagFx.from)/130)*Math.min(1,Math.max(0,(tagFx.until-now)/380)+0.25):0;
+const TG=tagFx.name;
+const P={tint:-1,tintA:0,spiky:0,jit:0,droop:0,sink:0,swell:1,dim:1,flee:0,bounce:0};
+if(fxA>0){
+  if(TG==='happy'){P.tint=2;P.tintA=0.20*fxA;P.bounce=Math.sin(Math.min(1,(now-tagFx.from)/600)*3.14)*0.05*fxA}
+  else if(TG==='ticklish'){P.jit=0.010*fxA;P.tint=2;P.tintA=0.08*fxA}
+  else if(TG==='shy'){P.tint=3;P.tintA=0.30*fxA;P.swell=1+0.055*Math.sin(Math.min(1,(now-tagFx.from)/900)*3.14)*fxA}
+  else if(TG==='panic'){P.jit=0.020*fxA;P.spiky=fxA}
+  else if(TG==='flee'){P.flee=fxA;P.jit=0.006*fxA}
+  else if(TG==='sleepy'){P.dim=1-0.30*fxA;P.droop=fxA;P.sink=6*fxA}
+  else if(TG==='warm'){P.tint=2;P.tintA=0.26*fxA}
+  else if(TG==='sad'){P.tint=0;P.tintA=0.22*fxA;P.dim=1-0.22*fxA;P.sink=9*fxA}
+  else if(TG==='rare'){P.tint=(Math.floor(t/260)%3===0)?2:((Math.floor(t/260)%3===1)?3:1);P.tintA=0.34*fxA;P.swell=1+0.11*Math.sin(Math.min(1,(now-tagFx.from)/1100)*3.14)*fxA}
+}
+/* flee: タッチ位置から中心が逃げる／warm: 触った側へ寄る */
+let wantX=0,wantY=0;
+if(P.flee>0&&lastPtr){const dx=W/2-lastPtr.x,dy=H/2-lastPtr.y,dl=Math.sqrt(dx*dx+dy*dy);const ang=dl<10?(t*0.0021)%6.283:Math.atan2(dy,dx);wantX=Math.cos(ang)*30*P.flee;wantY=Math.sin(ang)*30*P.flee}
+offX+=(wantX-offX)*Math.min(1,dt/110);offY+=(wantY-offY)*Math.min(1,dt/110);
+const tilt=Math.sin(t*0.00021)*0.16+lookTilt,cY=Math.cos(spin),sY=Math.sin(spin),cX=Math.cos(tilt),sX=Math.sin(tilt);
+const cx=W/2+offX,cy=H/2+offY+P.sink+(P.droop?10*P.droop:0),breath=1+0.022*Math.sin(t*0.0011)+0.010*Math.sin(t*0.00037);
+const R=Math.min(W,H)*0.345*breath*pop*(1+0.05*voice.env)*P.swell*(1+P.bounce);
+const Rx=R*(1+0.06*mood.squash),Ry=R*(1-0.09*mood.squash)*(P.droop?1-0.07*P.droop:1);
+ctx.clearRect(0,0,W,H);
+ctx.globalCompositeOperation='lighter';
+const pulse=0.75+0.25*Math.sin(t*0.0016);
+const gs=R*1.15*(0.9+0.1*pulse)*(1+0.3*voice.env);
+ctx.globalAlpha=(0.34*pulse+0.25*voice.env)*P.dim;ctx.drawImage(SPR[0],cx-gs/2,cy-gs/2,gs,gs);
+ctx.globalAlpha=0.85*P.dim;const ns=R*0.30*(0.92+0.08*Math.sin(t*0.0023))*(1+0.55*voice.env);ctx.drawImage(SPR[2],cx-ns/2,cy-ns/2,ns,ns);
+if(mood.warm>0.03){ctx.globalAlpha=0.16*mood.warm;const ws=R*2.05;ctx.drawImage(SPR[2],cx-ws/2,cy-ws/2,ws,ws)}
+if(P.tint>=0&&P.tintA>0){ctx.globalAlpha=P.tintA;const ts2=R*2.3;ctx.drawImage(SPR[P.tint],cx-ts2/2,cy-ts2/2,ts2,ts2)}
+ctx.globalAlpha=1;
+for(const s of sparks){s.a+=s.sp*(reduced?0:1)*(1+2.2*voice.env);const bx=Math.cos(s.a)*s.r,by=Math.sin(s.a)*s.r*0.92,bz=Math.sin(s.a+1.3)*0.3;const rx=bx*cY-bz*sY,rz=bx*sY+bz*cX;const ps=1/(1+rz*0.38);const sx=cx+rx*Rx*ps,sy=cy+by*Ry*ps;const d=s.sz*3.4*ps*(1+0.4*voice.env);ctx.globalAlpha=0.75*P.dim;ctx.drawImage(SPR[1],sx-d/2,sy-d/2,d,d)}
+ctx.globalAlpha=1;
+const warmPull=(TG==='warm'&&fxA>0)?lastPtr:null;
+for(let fi=0;fi<N;fi+=step){const p=pts[Math.floor(fi)];
+const y1=p.oy*cX-p.oz*sX,z1=p.oy*sX+p.oz*cX;
+const bx=p.ox*cY-z1*sY,bz=p.ox*sY+z1*cY,by=y1;
+if(p.px>=0){
+  const strokeMode=mood.purr>0.3;
+  for(const q of ptrs.values()){const ddx=p.px-q.x,ddy=p.py-q.y,d2=ddx*ddx+ddy*ddy;
+    if(d2<14400&&d2>0.01){const d=Math.sqrt(d2),f=(1-d/120);
+      if(strokeMode){const s=f*f*0.020/p.ps;p.vx-=ddx/d*s;p.vy-=ddy/d*s}
+      else{const s=f*f*(0.055*(P.flee>0?1.9:1))/p.ps;p.vx+=ddx/d*s+(-ddy/d)*s*0.55;p.vy+=ddy/d*s+(ddx/d)*s*0.55}}
+    else if(d2<36100&&d2>=14400){const d=Math.sqrt(d2),f=(1-d/190)*0.010/p.ps;p.vx-=ddx/d*f;p.vy-=ddy/d*f}}
+  if(hover){const ddx=p.px-hover.x,ddy=p.py-hover.y,d2=ddx*ddx+ddy*ddy;if(d2<32400&&d2>0.01){const d=Math.sqrt(d2),f=(1-d/180)*0.012/p.ps;p.vx-=ddx/d*f;p.vy-=ddy/d*f}}
+  if(warmPull){const ddx=p.px-warmPull.x,ddy=p.py-warmPull.y,d2=ddx*ddx+ddy*ddy;if(d2<25600&&d2>0.01){const d=Math.sqrt(d2),f=(1-d/160)*0.016/p.ps;p.vx-=ddx/d*f;p.vy-=ddy/d*f}}
+}
+p.vx+=(0-p.dx)*0.030;p.vy+=(0-p.dy)*0.030;p.vz+=(0-p.dz)*0.030;
+p.vx*=0.90;p.vy*=0.90;p.vz*=0.90;
+let jx=0,jy=0;if(P.jit>0){jx=(Math.random()-0.5)*P.jit*2;jy=(Math.random()-0.5)*P.jit*2}
+p.dx+=p.vx+(shiver?(Math.random()-0.5)*shiver:0)+jx;p.dy+=p.vy+(shiver?(Math.random()-0.5)*shiver:0)+jy;p.dz+=p.vz;
+let wx=bx+p.dx,wy=by+p.dy,wz=bz+p.dz;
+if(P.spiky>0){const m=1+P.spiky*0.15*Math.sin(p.ang*6+t*0.045);wx*=m;wy*=m}
+const ps=1/(1+wz*0.38);p.ps=ps;
+const sx=cx+wx*Rx*ps,sy=cy+wy*Ry*ps;p.px=sx;p.py=sy;
+const front=1-(wz+1)/2;
+let a=(0.16+0.84*front)*P.dim;a*=0.82+0.18*Math.sin(t*0.002*p.tws+p.twp);a*=1+0.35*voice.env*front;if(a>1)a=1;
+const d=p.sz*7.2*ps*(0.75+0.45*front)*(1+0.5*mood.excite*Math.random()*0.3);
+ctx.globalAlpha=a;ctx.drawImage(SPR[p.spr],sx-d/2,sy-d/2,d,d);
+}
+ctx.globalAlpha=1;
+for(let i=rings.length-1;i>=0;i--){const rg=rings[i];rg.r+=dt*0.16;rg.a-=dt*0.0009;if(rg.a<=0){rings.splice(i,1);continue}ctx.beginPath();ctx.strokeStyle='rgba(160,200,255,'+rg.a.toFixed(3)+')';ctx.lineWidth=2;ctx.arc(cx,cy,rg.r,0,6.283);ctx.stroke()}
+ctx.globalCompositeOperation='source-over';
+}
+requestAnimationFrame(frame);
+})();
+</script>
+<script src="/enhance.js" defer></script>
+<script src="/ad-overlay.js" defer></script>
+</body>
+</html>
