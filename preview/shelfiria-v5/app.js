@@ -12,9 +12,12 @@ const categories=[
  {id:"tool",label:"ツール",icon:"⌘"},
  {id:"article",label:"記事",icon:"▤"},
  {id:"service",label:"おまけ",icon:"↗"},
+ {id:"demo",label:"実験デモ",icon:"⌬"},
+ {id:"build",label:"制作物",icon:"▣"},
+ {id:"download",label:"無料DL",icon:"⇩"},
  {id:"fav",label:"お気に入り",icon:"♡"}
 ];
-let active="all",search="",view="grid",favorites=new Set(),recent=null;
+let active="all",search="",view="grid",favorites=new Set(),recent=null,visibleLimit=26,archiveLoaded=false;
 try{const stored=JSON.parse(localStorage.getItem("shelfiria-favorites.v5")||"[]");if(Array.isArray(stored))favorites=new Set(stored);recent=JSON.parse(localStorage.getItem("shelfiria-recent.v5")||"null")}catch(e){}
 const $=id=>document.getElementById(id);
 const categoriesEl=$("filterList"),results=$("results"),searchField=$("searchField");
@@ -23,7 +26,7 @@ function counts(id){if(id==="all")return items.length;if(id==="fav")return items
 function escapeAttr(v){return escapeHTML(v)}
 function formatNum(n){return String(n).padStart(2,"0")}
 function setupRail(){
- categoriesEl.innerHTML=categories.map(c=>'<button class="filter-btn'+(active===c.id?' active':'')+'" type="button" data-kind="'+c.id+'" aria-pressed="'+(active===c.id)+'"><span class="f-icon" aria-hidden="true">'+c.icon+'</span><span>'+c.label+'</span><span class="filter-num">'+formatNum(counts(c.id))+'</span></button>').join("");
+ categoriesEl.innerHTML=categories.filter(c=>!["demo","build","download"].includes(c.id)||archiveLoaded).map(c=>'<button class="filter-btn'+(active===c.id?' active':'')+'" type="button" data-kind="'+c.id+'" aria-pressed="'+(active===c.id)+'"><span class="f-icon" aria-hidden="true">'+c.icon+'</span><span>'+c.label+'</span><span class="filter-num">'+formatNum(counts(c.id))+'</span></button>').join("");
 }
 function matchItem(x){
  const q=search.toLocaleLowerCase("ja");
@@ -35,8 +38,8 @@ function remember(x){
  try{localStorage.setItem("shelfiria-recent.v5",JSON.stringify({id:x.id,href:x.href,title:x.title,kind:x.kind}))}catch(e){}
 }
 function renderCard(x){
- const color={game:"#8ef6f1",tool:"#aeb2ff",article:"#ff9bd9",service:"#e6d59d"}[x.kind]||"#9bf6ed";
- const badge={game:"GAME / PLAY",tool:"TOOL / USE",article:"ARTICLE / READ",service:"SERVICE / MORE"}[x.kind];
+ const color={game:"#8ef6f1",tool:"#aeb2ff",article:"#ff9bd9",service:"#e6d59d",demo:"#a3d5ff",build:"#c1a2ff",download:"#d2ff9b"}[x.kind]||"#9bf6ed";
+ const badge={game:"GAME / PLAY",tool:"TOOL / USE",article:"ARTICLE / READ",service:"SERVICE / MORE",demo:"LIVE / DEMO",build:"WORK / PROOF",download:"FREE / DOWNLOAD"}[x.kind];
  const visual=x.image?'<img src="'+escapeAttr(x.image)+'" alt="" loading="lazy">':'<span class="symbol" aria-hidden="true">'+escapeHTML(x.symbol||"✳")+'</span>';
  const fav=favorites.has(x.id);
  return '<article class="catalog-card'+(view==="list"?' list-layout':'')+'" style="--item-accent:'+color+'">'+
@@ -48,10 +51,11 @@ function renderCard(x){
 function render(){
  const filtered=items.filter(matchItem);
  results.classList.toggle("list-view",view==="list");
- results.innerHTML=filtered.length?filtered.map(renderCard).join(""):'<div class="empty"><strong>まだ見つからないみたい。</strong><p>検索を変えるか、別の棚をのぞいてみて。</p></div>';
+ results.innerHTML=filtered.length?filtered.slice(0,visibleLimit).map(renderCard).join(""):'<div class="empty"><strong>まだ見つからないみたい。</strong><p>検索を変えるか、別の棚をのぞいてみて。</p></div>';
  $("currentCategory").textContent=categories.find(x=>x.id===active)?.label||"すべて";
  $("resultCount").textContent=filtered.length+" / "+items.length+" ITEMS";
- $("statusResult").textContent=filtered.length+" 件表示";
+ $("statusResult").textContent=Math.min(filtered.length,visibleLimit)+" / "+filtered.length+" 件表示";
+ $("moreItems").hidden=filtered.length<=visibleLimit;
  $("gridButton").classList.toggle("active",view==="grid");
  $("listButton").classList.toggle("active",view==="list");
  $("gridButton").setAttribute("aria-pressed",String(view==="grid"));
@@ -63,10 +67,33 @@ function render(){
 categoriesEl.addEventListener("click",e=>{
  const btn=e.target.closest("button[data-kind]");
  if(!btn)return;
- active=btn.dataset.kind;render();
+ active=btn.dataset.kind;visibleLimit=26;render();
 });
-searchField.addEventListener("input",()=>{search=searchField.value.trim();render()});
+searchField.addEventListener("input",()=>{search=searchField.value.trim();visibleLimit=26;render()});
 $("gridButton").addEventListener("click",()=>{view="grid";render()});
+
+$("moreItems").addEventListener("click",()=>{visibleLimit+=26;render()});
+$("expandArchive").addEventListener("click",async()=>{
+ const button=$("expandArchive");
+ if(archiveLoaded||button.disabled)return;
+ button.disabled=true;button.textContent="保管庫にアクセス中…";
+ try{
+  const response=await fetch("/preview/shelfiria-v5/full-inventory.json",{cache:"force-cache"});
+  if(!response.ok)throw Error("HTTP "+response.status);
+  const manifest=await response.json();
+  if(!manifest||manifest.schemaVersion!==1||!Array.isArray(manifest.items)||manifest.items.length<90)throw Error("Invalid catalog schema");
+  const known=new Set(items.map(x=>x.href));
+  const more=manifest.items.filter(x=>{if(!x||typeof x.href!=="string"||typeof x.title!=="string"||known.has(x.href))return false;known.add(x.href);return true});
+  // The source inventory is public, read-only. Existing home entries take priority.
+  items.push(...more);
+  archiveLoaded=true;active="all";visibleLimit=26;
+  button.textContent="全資料棚 OPEN / "+items.length+" 点";
+  button.setAttribute("aria-pressed","true");
+  $("archiveDescription").textContent="公開デモ・作品証拠・全記事・無料ダウンロードを追加しました。検索もカテゴリも全部連動するよ。";
+  render();
+ }catch(err){button.disabled=false;button.textContent="読み込み失敗、もう一度開く";$("archiveDescription").textContent="ネットワークを確認して再実行してね。";}
+});
+
 $("listButton").addEventListener("click",()=>{view="list";render()});
 results.addEventListener("click",e=>{
  const btn=e.target.closest("button[data-favorite]");
