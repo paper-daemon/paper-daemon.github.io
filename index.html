@@ -12,8 +12,8 @@
 .hero-v2{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);gap:44px;align-items:center;padding:72px 0 64px}
 .hero-v2 h1{margin:0;font:900 clamp(2.6rem,7.2vw,4.9rem)/1.08 var(--disp);letter-spacing:-.02em;word-break:normal;overflow-wrap:anywhere}
 .hero-v2 .lead{font-size:clamp(1rem,2.2vw,1.15rem);line-height:1.9;color:var(--ink-dim);margin:22px 0 28px}
-.core-panel{background:radial-gradient(17rem 15rem at 50% 44%,rgba(96,118,255,.42),transparent 65%),radial-gradient(30rem 16rem at 80% -10%,rgba(255,75,51,.30),transparent 60%),var(--indigo-deep);border:3px solid var(--ink);border-radius:20px;box-shadow:var(--shadow-hard);overflow:hidden}
-.core-panel canvas{display:block;width:100%;height:auto;touch-action:none;cursor:pointer}
+.core-panel{background:radial-gradient(17rem 15rem at 50% 44%,rgba(96,118,255,.42),transparent 65%),radial-gradient(30rem 16rem at 80% -10%,rgba(255,75,51,.30),transparent 60%),var(--indigo-deep);border:3px solid var(--ink);border-radius:20px;box-shadow:var(--shadow-hard);overflow:hidden;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.core-panel canvas{display:block;width:100%;height:auto;touch-action:none;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 .core-cap{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;color:#fff;font:700 .78rem var(--sans)}
 .core-cap a{color:#ffb59d;font-weight:800}
 .hero-v2 .button.primary,.cta-band .button.primary{box-shadow:4px 4px 0 var(--ink)}
@@ -152,6 +152,11 @@
 <script>
 (function(){
 const cv=document.getElementById('heroCore');if(!cv)return;const ctx=cv.getContext('2d');
+/* 連打・長押しでブラウザのテキスト選択／コールアウトを出さない（実機FB対処） */
+cv.addEventListener('contextmenu',e=>{e.preventDefault()});
+cv.addEventListener('selectstart',e=>{e.preventDefault()});
+cv.addEventListener('dragstart',e=>{e.preventDefault()});
+const panelEl=cv.closest('.core-panel');if(panelEl)panelEl.addEventListener('selectstart',e=>{e.preventDefault()});
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let W=520,H=374;
 function resize(){const r=cv.getBoundingClientRect();const dpr=Math.min(2,window.devicePixelRatio||1);W=Math.max(280,r.width||520);H=Math.round(W*0.72);cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cv.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0)}
