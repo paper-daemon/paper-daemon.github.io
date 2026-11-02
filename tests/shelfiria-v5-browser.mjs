@@ -58,6 +58,7 @@ for(const config of [
  assert(await page.locator("#results .catalog-card").count()>=26);
  await page.screenshot({path:outDir+"/"+config.label+".png",fullPage:true,animations:"disabled"});
  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+ if(overflow>2){const offenders=await page.evaluate(()=>{const w=document.documentElement.clientWidth;return [...document.querySelectorAll('body *')].map(el=>({tag:el.tagName,cls:String(el.className||'').slice(0,90),text:(el.innerText||'').slice(0,40),left:Math.round(el.getBoundingClientRect().left),right:Math.round(el.getBoundingClientRect().right),width:Math.round(el.getBoundingClientRect().width),scrollWidth:el.scrollWidth})).filter(x=>x.right>w+2||x.left< -2).sort((a,b)=>b.right-a.right).slice(0,35)});console.log('MOBILE_OVERFLOW_DIAGNOSTICS',JSON.stringify({w:config.viewport.width,overflow,offenders}));}
  assert(overflow<=2,config.label+" document overflow "+overflow+"px");
  assert.deepEqual(errors,[],config.label+" JS runtime exceptions");
  console.log(config.label+" PASSED",JSON.stringify({count,canvasWidth:Math.round(box.width),overflow,errors:errors.length}));
