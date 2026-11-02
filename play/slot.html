@@ -3,11 +3,12 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>あませスロット | Shelfiria</title>
-<meta name="description" content="Shelfiriaの遊び場。レバーを引いて3つの絵をそろえるジャグラー風スロット。ランプが光ればボーナス。勝ったコインは下の受け皿に3Dで積み上がります。">
+<meta name="description" content="Shelfiriaの遊び場。レバーを引いて3つの絵をそろえるジャグラー風スロット。ランプが光ればボーナス。所持1000枚を超えると、筐体の受け皿にコインが溜まっていきます。">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="Shelfiria"><meta property="og:image" content="https://paper-daemon.github.io/og-slot.jpg"><meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/site.css?v=20261101-1">
 <style>
   .slot-dark{background:#0b0714;border-radius:26px;padding:18px 6px 10px;max-width:600px;margin:0 auto}
+  #trayCv{cursor:pointer}
   .machine{position:relative;width:min(540px,100%);margin:0 auto;aspect-ratio:1086/1448;container-type:inline-size;user-select:none;-webkit-user-select:none}
   .machine>img.cab{position:absolute;inset:0;width:100%;height:100%;display:block;border-radius:12px}
   .ov{position:absolute}
@@ -43,8 +44,6 @@
   .lever .ball{position:absolute;left:50%;top:0;width:68%;aspect-ratio:1;margin-left:-34%;border-radius:50%;background:radial-gradient(circle at 34% 30%,#ffb3ab,#e53224 55%,#8f130c);box-shadow:0 4px 10px rgba(0,0,0,.5),inset 0 -6px 10px rgba(0,0,0,.35);transition:transform .17s ease-in;z-index:2}
   .lever.pulled .ball{transform:translateY(7.6cqw)}
   .lever.pulled .stick{transform:scaleY(.45)}
-  #tray3d{left:11.5%;top:86.8%;width:77%;height:10.5%}
-  #tray3d canvas{display:block;width:100%;height:100%}
   .bgm-btn.off{opacity:.45}
   .bgm-btn{display:block;margin:10px 4px 0 auto;border-radius:99px;border:2px solid rgba(255,210,120,.55);background:rgba(20,8,24,.55);color:#ffd98a;font-size:.85rem;padding:7px 16px;cursor:pointer}
   .bgm-btn.off{opacity:.45}
@@ -53,13 +52,7 @@
   .machine.celebrate{animation:mshake .5s ease-in-out 3}
   @keyframes mshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
   .howto{max-width:560px;margin:14px auto 0;color:var(--ink-dim);line-height:1.9;font-size:.92rem}
-#pileBox{position:relative;width:min(540px,100%);margin:10px auto 0;height:112px;border-radius:16px;background:linear-gradient(180deg,#2a1430,#14061a);border:2px solid rgba(255,210,120,.38);box-shadow:inset 0 12px 26px rgba(0,0,0,.7),inset 0 -8px 16px rgba(0,0,0,.45);overflow:hidden}
-#pileBox canvas{display:block;width:100%;height:100%;touch-action:none;cursor:pointer}
-#pileHint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,217,138,.48);font:700 .8rem var(--sans);letter-spacing:.1em;pointer-events:none;transition:opacity .6s}
 </style>
-<script type="importmap">
-{"imports":{"three":"https://unpkg.com/three@0.170.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.170.0/examples/jsm/"}}
-</script>
 <script data-goatcounter="https://shelfiria.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script><script src="/analytics-out.js" defer></script>
 </head>
 <body>
@@ -80,15 +73,14 @@
   <button class="bet-hit" data-bet="30" type="button">30</button>
   <button class="bet-hit" data-bet="50" type="button">50</button>
   <div class="ov lever" id="lever"><div class="base"></div><div class="stick"></div><div class="ball"></div></div>
-  <div class="ov" id="tray3d"></div>
+  <canvas class="ov" id="trayCv" style="left:10.5%;top:84.9%;width:79%;height:15.1%;z-index:3;touch-action:none"></canvas>
 </div>
-<div id="pileBox"><canvas id="pileCv"></canvas><span id="pileHint">コイン置き場 ― 1000枚から貯まりはじめる</span></div>
 <button class="bgm-btn" id="bgmBtn" type="button" aria-label="BGM切替">♪ BGM</button>
 </div>
 <div class="howto">
 <p>配当（BET10のとき）：7 7 7＝300／★★★＝ジャックポット全額／◆◆◆ 200／●●● 120／▲▲▲ 100／ベルの3つ 60／チェリーの3つ 40／どれか2つ 15／チェリーが1つでも 5。BETを上げると配当も比例して上がります。</p>
 <p>ボーナス：たまに星ランプが光ります。光ったら次の回転からボーナス開始。BIGは15ゲーム、REG（バケ）は8ゲーム、どちらも回すのは無料で小当たりが続きます。ボーナス中は上の絵が動き出します。</p>
-<p>ジャックポットは通常時1回まわすごとに少しずつ貯まります。コインとプールはこの端末に保存されます。コインが尽きたら100枚補充されます。所持コインが1000枚を超えると、台の下のコイン置き場にもコインが貯まりはじめます。置き場を触るとコインが跳ねます。</p>
+<p>ジャックポットは通常時1回まわすごとに少しずつ貯まります。コインとプールはこの端末に保存されます。コインが尽きたら100枚補充されます。所持コインが1000枚を超えると、払い出し口からコインが出てきて筐体の受け皿に溜まっていきます。いっぱいになると前面に溢れます。受け皿を触るとコインが跳ねます。</p>
 </div>
 </section>
 </main>
@@ -312,205 +304,150 @@ function judge(finals,inBonus){
 reelEls.forEach((el,i)=>setReel(i,currentIdx[i]));
 draw();renderPile(0);
 </script>
-<script type="module">
-import * as THREE from 'three';
-const host=document.getElementById('tray3d');
-try{
-  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-  host.appendChild(renderer.domElement);
-  const scene=new THREE.Scene();
-  const camera=new THREE.PerspectiveCamera(36,2,0.1,100);
-  camera.position.set(0,7.6,9.4);camera.lookAt(0,0,0.2);
-  scene.add(new THREE.AmbientLight(0xfff2d8,0.85));
-  const dl=new THREE.DirectionalLight(0xffffff,1.6);dl.position.set(3,7,4);scene.add(dl);
-  const pl=new THREE.PointLight(0xffb84d,30,30);pl.position.set(-4,3.4,3);scene.add(pl);
-  const floor=new THREE.Mesh(new THREE.PlaneGeometry(11.4,5.8),new THREE.MeshStandardMaterial({color:0x180a16,roughness:0.9,metalness:0.1}));
-  floor.rotation.x=-Math.PI/2;floor.position.y=-0.02;scene.add(floor);
-  const tex=new THREE.TextureLoader().load('/play/assets/slot-coin.png');
-  tex.colorSpace=THREE.SRGBColorSpace;
-  const capMat=new THREE.MeshStandardMaterial({map:tex,metalness:0.5,roughness:0.32});
-  const sideMat=new THREE.MeshStandardMaterial({color:0xd9a441,metalness:0.85,roughness:0.3});
-  const geo=new THREE.CylinderGeometry(0.47,0.47,0.115,26);
-  const COLS=11,ROWS=5,CAP=110;
-  const heights=new Array(COLS*ROWS).fill(0);
-  const bodies=[];
-  function cellPos(i){return {x:-4.7+(i%COLS)*0.94+(Math.random()*0.24-0.12),z:-1.9+Math.floor(i/COLS)*0.95+(Math.random()*0.22-0.11)}}
-  function pickCell(){let best=-1,bh=1e9;for(let k=0;k<7;k++){const i=Math.floor(Math.random()*COLS*ROWS);if(heights[i]<bh){bh=heights[i];best=i}}return best}
-  function spawn(fall,delay){
-    const ci=pickCell();const p=cellPos(ci);
-    const ty=0.06+heights[ci]*0.096;heights[ci]++;
-    const m=new THREE.Mesh(geo,[sideMat,capMat,capMat]);
-    m.rotation.y=Math.random()*Math.PI*2;
-    const tilt={x:(Math.random()*0.34-0.17),z:(Math.random()*0.34-0.17)};
-    if(fall){m.position.set(p.x,ty+5.2+Math.random()*2.6,p.z);m.rotation.x=tilt.x*2;m.rotation.z=tilt.z*2;
-      bodies.push({m,ci,ty,y:m.position.y,vy:0,settled:false,tilt,delay:delay||0});
-    }else{m.position.set(p.x,ty,p.z);m.rotation.x=tilt.x;m.rotation.z=tilt.z;
-      bodies.push({m,ci,ty,y:ty,vy:0,settled:true,tilt,delay:0});}
-    scene.add(m);
-  }
-  function sync(balance,rain){
-    const target=Math.min(balance,CAP);
-    let diff=target-bodies.length;
-    if(diff>0){for(let i=0;i<diff;i++){spawn(rain>0&&i<rain, i*55)}}
-    else if(diff<0){
-      bodies.sort((a,b)=>b.y-a.y);
-      for(let i=0;i<-diff;i++){const b=bodies.pop();if(!b)break;scene.remove(b.m);if(heights[b.ci]>0)heights[b.ci]--}
-    }
-    wake();
-  }
-  function resize(){
-    const w=host.clientWidth||360,h=host.clientHeight||64;
-    renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();wake();
-  }
-  new ResizeObserver(resize).observe(host);resize();
-  let running=false,last=performance.now();
-  function wake(){if(!running){running=true;last=performance.now();requestAnimationFrame(step)}}
-  function step(now){
-    const dt=Math.min(0.033,(now-last)/1000);last=now;
-    let active=false;
-    for(const b of bodies){
-      if(b.settled)continue;active=true;
-      if(b.delay>0){b.delay-=dt*1000;continue}
-      b.vy-=26*dt;b.y+=b.vy*dt;
-      if(b.y<=b.ty){b.y=b.ty;
-        if(Math.abs(b.vy)>3.2){b.vy=-b.vy*0.22;b.m.rotation.x=b.tilt.x*1.4;b.m.rotation.z=b.tilt.z*1.4}
-        else{b.settled=true;b.m.rotation.x=b.tilt.x;b.m.rotation.z=b.tilt.z}
-      }
-      b.m.position.y=b.y;
-    }
-    renderer.render(scene,camera);
-    if(active)requestAnimationFrame(step);else running=false;
-  }
-  let initCoins=Number(localStorage.getItem('slotCoins'));if(Number.isNaN(initCoins)||initCoins<=0)initCoins=100;
-  sync(initCoins,0);
-  window.__traySync=sync;
-  wake();
-}catch(e){/* tray is an enhancement; the game works without it */}
-</script>
 <script>
-/* コイン貯金皿：所持1000枚から下に積み上がる（2D・軽量版。3Dトレイは当たり時の雨専用に役割変更） */
+/* 筐体トレイ内コイン物理：1000枚から中央の払い出し口に溜まり、満杯で前面に溢れる */
 (function(){
 try{
-const box=document.getElementById('pileBox'),cv=document.getElementById('pileCv'),hint=document.getElementById('pileHint');
-if(!box||!cv)return;
+const cv=document.getElementById('trayCv');if(!cv)return;
 const ctx=cv.getContext('2d');
 const DPR=Math.min(1.5,window.devicePixelRatio||1);
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-let W=0;const H=112;let d=26,r=13,cols=0,maxLv=4,cap=90,stepX=20;const PAD=10;
-let settled=[],heights=[],falling=[],popping=[],owed=0,spawnT=0,jig=0,running=false,lastT=0;
-const staticCv=document.createElement('canvas');const sctx=staticCv.getContext('2d');
-const img=new Image();let imgOk=false;img.onload=function(){imgOk=true;redrawStatic();ctx.clearRect(0,0,W,H);ctx.drawImage(staticCv,0,0,W,H)};img.src='/play/assets/slot-coin.png';
-function layout(){
-  W=box.clientWidth||340;
+let W=300,H=80,R=9,CAP=48;
+let bodies=[],owed=0,spawnT=0,retQ=0,retT=0,running=false,lastT=0,acc=0,actStart=0;
+const img=new Image();let imgOk=false;img.onload=function(){imgOk=true;drawFrame()};img.src='/play/assets/slot-coin.png';
+function surfY(x){const u=x/W;let f=0.56;if(u<0.07)f=0.56-(0.07-u)*7.0;else if(u>0.93)f=0.56-(u-0.93)*7.0;return Math.max(H*0.12,f*H)}
+function resize(){
+  const w=cv.clientWidth||300;W=w;H=cv.clientHeight||Math.round(w*0.19);
   cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);ctx.setTransform(DPR,0,0,DPR,0,0);
-  staticCv.width=cv.width;staticCv.height=cv.height;sctx.setTransform(DPR,0,0,DPR,0,0);
-  d=W>=480?27:23;r=d/2;stepX=d*0.94;
-  cols=Math.max(4,Math.floor((W-PAD*2-d)/stepX)+1);
-  maxLv=Math.max(2,Math.floor((H-16-d)/(d*0.84))+1);
-  cap=Math.min(115,cols*maxLv);
-  heights=new Array(cols).fill(0);
-  const keep=settled;settled=[];
-  for(const c of keep){const col=pickCol();c.c=col;c.l=heights[col]++;settled.push(c)}
-  redrawStatic();ctx.clearRect(0,0,W,H);ctx.drawImage(staticCv,0,0,W,H);
+  R=Math.max(6.8,Math.min(12,W/38));
+  CAP=Math.round((W/(2*R))*2.2);
 }
-function pickCol(){let best=-1,bh=1e9;for(let k=0;k<6;k++){const i=k<3?Math.floor(Math.random()*cols):Math.floor((Math.random()+Math.random())/2*cols);const cc=Math.min(cols-1,Math.max(0,i));if(heights[cc]<bh){bh=heights[cc];best=cc}}return best}
-function xOf(c,jx){return PAD+r+c*stepX+(jx||0)}
-function yOf(l){return H-8-r-l*(d*0.84)}
-function drawCoin(g,x,y,rot,shade,scale){
-  const rr=r*(scale||1);g.save();g.translate(x,y);g.rotate(rot);
-  if(imgOk){g.drawImage(img,-rr,-rr,rr*2,rr*2)}
-  else{const gr=g.createRadialGradient(-rr*0.3,-rr*0.3,rr*0.15,0,0,rr);gr.addColorStop(0,'#ffe9a0');gr.addColorStop(0.6,'#f2b93c');gr.addColorStop(1,'#c07f14');g.fillStyle=gr;g.beginPath();g.arc(0,0,rr,0,6.283);g.fill();g.strokeStyle='#8a5c08';g.lineWidth=1.6;g.stroke();g.fillStyle='#a86f0a';g.font='900 '+Math.round(rr*1.05)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('★',0,1)}
-  if(shade){g.globalAlpha=0.13;g.fillStyle='#6b4200';g.beginPath();g.arc(0,0,rr,0,6.283);g.fill();g.globalAlpha=1}
-  g.restore();
+function targetFor(bal){return bal>=1000?Math.min(CAP,5+Math.floor((bal-1000)/52)):0}
+function counted(){let n=owed+retQ*0;for(const b of bodies)if(!b.overflow&&b.state!=='return')n++;return n}
+function spawn(overflow){
+  bodies.push({x:W/2+(Math.random()*14-7),y:H*0.10,vx:(Math.random()-0.5)*36,vy:50,a:Math.random()*6.28,va:(Math.random()-0.5)*3,r:R,sleep:0,state:'fall',overflow:!!overflow,dyn:true,born:performance.now()});
 }
-function redrawStatic(){
-  sctx.clearRect(0,0,W,H);
-  const sorted=settled.filter(c=>!c.gone).sort((a,b)=>a.l-b.l);
-  for(const c of sorted)drawCoin(sctx,xOf(c.c,c.jx),yOf(c.l),c.rot,c.sh,false);
+function prefill(n){
+  bodies=[];
+  const perRow=Math.max(4,Math.floor((W*0.80)/(2*R)));
+  let placed=0,row=0;
+  while(placed<n&&row<6){
+    const cnt=Math.min(perRow-row*2,n-placed);if(cnt<=0)break;
+    const rowW=cnt*2*R;
+    for(let i=0;i<cnt;i++){
+      const x=W/2-rowW/2+(i+0.5)*2*R + (Math.random()*3-1.5);
+      const y=surfY(x)-R-row*(R*1.5);if(y<R*0.55){placed=n;break}
+      bodies.push({x:x,y:y,vx:0,vy:0,a:Math.random()*6.28,va:0,r:R,sleep:9,state:'rest',overflow:false,dyn:false,born:0});
+      placed++;
+    }
+    row++;
+  }
 }
-function wake(){if(!running){running=true;lastT=performance.now();requestAnimationFrame(step)}}
-function spawnCoin(temp){
-  const c=pickCol();
-  falling.push({c:c,x:xOf(c,(Math.random()*7-3.5)),y:-d,vy:0,rot:Math.random()*6.28,vr:(Math.random()-0.5)*2.4,temp:!!temp,popAt:0});
-}
-function settleCoin(f){
-  const l=heights[f.c];if(l>=maxLv){return}
-  heights[f.c]++;
-  settled.push({c:f.c,l:l,jx:f.x-xOf(f.c,0),rot:f.rot*0.4,sh:f.c%3===0,temp:f.temp,gone:false,popAt:f.temp?performance.now()+1300:0});
-  redrawStatic();
-}
-function removeTopPersistent(n){
-  let rem=n;
-  const tops=settled.filter(c=>!c.temp&&!c.gone).sort((a,b)=>b.l-a.l);
-  for(const c of tops){if(rem<=0)break;rem--;c.gone=true;popping.push({c:c,t:0});
-    for(const o of settled){if(o!==c&&!o.gone&&o.c===c.c&&o.l>c.l)o.l--}
-    heights[c.c]--;redrawStatic()}
-  return rem;
-}
-function persistentCount(){
-  let n=owed;for(const c of settled)if(!c.temp&&!c.gone)n++;for(const f of falling)if(!f.temp)n++;return n;
-}
-function targetFor(bal){return bal>=1000?Math.min(cap,5+Math.floor((bal-1000)/22)):0}
-function pileSync(bal,rain){
-  const target=targetFor(bal);
-  hint.style.opacity=bal>=1000?'0':'1';
-  let diff=target-persistentCount();
-  if(diff>0){if(reduced){for(let i=0;i<diff;i++){const c=pickCol();if(heights[c]>=maxLv)break;settled.push({c:c,l:heights[c]++,jx:(Math.random()*7-3.5),rot:Math.random()*1.2,sh:c%3===0,temp:false,gone:false,popAt:0})}redrawStatic()}
-    else owed+=diff}
-  else if(diff<0){let d2=-diff;if(owed>0){const cut=Math.min(owed,d2);owed-=cut;d2-=cut}
-    for(const f of falling)if(d2>0&&!f.temp){f.temp=true;f.popAt=0;d2--}
-    if(d2>0)removeTopPersistent(d2)}
-  if(rain>0&&!reduced){const rn=Math.min(6,rain);for(let i=0;i<rn;i++)setTimeout(()=>{spawnCoin(true);wake()},i*70)}
+function wake(){actStart=performance.now();if(!running){running=true;lastT=performance.now();requestAnimationFrame(frame)}}
+function syncTray(bal,rain){
+  const target=targetFor(bal);let diff=target-counted();
+  if(diff>0){if(reduced){prefill(target)}else owed+=diff}
+  else if(diff<0){owed=Math.max(0,owed+diff);retQ+= -diff - 0; if(reduced){prefill(target);retQ=0}}
+  if(rain>0&&!reduced){const rn=Math.min(8,rain);for(let i=0;i<rn;i++)setTimeout(()=>{spawn(true);wake()},i*60)}
   wake();
 }
-function disturb(x,y){
-  jig=1;let n=0;
-  const cand=settled.filter(c=>!c.gone).sort((a,b)=>b.l-a.l);
-  for(const c of cand){if(n>=7)break;const cx=xOf(c.c,c.jx),cy=yOf(c.l);const dx=cx-x,dy=cy-y;if(dx*dx+dy*dy<4600){n++;c.gone=true;heights[c.c]--;
-    for(const o of settled){if(o!==c&&!o.gone&&o.c===c.c&&o.l>c.l)o.l--}
-    falling.push({c:c.c,x:cx,y:cy,vy:-(230+Math.random()*190),vx:(Math.random()-0.5)*170,rot:c.rot,vr:(Math.random()-0.5)*5,temp:c.temp,popAt:c.popAt||0,free:true})}}
-  if(n)redrawStatic();wake();
-}
-cv.addEventListener('pointerdown',e=>{const b=cv.getBoundingClientRect();disturb(e.clientX-b.left,e.clientY-b.top)});
-cv.addEventListener('pointermove',e=>{if(e.buttons>0){const b=cv.getBoundingClientRect();disturb(e.clientX-b.left,e.clientY-b.top)}});
-function step(now){
-  const dt=Math.min(0.04,(now-lastT)/1000);lastT=now;
-  spawnT+=dt*1000;
-  if(owed>0&&spawnT>42&&falling.length<14){spawnT=0;owed--;spawnCoin(false)}
-  let active=falling.length>0||popping.length>0||owed>0||jig>0.02;
-  jig*=Math.pow(0.02,dt);
-  const nowMs=performance.now();
-  for(const c of settled){if(c.temp&&!c.gone&&c.popAt&&nowMs>c.popAt){c.gone=true;popping.push({c:c,t:0});for(const o of settled){if(o!==c&&!o.gone&&o.c===c.c&&o.l>c.l)o.l--}heights[c.c]--;redrawStatic();active=true}}
-  for(let i=falling.length-1;i>=0;i--){const f=falling[i];
-    if(!f.free){f.vy+=1500*dt;f.y+=f.vy*dt;f.rot+=f.vr*dt;
-      const ty=yOf(heights[f.c]);
-      if(f.y>=ty){if(f.vy>300&&heights[f.c]<maxLv){f.y=ty;f.vy=-f.vy*0.24}else{f.y=ty;falling.splice(i,1);settleCoin(f)}}}
-    else{f.vy+=1500*dt;f.y+=f.vy*dt;f.x+=(f.vx||0)*dt;f.rot+=f.vr*dt;
-      const col=Math.min(cols-1,Math.max(0,Math.round((f.x-PAD-r)/stepX)));f.c=col;
-      const ty=yOf(heights[col]);
-      if(f.y>=ty&&f.vy>0){if(f.vy>330){f.y=ty;f.vy=-f.vy*0.22;f.vx=(f.vx||0)*0.5}else{f.y=ty;falling.splice(i,1);settleCoin(f)}}}
+function step(dt){
+  spawnT+=dt*1000;retT+=dt*1000;
+  if(owed>0&&spawnT>55&&bodies.length<CAP+14){spawnT=0;owed--;spawn(false)}
+  if(retQ>0&&retT>40){retT=0;retQ--;
+    let top=null;for(const b of bodies)if(b.state==='rest'&&(!top||b.y<top.y))top=b;
+    if(top){top.state='return';top.sleep=0}else retQ=0}
+  const G=1500;
+  for(const b of bodies){b.touch=false;b.supported=false}
+  for(const b of bodies){
+    if(b.state==='return'){
+      const mx=W/2,my=H*0.05;b.x+=(mx-b.x)*Math.min(1,dt*9);b.y+=(my-b.y)*Math.min(1,dt*9);b.r*=Math.pow(0.02,dt);
+      if(Math.abs(b.x-mx)<4&&Math.abs(b.y-my)<4||b.r<1.2)b.state='dead';
+      continue}
+    if(b.state==='spill'){
+      b.vy+=G*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.a+=b.va*dt;
+      b.vx+=((W/2)-b.x)*0.6*dt;
+      if(b.y>H*1.05)b.state='dead';
+      continue}
+    if(b.sleep>4)continue;
+    b.vy+=G*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.a+=b.va*dt;
+    const fy=surfY(b.x);
+    if(b.y+b.r>fy){b.y=fy-b.r;if(b.vy>70)b.vy=-b.vy*0.26;else b.vy=0;b.vx*=0.84;b.va=b.vx/b.r;
+      if(Math.abs(b.vx)<7)b.vx=0}
+    if(b.x<W*0.045+b.r*0.6){b.x=W*0.045+b.r*0.6;b.vx=Math.abs(b.vx)*0.35}
+    if(b.x>W*0.955-b.r*0.6){b.x=W*0.955-b.r*0.6;b.vx=-Math.abs(b.vx)*0.35}
   }
-  for(let i=popping.length-1;i>=0;i--){popping[i].t+=dt;if(popping[i].t>0.17){const c=popping[i].c;const ix=settled.indexOf(c);if(ix>=0)settled.splice(ix,1);popping.splice(i,1)}}
-  ctx.clearRect(0,0,W,H);
-  const jy=jig>0.02?Math.sin(now*0.09)*1.6*jig:0;
-  ctx.drawImage(staticCv,0,jy,W,H);
-  for(const f of falling)drawCoin(ctx,f.x,f.y,f.rot,false,false);
-  for(const p of popping){const k=p.t/0.17;ctx.globalAlpha=1-k;drawCoin(ctx,xOf(p.c.c,p.c.jx),yOf(p.c.l)-k*10,p.c.rot,p.c.sh,1+0.3*k);ctx.globalAlpha=1}
-  if(active||falling.length||popping.length)requestAnimationFrame(step);else{running=false;ctx.clearRect(0,0,W,H);ctx.drawImage(staticCv,0,0,W,H)}
+  for(let it=0;it<2;it++){
+    for(let i=0;i<bodies.length;i++){const A=bodies[i];if(A.state!=='fall'&&A.state!=='rest')continue;
+      for(let j=i+1;j<bodies.length;j++){const B=bodies[j];if(B.state!=='fall'&&B.state!=='rest')continue;
+        const dx=B.x-A.x,dy=B.y-A.y,rr=A.r+B.r,d2=dx*dx+dy*dy;
+        if(d2>0.01&&d2<rr*rr){const d=Math.sqrt(d2),ov=(rr-d)/2,nx=dx/d,ny=dy/d;
+          A.touch=true;B.touch=true;if(dy>2)A.supported=true;if(dy<-2)B.supported=true;
+          const aDyn=A.sleep<=4,bDyn=B.sleep<=4;
+          if(aDyn&&bDyn){A.x-=nx*ov*0.6;A.y-=ny*ov*0.6;B.x+=nx*ov*0.6;B.y+=ny*ov*0.6}
+          else if(aDyn){A.x-=nx*ov*1.2;A.y-=ny*ov*1.2}
+          else if(bDyn){B.x+=nx*ov*1.2;B.y+=ny*ov*1.2}
+          const rvx=B.vx-A.vx,rvy=B.vy-A.vy,vn=rvx*nx+rvy*ny;
+          if(vn<0){const rest=vn<-60?0.24:0;const imp=-(1+rest)*vn/2;if(aDyn){A.vx-=imp*nx;A.vy-=imp*ny}if(bDyn){B.vx+=imp*nx;B.vy+=imp*ny}
+            if(Math.abs(vn)>26){A.sleep=0;B.sleep=0}}
+        }}}
+  }
+  let full=true;
+  for(const b of bodies){
+    if(b.state==='fall'||b.state==='rest'){
+      if(b.touch&&b.state==='fall'){b.vx*=0.90;b.vy*=0.90}
+      const sp=Math.abs(b.vx)+Math.abs(b.vy);
+      const onFloor=b.y+b.r>=surfY(b.x)-1.5;
+      if((onFloor||b.supported)&&sp<34){b.vx*=0.80;b.vy*=0.80}
+      if(sp<16&&(onFloor||b.supported||b.state==='rest')){b.sleep+=dt*5;if(b.sleep>3){b.state='rest';b.vx=0;b.vy=0}}
+      else if(b.state==='fall')b.sleep=0;
+      if(b.state==='rest'&&b.y<H*0.40&&(b.overflow||(b.dyn&&counted()>=CAP))&&performance.now()-b.born>400){b.state='spill';b.vx=(W/2-b.x)*0.4;b.vy=-30}
+      if(b.sleep<=4)full=false;
+    }
+  }
+  bodies=bodies.filter(b=>b.state!=='dead');
+  return !(owed>0||retQ>0)&&full&&!bodies.some(b=>b.state==='spill'||b.state==='return');
 }
-/* 初期化：残高から即座に積む（雨なし） */
-layout();new ResizeObserver(()=>{layout()}).observe(box);
-let bal0=Number(localStorage.getItem('slotCoins'));if(Number.isNaN(bal0)||bal0<=0)bal0=100;
-(function(){const target=targetFor(bal0);hint.style.opacity=bal0>=1000?'0':'1';
-  for(let i=0;i<target;i++){const c=pickCol();if(heights[c]>=maxLv)break;settled.push({c:c,l:heights[c]++,jx:(Math.random()*7-3.5),rot:Math.random()*1.2,sh:c%3===0,temp:false,gone:false,popAt:0})}
-  redrawStatic();ctx.drawImage(staticCv,0,0,W,H)})();
-/* 3Dトレイは当たりの雨専用にし、残高連動は貯金皿へ一本化。
-   トレイ側は module（遅延実行）で __traySync を後から代入してくるため、setterで横取りして合体させる */
-let _trayFn=null;
-function combinedSync(bal,rain){if(_trayFn){try{_trayFn(rain>0?rain:0,rain)}catch(e){}}pileSync(bal,rain)}
-try{Object.defineProperty(window,'__traySync',{configurable:true,get(){return combinedSync},set(fn){_trayFn=fn;if(fn){try{fn(0,0)}catch(e){}}}})}catch(e){window.__traySync=combinedSync}
-}catch(e){/* 貯金皿は飾り。ゲーム本体は無関係に動く */}
+function drawCoin(b){
+  ctx.save();ctx.translate(b.x,b.y);ctx.rotate(b.a);
+  if(b.state==='spill'){const k=Math.max(0,Math.min(1,(H*1.02-b.y)/(H*0.22)));ctx.globalAlpha=Math.min(1,k+0.25)}
+  const rr=b.r;
+  if(imgOk)ctx.drawImage(img,-rr,-rr,rr*2,rr*2);
+  else{const g=ctx.createRadialGradient(-rr*0.3,-rr*0.3,rr*0.15,0,0,rr);g.addColorStop(0,'#ffe9a0');g.addColorStop(0.6,'#f2b93c');g.addColorStop(1,'#c07f14');ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,rr,0,6.283);ctx.fill();ctx.fillStyle='#a86f0a';ctx.font='900 '+Math.round(rr*1.05)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('★',0,1)}
+  ctx.restore();ctx.globalAlpha=1;
+}
+function drawFrame(){
+  ctx.clearRect(0,0,W,H);
+  const g=ctx.createRadialGradient(W/2,H*0.10,2,W/2,H*0.10,W*0.17);
+  g.addColorStop(0,'rgba(0,0,0,0.6)');g.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(W/2,H*0.10,W*0.17,H*0.13,0,0,6.283);ctx.fill();
+  const sorted=bodies.slice().sort((a,b)=>a.y-b.y);
+  for(const b of sorted)drawCoin(b);
+}
+function frame(now){
+  const dt=Math.min(0.05,(now-lastT)/1000);lastT=now;acc+=dt;
+  let done=false;const h=1/120;let n=0;
+  while(acc>h&&n<8){done=step(h);acc-=h;n++}
+  if(now-actStart>6000&&owed<=0&&retQ<=0){for(const b of bodies)if(b.state==='fall'){b.state='rest';b.vx=0;b.vy=0;b.sleep=9}done=true}
+  drawFrame();
+  if(done&&owed<=0){running=false;return}
+  requestAnimationFrame(frame);
+}
+function disturb(x,y){
+  for(const b of bodies){if(b.state!=='rest'&&b.state!=='fall')continue;const dx=b.x-x,dy=b.y-y,d2=dx*dx+dy*dy;
+    if(d2<4900&&d2>1){const d=Math.sqrt(d2),f=(1-d/70)*230;b.vx+=dx/d*f;b.vy+=dy/d*f-90;b.sleep=0;b.state='fall'}}
+  wake();
+}
+function evPos(e){const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+cv.addEventListener('pointerdown',e=>{const p=evPos(e);disturb(p.x,p.y)});
+cv.addEventListener('pointermove',e=>{if(e.buttons>0){const p=evPos(e);disturb(p.x,p.y)}});
+resize();
+new ResizeObserver(()=>{const keep=targetFor(currentBal());resize();if(!running)prefill(Math.min(keep,countedStatic()));drawFrame()}).observe(cv);
+function currentBal(){const v=Number(localStorage.getItem('slotCoins'));return Number.isNaN(v)||v<=0?100:v}
+function countedStatic(){let n=0;for(const b of bodies)if(!b.overflow)n++;return n}
+prefill(targetFor(currentBal()));drawFrame();
+window.__traySync=syncTray;
+}catch(e){/* トレイ演出は飾り。本体は無関係に動く */}
 })();
 </script>
 </body></html>
