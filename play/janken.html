@@ -42,7 +42,7 @@
 .amase-ready.shaking{animation:jkshake .26s ease-in-out infinite}
 .bgm-toggle{border:2px solid var(--ink);background:#fff;border-radius:99px;padding:4px 14px;font:700 .78rem var(--sans);cursor:pointer}
 .bgm-toggle.off{opacity:.5}
-#fxVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none;transition:opacity .25s}
+#fxVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none;transition:opacity .15s}
 #fxVideo.on{opacity:1}
 .jk-stage,.jk-stage *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .jk-stage img,.jk-stage video{-webkit-user-drag:none}
@@ -144,10 +144,13 @@ function setHand(view,imgEl,emoEl,h,map){
 }
 const RESULT_FX={win:['/play/assets/fx-win-1.mp4','/play/assets/fx-win-2.mp4','/play/assets/fx-win-3.mp4'],lose:['/play/assets/fx-lose-1.mp4','/play/assets/fx-lose-2.mp4','/play/assets/fx-lose-3.mp4'],draw:['/play/assets/fx-draw-1.mp4','/play/assets/fx-draw-2.mp4'],mtake:['/play/assets/fx-mtake-1.mp4','/play/assets/fx-mtake-2.mp4'],mwin:['/play/assets/fx-mwin-1.mp4','/play/assets/fx-mwin-2.mp4']};
 const fxVideo=document.getElementById("fxVideo");let fxTimer=null;
-function hideFx(){if(!fxVideo)return;fxVideo.classList.remove("on");if(fxTimer){clearTimeout(fxTimer);fxTimer=null}try{fxVideo.pause()}catch(e){}}
-function playFxSrc(src){if(!fxVideo||!src)return;if(fxTimer)clearTimeout(fxTimer);fxVideo.src=src;try{fxVideo.currentTime=0}catch(e){}fxVideo.classList.add("on");const p=fxVideo.play();if(p)p.catch(()=>hideFx());fxTimer=setTimeout(hideFx,5600);}
+let pendingFxSrc=null;
+function hideFx(){if(!fxVideo)return;fxVideo.classList.remove("on");if(fxTimer){clearTimeout(fxTimer);fxTimer=null}try{fxVideo.pause()}catch(e){}pendingFxSrc=null;}
+function playFxSrc(src){if(!fxVideo||!src)return;if(fxTimer)clearTimeout(fxTimer);if(fxVideo.getAttribute("src")!==src)fxVideo.src=src;try{fxVideo.currentTime=0}catch(e){}fxVideo.classList.add("on");const p=fxVideo.play();if(p)p.catch(()=>hideFx());fxTimer=setTimeout(hideFx,5600);}
 if(fxVideo)fxVideo.addEventListener("ended",hideFx);
-function playResultFx(kind){const arr=RESULT_FX[kind];if(!arr||!arr.length)return;playFxSrc(arr[Math.floor(Math.random()*arr.length)]);}
+function fxKindFor(you,eve){const base=you===eve?"draw":(((you-eve+3)%3===2)?"win":"lose");if(base==="win"&&(mpYou+1>=5||streak+1>=5))return "mwin";if(base==="lose"&&mpEve+1>=5)return "mtake";return base;}
+function primeFx(kind){const arr=RESULT_FX[kind];if(!arr||!arr.length||!fxVideo)return;pendingFxSrc=arr[Math.floor(Math.random()*arr.length)];if(fxVideo.getAttribute("src")!==pendingFxSrc){fxVideo.src=pendingFxSrc;try{fxVideo.load()}catch(e){}}}
+function playResultFx(kind){if(pendingFxSrc){playFxSrc(pendingFxSrc);return}const arr=RESULT_FX[kind];if(!arr||!arr.length)return;playFxSrc(arr[Math.floor(Math.random()*arr.length)]);}
 function playVictoryFx(){playResultFx("mwin");}
 const NAMES=["グー","チョキ","パー"];
 let w=0,l=0,d=0,streak=0,mpYou=0,mpEve=0,lastYou=-1,lastOut="";
@@ -183,7 +186,7 @@ line.textContent=lineArr[Math.floor(Math.random()*lineArr.length)];
 lastYou=you;lastOut=out;
 paintScore();
 }
-const THROW={0:{src:"/play/assets/hand-throw2-rock.mp4",at:1200},1:{src:"/play/assets/hand-throw2-scissors.mp4",at:1300},2:{src:"/play/assets/hand-throw2-paper.mp4",at:1500}};
+const THROW={0:{src:"/play/assets/hand-throw2-rock.mp4",pon:1.10},1:{src:"/play/assets/hand-throw2-scissors.mp4",pon:0.85},2:{src:"/play/assets/hand-throw2-paper.mp4",pon:1.55}};
 const stageVid=document.getElementById("stageVid");
 function toIdle(){if(!stageVid)return;stageVid.loop=true;if(!stageVid.src.includes("hand-idle2"))stageVid.src="/play/assets/hand-idle2.mp4";const p=stageVid.play();if(p)p.catch(()=>{});}
 setHand(youView,youImg,youEmo,0,YOUIMG);
@@ -201,7 +204,7 @@ jkStart.style.display="none";setHandsEnabled(true);busy=false;
 });
 document.querySelectorAll(".handbtn").forEach(b=>b.addEventListener("click",()=>{
 if(busy||!chant)return;busy=true;hideFx();
-const you=Number(b.dataset.h);const eve=chant.eve;chant=null;
+const you=Number(b.dataset.h);const eve=chant.eve;chant=null;primeFx(fxKindFor(you,eve));
 setHandsEnabled(false);
 youView.classList.add("shaking");
 setHand(youView,youImg,youEmo,0,YOUIMG);
@@ -221,12 +224,20 @@ if(stageVid){
   stageVid.loop=false;
   stageVid.onerror=()=>setTimeout(finish,700);
   if(stageVid.src.indexOf(th.src)===-1)stageVid.src=th.src;
-  try{stageVid.currentTime=0;}catch(e){}
-  const pr=stageVid.play();if(pr)pr.catch(()=>{});
-  setTimeout(finish,th.at);
-  setTimeout(finish,th.at+3500);
+  let armed=false;
+  const armThrow=()=>{
+    if(armed)return;armed=true;
+    try{if(stageVid.currentTime>0.05)stageVid.currentTime=0;}catch(e){}
+    const pr=stageVid.play();if(pr)pr.catch(()=>{});
+    const tick=()=>{if(done)return;if(stageVid.currentTime>=th.pon){finish();return}if(stageVid.requestVideoFrameCallback)stageVid.requestVideoFrameCallback(tick);else setTimeout(tick,40);};
+    if(stageVid.requestVideoFrameCallback)stageVid.requestVideoFrameCallback(tick);else setTimeout(tick,40);
+  };
+  if(stageVid.readyState>=1)armThrow();else stageVid.addEventListener("loadedmetadata",armThrow,{once:true});
+  setTimeout(finish,4500);
 }else setTimeout(finish,900);
 }));
-paintScore();</script>
+paintScore();
+window.addEventListener("load",()=>{const urls=Object.values(THROW).map(t=>t.src);let i=0;const step=()=>{if(i>=urls.length)return;const u=urls[i++];fetch(u).then(r=>r.arrayBuffer()).catch(()=>{}).finally(()=>setTimeout(step,100));};setTimeout(step,1200);});
+</script>
 <script src="/ad-overlay.js" defer></script>
 </body></html>
