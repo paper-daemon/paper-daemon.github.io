@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ja"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>制作物 | Shelfiria</title>
+<meta name="description" content="Shelfiria / paper-daemonの公開制作物。AgentLink、SI制作ライン、業務自動化、納品ガード、実用ツール。説明だけでなく公開コード・デモ・生成物まで。">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta property="og:type" content="website"><meta property="og:title" content="作ったものと、その証拠。 | Shelfiria"><meta property="og:description" content="システム、制作ライン、自動化、実用ツール。動くもの・コード・生成物まで公開。"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/site.css?v=20261101-1">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9454193786755558" crossorigin="anonymous"></script>
+<script data-goatcounter="https://shelfiria.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script><script src="/analytics-out.js" defer></script>
+<style>.video-card video{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;background:#0b0714;display:block;margin-bottom:12px}.video-card .video-exit{font-weight:700;color:var(--red);text-decoration:none}.video-card .video-exit:hover{text-decoration:underline}</style>
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0a0d20"><link rel="stylesheet" href="/preview/holo-v4/theme.css?v=4"></head><body>
+<header class="site-head"><a class="brand" href="/preview/holo-v4/index.html"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>Shelfiria</strong></span></a><nav aria-label="main"><a href="/preview/holo-v4/demo.html">あそぶ</a><a href="/preview/holo-v4/showcase.html" aria-current="page">みる</a><a href="/preview/holo-v4/notes.html">よむ</a><a href="/preview/holo-v4/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="social-mini" href="https://x.com/amase__iv" aria-label="X">X</a><a class="head-cta" href="/preview/holo-v4/demo.html">あそぶ →</a></div></header>
+<main class="page">
+<section class="page-hero"><p class="eyebrow">WORKS / PUBLIC PROOF</p><h1>作ったものと、<br>その証拠。</h1><p class="page-lead">スクショだけで終わらせず、公開できるものはコード、入力、生成物、失敗時の扱いまで残しています。</p><div class="page-meta"><span>SYSTEMS</span><span>PRODUCTION</span><span>AUTOMATION</span><span>DELIVERY</span><span>TOOLS</span></div></section>
+
+<section class="section tone-white"><header class="section-head reveal"><small>01 / CORE</small><h2>軸になってるもの。</h2><p>単発のデモより、今も使って育てている仕組み。</p></header><div class="link-list">
+<a class="link-row reveal" href="https://github.com/paper-daemon/AgentLink"><small>SYSTEM / OSS RELEASE</small><strong>AgentLink</strong><span>長時間SI workerの復旧・二重実行防止・state/receiptを扱う基盤。公開MITデモ v0.1.0 をリリース済みで、外部forkからのPR #20もテスト後にmerge。</span><b>↗</b></a>
+<a class="link-row reveal" href="https://github.com/paper-daemon/AgentLink/releases/tag/receipt-replay-simulator-v0.1.0"><small>RELEASE / MIT DEMO</small><strong>Receipt Replay Simulator v0.1.0</strong><span>timeout ≠ failure を30秒で試せる依存なしPythonデモ。completed / retry / reconcile とpre-attempt guardを公開。</span><b>↗</b></a>
+<a class="link-row reveal" href="/portfolio/ai-production-control-room.html"><small>SI PRODUCTION</small><strong>SI Production Control Room</strong><span>brief → 制作 → QA → 差分修正 → 納品を一つの工程として扱う。</span><b>→</b></a>
+<a class="link-row reveal" href="/portfolio/revenue-delivery-guard.html"><small>DELIVERY OPS</small><strong>Revenue Delivery Guard</strong><span>仮払い、QA、納品、検収、入金を分け、一度だけ正しく外部effectを実行する。</span><b>→</b></a>
+</div></section>
+
+<section class="section tone-warm"><header class="section-head reveal"><small>02 / AUTOMATION</small><h2>入力から成果物まで。</h2><p>実務で本当に起きる事故（形式の崩れや二重実行）を防ぐための、小さい公開ツールも切り出しています。</p></header><div class="link-list">
+<a class="link-row reveal" href="https://github.com/paper-daemon/workflow-contract-gate"><small>API / WEBHOOK / CI</small><strong>Workflow Contract Gate</strong><span>API・Webhook・n8n/Make連携のpayload contractをCIで検証。required、type、enum、unknown fieldを依存少なめでチェック。</span><b>↗</b></a>
+<a class="link-row reveal" href="https://github.com/paper-daemon/idempotency-receipt-ledger"><small>IDEMPOTENCY / SQLITE</small><strong>Idempotency Receipt Ledger</strong><span>外部effectの前にEXECUTE / SKIP / CONFLICTを判定し、timeout後の再実行でも二重送信・二重処理を避けるreceipt台帳。</span><b>↗</b></a>
+<a class="link-row reveal" href="https://github.com/paper-daemon/AgentLink/tree/main/demos/agent-eval-regression-kit"><small>AGENT EVAL / REGRESSION</small><strong>Agent Evaluation & Regression Kit</strong><span>固定ケース、必須証拠、禁止event、試行上限、重複effect receiptを小さな依存なしharnessで回帰チェック。自己制作デモとして公開。</span><b>↗</b></a>
+<a class="link-row reveal" href="/portfolio/construction-daily-report-automation.html"><small>CSV / PYTHON</small><strong>建設日報の自動化</strong><span>架空CSVをvalidationし、日別集計と日本語日報へ変換。入力、コード、出力を公開。</span><b>→</b></a>
+<a class="link-row reveal" href="/portfolio/brief-to-page.html"><small>BRIEF → PAGE</small><strong>Brief to Page</strong><span>構造化された依頼文（JSON）から、検証を通した1枚ページを自動で組む仕組みの事例。</span></a>
+<a class="link-row reveal" href="/portfolio/data-shape-guard.html"><small>DATA CONTRACT</small><strong>Data Shape Guard</strong><span>ぐちゃぐちゃなJSONを、型とドリフト検知つきのデータ契約に変える事例。</span></a>
+<a class="link-row reveal" href="/portfolio/idempotency-receipt-ledger.html"><small>IDEMPOTENCY</small><strong>冪等性レシート台帳</strong><span>外部への処理が二重に走らないよう、実行・スキップ・再試行を台帳で管理する事例。</span></a>
+<a class="link-row reveal" href="/portfolio/automation-first-aid.html"><small>DIAGNOSTICS</small><strong>Automation First Aid</strong><span>自動化の応急診断。再試行して安全かどうかを分類し、ログを安全に点検する事例。</span></a>
+<a class="link-row reveal" href="/portfolio/workflow-contract-gate.html"><small>CI GATE</small><strong>Workflow Contract Gate</strong><span>APIとWebhookの契約を、CIで検証する小さな門番の事例。</span></a>
+<a class="link-row reveal" href="https://github.com/paper-daemon/AgentLink/blob/main/CASE_STUDY_RAG_FLEET.md"><small>RAG / OBSERVABILITY</small><strong>RAG Fleet Harness</strong><span>複数agentのrouting、source、run ID、validation、healthを分けて追う。</span><b>↗</b></a>
+<a class="link-row reveal" href="https://github.com/paper-daemon/AgentLink/tree/main/demos/receipt-replay-simulator"><small>RECOVERY / EFFECT GUARD</small><strong>Receipt Replay Simulator</strong><span>結果不明時のskip / retry / reconcileに加え、認証ゲート・cooldown・既実行effectを見て「今は実行しない」判断もテストする。</span><b>↗</b></a>
+</div></section>
+
+<section class="section tone-white"><header class="section-head reveal"><small>03 / TOOLS</small><h2>小さく使える道具。</h2><p>大きいシステムを買わなくても、1個の困りごとにそのまま使えるもの。</p></header><div class="feature-grid">
+<a class="feature-card reveal" href="/creator-delivery-inspector/"><small>MEDIA QA</small><h3>Delivery Inspector</h3><p>動画・音声の解像度、長さ、codec、audio条件を納品前に確認。</p><b>使う →</b></a>
+<a class="feature-card reveal" href="/hosting-launch-checker/"><small>WEB QA</small><h3>Hosting Launch Checker</h3><p>公開前サイトのassets・links・meta・viewportを静的チェック。</p><b>使う →</b></a>
+<a class="feature-card reveal" href="/creator-stack-picker/"><small>CREATOR</small><h3>Creator Stack Picker</h3><p>制作・自動化の条件から、比較するツールカテゴリを整理。</p><b>使う →</b></a>
+<a class="feature-card reveal" href="/ai-work-router/"><small>ROUTING</small><h3>SI Work Router</h3><p>目的・予算・運用条件から、先に見るSIカテゴリを整理。</p><b>使う →</b></a>
+<a class="feature-card reveal" href="/shop-image-qa/"><small>IMAGE QA</small><h3>Shop Image QA</h3><p>商品画像の寸法、比率、容量、形式をブラウザ内で確認。</p><b>使う →</b></a>
+<a class="feature-card reveal" href="/vpn-needs-router/"><small>NETWORK</small><h3>VPN Needs Router</h3><p>公衆Wi-Fi、固定IP、リモート用途から必要条件を整理。</p><b>使う →</b></a>
+<a class="feature-card reveal" href="/video-preflight/"><small>VIDEO / BROWSER</small><h3>動画メタデータ確認</h3><p>尺・解像度・容量をまとめて確認し、結果をCSVで保存。納品前QAキットの無料版にあたる確認がブラウザでできます。</p><b>使う →</b></a>
+<a class="feature-card reveal" href="/n8n-retry-checker/"><small>AUTOMATION / BROWSER</small><h3>n8n重複実行リスク診断</h3><p>ワークフローのJSONをブラウザだけで静的分析し、重複実行のリスクを見る。</p><b>使う →</b></a>
+</div></section>
+
+<section class="section tone-white"><header class="section-head reveal"><small>04 / VIDEOS</small><h2>動画で見る、できること。</h2><p>各30秒ほど。実際の作業の流れと、できることをそのまま映しています。</p></header><div class="feature-grid">
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_srt.jpg" src="/assets/video/explainer_srt.mp4"></video><small>SRT</small><h3>SRT字幕点検</h3><p>字幕の重なりや時刻のズレを、納品前に自動で洗い出す点検の流れ。</p><a class="video-exit" href="https://coconala.com/services/4374617">サービスを見る ↗</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer3_srt.jpg" src="/assets/video/explainer3_srt.mp4"></video><small>SRT</small><h3>SRT字幕点検：進め方</h3><p>字幕ファイルを渡してから、点検結果を受け取るまでの進み方。</p><a class="video-exit" href="https://coconala.com/services/4374617">サービスを見る ↗</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_qa.jpg" src="/assets/video/explainer_qa.mp4"></video><small>MEDIA QA</small><h3>納品前QA代行</h3><p>動画・音声の尺・解像度・codecを、納品前に代わりに検査する流れ。</p><a class="video-exit" href="https://coconala.com/services/3914156">サービスを見る ↗</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_qakit.jpg" src="/assets/video/explainer_qakit.mp4"></video><small>MEDIA QA</small><h3>納品前QAキット</h3><p>自分で納品前検査を回す人向けキットの中身と使い方。</p><a class="video-exit" href="https://coconala.com/services/4477076">キットを見る ↗</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_csv.jpg" src="/assets/video/explainer_csv.mp4"></video><small>DATA</small><h3>CSV・TSV整理</h3><p>文字化け・重複・欠損のある表を、扱える形に直す整理の流れ。</p><a class="video-exit" href="https://coconala.com/services/4374623">サービスを見る ↗</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_auto.jpg" src="/assets/video/explainer_auto.mp4"></video><small>AUTOMATION</small><h3>小さなAI自動化ツール</h3><p>繰り返し作業を、小さなAI自動化ツールにして渡す進め方。</p><a class="video-exit" href="https://coconala.com/services/2809225">サービスを見る ↗</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_comfy.jpg" src="/assets/video/explainer_comfy.mp4"></video><small>IMAGE</small><h3>ComfyUIワークフロー整理</h3><p>散らかったワークフローを、再現できる形に整理する流れ。</p><a class="video-exit" href="https://coconala.com/services/2330394">サービスを見る ↗</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_hosting.jpg" src="/assets/video/explainer_hosting.mp4"></video><small>WEB QA</small><h3>Hosting Launch Checker</h3><p>公開前サイトのリンク・メタ・素材抜けを静的チェックする道具。</p><a class="video-exit" href="/hosting-launch-checker/">使う →</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_n8n.jpg" src="/assets/video/explainer_n8n.mp4"></video><small>AUTOMATION</small><h3>n8n重複実行リスク診断</h3><p>ワークフローの重複実行リスクを、ブラウザだけで診断する道具。</p><a class="video-exit" href="/n8n-retry-checker/">使う →</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_preflight.jpg" src="/assets/video/explainer_preflight.mp4"></video><small>VIDEO</small><h3>動画メタデータ確認</h3><p>動画の尺・解像度・容量をまとめて確認し、結果をCSVで残す道具。</p><a class="video-exit" href="/video-preflight/">使う →</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_shopimg.jpg" src="/assets/video/explainer_shopimg.mp4"></video><small>IMAGE QA</small><h3>Shop Image QA</h3><p>商品画像の寸法・比率・容量・形式をブラウザ内で確認する道具。</p><a class="video-exit" href="/shop-image-qa/">使う →</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_api.jpg" src="/assets/video/explainer_api.mp4"></video><small>API</small><h3>API連携の自動化</h3><p>APIのつなぎ目で起きる事故を減らす、連携自動化の考え方。</p><a class="video-exit" href="/services/ai-automation.html">詳しく →</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_webhook.jpg" src="/assets/video/explainer_webhook.mp4"></video><small>WEBHOOK</small><h3>Webhook二重実行ガード</h3><p>Webhookの二重実行を防ぐ、実行前チェックの仕組み。</p><a class="video-exit" href="/services/workflow-reliability.html">詳しく →</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_data.jpg" src="/assets/video/explainer_data.mp4"></video><small>DATA</small><h3>データ整形</h3><p>ぐちゃぐちゃなデータを、型のある扱える形に整える流れ。</p><a class="video-exit" href="/services/data-quality.html">詳しく →</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_excel.jpg" src="/assets/video/explainer_excel.mp4"></video><small>DATA</small><h3>Excel表の自動整理</h3><p>Excelの表を、集計しやすい形に整える自動化の例。</p><a class="video-exit" href="https://coconala.com/services/4374623">サービスを見る ↗</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_ppt.jpg" src="/assets/video/explainer_ppt.mp4"></video><small>AUTOMATION</small><h3>スライド自動生成</h3><p>資料をテンプレートから自動で組み立てる例。</p><a class="video-exit" href="/services/python-automation.html">詳しく →</a></div>
+<div class="feature-card video-card reveal"><video controls preload="none" playsinline poster="/assets/video/explainer_prompts.jpg" src="/assets/video/explainer_prompts.mp4"></video><small>PRODUCTS</small><h3>プロンプト集</h3><p>実務テンプレート／プロンプト集の中身と見方。</p><a class="video-exit" href="/products.html">商品を見る →</a></div>
+</div></section>
+
+<section class="section tone-warm"><header class="section-head reveal"><small>05 / PRODUCTS</small><h2>売ってるものは、おまけに。</h2><p>完成品の販売は「おまけ」の商品ページにまとめました。</p></header><div class="link-list">
+<a class="link-row reveal" href="/products.html"><small>PRODUCTS</small><strong>商品ページを見る</strong><span>動画QAキット、実務テンプレート、プロンプト集など。</span><b>→</b></a>
+</div></section>
+
+<section class="section tone-white"><header class="section-head reveal"><small>06 / DEMOS</small><h2>触って確かめる。</h2><p>公開デモは外部へ送信せず、ブラウザ内で処理の芯を見られます。</p></header><div class="feature-grid"><a class="feature-card reveal" href="/demo-view.html?id=work-agentlink"><small>RECOVERY</small><h3>AgentLink</h3><p>worker停止・重複時の処理を見る。</p><b>試す ↗</b></a><a class="feature-card reveal" href="/demo-view.html?id=svc-entry-100"><small>DATA</small><h3>100件の表整理</h3><p>型、重複、欠損の処理を見る。</p><b>試す ↗</b></a><a class="feature-card reveal" href="/demo-view.html?id=svc-web-fix"><small>WEB QA</small><h3>Web修復</h3><p>崩れを検出してPASSまで戻す。</p><b>試す ↗</b></a></div></section>
+<section class="section tone-warm">
+<header class="section-head reveal"><small>EXIT / 仕事の入口</small><h2>見て、自分の作業でも困ったら。</h2><p>内容に近い作業は、ココナラでそのまま頼めます。価格と内容の正本はココナラ側です。</p></header>
+<div class="link-list">
+<a class="link-row reveal" href="https://coconala.com/services/4374623"><small>DATA / ¥3,000</small><strong>CSV・TSV整理</strong><span>文字化け・重複・欠損セルを直して、扱える表データに。お届け2日。</span><b>↗</b></a>
+<a class="link-row reveal" href="https://coconala.com/services/4374617"><small>SERVICE / ¥3,000</small><strong>SRT字幕点検</strong><span>字幕の重なり・時刻の不整合を点検して、納品できる形に。お届け2日。</span><b>↗</b></a>
+<a class="link-row reveal" href="https://coconala.com/services/3914156"><small>SERVICE / ¥3,000</small><strong>動画・音声の納品前QA（代行）</strong><span>尺・解像度・codec・デコード整合性を代わりに検査。お届け2日。</span><b>↗</b></a>
+<a class="link-row reveal" href="https://coconala.com/services/4477076"><small>SKILL / ¥1,000</small><strong>動画・音声の納品前QAキット</strong><span>自分で検査する人向けのキット。尺・解像度・codec・整合性・ハッシュをまとめて検査。</span><b>↗</b></a>
+<a class="link-row reveal" href="https://coconala.com/services/4479466"><small>SERVICE / ¥5,000</small><strong>YouTube動画の編集を行います</strong><span>字幕・テロップ・フック設計まで。お届け3日／無料修正1回。</span><b>↗</b></a>
+<a class="link-row reveal" href="https://coconala.com/services/2809225"><small>SERVICE / ¥5,000</small><strong>小さなAI自動化ツール</strong><span>繰り返し作業を小さなツールにして渡します。お届け3日。</span><b>↗</b></a>
+<a class="link-row reveal" href="https://coconala.com/services/2330394"><small>SERVICE / ¥7,000</small><strong>ComfyUIワークフロー整理</strong><span>散らかったワークフローを、再現できる形に整理。お届け3日。</span><b>↗</b></a>
+</div>
+</section>
+<section class="cta-band"><div><h2>「これに近い」を見つけたら。</h2><p>同じ形をそのまま売るより、手元のデータや環境に合わせて小さく切ります。</p></div><a class="button primary" href="/preview/holo-v4/work.html">頼めることを見る ↗</a></section>
+</main>
+<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>Shelfiria</strong></span></div><nav><a href="/preview/holo-v4/index.html">トップ</a><a href="/preview/holo-v4/demo.html">あそぶ</a><a href="/preview/holo-v4/showcase.html">みる</a><a href="/preview/holo-v4/notes.html">よむ</a><a href="/preview/holo-v4/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a><a href="https://coconala.com/users/3185601">ココナラ</a></nav></footer>
+<script src="/ad-overlay.js" defer></script>
+<script src="/enhance.js" defer></script></body></html>
