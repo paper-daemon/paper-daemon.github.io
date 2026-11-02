@@ -1,0 +1,42 @@
+name: Amase Personal V8 browser integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'preview/amase-personal-v8/**'
+      - 'tests/amase-personal-v8-browser.mjs'
+      - '.github/workflows/amase-personal-v8-browser.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start site server
+        run: |
+          python3 -m http.server 4173 >/tmp/amase-v8-http.log 2>&1 &
+          for i in {1..20}; do
+            curl -fsS http://127.0.0.1:4173/preview/amase-personal-v8/index.html >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/amase-v8-http.log
+          exit 1
+      - name: Test real website interactions on desktop and mobile
+        run: node tests/amase-personal-v8-browser.mjs
+      - name: Save screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: amase-personal-v8-screenshots
+          path: artifacts/amase-personal-v8/
+          if-no-files-found: ignore
