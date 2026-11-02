@@ -32,8 +32,9 @@ canvas#sb{width:100%;height:auto;display:block;touch-action:none}
 <div class="sb-wrap"><canvas id="sb" width="420" height="620"></canvas></div>
 <div class="sb-hud"><span>SCORE <b id="hudScore">0</b></span><span>HI <b id="hudHi">0</b></span><span>WAVE <b id="hudWave">-</b></span><span>❤ <b id="hudLife">3</b> ／ 💣 <b id="hudBomb">3</b></span><span>GRAZE <b id="hudGraze">0</b></span></div>
 <div class="sb-stages" id="stageRow"><button class="button soft" type="button" data-point="0">ステージ1 最初から</button><button class="button soft" type="button" data-point="1">ステージ1 中間から</button><button class="button soft" type="button" data-point="2">ステージ2 最初から</button><button class="button soft" type="button" data-point="3">ステージ2 中間から</button><button class="button soft" type="button" data-point="4">ステージ3 最初から</button><button class="button soft" type="button" data-point="5">ステージ3 中間から</button></div>
+<p id="sndHint" style="display:none;margin:8px 0 0;font-size:.85rem;color:#b3402e;font-weight:700">♪ 音が出ていない場合は、画面をタップすると出ます</p>
 <div class="sb-btns"><button class="button soft" id="bombBtn" type="button">▶ スタート</button><button class="button soft" id="pauseBtn" type="button">一時停止</button><button class="button soft" id="focusBtn" type="button">低速（タッチ用）</button></div>
-<p class="legend">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1102-6</span></p>
+<p class="legend">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1102-7</span></p>
 </div>
 </section>
 </main>
@@ -110,7 +111,7 @@ function drawSheet(name,x,y,s){
 // brightest cluster sits ~9px below centre at draw size 50). Graze stays wide/centre-based.
 const PHIT={dx:0,dy:8.8,r:3};
 // ---------- audio assets (2 BGM tracks + SE set; format picked by browser support) ----------
-const AU={bgmStage:null,bgmBoss:null,bgmBoss2:null,bgmBoss3:null,cur:null,se:{}};
+const AU={bgmStage:null,bgmBoss:null,bgmBoss2:null,bgmBoss3:null,cur:null,se:{},sePool:{},want:null};
 const SE_MAP={boomS:'enemy_down',boomL:'player_down',die:'player_down',bomb:'enemy_down',spell:'boss_spell',power:'item',graze:'graze',warning:'warning',shot:'shot',hit:'enemy_hit'};
 function loadAudio(){
   try{
@@ -122,13 +123,17 @@ function loadAudio(){
     AU.bgmBoss=mk('/play/assets/bgm_boss_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
     AU.bgmBoss2=mk('/play/assets/bgm_boss2_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
     AU.bgmBoss3=mk('/play/assets/bgm_boss3_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
-    for(const k in SE_MAP){const a=new Audio('/play/assets/se-'+SE_MAP[k]+'.'+bext);a.volume=0.5;a.preload='auto';AU.se[k]=a;}
+    for(const k in SE_MAP){const a=new Audio('/play/assets/se-'+SE_MAP[k]+'.'+bext);a.volume=0.5;a.preload='auto';AU.se[k]=a;
+      const n=(k==='shot')?4:(k==='boomS'||k==='hit')?3:2,pool=[];
+      for(let i=0;i<n;i++){const e=new Audio('/play/assets/se-'+SE_MAP[k]+'.'+bext);e.volume=0.5;e.preload='auto';pool.push(e);}
+      pool.idx=0;AU.sePool[k]=pool;}
   }catch(e){/* assets not present yet */}
 }
 loadAudio();
 function bgmUsable(a){return !!a&&a.networkState!==3;}
 function playBgm(track,bossId){
   try{
+    AU.want=[track,bossId];
     let want;
     if(track==='boss'){
       want=AU.bgmBoss;
@@ -146,8 +151,44 @@ function playBgm(track,bossId){
 }
 function stopBgm(){try{for(const k of ['bgmStage','bgmBoss','bgmBoss2','bgmBoss3'])if(AU[k])AU[k].pause();AU.cur=null;}catch(e){}}
 function se(name,vol){
-  try{const a=AU.se[name];if(!a)return;const c=a.cloneNode();c.volume=vol||0.5;c.play().catch(()=>{});}catch(e){}
+  try{
+    const pool=AU.sePool[name];
+    if(pool&&pool.length){const a=pool[pool.idx++%pool.length];try{a.currentTime=0;}catch(e){}a.volume=vol||0.5;a.play().catch(()=>{});return;}
+    const a=AU.se[name];if(!a)return;const c=a.cloneNode();c.volume=vol||0.5;c.play().catch(()=>{});
+  }catch(e){}
 }
+// Entry-route-proof unlock: some in-app browsers only unlock elements that were
+// actually played inside a user gesture. Play+pause EVERY element (pooled SE
+// included) muted, sequentially, on real taps — not just load() them.
+let unlocking=false;
+async function unlockAudio(){
+  if(unlocking)return;unlocking=true;
+  try{
+    const els=[];
+    for(const k of ['bgmStage','bgmBoss','bgmBoss2','bgmBoss3'])if(AU[k])els.push(AU[k]);
+    for(const k in AU.sePool)for(const e of AU.sePool[k])els.push(e);
+    for(const a of els){
+      if(a.__unlocked)continue;
+      if(a===AU.cur){a.__unlocked=true;continue;}
+      const v0=a.volume;a.volume=0;
+      try{await a.play();a.pause();try{a.currentTime=0;}catch(e){}a.__unlocked=true;}
+      catch(e){}
+      a.volume=v0;
+    }
+  }catch(e){}
+  unlocking=false;
+}
+function healAudio(){
+  unlockAudio();
+  try{
+    if(typeof mode!=='undefined'&&mode==='play'){
+      if(AU.cur&&AU.cur.paused)AU.cur.play().catch(()=>{});
+      else if(!AU.cur&&AU.want)playBgm(AU.want[0],AU.want[1]);
+    }
+  }catch(e){}
+}
+document.addEventListener('pointerdown',healAudio,{capture:true});
+setInterval(()=>{try{const h=document.getElementById('sndHint');if(h)h.style.display=(typeof mode!=='undefined'&&mode==='play'&&AU.cur&&AU.cur.paused)?'':'none';}catch(e){}},1000);
 function reset(full){
   player={x:W/2,y:H-90,invuln:0,shotT:0};
   pshots=[];ebullets=[];enemies=[];items=[];parts=[];boss=null;spawnQ=[];bombT=0;bannerT=0;bannerText='';
@@ -414,8 +455,7 @@ function startGame(pi){
   if(startWave>1)power=2; // midpoint start compensation
   mode='play';syncChrome();nextWave();hud();playBgm('stage');primeAudio();
 }
-let primed=false;
-function primeAudio(){if(primed)return;primed=true;try{for(const k of['bgmBoss','bgmBoss2','bgmBoss3']){const a=AU[k];if(a){a.load();const v0=a.volume;a.volume=0;const pr=a.play();if(pr&&pr.then)pr.then(()=>{if(AU.cur!==a){a.pause();a.currentTime=0;}a.volume=v0;}).catch(()=>{a.volume=v0;});}}for(const k in AU.se)AU.se[k].load();}catch(e){}}
+function primeAudio(){unlockAudio();}
 function continueGame(){const keep=score,keepG=graze;startGame((stage-1)*2);score=keep;graze=keepG;power=Math.max(2,power);lives=3;bombs=3;hud();}
 function tapAction(){const now=performance.now();if(now-(window.__lastTapAct||0)<450)return;window.__lastTapAct=now;if(mode==='title')startGame(selPoint);else if(mode==='over')continueGame();else if(mode==='clear'&&stage<3)startGame(stage*2);}
 function hud(){
