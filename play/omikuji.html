@@ -6,7 +6,8 @@
 <meta name="description" content="Shelfiriaの小さな遊び場。箱を振って引く、本物仕様のおみくじ。今日の運勢と、あませからの一言をどうぞ。何度でも引けます。">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="Shelfiria"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/site.css?v=20261101-1">
-<link rel="preload" as="image" href="/play/assets/omikuji-night.webp">
+<link rel="preload" as="image" href="/play/assets/omikuji-night2.webp">
+<link rel="preload" as="image" href="/play/assets/omikuji-tube.webp">
 <style>
 .omikuji-stage{max-width:560px;margin:0 auto;text-align:center}
 [hidden]{display:none!important}
@@ -22,7 +23,7 @@ button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touc
 .stage{position:relative;border:2px solid var(--ink);border-radius:18px;box-shadow:8px 8px 0 var(--ink);overflow:hidden;
  background:
   linear-gradient(180deg,rgba(16,19,54,.05) 0%,rgba(10,10,30,.10) 62%,rgba(6,6,20,.42) 100%),
-  url("/play/assets/omikuji-night.webp") center 26%/cover no-repeat,
+  url("/play/assets/omikuji-night2.webp") center 26%/cover no-repeat,
   linear-gradient(180deg,#141a4d 0%,#1d245f 52%,#2a2350 78%,#241d3d 100%);
  padding:18px 12px 14px;color:#eef}
 .stage:before{content:"";position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(180deg,transparent,rgba(6,6,20,.55));pointer-events:none}
@@ -33,13 +34,14 @@ button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touc
 .tied-slip{position:absolute;top:0;width:17px;height:44px;background:linear-gradient(180deg,#fffdf4,#f3e8c8);border:1px solid #cbb27a;border-radius:2px;transform-origin:top center;animation:sway 5s ease-in-out infinite;box-shadow:1px 2px 3px rgba(0,0,20,.35)}
 .tied-slip:before{content:"";position:absolute;top:-7px;left:50%;width:26px;height:2px;margin-left:-13px;background:#d8c48f;border-radius:2px}
 /* ---------- mikuji box ---------- */
-.box-zone{position:relative;height:252px;display:flex;align-items:flex-end;justify-content:center;z-index:4}
+.box-zone{position:relative;height:292px;display:flex;align-items:flex-end;justify-content:center;z-index:4}
 .box-hit{position:relative;width:210px;cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 .box-hit:active{cursor:grabbing}
 .box-hit:focus-visible{outline:3px solid var(--yellow);outline-offset:6px;border-radius:12px}
-.box-fig{transform-origin:50% 88%;will-change:transform}
-.draw-stick{position:absolute;left:50%;bottom:148px;width:26px;height:0;margin-left:-13px;z-index:5;opacity:0;pointer-events:none}
-.draw-stick .stick-body{position:absolute;bottom:0;left:50%;width:15px;height:100%;margin-left:-7.5px;background:linear-gradient(90deg,#dcb878,#f7e3ae 45%,#cfa75e);border-radius:6px 6px 2px 2px;box-shadow:inset 0 0 0 1px rgba(120,80,20,.35),2px 2px 5px rgba(0,0,20,.35)}
+.box-fig{transform-origin:50% 92%;will-change:transform}
+.tube-img{display:block;height:284px;width:auto;margin:0 auto;pointer-events:none;filter:drop-shadow(0 12px 13px rgba(2,2,16,.5))}
+.draw-stick{position:absolute;left:50%;bottom:196px;width:26px;height:0;margin-left:-13px;z-index:5;opacity:0;pointer-events:none}
+.draw-stick .stick-body{position:absolute;bottom:0;left:50%;width:17px;height:100%;margin-left:-8.5px;background:url("/play/assets/omikuji-stick.webp") center/100% 100% no-repeat;filter:drop-shadow(2px 2px 3px rgba(0,0,20,.35))}
 .draw-stick .stick-num{position:absolute;top:8px;left:50%;transform:translateX(-50%);writing-mode:vertical-rl;font:900 .72rem/1.15 var(--sans);color:#8a2b1d;letter-spacing:.08em;white-space:nowrap}
 .draw-stick.rise{opacity:1;transition:height 1.05s cubic-bezier(.3,.7,.25,1)}
 .draw-stick.fall{opacity:0;transition:opacity .25s ease,height .25s ease}
@@ -53,9 +55,7 @@ button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touc
 .draw-btn{font-size:1.02rem;padding:15px 32px;min-width:210px}
 .icon-btn{min-width:52px;padding:0 14px;font-size:1.25rem}
 /* ---------- slip ---------- */
-.slip{margin:36px auto 0;width:min(320px,88vw);background-image:url("/play/assets/omikuji-washi.webp"),repeating-linear-gradient(180deg,#fffdf4 0 26px,#fdf6df 26px 27px);background-size:340px,auto;background-repeat:repeat,repeat;border:2px solid #d8c48f;border-radius:4px;box-shadow:6px 8px 0 rgba(19,24,71,.22);padding:24px 20px 20px;transform-origin:top center;position:relative;color:var(--ink);text-align:center}
-.slip:before,.slip:after{content:"";position:absolute;left:0;right:0;height:8px;background-image:radial-gradient(circle at 6px 4px,transparent 3.5px,#e7d9ae 4px);background-size:14px 8px}
-.slip:before{top:-2px}.slip:after{bottom:-2px;transform:scaleY(-1)}
+.slip{margin:36px auto 0;width:min(320px,88vw);background-color:#f9efdb;background-image:url("/play/assets/omikuji-washi.webp");background-size:340px;background-repeat:repeat;border-style:solid;border-color:transparent;border-width:58px 11px 17px;border-image:url("/play/assets/omikuji-slip.webp") 150 30 46 30 fill / 58px 11px 17px / 0 stretch;box-shadow:6px 8px 0 rgba(19,24,71,.22);padding:4px 12px 6px;transform-origin:top center;position:relative;color:var(--ink);text-align:center}
 .slip.unfold{animation:unfold .75s cubic-bezier(.22,1.05,.36,1) both}
 @keyframes unfold{0%{opacity:0;transform:perspective(700px) rotateX(62deg) scaleY(.32)}55%{opacity:1}100%{opacity:1;transform:none}}
 .slip.tied-away{animation:tieAway .8s ease-in both}
@@ -82,7 +82,7 @@ button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touc
 .slip .lucky b{background:linear-gradient(transparent 62%,var(--yellow) 62%,var(--yellow) 94%,transparent 94%);padding:0 4px}
 .swatch{display:inline-block;width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(19,24,71,.4);vertical-align:-2px;margin-right:5px}
 .slip-actions{margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.slip.gold{background-image:url("/play/assets/omikuji-washi.webp"),repeating-linear-gradient(180deg,#fffbe8 0 26px,#fdf3c8 26px 27px);border-color:#c9a227;box-shadow:6px 8px 0 rgba(160,120,10,.35),0 0 34px rgba(255,205,60,.35)}
+.slip.gold{box-shadow:6px 8px 0 rgba(160,120,10,.35),0 0 34px rgba(255,205,60,.35)}
 .slip.gold .stamp{border-color:#a67c00;color:#a67c00;background:rgba(201,162,39,.1);width:120px;height:120px}
 .slip.bad .stamp{border-color:#4a4a72;color:#4a4a72;background:rgba(60,60,110,.06)}
 .count-note{margin-top:18px;color:var(--muted);font-size:.8rem}
@@ -131,32 +131,7 @@ button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touc
 <div class="draw-stick" id="drawStick"><div class="stick-body"><span class="stick-num" id="stickNum"></span></div></div>
 <div class="box-hit" id="boxHit" role="button" tabindex="0" aria-label="おみくじの箱。左右に振ると引けます">
 <div class="box-fig" id="boxFig">
-<svg viewBox="0 0 220 196" width="210" height="187" aria-hidden="true">
-<defs>
-<linearGradient id="wood" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7c4525"/><stop offset=".28" stop-color="#9a5a30"/><stop offset=".5" stop-color="#a86638"/><stop offset=".74" stop-color="#8a4e27"/><stop offset="1" stop-color="#6f3a20"/></linearGradient>
-<linearGradient id="woodTop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d3018"/><stop offset="1" stop-color="#3c1e0d"/></linearGradient>
-<linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9c766"/><stop offset=".5" stop-color="#c9a227"/><stop offset="1" stop-color="#9a7a14"/></linearGradient>
-</defs>
-<g id="sticksG">
-<g stroke-linecap="round">
-<line x1="110" y1="52" x2="76" y2="6" stroke="#e8c98a" stroke-width="7"/>
-<line x1="110" y1="52" x2="92" y2="2" stroke="#f0d79c" stroke-width="7"/>
-<line x1="110" y1="52" x2="110" y2="0" stroke="#e8c98a" stroke-width="7"/>
-<line x1="110" y1="52" x2="128" y2="2" stroke="#f0d79c" stroke-width="7"/>
-<line x1="110" y1="52" x2="144" y2="7" stroke="#e8c98a" stroke-width="7"/>
-</g>
-<g fill="#d23b2a"><rect x="72" y="2" width="8" height="9" rx="2" transform="rotate(-24 76 6)"/><rect x="88" y="0" width="8" height="9" rx="2" transform="rotate(-12 92 4)"/><rect x="106" y="-2" width="8" height="10" rx="2"/><rect x="124" y="0" width="8" height="9" rx="2" transform="rotate(12 128 4)"/><rect x="140" y="3" width="8" height="9" rx="2" transform="rotate(24 144 7)"/></g>
-</g>
-<ellipse cx="110" cy="54" rx="76" ry="15" fill="url(#woodTop)"/>
-<ellipse cx="110" cy="52" rx="58" ry="10" fill="#241105"/>
-<path d="M34 56 L186 56 L198 92 L190 176 Q110 190 30 176 L22 92 Z" fill="url(#wood)" stroke="#4c2712" stroke-width="3"/>
-<path d="M72 58 L76 182 M148 58 L144 182" stroke="rgba(60,30,8,.35)" stroke-width="2"/>
-<path d="M28 92 L192 92 M31 168 Q110 181 189 168" stroke="rgba(60,30,8,.3)" stroke-width="2" fill="none"/>
-<rect x="30" y="66" width="160" height="9" fill="url(#gold)" opacity=".92"/>
-<rect x="32" y="158" width="156" height="9" fill="url(#gold)" opacity=".92"/>
-<circle cx="110" cy="118" r="27" fill="none" stroke="#ffe9bb" stroke-width="2.5"/>
-<text x="110" y="126" text-anchor="middle" font-size="17" font-weight="900" fill="#ffe9bb" letter-spacing="1">神籤</text>
-</svg>
+<img class="tube-img" id="tubeImg" src="/play/assets/omikuji-tube.webp" alt="" draggable="false">
 </div>
 </div>
 </div>
@@ -377,7 +352,7 @@ function startDraw(){
   var res=makeResult(isFirst);
   currentResult=res;
   stickNum.textContent='第'+res.no+'番';
-  drawStick.classList.remove('fall');drawStick.style.height='118px';drawStick.classList.add('rise');
+  drawStick.classList.remove('fall');drawStick.style.height='108px';drawStick.classList.add('rise');
   thunk(false);paper();
   setTimeout(function(){
    drawStick.classList.remove('rise');drawStick.classList.add('fall');
