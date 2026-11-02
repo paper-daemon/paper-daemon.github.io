@@ -1,9 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://paper-daemon.github.io/muse-codes/</loc>
-    <lastmod>2026-11-02</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
+<url><loc>https://paper-daemon.github.io/</loc></url>
+<url><loc>https://paper-daemon.github.io/agentlink-continuity/</loc></url>
+<url><loc>https://paper-daemon.github.io/ai-work-router/</loc></url>
+<url><loc>https://paper-daemon.github.io/amase/</loc></url>
+<url><loc>https://paper-daemon.github.io/creator-delivery-inspector/</loc></url>
+<url><loc>https://paper-daemon.github.io/creator-stack-picker/</loc></url>
+<url><loc>https://paper-daemon.github.io/demo.html</loc></url>
+<url><loc>https://paper-daemon.github.io/direct.html</loc></url>
+<url><loc>https://paper-daemon.github.io/global.html</loc></url>
+<url><loc>https://paper-daemon.github.io/muse-codes/</loc></url>
+<url><loc>https://paper-daemon.github.io/muse-invite-code-exchange/</loc></url>
+<url><loc>https://paper-daemon.github.io/n8n-retry-checker/</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/chat-long-turn-agentlink.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/csv-quoted-multiline.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/debuggable-rag.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/fedora-steam-proton-gta.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/games-remade-and-added.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/github-rename-link-audit.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/image-model-benchmark.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/licensed-video-delivery-pipeline.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/linux-user-service-debug.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/negative-side-effect-proof.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/one-price-source.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/proof-of-antiquity.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/repo-health-secret-report.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/share-safe-symlink-boundary.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/site-redesign-flashy.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/site-surface-doctor.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/small-workflow-kit-first.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/srt-timestamp-ranges.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/taishoku-daiko-before-use.html</loc></url>
+<url><loc>https://paper-daemon.github.io/notes/trace-invalid-timestamps.html</loc></url>
+<url><loc>https://paper-daemon.github.io/play/core.html</loc></url>
+<url><loc>https://paper-daemon.github.io/play/guess.html</loc></url>
+<url><loc>https://paper-daemon.github.io/play/hoshikuzu.html</loc></url>
+<url><loc>https://paper-daemon.github.io/play/janken.html</loc></url>
+<url><loc>https://paper-daemon.github.io/play/omikuji.html</loc></url>
+<url><loc>https://paper-daemon.github.io/play/secret.html</loc></url>
+<url><loc>https://paper-daemon.github.io/play/shooter.html</loc></url>
+<url><loc>https://paper-daemon.github.io/play/slot.html</loc></url>
+<url><loc>https://paper-daemon.github.io/play/timing.html</loc></url>
+<url><loc>https://paper-daemon.github.io/portfolio/</loc></url>
+<url><loc>https://paper-daemon.github.io/portfolio/ai-production-control-room.html</loc></url>
+<url><loc>https://paper-daemon.github.io/portfolio/automation-first-aid.html</loc></url>
+<url><loc>https://paper-daemon.github.io/portfolio/brief-to-page.html</loc></url>
+<url><loc>https://paper-daemon.github.io/portfolio/construction-daily-report-automation.html</loc></url>
+<url><loc>https://paper-daemon.github.io/portfolio/data-shape-guard.html</loc></url>
+<url><loc>https://paper-daemon.github.io/portfolio/idempotency-receipt-ledger.html</loc></url>
+<url><loc>https://paper-daemon.github.io/portfolio/revenue-delivery-guard.html</loc></url>
+<url><loc>https://paper-daemon.github.io/portfolio/workflow-contract-gate.html</loc></url>
+<url><loc>https://paper-daemon.github.io/products.html</loc></url>
+<url><loc>https://paper-daemon.github.io/proof/reliability-audit-sample.html</loc></url>
+<url><loc>https://paper-daemon.github.io/request.html</loc></url>
+<url><loc>https://paper-daemon.github.io/services/agency-overflow.html</loc></url>
+<url><loc>https://paper-daemon.github.io/services/ai-automation.html</loc></url>
+<url><loc>https://paper-daemon.github.io/services/data-quality.html</loc></url>
+<url><loc>https://paper-daemon.github.io/services/python-automation.html</loc></url>
+<url><loc>https://paper-daemon.github.io/services/research-evidence.html</loc></url>
+<url><loc>https://paper-daemon.github.io/services/workflow-reliability.html</loc></url>
+<url><loc>https://paper-daemon.github.io/showcase.html</loc></url>
+<url><loc>https://paper-daemon.github.io/subtitle-qa.html</loc></url>
+<url><loc>https://paper-daemon.github.io/video-preflight/</loc></url>
+<url><loc>https://paper-daemon.github.io/vpn-needs-router/</loc></url>
+<url><loc>https://paper-daemon.github.io/work.html</loc></url>
 </urlset>

@@ -42,4 +42,5 @@ Allow: /
 User-agent: DuckAssistBot
 Allow: /
 
+Sitemap: https://paper-daemon.github.io/sitemap.xml
 Sitemap: https://paper-daemon.github.io/muse-codes/sitemap.xml
