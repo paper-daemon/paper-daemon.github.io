@@ -1,0 +1,42 @@
+name: Amase After Hours V6 browser integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'preview/amase-after-hours-v6/**'
+      - 'tests/amase-after-hours-v6-browser.mjs'
+      - '.github/workflows/amase-after-hours-v6-browser.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  v6-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start local GitHub Pages equivalent
+        run: |
+          python3 -m http.server 4173 >/tmp/afterhours-server.log 2>&1 &
+          for i in {1..20}; do
+            curl -fsS http://127.0.0.1:4173/preview/amase-after-hours-v6/index.html >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/afterhours-server.log
+          exit 1
+      - name: Test interactive night room on desktop and mobile
+        run: node tests/amase-after-hours-v6-browser.mjs
+      - name: Save desktop and mobile previews
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: after-hours-v6-visual-qa
+          path: artifacts/after-hours-v6/
+          if-no-files-found: ignore
