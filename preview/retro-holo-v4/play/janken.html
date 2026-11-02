@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="ja">
+<head><base href="/play/">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>あませとじゃんけん | Shelfiria</title>
+<meta name="description" content="Shelfiriaの小さな遊び場。あませとじゃんけん勝負。連勝記録つき。">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="Shelfiria"><meta property="og:image" content="https://paper-daemon.github.io/og-janken.jpg"><meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/site.css?v=20261101-1">
+<style>.jk-stage{max-width:560px;margin:0 auto;text-align:center;background:#fff;border:3px solid var(--ink);border-radius:22px;box-shadow:8px 8px 0 var(--ink);padding:30px 22px 32px;position:relative;overflow:hidden}
+.jk-stage:before{content:"";position:absolute;top:0;left:0;right:0;height:8px;background:linear-gradient(90deg,#ff5d8f,#ffb84d)}
+.duel{background:#f6f7ff;border-radius:16px;padding:12px 0 8px}
+.hands{display:flex;gap:14px;justify-content:center;margin:20px 0}
+.hand{font:900 1.05rem var(--sans);padding:18px 22px;border:2px solid var(--ink);border-radius:16px;background:#fff;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .12s}
+.hand:hover{transform:translateY(-3px)}
+.duel{display:flex;justify-content:center;gap:36px;align-items:center;margin:8px 0 4px;font:900 2rem var(--sans)}
+.vs{font:700 .7rem var(--mono);color:var(--muted)}
+.result{font-weight:900;font-size:1.3rem;min-height:1.7em;margin:12px 0 2px}
+.eve-line{color:var(--ink-dim);line-height:1.9;min-height:1.9em}
+.score{font:700 .85rem var(--mono);color:var(--muted);margin-top:12px}
+.match{display:flex;gap:16px;justify-content:center;margin-top:8px;font:700 .8rem var(--mono);color:var(--ink-dim)}
+.pips{letter-spacing:.18em}
+.prev{font-size:.8rem;color:var(--muted);min-height:1.4em;margin-top:2px}
+.duel2{display:flex;justify-content:center;gap:8px;align-items:center;margin:4px 0}
+.fighter{width:58%;max-width:230px;text-align:center}
+.fighter .who{font:700 .68rem var(--mono);color:var(--muted);letter-spacing:.14em}
+.handview{position:relative;display:flex;align-items:center;justify-content:center}
+.handview img{width:100%;max-width:200px;aspect-ratio:1/1;object-fit:cover;border-radius:22px;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink)}
+.handview .emo{font-size:5.2rem;line-height:1}
+.handview.shaking{animation:jkshake .26s ease-in-out infinite}
+@keyframes jkshake{0%,100%{transform:translateY(0)}50%{transform:translateY(-13px)}}
+.beat{font:900 1.5rem var(--sans);min-height:1.5em;color:var(--ink)}
+.handbtn{display:flex;flex-direction:column;align-items:center;gap:2px;font:900 .95rem var(--sans);padding:10px 14px;border:2px solid var(--ink);border-radius:16px;background:#fff;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .12s}
+.handbtn:hover{transform:translateY(-3px)}
+.handbtn:disabled{opacity:.55;cursor:wait}
+.handbtn img{width:62px;height:62px;object-fit:cover;border-radius:14px;border:2px solid var(--ink)}
+
+
+.bgm-row{text-align:right;max-width:560px;margin:0 auto 6px}
+.amase-ready{display:block;margin:2px auto 0;height:158px;width:auto;filter:drop-shadow(0 10px 14px rgba(20,20,60,.22))}
+.stage-wrap{position:relative;max-width:560px;margin:2px auto 8px;border-radius:18px;overflow:hidden;box-shadow:0 14px 30px rgba(20,20,60,.28);background:#171233;line-height:0;border:3px solid var(--ink)}.stage-plate{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(19,24,71,.88);color:#fff;font:900 .8rem var(--sans);letter-spacing:.12em;padding:6px 16px;border-radius:99px;border:2px solid #ffb84d;white-space:nowrap;line-height:1.25;text-align:center}.stage-plate small{display:block;font:700 .58rem var(--mono);letter-spacing:.22em;color:#ffd9a0}
+.stage-wrap video{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+.amase-ready.shaking{animation:jkshake .26s ease-in-out infinite}
+.bgm-toggle{border:2px solid var(--ink);background:#fff;border-radius:99px;padding:4px 14px;font:700 .78rem var(--sans);cursor:pointer}
+.bgm-toggle.off{opacity:.5}
+#fxVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none;transition:opacity .15s}
+#fxVideo.on{opacity:1}
+.jk-stage,.jk-stage *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.jk-stage img,.jk-stage video{-webkit-user-drag:none}
+.jk-stage button{touch-action:manipulation}
+.jk-stage .stage-wrap,.jk-stage .handview{touch-action:pan-y}
+@media (max-width:640px){
+.site-head{padding:7px 12px;gap:6px}
+.brand-avatar{width:28px;height:28px}
+.site-head nav a{min-height:32px;padding:4px 9px;font-size:.68rem}
+.head-cta{min-height:34px;padding:0 11px}
+.page{padding:0 10px}
+.page-hero{padding:20px 0 0}
+.eyebrow{margin:0 0 6px;font-size:.56rem}
+.page-hero h1{font-size:1.72rem;line-height:1.08;letter-spacing:-.02em}
+.page-lead{margin:8px 0 0;font-size:.79rem;line-height:1.5}
+.section{padding:12px 0 18px}
+.jk-stage{padding:12px 12px 14px;border-radius:18px}
+.stage-wrap{max-width:248px;margin:0 auto 4px}
+.bgm-row{margin:0 0 2px}
+.bgm-toggle{padding:2px 11px;font-size:.72rem}
+.duel2{margin:0}
+.fighter{max-width:150px}
+.fighter .who{margin:2px 0 4px;font-size:.62rem}
+.handview img{max-width:104px;border-radius:16px}
+.beat{font-size:1.12rem;min-height:1.25em;margin:2px 0 0}
+.result{font-size:1.02rem;min-height:1.35em;margin:4px 0 0}
+.eve-line{font-size:.84rem;line-height:1.5;min-height:1.5em;margin:2px 0 0}
+#jkStart{min-height:46px!important;font-size:1rem!important;margin:8px 0!important}
+.hands{margin:8px 0 4px;gap:10px}
+.handbtn{padding:6px 10px;border-radius:13px;font-size:.84rem}
+.handbtn img{width:44px;height:44px;border-radius:11px}
+.match{margin-top:4px;font-size:.72rem;gap:10px}
+.score{margin-top:6px;font-size:.76rem}
+.prev{font-size:.72rem}
+}
+@media (max-width:640px) and (max-height:800px){
+.page-lead{display:none}
+.stage-wrap{max-width:212px}
+.handview img{max-width:84px}
+.beat{min-height:1.1em}
+}</style>
+<script data-goatcounter="https://shelfiria.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script><script src="/analytics-out.js" defer></script>
+<meta name="robots" content="noindex,nofollow"><link rel="stylesheet" href="/preview/retro-holo-v4.css?v=4.1.0"></head>
+<body class="holo-game">
+<header class="site-head"><a class="brand" href="/preview/retro-holo-v4/index.html"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>Shelfiria</strong></span></a><nav aria-label="main"><a href="/preview/retro-holo-v4/demo.html" aria-current="page">あそぶ</a><a href="/preview/retro-holo-v4/showcase.html">みる</a><a href="/preview/retro-holo-v4/notes/">よむ</a><a href="/preview/retro-holo-v4/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/preview/retro-holo-v4/demo.html">あそぶ →</a></div></header>
+<main class="page">
+<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — JANKEN</p><h1>あませとじゃんけん</h1><p class="page-lead">あませとじゃんけん。5本先取でマッチ勝利です。あませは負けず嫌いなので、負けた次はあなたの前の手を狩りに来るクセがあります。前の手を読んで裏をかくのがコツ。</p></section>
+<section class="section" style="border-bottom:none;padding-top:16px">
+<div class="jk-stage">
+<div class="stage-wrap"><video poster="/play/assets/hand2-rock.jpg" id="stageVid" src="/play/assets/hand-idle2.mp4" autoplay muted loop playsinline preload="auto"></video><video id="fxVideo" poster="/play/assets/stage-art-new.jpg" muted playsinline preload="none"></video><p class="stage-plate"><small>AMASE&rsquo;S STAGE</small>あませのステージ</p></div>
+<div class="bgm-row" style="max-width:none;margin:0 0 4px"><button class="bgm-toggle" id="bgmBtn" type="button">♪ BGM</button></div>
+<div class="duel2">
+<div class="fighter"><p class="who">YOU</p><div class="handview" id="youView"><span class="emo" id="youEmo">✊</span><img id="youImg" src="/play/assets/player-hand2-rock.jpg" alt="あなたの手" onerror="this.remove()"></div></div>
+</div>
+<p class="beat" id="beat"></p>
+<p class="result" id="result">手を選んでね</p>
+<p class="eve-line" id="eveLine">あませ「本気で来ていいよ。負けず嫌いだから」</p>
+<button id="jkStart" class="button" type="button" style="width:100%;min-height:56px;font-size:1.12rem;font-weight:900;background:var(--red);color:#fff;border-color:var(--ink);margin:2px 0 12px">▶ じゃんけんをはじめる</button>
+<div class="hands">
+<button class="handbtn" data-h="0" type="button"><img src="/play/assets/player-hand2-rock.jpg" alt="" onerror="this.outerHTML='✊'">グー</button>
+<button class="handbtn" data-h="1" type="button"><img src="/play/assets/player-hand2-scissors.jpg" alt="" onerror="this.outerHTML='✌️'">チョキ</button>
+<button class="handbtn" data-h="2" type="button"><img src="/play/assets/player-hand2-paper.jpg" alt="" onerror="this.outerHTML='✋'">パー</button>
+</div>
+<div class="match"><span>YOU <span class="pips" id="pipsYou">○○○○○</span></span><span>先取5本でマッチ</span><span><span class="pips" id="pipsEve">○○○○○</span> EVE</span></div>
+<p class="prev" id="prevLine"></p>
+<p class="score" id="score">0勝 0敗 0分 ｜ 連勝 0</p>
+</div>
+</section>
+</main>
+<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>Shelfiria</strong></span></div><nav><a href="/preview/retro-holo-v4/index.html">トップ</a><a href="/preview/retro-holo-v4/demo.html" aria-current="page">あそぶ</a><a href="/preview/retro-holo-v4/showcase.html">みる</a><a href="/preview/retro-holo-v4/notes/">よむ</a><a href="/preview/retro-holo-v4/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a><a href="https://coconala.com/users/3185601">ココナラ</a></nav></footer>
+<script>let AC=null;function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function tone(f,d,type,v,when){const ac=audio();if(!ac)return;const t=ac.currentTime+(when||0);const o=ac.createOscillator(),g=ac.createGain();o.type=type||"sine";o.frequency.value=f;g.gain.setValueAtTime(v||0.12,t);g.gain.exponentialRampToValueAtTime(0.001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02)}
+/* file audio (Flow Music, cleaned) with beep fallback */
+const oggOkJ=(()=>{const a=document.createElement('audio');return !!(a.canPlayType&&a.canPlayType('audio/ogg; codecs="vorbis"').replace(/no/,''))})();
+const EXTJ=oggOkJ?'ogg':'mp3';
+function mkA(s,v,loop){const a=new Audio();a.preload='auto';a.src=s;a.volume=v;if(loop)a.loop=true;return a}
+const JAU={bgm:mkA('/play/assets/bgm_janken_loop.'+EXTJ,0.3,true),pon:mkA('/play/assets/se-janken-pon.'+EXTJ,0.6),win:mkA('/play/assets/se-janken-win.'+EXTJ,0.6),lose:mkA('/play/assets/se-janken-lose.'+EXTJ,0.55),draw:mkA('/play/assets/se-janken-draw.'+EXTJ,0.55)};
+const JVO={jan:mkA('/play/assets/voice-jan.'+EXTJ,0.95),pon:mkA('/play/assets/voice-pon.'+EXTJ,0.95),win:mkA('/play/assets/voice-win.'+EXTJ,0.95),lose:mkA('/play/assets/voice-lose.'+EXTJ,0.95),draw:mkA('/play/assets/voice-draw.'+EXTJ,0.95),mwin:mkA('/play/assets/voice-matchwin.'+EXTJ,0.95),mlose:mkA('/play/assets/voice-matchlose.'+EXTJ,0.95)};
+const JV={
+greet:[mkA('/play/assets/voice-greet1.'+EXTJ,0.95),mkA('/play/assets/voice-greet2.'+EXTJ,0.95)],
+jan:[JVO.jan,mkA('/play/assets/voice-jan2.'+EXTJ,0.95)],
+pon:[JVO.pon,mkA('/play/assets/voice-pon2.'+EXTJ,0.95)],
+win:[JVO.win,mkA('/play/assets/voice-win2.'+EXTJ,0.95),mkA('/play/assets/voice-win3.'+EXTJ,0.95)],
+lose:[JVO.lose,mkA('/play/assets/voice-lose2.'+EXTJ,0.95),mkA('/play/assets/voice-lose3.'+EXTJ,0.95)],
+draw:[JVO.draw,mkA('/play/assets/voice-draw2.'+EXTJ,0.95)]};
+const jpick=a=>a[(Math.random()*a.length)|0];
+const jplayV=a=>jplay(jpick(a));
+function jplay(a){if(!a||a.networkState===3)return false;try{a.currentTime=0;const p=a.play();if(p&&p.catch)p.catch(()=>{});return true}catch(e){return false}}
+let jBgmOn=true,jBgmStarted=false;
+function jBgmStart(){if(jBgmStarted||!jBgmOn)return;if(JAU.bgm&&JAU.bgm.networkState!==3){try{const p=JAU.bgm.play();if(p&&p.catch)p.catch(()=>{});jBgmStarted=true}catch(e){}}}
+document.getElementById('bgmBtn').addEventListener('click',function(){jBgmOn=!jBgmOn;this.classList.toggle('off',!jBgmOn);if(!jBgmOn){JAU.bgm.pause();jBgmStarted=false}else jBgmStart()});
+function vibJ(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
+const HANDIMG=['/play/assets/hand2-rock.jpg','/play/assets/hand2-scissors.jpg','/play/assets/hand2-paper.jpg'];
+const YOUIMG=['/play/assets/player-hand2-rock.jpg','/play/assets/player-hand2-scissors.jpg','/play/assets/player-hand2-paper.jpg'];
+const HANDEMO=['✊','✌️','✋'];
+function setHand(view,imgEl,emoEl,h,map){
+  if(imgEl){imgEl.src=(map||HANDIMG)[h];emoEl.style.display='none';imgEl.style.display=''}
+  else{emoEl.textContent=HANDEMO[h]}
+}
+const RESULT_FX={win:['/play/assets/fx-win-1.mp4','/play/assets/fx-win-2.mp4','/play/assets/fx-win-3.mp4'],lose:['/play/assets/fx-lose-1.mp4','/play/assets/fx-lose-2.mp4','/play/assets/fx-lose-3.mp4'],draw:['/play/assets/fx-draw-1.mp4','/play/assets/fx-draw-2.mp4'],mtake:['/play/assets/fx-mtake-1.mp4','/play/assets/fx-mtake-2.mp4'],mwin:['/play/assets/fx-mwin-1.mp4','/play/assets/fx-mwin-2.mp4']};
+const fxVideo=document.getElementById("fxVideo");let fxTimer=null;
+let pendingFxSrc=null;
+function hideFx(){if(!fxVideo)return;fxVideo.classList.remove("on");if(fxTimer){clearTimeout(fxTimer);fxTimer=null}try{fxVideo.pause()}catch(e){}pendingFxSrc=null;}
+function playFxSrc(src){if(!fxVideo||!src)return;if(fxTimer)clearTimeout(fxTimer);if(fxVideo.getAttribute("src")!==src)fxVideo.src=src;try{fxVideo.currentTime=0}catch(e){}fxVideo.classList.add("on");const p=fxVideo.play();if(p)p.catch(()=>hideFx());fxTimer=setTimeout(hideFx,5600);}
+if(fxVideo)fxVideo.addEventListener("ended",hideFx);
+function fxKindFor(you,eve){const base=you===eve?"draw":(((you-eve+3)%3===2)?"win":"lose");if(base==="win"&&(mpYou+1>=5||streak+1>=5))return "mwin";if(base==="lose"&&mpEve+1>=5)return "mtake";return base;}
+function primeFx(kind){const arr=RESULT_FX[kind];if(!arr||!arr.length||!fxVideo)return;pendingFxSrc=arr[Math.floor(Math.random()*arr.length)];if(fxVideo.getAttribute("src")!==pendingFxSrc){fxVideo.src=pendingFxSrc;try{fxVideo.load()}catch(e){}}}
+function playResultFx(kind){if(pendingFxSrc){playFxSrc(pendingFxSrc);return}const arr=RESULT_FX[kind];if(!arr||!arr.length)return;playFxSrc(arr[Math.floor(Math.random()*arr.length)]);}
+function playVictoryFx(){playResultFx("mwin");}
+const NAMES=["グー","チョキ","パー"];
+let w=0,l=0,d=0,streak=0,mpYou=0,mpEve=0,lastYou=-1,lastOut="";
+let matchYou=Number(localStorage.getItem("jkMatchYou")||0),matchEve=Number(localStorage.getItem("jkMatchEve")||0);
+const LINES={win:["あませ「むむ…やるね」","あませ「次は勝つから」","あませ「今のは運。たぶん」"],lose:["あませ「はい、私の勝ち」","あませ「読み通りでした」","あませ「もう一回来る？」"],draw:["あませ「気が合うね」","あませ「あいこ。次で決めよ」"],
+matchWin:["あませ「マッチ取られた…くやしい。もう1マッチ！」"],matchLose:["あませ「マッチは私のもの。はい、次いこ」"]};
+const result=document.getElementById("result"),line=document.getElementById("eveLine"),score=document.getElementById("score"),prevLine=document.getElementById("prevLine");
+function pips(n){return "●".repeat(n)+"○".repeat(5-n)}
+function paintScore(){
+document.getElementById("pipsYou").textContent=pips(mpYou);
+document.getElementById("pipsEve").textContent=pips(mpEve);
+let st="";if(streak>=8)st="【無双】";else if(streak>=5)st="【絶好調】";else if(streak>=3)st="【好調】";
+score.textContent=w+"勝 "+l+"敗 "+d+"分 ｜ 連勝 "+streak+st+" ｜ マッチ あなた"+matchYou+" — あませ"+matchEve;
+prevLine.textContent=lastYou>=0?("あませの狙いメモ：あなたは前回「"+NAMES[lastYou]+"」。負けた次のあませは、それに勝つ手を出しがち"):"";
+}
+function pickEve(){
+if(lastOut==="win"&&lastYou>=0&&Math.random()<0.55)return (lastYou+2)%3;
+return Math.floor(Math.random()*3);
+}
+let busy=false;
+const youView=document.getElementById("youView"),beatEl=document.getElementById("beat");
+const youImg=document.getElementById("youImg"),youEmo=document.getElementById("youEmo");
+function reveal(you,eve){
+let out;
+if(you===eve){out="draw";d++;streak=0;result.textContent="あいこ";playResultFx("draw");if(!jplay(JAU.draw))tone(520,0.09,"sine",0.1);setTimeout(()=>jplayV(JV.draw),520)}
+else if((you-eve+3)%3===2){out="win";w++;streak++;mpYou++;result.textContent="あなたの勝ち！";playResultFx("win");if(!jplay(JAU.win)){tone(784,0.12,"sine",0.12);tone(1047,0.18,"sine",0.12,0.1)}vibJ(30);setTimeout(()=>jplayV(JV.lose),520)}
+else{out="lose";l++;streak=0;mpEve++;result.textContent="あませの勝ち";playResultFx("lose");if(!jplay(JAU.lose))tone(262,0.14,"triangle",0.1);vibJ([20,40,20]);setTimeout(()=>jplayV(JV.win),520)}
+let lineArr=LINES[out];
+if(mpYou>=5){matchYou++;localStorage.setItem("jkMatchYou",matchYou);result.textContent="マッチ獲得！！ あなたの勝ち";lineArr=LINES.matchWin;mpYou=0;mpEve=0;playVictoryFx();vibJ([50,40,50,40,120]);tone(784,0.12,"sine",0.12);tone(988,0.12,"sine",0.12,0.1);tone(1318,0.26,"sine",0.12,0.2);setTimeout(()=>jplay(JVO.mlose),2100)}
+else if(mpEve>=5){matchEve++;localStorage.setItem("jkMatchEve",matchEve);result.textContent="マッチはあませのもの…";lineArr=LINES.matchLose;mpYou=0;mpEve=0;playResultFx("mtake");setTimeout(()=>jplay(JVO.mwin),2100)}
+else if(out==="win"&&streak>=5){playVictoryFx()}
+line.textContent=lineArr[Math.floor(Math.random()*lineArr.length)];
+lastYou=you;lastOut=out;
+paintScore();
+}
+const THROW={0:{src:"/play/assets/hand-throw2-rock.mp4",pon:1.10},1:{src:"/play/assets/hand-throw2-scissors.mp4",pon:0.85},2:{src:"/play/assets/hand-throw2-paper.mp4",pon:1.55}};
+const stageVid=document.getElementById("stageVid");
+function toIdle(){if(!stageVid)return;stageVid.loop=true;if(!stageVid.src.includes("hand-idle2"))stageVid.src="/play/assets/hand-idle2.mp4";const p=stageVid.play();if(p)p.catch(()=>{});}
+setHand(youView,youImg,youEmo,0,YOUIMG);
+const jkStart=document.getElementById("jkStart");
+let chant=null;
+function setHandsEnabled(on){document.querySelectorAll(".handbtn").forEach(x=>x.disabled=!on);}
+setHandsEnabled(false);
+jkStart.addEventListener("click",()=>{
+if(busy||chant)return;busy=true;hideFx();jBgmStart();if(!window.__greeted){window.__greeted=true;jplayV(JV.greet);}else jplayV(JV.jan);
+const eve=pickEve();
+chant={eve: eve};
+beatEl.textContent="じゃん・けん！";result.textContent="手を選んでね";line.textContent="あませ「いくよ？」";
+setHand(youView,youImg,youEmo,0,YOUIMG);
+jkStart.style.display="none";setHandsEnabled(true);busy=false;
+});
+document.querySelectorAll(".handbtn").forEach(b=>b.addEventListener("click",()=>{
+if(busy||!chant)return;busy=true;hideFx();
+const you=Number(b.dataset.h);const eve=chant.eve;chant=null;primeFx(fxKindFor(you,eve));
+setHandsEnabled(false);
+youView.classList.add("shaking");
+setHand(youView,youImg,youEmo,0,YOUIMG);
+let done=false;
+const finish=()=>{
+if(done)return;done=true;
+beatEl.textContent="ぽん！";if(!jplayV(JV.pon)&&!jplay(JAU.pon))tone(920,0.08,"sine",0.13);vibJ(18);
+youView.classList.remove("shaking");
+setHand(youView,youImg,youEmo,you,YOUIMG);
+reveal(you,eve);
+busy=false;
+jkStart.textContent="もう一回";jkStart.style.display="";
+setTimeout(toIdle,1700);
+};
+const th=THROW[eve];
+if(stageVid){
+  stageVid.loop=false;
+  stageVid.onerror=()=>setTimeout(finish,700);
+  if(stageVid.src.indexOf(th.src)===-1)stageVid.src=th.src;
+  let armed=false;
+  const armThrow=()=>{
+    if(armed)return;armed=true;
+    try{if(stageVid.currentTime>0.05)stageVid.currentTime=0;}catch(e){}
+    const pr=stageVid.play();if(pr)pr.catch(()=>{});
+    const tick=()=>{if(done)return;if(stageVid.currentTime>=th.pon){finish();return}if(stageVid.requestVideoFrameCallback)stageVid.requestVideoFrameCallback(tick);else setTimeout(tick,40);};
+    if(stageVid.requestVideoFrameCallback)stageVid.requestVideoFrameCallback(tick);else setTimeout(tick,40);
+  };
+  if(stageVid.readyState>=1)armThrow();else stageVid.addEventListener("loadedmetadata",armThrow,{once:true});
+  setTimeout(finish,4500);
+}else setTimeout(finish,900);
+}));
+paintScore();
+window.addEventListener("load",()=>{const urls=Object.values(THROW).map(t=>t.src);let i=0;const step=()=>{if(i>=urls.length)return;const u=urls[i++];fetch(u).then(r=>r.arrayBuffer()).catch(()=>{}).finally(()=>setTimeout(step,100));};setTimeout(step,1200);});
+</script>
+<script src="/ad-overlay.js" defer></script>
+</body></html>
