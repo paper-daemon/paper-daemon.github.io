@@ -3,231 +3,188 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>あませスロット | Shelfiria</title>
-<meta name="description" content="Shelfiriaの小さな遊び場。レバーを引いて回すジャグラー風スロット。ランプが光ればボーナス。コインは端末に保存されます。">
+<meta name="description" content="Shelfiriaの遊び場。レバーを引いて3つの絵をそろえるジャグラー風スロット。ランプが光ればボーナス。勝ったコインは下の受け皿に3Dで積み上がります。">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="Shelfiria"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/site.css?v=20261101-1">
-<style>.slot-stage{max-width:520px;margin:0 auto;text-align:center}
-.cabinet{background:linear-gradient(180deg,#4a1030 0%,#2a0a24 55%,#1a0618 100%);border:3px solid #0d0510;border-radius:26px;box-shadow:8px 8px 0 var(--ink),inset 0 0 0 3px #b98a2f,inset 0 0 44px rgba(245,179,1,.14);padding:16px 16px 18px;color:#fff;position:relative;overflow:hidden}
-.cabinet::before{content:"";position:absolute;inset:6px;border:2px solid rgba(245,179,1,.35);border-radius:20px;pointer-events:none}
-.panel{position:relative;border-radius:14px;overflow:hidden;border:2px solid #b98a2f;background:radial-gradient(120% 160% at 50% 0%,#7a1f4d,#2a0a24);min-height:120px}
-.panel img{width:100%;height:170px;object-fit:cover;object-position:50% 22%;display:none}
-.cabinet.art-panel .panel img{display:block}
-  .panel video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 22%;opacity:0;transition:opacity .5s;pointer-events:none}
-  .cabinet.in-bonus .panel video{opacity:1}
-.panel .panel-title{position:absolute;inset:auto 0 0 0;padding:22px 10px 6px;background:linear-gradient(180deg,transparent,rgba(10,2,10,.72));font:900 1.05rem var(--display);letter-spacing:.14em;color:#ffe9a8;text-shadow:0 2px 0 #57153a}
-.lamp{position:absolute;top:8px;right:10px;width:52px;height:52px;z-index:3}
-.lamp img{width:100%;height:100%;object-fit:contain;display:none;filter:saturate(.35) brightness(.75)}
-.cabinet.art-lamp .lamp img{display:block}
-.lamp .lamp-star{font-size:2.2rem;line-height:52px;text-align:center;color:#8a6a3a;text-shadow:0 0 2px #000}
-.cabinet.art-lamp .lamp .lamp-star{display:none}
-.lamp.on img{filter:saturate(1.3) brightness(1.25) drop-shadow(0 0 14px #ffd23e)}
-.lamp.on .lamp-star{color:#ffd23e;text-shadow:0 0 18px #ffd23e,0 0 34px #ff9d00;animation:lampPulse .5s ease-in-out infinite alternate}
-@keyframes lampPulse{from{transform:scale(1)}to{transform:scale(1.14)}}
-.led-row{display:flex;gap:7px;justify-content:center;margin:10px 0 2px}
-.led-row i{width:9px;height:9px;border-radius:50%;background:#ff5d8f;box-shadow:0 0 8px #ff5d8f;animation:ledBlink 1.1s steps(2) infinite}
-.led-row i:nth-child(2n){background:#37c8d9;box-shadow:0 0 8px #37c8d9;animation-delay:.28s}
-.led-row i:nth-child(3n){background:#ffe066;box-shadow:0 0 8px #ffe066;animation-delay:.55s}
-.led-row i:nth-child(4n){background:#7dffb0;box-shadow:0 0 8px #7dffb0;animation-delay:.82s}
-@keyframes ledBlink{50%{opacity:.35}}
-.info-strip{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px}
-.info-strip .box{background:#12040f;border:2px solid #b98a2f;border-radius:10px;padding:4px 12px;font:700 .92rem var(--mono);letter-spacing:.05em;color:#ffe9a8;min-width:104px}
-.info-strip .box.bonus-box{color:#ff9db1;border-color:#ff5d8f;display:none}
-.cabinet.in-bonus .info-strip .box.bonus-box{display:block}
-.reel-window{background:linear-gradient(180deg,#0d0510,#24102a);border:3px solid #b98a2f;border-radius:18px;padding:14px 10px;margin-top:12px;position:relative}
-.reels{display:flex;gap:12px;justify-content:center}
-.reel{width:96px;height:110px;background:#fffdf4;border-radius:14px;overflow:hidden;position:relative;box-shadow:inset 0 -8px 0 rgba(19,24,71,.12),inset 0 8px 0 rgba(19,24,71,.08)}
-.reel .strip{position:absolute;left:0;top:0;width:100%;will-change:transform}
-.reel .cell{height:110px;display:flex;align-items:center;justify-content:center;font-size:3rem;color:#171233;line-height:1}
-.reel .cell img{width:88px;height:88px;object-fit:contain;display:none}
-.reel.art .cell img{display:block}
-.reel.art .cell .glyph{display:none}
-.reel.fast .strip{filter:blur(2.5px)}
-.reel.win{outline:4px solid #f5b301}
-.reel.reach{animation:reachPulse .3s ease-in-out infinite alternate}
-@keyframes reachPulse{from{box-shadow:0 0 0 0 rgba(245,179,1,.0)}to{box-shadow:0 0 22px 6px rgba(245,179,1,.75)}}
-.controls{display:flex;gap:14px;align-items:flex-start;justify-content:center;margin-top:14px}
-.lever{width:54px;display:flex;flex-direction:column;align-items:center;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none}
-.lever .lever-slot{width:14px;height:86px;background:#0d0510;border:2px solid #b98a2f;border-radius:8px;position:relative}
-.lever .lever-knob{position:absolute;left:50%;top:2px;transform:translateX(-50%);width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff8fa8,#e0205c 60%,#8f0f38);border:2px solid #ffd9e2;box-shadow:0 3px 8px rgba(0,0,0,.5);transition:top .16s ease-in}
-.lever.pulled .lever-knob{top:42px}
-.lever .lever-label{font:700 .68rem var(--mono);color:#ffe9a8;margin-top:6px;letter-spacing:.1em}
-.control-main{flex:1;max-width:330px}
-.bet-btns{display:flex;gap:8px;justify-content:center;margin:2px 0 10px}
-.bet-btns button{font:700 .85rem var(--mono);padding:7px 16px;border:2px solid #fff;border-radius:999px;background:transparent;color:#fff;cursor:pointer}
-.bet-btns button.on{background:#f5b301;border-color:#f5b301;color:#171233}
-.msg{min-height:1.8em;font-weight:700;color:#ffd98a;margin:10px 0 0}
-.bgm-toggle{position:absolute;top:10px;left:12px;z-index:4;background:rgba(10,2,10,.55);border:2px solid rgba(255,255,255,.55);color:#fff;border-radius:999px;width:38px;height:38px;font-size:1rem;cursor:pointer}
-.bgm-toggle.off{opacity:.45}
-.cabinet.celebrate{animation:machineGlow .5s ease-in-out 6 alternate}
-@keyframes machineGlow{from{box-shadow:8px 8px 0 var(--ink),0 0 0 0 rgba(245,179,1,0)}to{box-shadow:8px 8px 0 var(--ink),0 0 42px 10px rgba(245,179,1,.8)}}
-.fx-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:screen;opacity:0;pointer-events:none;transition:opacity .25s;z-index:5}
-.fx-video.on{opacity:1}
-.sparkle{position:absolute;pointer-events:none;font-size:1.3rem;animation:sparkleFly 1.1s ease-out forwards;z-index:6}
-@keyframes sparkleFly{0%{transform:translateY(0) scale(.6);opacity:1}100%{transform:translateY(-150px) scale(1.25);opacity:0}}
-.tray{margin-top:16px;background:linear-gradient(180deg,#12040f,#1e0a1a);border:3px solid #b98a2f;border-radius:14px;padding:8px 10px 6px}
-.tray .tray-label{font:700 .72rem var(--mono);letter-spacing:.16em;color:#b98a2f;text-align:left}
-.pile{position:relative;height:104px;margin-top:2px}
-.pile .coin{position:absolute;width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.45))}
-.pile .coin-emoji{position:absolute;font-size:1.5rem;line-height:34px;width:34px;text-align:center}
-.coin-fall{position:absolute;width:34px;height:34px;object-fit:contain;z-index:7;pointer-events:none;transition:transform .55s cubic-bezier(.5,.1,.7,.4),opacity .55s}
-.pay{margin:18px auto 0;font-size:.8rem;color:var(--muted);line-height:2;text-align:left;max-width:380px}
+<style>
+  .slot-dark{background:#0b0714;border-radius:26px;padding:18px 6px 10px;max-width:600px;margin:0 auto}
+  .machine{position:relative;width:min(540px,96vw);margin:0 auto;aspect-ratio:1086/1448;container-type:inline-size;user-select:none;-webkit-user-select:none}
+  .machine>img.cab{position:absolute;inset:0;width:100%;height:100%;display:block;border-radius:12px}
+  .ov{position:absolute}
+  .led{font-family:ui-monospace,Menlo,monospace;font-weight:700;color:#ffb43a;text-shadow:0 0 6px rgba(255,150,20,.85),0 0 2px rgba(255,180,40,.9);letter-spacing:.06em;white-space:nowrap;overflow:hidden}
+  .disp-top{left:16.5%;top:38.35%;width:67%;height:4.7%;display:flex;align-items:center;justify-content:space-between;padding:0 2.2cqw;font-size:4.6cqw}
+  .disp-msg{left:17.5%;top:66.9%;width:65%;height:6.9%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:3.9cqw;color:#ffcf7d}
+  .disp-msg.hot{color:#ff8f6b;text-shadow:0 0 8px rgba(255,90,40,.9)}
+  #panelVideo{left:5.5%;top:2.6%;width:89%;height:34.5%;object-fit:cover;object-position:50% 30%;border-radius:9% 9% 12% 12%/14% 14% 10% 10%;opacity:0;transition:opacity .5s;pointer-events:none}
+  .machine.in-bonus #panelVideo{opacity:1}
+  .lamp{left:79.2%;top:0.9%;width:20.3%;aspect-ratio:1;pointer-events:none}
+  .lamp img{width:100%;height:100%;opacity:0;transition:opacity .25s}
+  .lamp.on img{opacity:1;filter:drop-shadow(0 0 18px rgba(255,190,40,.95)) drop-shadow(0 0 46px rgba(255,150,20,.6))}
+  .lamp.blink img{opacity:1;animation:lampblink .5s steps(2,start) infinite}
+  @keyframes lampblink{50%{opacity:.15}}
+  .reel{top:46.55%;height:18.3%;overflow:hidden;border-radius:6%/10%}
+  #r0{left:16.55%;width:21.2%} #r1{left:39.35%;width:21.2%} #r2{left:62.1%;width:21.2%}
+  .reel .strip{will-change:transform}
+  .reel .cell{position:relative;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 42%,#fffdf4,#f7ecd2)}
+  .reel .cell .glyph{font-weight:900;line-height:1}
+  .reel .cell img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:5%;box-sizing:border-box}
+  .reel.fast .cell img,.reel.fast .cell .glyph{filter:blur(1.6px) saturate(1.1)}
+  .reel.win .cell{background:radial-gradient(circle at 50% 42%,#fff6c8,#ffe89a)}
+  .reel.reach{box-shadow:inset 0 0 0 3px rgba(255,90,40,.85),inset 0 0 22px rgba(255,90,40,.45)}
+  #fxVideo{left:15.9%;top:45.9%;width:68.6%;height:19.6%;object-fit:cover;mix-blend-mode:screen;opacity:0;transition:opacity .25s;pointer-events:none;border-radius:14px}
+  #fxVideo.on{opacity:.95}
+  .bet-hit{position:absolute;top:76.4%;line-height:1;width:12.5%;aspect-ratio:1;border-radius:50%;border:none;background:transparent;cursor:pointer;color:#fff;font:900 4.4cqw var(--sans);text-shadow:0 1px 3px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:0}
+  .bet-hit[data-bet="10"]{left:26.9%} .bet-hit[data-bet="30"]{left:43.7%} .bet-hit[data-bet="50"]{left:60.4%}
+  .bet-hit.on{box-shadow:0 0 0 3px rgba(255,230,150,.95),0 0 22px rgba(255,190,40,.85);background:rgba(255,170,30,.18)}
+  .lever{left:84.6%;top:54.5%;width:14.5%;height:27%;cursor:pointer;touch-action:none}
+  .lever .stick{position:absolute;left:50%;top:6%;width:9%;height:52%;margin-left:-4.5%;background:linear-gradient(90deg,#8a8f98,#e8ecf2,#8a8f98);border-radius:99px;transform-origin:50% 0;transition:transform .16s ease-in}
+  .lever .ball{position:absolute;left:50%;top:0;width:52%;aspect-ratio:1;margin-left:-26%;border-radius:50%;background:radial-gradient(circle at 34% 30%,#ffb3ab,#e53224 55%,#8f130c);box-shadow:0 4px 10px rgba(0,0,0,.5),inset 0 -6px 10px rgba(0,0,0,.35);transition:transform .16s ease-in}
+  .lever.pulled .ball{transform:translateY(11.5cqw)}
+  .lever.pulled .stick{transform:scaleY(1.55)}
+  #tray3d{left:12.8%;top:86.4%;width:74.5%;height:9.3%}
+  #tray3d canvas{display:block;width:100%;height:100%}
+  .bgm-btn{left:1.2%;top:0.6%;width:9%;aspect-ratio:1;border-radius:50%;border:2px solid rgba(255,210,120,.7);background:rgba(20,8,24,.55);color:#ffd98a;font-size:4.6cqw;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:5}
+  .bgm-btn.off{opacity:.45}
+  .sparkle{position:absolute;font-size:5.5cqw;pointer-events:none;animation:spk 1.1s ease-out forwards;z-index:6}
+  @keyframes spk{0%{transform:translateY(0) scale(.5);opacity:0}25%{opacity:1}100%{transform:translateY(-9cqw) scale(1.25) rotate(40deg);opacity:0}}
+  .machine.celebrate{animation:mshake .5s ease-in-out 3}
+  @keyframes mshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .howto{max-width:560px;margin:14px auto 0;color:var(--ink-dim);line-height:1.9;font-size:.92rem}
 </style>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.170.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.170.0/examples/jsm/"}}
+</script>
 </head>
 <body>
 <header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>Shelfiria</strong></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
 <main class="page">
-<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — SLOT</p><h1>あませスロット</h1><p class="page-lead">レバーを引いて3つの絵をそろえるジャグラー風スロット。賭けるたびにジャックポットが貯まり、★3つで総取り。たまにランプが光ったらボーナス突入。勝ったコインは下の受け皿に積み上がります。</p></section>
-<section class="section" style="border-bottom:none;padding-top:16px">
-<div class="slot-stage"><div class="cabinet" id="machine">
-<video class="fx-video" id="fxVideo" muted playsinline preload="auto"></video>
-<button class="bgm-toggle" id="bgmBtn" type="button" aria-label="BGM切り替え">♪</button>
-<div class="panel">
-<img id="panelImg" src="/play/assets/cabinet-panel.jpg" alt="">
-      <video id="panelVideo" src="/play/assets/panel-bonus.mp4" loop muted playsinline preload="metadata"></video>
-<div class="lamp" id="lamp"><span class="lamp-star">★</span><img id="lampImg" src="/play/assets/star-lamp.png" alt=""></div>
-<div class="panel-title">AMASE SLOT</div>
+<section class="page-hero" style="border-bottom:none;padding-bottom:8px"><p class="eyebrow">PLAY — SLOT</p><h1>あませスロット</h1><p class="page-lead">レバーを引いて3つの絵をそろえるジャグラー風スロット。賭けるたびにジャックポットが貯まり、★3つで総取り。たまに星ランプが光ったらボーナス突入。勝ったコインは下の受け皿に積み上がります。</p></section>
+<section class="section" style="border-bottom:none;padding-top:6px">
+<div class="slot-dark">
+<div class="machine" id="machine">
+  <img class="cab" src="/play/assets/cabinet-full.jpg" alt="あませスロット筐体">
+  <video class="ov" id="panelVideo" src="/play/assets/panel-cabinet.mp4" loop muted playsinline preload="metadata"></video>
+  <div class="ov lamp" id="lamp"><img src="/play/assets/star-lamp.png" alt=""></div>
+  <button class="ov bgm-btn" id="bgmBtn" type="button" aria-label="BGM切替">♪</button>
+  <div class="ov led disp-top"><span>COINS <span id="coins">100</span></span><span>★JP <span id="jp">500</span></span></div>
+  <div class="ov reel" id="r0"></div><div class="ov reel" id="r1"></div><div class="ov reel" id="r2"></div>
+  <video class="ov" id="fxVideo" muted playsinline preload="auto"></video>
+  <div class="ov led disp-msg" id="msg">レバーを引いてね</div>
+  <button class="bet-hit on" data-bet="10" type="button">10</button>
+  <button class="bet-hit" data-bet="30" type="button">30</button>
+  <button class="bet-hit" data-bet="50" type="button">50</button>
+  <div class="ov lever" id="lever"><div class="stick"></div><div class="ball"></div></div>
+  <div class="ov" id="tray3d"></div>
 </div>
-<div class="led-row" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-<div class="info-strip">
-<span class="box">COINS <span id="coins">100</span></span>
-<span class="box">★ JP <span id="jp">500</span></span>
-<span class="box bonus-box" id="bonusBox">BONUS <span id="bonusLeft">0</span></span>
 </div>
-<div class="reel-window">
-<div class="reels"><div class="reel" id="r0"></div><div class="reel" id="r1"></div><div class="reel" id="r2"></div></div>
+<div class="howto">
+<p>配当（BET10のとき）：7 7 7＝300／★★★＝ジャックポット全額／◆◆◆ 200／●●● 120／▲▲▲ 100／ベルの3つ 60／チェリーの3つ 40／どれか2つ 15／チェリーが1つでも 5。BETを上げると配当も比例して上がります。</p>
+<p>ボーナス：たまに星ランプが光ります。光ったら次の回転からボーナス開始。BIGは15ゲーム、REG（バケ）は8ゲーム、どちらも回すのは無料で小当たりが続きます。ボーナス中は上の絵が動き出します。</p>
+<p>ジャックポットは通常時1回まわすごとに少しずつ貯まります。コインとプールはこの端末に保存されます。コインが尽きたら100枚補充されます。</p>
 </div>
-<div class="controls">
-<div class="control-main">
-<div class="bet-btns" role="group" aria-label="BET">
-<button type="button" data-bet="10" class="on">BET 10</button>
-<button type="button" data-bet="30">BET 30</button>
-<button type="button" data-bet="50">BET 50</button>
-</div>
-<button class="button primary" id="spinBtn" type="button" style="font-size:1.05rem;padding:14px 38px">まわす</button>
-<p class="msg" id="msg">レバーを引くか、ボタンを押して。ランプが光ったらボーナス。</p>
-</div>
-<div class="lever" id="lever" role="button" aria-label="レバー"><div class="lever-slot"><div class="lever-knob"></div></div><span class="lever-label">LEVER</span></div>
-</div>
-<div class="tray"><div class="tray-label">COIN TRAY</div><div class="pile" id="pile"></div></div>
-</div>
-<p class="pay">配当（BET10のとき）：★★★ ジャックポット全額 ／ ◆◆◆ 200 ／ ●●● 120 ／ ▲▲▲ 100 ／ どれか2つ 15。BETを上げると配当も比例して上がります。<br>ボーナス：たまに星ランプが光ります。光ったら次の回転からボーナス開始。BIGは15ゲーム、REG（バケ）は8ゲーム、どちらも回すのは無料で小当たりが続きます。<br>ジャックポットは通常時1回まわすごとに少しずつ貯まります。コインとプールはこの端末に保存されます。コインが尽きたら100枚もらえます。</p></div>
 </section>
 </main>
-<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>Shelfiria</strong></span></div><nav><a href="/">トップ</a><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/@ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
+<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>Shelfiria</strong></span></div><nav><a href="/">トップ</a><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
+<script src="/ad-overlay.js" defer></script>
 <script>
 'use strict';
-/* ---------- fallback beeps ---------- */
 let AC=null;function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC}
 function tone(f,d,type,v,when){const ac=audio();if(!ac)return;const t=ac.currentTime+(when||0);const o=ac.createOscillator(),g=ac.createGain();o.type=type||"sine";o.frequency.value=f;g.gain.setValueAtTime(v||0.12,t);g.gain.exponentialRampToValueAtTime(0.001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02)}
 function vib(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
-/* ---------- file audio with fallback ---------- */
 const oggOk=(()=>{const a=document.createElement('audio');return !!(a.canPlayType&&a.canPlayType('audio/ogg; codecs="vorbis"').replace(/no/,''))})();
+const EXT=oggOk?'ogg':'mp3';
 function mkAudio(src,vol,loop){const a=new Audio();a.preload='auto';a.src=src;a.volume=vol;if(loop)a.loop=true;return a}
-const AU={};
-function loadAudio(){
-  const ext=oggOk?'ogg':'mp3';
-  AU.bgm=mkAudio('/play/assets/bgm_slot_loop.'+ext,0.30,true);
-  AU.bgmBig=mkAudio('/play/assets/bgm_big_loop.'+ext,0.34,true);
-  AU.bgmReg=mkAudio('/play/assets/bgm_reg_loop.'+ext,0.32,true);
-  AU.spin=mkAudio('/play/assets/se-slot-spin.'+ext,0.5);
-  AU.stop=mkAudio('/play/assets/se-slot-stop.'+ext,0.6);
-  AU.reach=mkAudio('/play/assets/se-slot-reach.'+ext,0.55);
-  AU.win=mkAudio('/play/assets/se-slot-win.'+ext,0.6);
-  AU.jackpot=mkAudio('/play/assets/se-slot-jackpot.'+ext,0.7);
-  AU.coin=mkAudio('/play/assets/se-slot-coin.'+ext,0.5);
-  AU.bonus=mkAudio('/play/assets/se-slot-bonus.'+ext,0.65);
-}
-loadAudio();
+const AU={bgm:mkAudio('/play/assets/bgm_slot_loop.'+EXT,0.30,true),bgmBig:mkAudio('/play/assets/bgm_big_loop.'+EXT,0.34,true),bgmReg:mkAudio('/play/assets/bgm_reg_loop.'+EXT,0.32,true),
+spin:mkAudio('/play/assets/se-slot-spin.'+EXT,0.5),stop:mkAudio('/play/assets/se-slot-stop.'+EXT,0.6),reach:mkAudio('/play/assets/se-slot-reach.'+EXT,0.55),win:mkAudio('/play/assets/se-slot-win.'+EXT,0.6),jackpot:mkAudio('/play/assets/se-slot-jackpot.'+EXT,0.7),coin:mkAudio('/play/assets/se-slot-coin.'+EXT,0.5),bonus:mkAudio('/play/assets/se-slot-bonus.'+EXT,0.65)};
 function usable(a){return !!a&&a.networkState!==3}
 function playFile(a){if(!usable(a))return false;try{a.currentTime=0;const p=a.play();if(p&&p.catch)p.catch(()=>{});return true}catch(e){return false}}
-let bgmOn=true,bgmStarted=false,bgmKey='bgm';
-function playBgmKey(k){
-  bgmKey=k;if(!bgmOn)return;
-  ['bgm','bgmBig','bgmReg'].forEach(key=>{if(key!==k&&AU[key])AU[key].pause()});
-  const t=AU[k]||AU.bgm;
-  if(usable(t)){try{const p=t.play();if(p&&p.catch)p.catch(()=>{});bgmStarted=true}catch(e){}}
-  else if(k!=='bgm'&&usable(AU.bgm)){try{AU.bgm.play()}catch(e){}}
-}
-function startBgm(){if(bgmStarted)return;playBgmKey(bgmKey)}
+const SE_FALLBACK={spin(){tone(300,0.06,'square',0.05)},stop(){tone(520,0.07,'sine',0.1)},reach(){tone(740,0.1,'sine',0.11);tone(880,0.14,'sine',0.11,0.12)},win(){tone(784,0.12,'sine',0.12);tone(988,0.12,'sine',0.12,0.1);tone(1318,0.22,'sine',0.12,0.2)},jackpot(){tone(784,0.12,'sine',0.12);tone(988,0.12,'sine',0.12,0.1);tone(1175,0.12,'sine',0.12,0.2);tone(1568,0.3,'sine',0.13,0.3)},coin(){tone(1568,0.06,'square',0.06);tone(2093,0.09,'square',0.06,0.05)},bonus(){tone(784,0.12,'sine',0.12);tone(988,0.12,'sine',0.12,0.1);tone(1175,0.12,'sine',0.12,0.2);tone(1568,0.3,'sine',0.13,0.3)}};
 function se(name,fallback){if(playFile(AU[name]))return;if(fallback)fallback()}
-const SE_FALLBACK={
-  spin(){tone(300,0.06,'square',0.05)},
-  stop(){tone(520,0.07,'sine',0.1)},
-  reach(){tone(740,0.1,'sine',0.11);tone(880,0.14,'sine',0.11,0.12)},
-  win(){tone(784,0.12,'sine',0.12);tone(988,0.12,'sine',0.12,0.1);tone(1318,0.22,'sine',0.12,0.2)},
-  jackpot(){tone(784,0.12,'sine',0.12);tone(988,0.12,'sine',0.12,0.1);tone(1175,0.12,'sine',0.12,0.2);tone(1568,0.3,'sine',0.13,0.3)},
-  coin(){tone(1568,0.06,'square',0.06);tone(2093,0.09,'square',0.06,0.05)}
-};
+/* ---- seamless BGM (WebAudio overlap loop), legacy fallback ---- */
+let bgmOn=true,bgmStarted=false,bgmKey='bgm';
+const BGMF={bgm:'bgm_slot_loop',bgmBig:'bgm_big_loop',bgmReg:'bgm_reg_loop'};
+const BGMV={bgm:0.30,bgmBig:0.34,bgmReg:0.32};
+const BGMU={bufs:{},loading:false,ready:false,cur:null,timer:null,master:null};
+function bgmLoad(){
+  if(BGMU.loading||BGMU.ready)return;BGMU.loading=true;
+  const ctx=audio();if(!ctx){BGMU.loading=false;return}
+  BGMU.master=ctx.createGain();BGMU.master.gain.value=bgmOn?1:0;BGMU.master.connect(ctx.destination);
+  const keys=Object.keys(BGMF);let done=0;
+  keys.forEach(k=>{
+    fetch('/play/assets/'+BGMF[k]+'.'+EXT).then(r=>r.arrayBuffer()).then(ab=>ctx.decodeAudioData(ab)).then(buf=>{BGMU.bufs[k]=buf}).catch(()=>{}).finally(()=>{done++;if(done===keys.length){BGMU.ready=true;if(bgmStarted)playBuf(bgmKey)}});
+  });
+}
+function stopCur(fade){
+  const ctx=audio();if(!ctx||!BGMU.cur)return;const c=BGMU.cur;BGMU.cur=null;
+  if(BGMU.timer){clearTimeout(BGMU.timer);BGMU.timer=null}
+  try{c.g.gain.cancelScheduledValues(ctx.currentTime);c.g.gain.setValueAtTime(c.g.gain.value,ctx.currentTime);c.g.gain.linearRampToValueAtTime(0,ctx.currentTime+(fade||0.4));const s=c.src;setTimeout(()=>{try{s.stop()}catch(e){}},(fade||0.4)*1000+120)}catch(e){}
+}
+function playBuf(key){
+  const ctx=audio();if(!ctx||!BGMU.bufs[key]){legacyBgm(key);return}
+  stopCur(0.45);
+  const buf=BGMU.bufs[key];
+  const g=ctx.createGain();g.connect(BGMU.master);g.gain.value=0;g.gain.linearRampToValueAtTime(BGMV[key],ctx.currentTime+0.7);
+  const src=ctx.createBufferSource();src.buffer=buf;src.connect(g);src.start();
+  BGMU.cur={src,g,key};
+  BGMU.timer=setTimeout(()=>loopAgain(key),Math.max(60,(buf.duration-1.2)*1000));
+}
+function loopAgain(key){
+  const ctx=audio();if(!ctx||!BGMU.cur||BGMU.cur.key!==key)return;
+  const buf=BGMU.bufs[key];const prev=BGMU.cur;
+  const g=ctx.createGain();g.connect(BGMU.master);g.gain.value=0;g.gain.linearRampToValueAtTime(BGMV[key],ctx.currentTime+1.2);
+  const src=ctx.createBufferSource();src.buffer=buf;src.connect(g);src.start();
+  try{prev.g.gain.cancelScheduledValues(ctx.currentTime);prev.g.gain.setValueAtTime(prev.g.gain.value,ctx.currentTime);prev.g.gain.linearRampToValueAtTime(0,ctx.currentTime+1.2);const ps=prev.src;setTimeout(()=>{try{ps.stop()}catch(e){}},1400)}catch(e){}
+  BGMU.cur={src,g,key};
+  BGMU.timer=setTimeout(()=>loopAgain(key),Math.max(60,(buf.duration-1.2)*1000));
+}
+function legacyBgm(key){
+  ['bgm','bgmBig','bgmReg'].forEach(k=>{if(k!==key&&AU[k])AU[k].pause()});
+  const t=AU[key]||AU.bgm;
+  if(usable(t)){try{const p=t.play();if(p&&p.catch)p.catch(()=>{})}catch(e){}}
+  else if(key!=='bgm'&&usable(AU.bgm)){try{AU.bgm.play()}catch(e){}}
+}
+function playBgmKey(k){
+  bgmKey=k;if(!bgmOn)return;bgmStarted=true;
+  if(BGMU.ready&&BGMU.bufs[k])playBuf(k);else legacyBgm(k);
+}
+function startBgm(){bgmLoad();if(!bgmStarted)playBgmKey(bgmKey)}
 document.getElementById('bgmBtn').addEventListener('click',function(){
   bgmOn=!bgmOn;this.classList.toggle('off',!bgmOn);
+  if(BGMU.master&&AC)BGMU.master.gain.linearRampToValueAtTime(bgmOn?1:0,AC.currentTime+0.2);
   if(!bgmOn){['bgm','bgmBig','bgmReg'].forEach(k=>{if(AU[k])AU[k].pause()});bgmStarted=false}
   else startBgm();
 });
-/* ---------- state ---------- */
-const SYMS=['★','◆','●','▲'],W=[2,4,5,6];
-const ART=['/play/assets/slot-star.png','/play/assets/slot-dia.png','/play/assets/slot-orb.png','/play/assets/slot-gem.png'];
+/* ---- state ---- */
+const SYMS=['★','◆','●','▲','7','🔔','🍒'];
+const W=[2,3,4,5,1,6,6],PAY3=[0,200,120,100,300,60,40];
+const ART=['/play/assets/slot-star.png','/play/assets/slot-dia.png','/play/assets/slot-orb.png','/play/assets/slot-gem.png','/play/assets/slot-seven.png','/play/assets/slot-bell.png','/play/assets/slot-cherry.png'];
 let coins=Number(localStorage.getItem('slotCoins'));if(Number.isNaN(coins))coins=100;if(coins<=0)coins=100;
 let jp=Number(localStorage.getItem('slotJP'));if(!jp||jp<500)jp=500;
-let bet=10;
-let bonusFlag=null;           // 'BIG' | 'REG' : lamp lit, bonus starts next spin
-let bonus=null;               // {type,left,total} while in bonus
-const machine=document.getElementById('machine'),msg=document.getElementById('msg'),btn=document.getElementById('spinBtn'),cEl=document.getElementById('coins'),jpEl=document.getElementById('jp'),lamp=document.getElementById('lamp'),pileEl=document.getElementById('pile'),bonusLeftEl=document.getElementById('bonusLeft');
+let bet=10,bonusFlag=null,bonus=null,spinning=false;
+const machine=document.getElementById('machine'),msg=document.getElementById('msg'),cEl=document.getElementById('coins'),jpEl=document.getElementById('jp'),lamp=document.getElementById('lamp');
 const reelEls=[0,1,2].map(i=>document.getElementById('r'+i));
 function save(){localStorage.setItem('slotCoins',coins);localStorage.setItem('slotJP',jp)}
-function draw(){cEl.textContent=coins;jpEl.textContent=jp;if(bonus)bonusLeftEl.textContent=bonus.left}
-function pick(){let t=W.reduce((a,b)=>a+b,0),r=Math.random()*t;for(let i=0;i<4;i++){if((r-=W[i])<0)return i}return 2}
-/* art availability */
-(function(){let ok=0;ART.forEach(src=>{const im=new Image();im.onload=()=>{ok++;if(ok===4)reelEls.forEach(el=>el.classList.add('art'))};im.src=src})})();
-(function(){const im=new Image();im.onload=()=>machine.classList.add('art-panel');im.src='/play/assets/cabinet-panel.jpg'})();
-(function(){const im=new Image();im.onload=()=>machine.classList.add('art-lamp');im.src='/play/assets/star-lamp.png'})();
-let coinArt=false;(function(){const im=new Image();im.onload=()=>{coinArt=true;renderPile()};im.src='/play/assets/slot-coin.png'})();
-/* ---------- coin pile ---------- */
-function renderPile(){
-  const n=Math.min(coins,91),cols=13;let html='';
-  for(let i=0;i<n;i++){
-    const col=i%cols,row=Math.floor(i/cols);
-    const x=6+col*35+((i*37)%9),y=row*11;
-    if(coinArt)html+='<img class="coin" src="/play/assets/slot-coin.png" style="left:'+x+'px;bottom:'+y+'px;transform:rotate('+((i*53)%24-12)+'deg)" alt="">';
-    else html+='<span class="coin-emoji" style="left:'+x+'px;bottom:'+y+'px">🪙</span>';
-  }
-  pileEl.innerHTML=html;
-}
-function coinFall(k){
-  const tray=pileEl.getBoundingClientRect(),host=machine.getBoundingClientRect();
-  for(let i=0;i<k;i++){
-    const c=document.createElement(coinArt?'img':'span');
-    if(coinArt){c.src='/play/assets/slot-coin.png';c.className='coin-fall'}
-    else{c.textContent='🪙';c.className='coin-fall';c.style.fontSize='1.5rem'}
-    const sx=host.width/2-17+(Math.random()*160-80),sy=host.height*0.42;
-    const tx=tray.left-host.left+20+Math.random()*(tray.width-60),ty=tray.top-host.top+30+Math.random()*40;
-    c.style.left=sx+'px';c.style.top=sy+'px';
-    machine.appendChild(c);
-    requestAnimationFrame(()=>{c.style.transform='translate('+(tx-sx)+'px,'+(ty-sy)+'px) rotate('+(Math.random()*160-80)+'deg)';c.style.opacity='0.9'});
-    setTimeout(()=>c.remove(),650);
-  }
-}
-/* ---------- reels ---------- */
-const CELL=110;
-function cellHTML(idx){return '<div class="cell"><span class="glyph">'+SYMS[idx]+'</span><img src="'+ART[idx]+'" alt=""></div>'}
-function buildStrip(finalIdx,loops){
-  const seq=[];const total=loops*4+finalIdx+1;
-  for(let i=0;i<total;i++)seq.push(i===total-1?finalIdx:Math.floor(Math.random()*4));
-  return {html:seq.map(cellHTML).join(''),cells:total};
+function draw(){cEl.textContent=coins;jpEl.textContent=jp}
+function pick(){let t=W.reduce((a,b)=>a+b,0),r=Math.random()*t;for(let i=0;i<7;i++){if((r-=W[i])<0)return i}return 2}
+function renderPile(rain){if(window.__traySync)window.__traySync(coins,rain||0)}
+/* ---- reels ---- */
+function cellHTML(idx,h){return '<div class="cell" style="height:'+h+'px"><span class="glyph" style="font-size:'+Math.round(h*0.46)+'px">'+SYMS[idx]+'</span><img src="'+ART[idx]+'" alt="" onerror="this.remove()"></div>'}
+function buildStrip(finalIdx,loops,h){
+  const seq=[];const total=loops*7+finalIdx+1;
+  for(let i=0;i<total;i++)seq.push(i===total-1?finalIdx:Math.floor(Math.random()*7));
+  return {html:seq.map(s=>cellHTML(s,h)).join(''),cells:total};
 }
 const currentIdx=[0,1,2];
-function setReel(i,idx){reelEls[i].innerHTML='<div class="strip">'+cellHTML(idx)+'</div>';currentIdx[i]=idx}
-reelEls.forEach((el,i)=>setReel(i,currentIdx[i]));
+function setReel(i,idx){const h=reelEls[i].clientHeight||110;reelEls[i].innerHTML='<div class="strip">'+cellHTML(idx,h)+'</div>';currentIdx[i]=idx}
 let tickTimer=null;
 function startTicks(){stopTicks();tickTimer=setInterval(()=>tone(240+Math.random()*120,0.02,'square',0.018),85)}
 function stopTicks(){if(tickTimer){clearInterval(tickTimer);tickTimer=null}}
 function spinReel(i,finalIdx,duration,done){
-  const el=reelEls[i];
+  const el=reelEls[i];const h=el.clientHeight||110;
   const loops=3+Math.floor(duration/500);
-  const built=buildStrip(finalIdx,loops);
+  const built=buildStrip(finalIdx,loops,h);
   el.innerHTML='<div class="strip">'+built.html+'</div>';
-  const strip=el.firstChild;
-  const dist=(built.cells-1)*CELL;
-  const t0=performance.now();
+  const strip=el.firstChild;const dist=(built.cells-1)*h;const t0=performance.now();
   el.classList.add('fast');
   function easeOutCubic(x){return 1-Math.pow(1-x,3)}
   function tick(now){
@@ -235,179 +192,192 @@ function spinReel(i,finalIdx,duration,done){
     strip.style.transform='translateY('+(-dist*easeOutCubic(p))+'px)';
     if(p>0.55)el.classList.remove('fast');
     if(p<1)requestAnimationFrame(tick);
-    else{
-      strip.style.transition='transform .12s ease-out';strip.style.transform='translateY('+(-dist+5)+'px)';
-      setTimeout(()=>{strip.style.transform='translateY('+(-dist)+'px)';setReel(i,finalIdx);done()},130);
-    }
+    else{strip.style.transition='transform .12s ease-out';strip.style.transform='translateY('+(-dist+5)+'px)';setTimeout(()=>{strip.style.transform='translateY('+(-dist)+'px)';setReel(i,finalIdx);done()},130)}
   }
   requestAnimationFrame(tick);
 }
-/* ---------- win celebration video ---------- */
+/* ---- fx ---- */
 const fxVideo=document.getElementById('fxVideo');
-function showFx(){
-  try{fxVideo.currentTime=0;const p=fxVideo.play();if(p&&p.catch)p.catch(()=>{});
-    fxVideo.classList.add('on');
-    fxVideo.onended=()=>fxVideo.classList.remove('on');
-    setTimeout(()=>fxVideo.classList.remove('on'),4600);
-  }catch(e){}
-}
+function showFx(){try{fxVideo.currentTime=0;const p=fxVideo.play();if(p&&p.catch)p.catch(()=>{});fxVideo.classList.add('on');fxVideo.onended=()=>fxVideo.classList.remove('on');setTimeout(()=>fxVideo.classList.remove('on'),4600)}catch(e){}}
 function playFx(jackpot){
   const src=jackpot?'/play/assets/jackpot-fx.mp4':'/play/assets/win-fx.mp4';
-  if(fxVideo.dataset.src!==src){
-    fxVideo.dataset.src=src;fxVideo.src=src;
-    fxVideo.addEventListener('canplay',function h(){fxVideo.removeEventListener('canplay',h);showFx()});
-    fxVideo.load();
-  }else showFx();
-  return true;
+  if(fxVideo.dataset.src!==src){fxVideo.dataset.src=src;fxVideo.src=src;fxVideo.addEventListener('canplay',function h(){fxVideo.removeEventListener('canplay',h);showFx()});fxVideo.load()}
+  else showFx();
 }
 function sparkles(n){
-  for(let i=0;i<n;i++){
-    const s=document.createElement('span');s.className='sparkle';s.textContent='✦';
-    s.style.left=(15+Math.random()*70)+'%';s.style.top=(55+Math.random()*20)+'%';s.style.color=['#ffe066','#f5b301','#fff3b0'][i%3];
-    machine.appendChild(s);setTimeout(()=>s.remove(),1200);
-  }
+  for(let i=0;i<n;i++){const s=document.createElement('span');s.className='sparkle';s.textContent='✦';s.style.left=(18+Math.random()*60)+'%';s.style.top=(48+Math.random()*10)+'%';s.style.color=['#ffe066','#f5b301','#fff3b0'][i%3];machine.appendChild(s);setTimeout(()=>s.remove(),1200)}
 }
-function countUp(el,from,to,dur){
-  const t0=performance.now();
-  function tick(now){let p=(now-t0)/dur;if(p>1)p=1;el.textContent=Math.round(from+(to-from)*p);if(p<1)requestAnimationFrame(tick)}
-  requestAnimationFrame(tick);
-}
-/* ---------- bonus ---------- */
+function countUp(el,from,to,dur){const t0=performance.now();function tick(now){let p=(now-t0)/dur;if(p>1)p=1;el.textContent=Math.round(from+(to-from)*p);if(p<1)requestAnimationFrame(tick)}requestAnimationFrame(tick)}
+/* ---- bonus ---- */
 function bonusFinals(type){
   const r=Math.random();
-  const pair=()=>{const s=pick();let o=pick();if(o===s)o=(s+1)%4;const pos=Math.floor(Math.random()*3);const a=[s,s,s];a[pos]=o;return a};
-  const triple=s=>[s,s,s];
-  const miss=()=>{const a=[0,1,2,3].sort(()=>Math.random()-0.5);return [a[0],a[1],a[2]]};
+  const pair=()=>{const s=pick();let o=pick();if(o===s)o=(s+1)%7;const pos=Math.floor(Math.random()*3);const a=[s,s,s];a[pos]=o;return a};
+  const miss=()=>{const pool=[0,1,2,3,4,5].sort(()=>Math.random()-0.5);return [pool[0],pool[1],pool[2]]};
   if(type==='BIG'){
-    if(r<0.68)return pair();
-    if(r<0.73)return triple(3);
-    if(r<0.76)return triple(2);
-    if(r<0.77)return triple(1);
-    return miss();
+    if(r<0.68)return pair();if(r<0.74)return [3,3,3];if(r<0.77)return [2,2,2];if(r<0.785)return [1,1,1];if(r<0.815)return [5,5,5];return miss();
   }
-  if(r<0.70)return pair();
-  if(r<0.72)return triple(3);
-  return miss();
+  if(r<0.70)return pair();if(r<0.72)return [3,3,3];if(r<0.74)return [5,5,5];return miss();
 }
-function setLamp(on){lamp.classList.toggle('on',on)}
+function setLamp(mode){lamp.className='ov lamp'+(mode==='on'?' on':mode==='blink'?' blink':'')}
 const panelVideo=document.getElementById('panelVideo');
-if(panelVideo){panelVideo.addEventListener('error',()=>{panelVideo.style.display='none'});}
+if(panelVideo){panelVideo.addEventListener('error',()=>{if(!panelVideo.dataset.fb){panelVideo.dataset.fb='1';panelVideo.src='/play/assets/panel-bonus.mp4'}else panelVideo.style.display='none'})}
 function startBonus(type){
-  bonus={type,left:type==='BIG'?15:8,total:0};
-  bonusFlag=null;
-  machine.classList.add('in-bonus');
-  setLamp(true);
-  if(panelVideo&&panelVideo.style.display!=='none'){try{const p=panelVideo.play();if(p&&p.catch)p.catch(()=>{})}catch(e){}}
+  bonus={type,left:type==='BIG'?15:8,total:0};bonusFlag=null;
+  machine.classList.add('in-bonus');msg.classList.add('hot');setLamp('on');
   playBgmKey(type==='BIG'?'bgmBig':'bgmReg');
-  msg.textContent=(type==='BIG'?'BIG BONUS!! ':'REG BONUS ')+bonus.left+'ゲーム、無料で回せる！';
-  se('jackpot',SE_FALLBACK.jackpot);
-  playFx(true);sparkles(10);
-  machine.classList.add('celebrate');setTimeout(()=>machine.classList.remove('celebrate'),3200);
-  vib([60,50,60,50,140]);
-  draw();
+  msg.textContent=(type==='BIG'?'BIG BONUS!! ':'REG BONUS ')+bonus.left+'ゲーム無料！';
+  se('jackpot',SE_FALLBACK.jackpot);playFx(true);sparkles(8);
+  machine.classList.add('celebrate');setTimeout(()=>machine.classList.remove('celebrate'),1600);
+  if(panelVideo&&panelVideo.style.display!=='none'){try{const p=panelVideo.play();if(p&&p.catch)p.catch(()=>{})}catch(e){}}
+  vib([60,50,60,50,140]);draw();
 }
 function endBonus(){
   msg.textContent=bonus.type+'終了！ 合計 +'+bonus.total+'枚';
-  bonus=null;
-  machine.classList.remove('in-bonus');
+  bonus=null;machine.classList.remove('in-bonus');msg.classList.remove('hot');setLamp('');
   if(panelVideo)panelVideo.pause();
-  setLamp(false);
-  playBgmKey('bgm');
-  draw();save();renderPile();
+  playBgmKey('bgm');draw();save();renderPile(0);
 }
-/* ---------- spin flow ---------- */
-let spinning=false;
+/* ---- spin ---- */
 function doSpin(){
   if(spinning)return;
   startBgm();
-  if(bonusFlag&&!bonus){startBonus(bonusFlag)}
+  if(bonusFlag&&!bonus)startBonus(bonusFlag);
   const inBonus=!!bonus;
   if(!inBonus){
-    if(coins<bet){msg.textContent='コイン不足。100枚あげるから、もう一回押して。';coins=100;draw();save();renderPile();return}
+    if(coins<bet){msg.textContent='コイン不足。100枚補充したよ';coins=100;draw();save();renderPile(0);return}
     coins-=bet;jp+=Math.ceil(bet/2);
   }
-  spinning=true;draw();save();renderPile();
-  msg.textContent=inBonus?bonus.type+' 残り'+bonus.left+'ゲーム':'…';
+  spinning=true;draw();save();renderPile(0);
+  msg.textContent=inBonus?bonus.type+' 残り'+bonus.left:'…';
   machine.classList.remove('celebrate');
   reelEls.forEach(r=>r.classList.remove('win','reach'));
-  se('spin',SE_FALLBACK.spin);
-  startTicks();
+  se('spin',SE_FALLBACK.spin);startTicks();
   const finals=inBonus?bonusFinals(bonus.type):[pick(),pick(),pick()];
   const reachPair=finals[0]===finals[1];
   let stopped=0;
   finals.forEach((f,i)=>{
-    let dur=750+i*380;
-    if(i===2&&reachPair)dur=750+2*380+1150;
+    let dur=750+i*380;if(i===2&&reachPair)dur=750+2*380+1150;
     spinReel(i,f,dur,()=>{
-      se('stop',SE_FALLBACK.stop);vib(15);
-      stopped++;
+      se('stop',SE_FALLBACK.stop);vib(15);stopped++;
       if(stopped===3)stopTicks();
-      if(i===1&&reachPair){
-        msg.textContent='リーチ！！';reelEls[2].classList.add('reach');
-        se('reach',SE_FALLBACK.reach);vib([20,60,20,60,20]);
-      }
+      if(i===1&&reachPair){msg.textContent='リーチ！！';reelEls[2].classList.add('reach');se('reach',SE_FALLBACK.reach);vib([20,60,20,60,20])}
       if(i===2)reelEls[2].classList.remove('reach');
       if(stopped===3)judge(finals,inBonus);
     });
   });
 }
-btn.addEventListener('click',doSpin);
-const lever=document.getElementById('lever');
-let leverPulled=false;
-lever.addEventListener('pointerdown',e=>{
-  e.preventDefault();
-  if(leverPulled)return;leverPulled=true;
-  lever.classList.add('pulled');vib(10);
-  setTimeout(()=>{doSpin()},140);
-  setTimeout(()=>{lever.classList.remove('pulled');leverPulled=false},420);
-});
-document.querySelectorAll('.bet-btns button').forEach(b=>{b.addEventListener('click',()=>{if(spinning)return;document.querySelectorAll('.bet-btns button').forEach(x=>x.classList.remove('on'));b.classList.add('on');bet=Number(b.dataset.bet);tone(600,0.05,'sine',0.08)})});
-/* ---------- judge ---------- */
+const lever=document.getElementById('lever');let leverPulled=false;
+lever.addEventListener('pointerdown',e=>{e.preventDefault();if(leverPulled)return;leverPulled=true;lever.classList.add('pulled');vib(10);setTimeout(()=>{doSpin()},150);setTimeout(()=>{lever.classList.remove('pulled');leverPulled=false},430)});
+document.querySelectorAll('.bet-hit').forEach(b=>{b.addEventListener('click',()=>{if(spinning)return;document.querySelectorAll('.bet-hit').forEach(x=>x.classList.remove('on'));b.classList.add('on');bet=Number(b.dataset.bet);tone(600,0.05,'sine',0.08)})});
+/* ---- judge ---- */
 function judge(finals,inBonus){
-  const[a,b,c]=finals.map(i=>SYMS[i]);const m=inBonus?1:bet/10;let win=0,label='',isJp=false;
+  const[a,b,c]=finals;const m=inBonus?1:bet/10;let win=0,label='',isJp=false,triple=false;
   if(a===b&&b===c){
-    if(a==='★'&&!inBonus){win=jp;label='★★★ JACKPOT!! +'+win;jp=500;isJp=true}
-    else{win=(a==='◆'?200:a==='●'?120:a==='▲'?100:150)*m;label='3つそろった！ +'+win}
+    triple=true;
+    if(a===0&&!inBonus){win=jp;label='★★★ JACKPOT!! +'+win;jp=500;isJp=true}
+    else{win=Math.round(PAY3[a]*m);label=SYMS[a]+' 3つ！ +'+win}
   }
   else if(a===b||b===c||a===c){win=Math.round(15*m);label='2つそろった +'+win}
+  else if(finals.includes(6)){win=Math.round(5*m);label='チェリー +'+win}
   if(win>0){
     const before=coins;coins+=win;
     reelEls.forEach(r=>r.classList.add('win'));
-    if(isJp){se('jackpot',SE_FALLBACK.jackpot);machine.classList.add('celebrate');if(!playFx(true))sparkles(14);vib([60,50,60,50,140])}
-    else{se('win',SE_FALLBACK.win);playFx(false);vib([30,40,30])}
+    if(isJp){se('jackpot',SE_FALLBACK.jackpot);machine.classList.add('celebrate');playFx(true);vib([60,50,60,50,140])}
+    else if(triple){se('win',SE_FALLBACK.win);playFx(false);vib([30,40,30])}
+    else{se('win',SE_FALLBACK.win);sparkles(5);vib(25)}
     se('coin',SE_FALLBACK.coin);
-    coinFall(Math.min(12,Math.max(3,Math.round(win/15))));
-    countUp(cEl,before,coins,600);
-    jpEl.textContent=jp;
+    countUp(cEl,before,coins,600);jpEl.textContent=jp;
+    renderPile(Math.min(12,Math.max(3,Math.round(win/15))));
     if(inBonus)bonus.total+=win;
-    label+=(inBonus?'（BONUS残り'+(bonus.left-1)+'）':'');
+    label+=(inBonus?'（残り'+(bonus.left-1)+'）':'');
+  }else{
+    label=inBonus?'はずれ（残り'+(bonus.left-1)+'）':'はずれ。またどうぞ。';draw();
   }
-  else{
-    label=inBonus?'はずれ（BONUS残り'+(bonus.left-1)+'）':'はずれ。またどうぞ。';
-    draw();
-  }
-  msg.textContent=label;save();
-  setTimeout(()=>renderPile(),620);
-  spinning=false;
-  if(inBonus){
-    bonus.left--;draw();
-    if(bonus.left<=0){const t=bonus;setTimeout(()=>{endBonus()},900)}
-    return;
-  }
-  /* bonus flag roll (normal games only) */
+  msg.textContent=label;save();spinning=false;
+  if(inBonus){bonus.left--;if(bonus.left<=0)setTimeout(()=>{endBonus()},900);return}
   if(!bonusFlag){
     const r=Math.random();
-    if(r<1/80){bonusFlag='BIG'}
-    else if(r<1/80+1/120){bonusFlag='REG'}
-    if(bonusFlag){
-      setLamp(true);
-      msg.textContent='★ ランプが光った！ 次の回転で'+bonusFlag+'ボーナス突入！';
-      se('bonus',SE_FALLBACK.jackpot);vib([40,60,40,60,120]);
-      save();
-    }
+    if(r<1/80)bonusFlag='BIG';else if(r<1/80+1/120)bonusFlag='REG';
+    if(bonusFlag){setLamp('blink');msg.textContent='★ランプ点灯！ 次の回転で'+bonusFlag+'突入！';se('bonus',SE_FALLBACK.bonus);vib([40,60,40,60,120]);save()}
   }
 }
-draw();renderPile();
+reelEls.forEach((el,i)=>setReel(i,currentIdx[i]));
+draw();renderPile(0);
 </script>
-<script src="/ad-overlay.js" defer></script>
+<script type="module">
+import * as THREE from 'three';
+const host=document.getElementById('tray3d');
+try{
+  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  host.appendChild(renderer.domElement);
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(36,2,0.1,100);
+  camera.position.set(0,7.6,9.4);camera.lookAt(0,0,0.2);
+  scene.add(new THREE.AmbientLight(0xfff2d8,0.85));
+  const dl=new THREE.DirectionalLight(0xffffff,1.6);dl.position.set(3,7,4);scene.add(dl);
+  const pl=new THREE.PointLight(0xffb84d,30,30);pl.position.set(-4,3.4,3);scene.add(pl);
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(11.4,5.8),new THREE.MeshStandardMaterial({color:0x180a16,roughness:0.9,metalness:0.1}));
+  floor.rotation.x=-Math.PI/2;floor.position.y=-0.02;scene.add(floor);
+  const tex=new THREE.TextureLoader().load('/play/assets/slot-coin.png');
+  tex.colorSpace=THREE.SRGBColorSpace;
+  const capMat=new THREE.MeshStandardMaterial({map:tex,metalness:0.5,roughness:0.32});
+  const sideMat=new THREE.MeshStandardMaterial({color:0xd9a441,metalness:0.85,roughness:0.3});
+  const geo=new THREE.CylinderGeometry(0.47,0.47,0.115,26);
+  const COLS=11,ROWS=5,CAP=110;
+  const heights=new Array(COLS*ROWS).fill(0);
+  const bodies=[];
+  function cellPos(i){return {x:-4.7+(i%COLS)*0.94+(Math.random()*0.24-0.12),z:-1.9+Math.floor(i/COLS)*0.95+(Math.random()*0.22-0.11)}}
+  function pickCell(){let best=-1,bh=1e9;for(let k=0;k<7;k++){const i=Math.floor(Math.random()*COLS*ROWS);if(heights[i]<bh){bh=heights[i];best=i}}return best}
+  function spawn(fall,delay){
+    const ci=pickCell();const p=cellPos(ci);
+    const ty=0.06+heights[ci]*0.096;heights[ci]++;
+    const m=new THREE.Mesh(geo,[sideMat,capMat,capMat]);
+    m.rotation.y=Math.random()*Math.PI*2;
+    const tilt={x:(Math.random()*0.34-0.17),z:(Math.random()*0.34-0.17)};
+    if(fall){m.position.set(p.x,ty+5.2+Math.random()*2.6,p.z);m.rotation.x=tilt.x*2;m.rotation.z=tilt.z*2;
+      bodies.push({m,ci,ty,y:m.position.y,vy:0,settled:false,tilt,delay:delay||0});
+    }else{m.position.set(p.x,ty,p.z);m.rotation.x=tilt.x;m.rotation.z=tilt.z;
+      bodies.push({m,ci,ty,y:ty,vy:0,settled:true,tilt,delay:0});}
+    scene.add(m);
+  }
+  function sync(balance,rain){
+    const target=Math.min(balance,CAP);
+    let diff=target-bodies.length;
+    if(diff>0){for(let i=0;i<diff;i++){spawn(rain>0&&i<rain, i*55)}}
+    else if(diff<0){
+      bodies.sort((a,b)=>b.y-a.y);
+      for(let i=0;i<-diff;i++){const b=bodies.pop();if(!b)break;scene.remove(b.m);if(heights[b.ci]>0)heights[b.ci]--}
+    }
+    wake();
+  }
+  function resize(){
+    const w=host.clientWidth||360,h=host.clientHeight||64;
+    renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();wake();
+  }
+  new ResizeObserver(resize).observe(host);resize();
+  let running=false,last=performance.now();
+  function wake(){if(!running){running=true;last=performance.now();requestAnimationFrame(step)}}
+  function step(now){
+    const dt=Math.min(0.033,(now-last)/1000);last=now;
+    let active=false;
+    for(const b of bodies){
+      if(b.settled)continue;active=true;
+      if(b.delay>0){b.delay-=dt*1000;continue}
+      b.vy-=26*dt;b.y+=b.vy*dt;
+      if(b.y<=b.ty){b.y=b.ty;
+        if(Math.abs(b.vy)>3.2){b.vy=-b.vy*0.22;b.m.rotation.x=b.tilt.x*1.4;b.m.rotation.z=b.tilt.z*1.4}
+        else{b.settled=true;b.m.rotation.x=b.tilt.x;b.m.rotation.z=b.tilt.z}
+      }
+      b.m.position.y=b.y;
+    }
+    renderer.render(scene,camera);
+    if(active)requestAnimationFrame(step);else running=false;
+  }
+  let initCoins=Number(localStorage.getItem('slotCoins'));if(Number.isNaN(initCoins)||initCoins<=0)initCoins=100;
+  sync(initCoins,0);
+  window.__traySync=sync;
+  wake();
+}catch(e){/* tray is an enhancement; the game works without it */}
+</script>
 </body></html>
