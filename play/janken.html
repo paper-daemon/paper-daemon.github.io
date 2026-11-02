@@ -37,6 +37,8 @@
 #fxVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:screen;opacity:0;pointer-events:none;transition:opacity .25s}
 #fxVideo.on{opacity:.95}
 .bgm-row{text-align:right;max-width:560px;margin:0 auto 6px}
+.amase-ready{display:block;margin:2px auto 0;height:158px;width:auto;filter:drop-shadow(0 10px 14px rgba(20,20,60,.22))}
+.amase-ready.shaking{animation:jkshake .26s ease-in-out infinite}
 .bgm-toggle{border:2px solid var(--ink);background:#fff;border-radius:99px;padding:4px 14px;font:700 .78rem var(--sans);cursor:pointer}
 .bgm-toggle.off{opacity:.5}</style>
 </head>
@@ -46,6 +48,7 @@
 <section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — JANKEN</p><h1>あませとじゃんけん</h1><p class="page-lead">あませとじゃんけん。5本先取でマッチ勝利です。あませは負けず嫌いなので、負けた次はあなたの前の手を狩りに来るクセがあります。前の手を読んで裏をかくのがコツ。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
 <div class="jk-stage">
+<img class="amase-ready" id="amaseReady" src="/play/assets/amase-ready.png" alt="あませ" onerror="this.remove()">
 <div class="bgm-row" style="max-width:none;margin:0 0 4px"><button class="bgm-toggle" id="bgmBtn" type="button">♪ BGM</button></div>
 <div class="duel2">
 <div class="fighter"><p class="who">AMASE</p><div class="handview" id="eveView"><span class="emo" id="eveEmo">✊</span><img id="eveImg" src="/play/assets/hand-rock.png" alt="あませの手" onerror="this.remove()"></div></div>
@@ -130,12 +133,12 @@ if(busy)return;busy=true;jBgmStart();
 const you=Number(b.dataset.h);const eve=pickEve();
 document.querySelectorAll(".handbtn").forEach(x=>x.disabled=true);
 setHand(youView,youImg,youEmo,0);setHand(eveView,eveImg,eveEmo,0);
-eveView.classList.add("shaking");youView.classList.add("shaking");
+eveView.classList.add("shaking");youView.classList.add("shaking");const ar=document.getElementById("amaseReady");if(ar)ar.classList.add("shaking");
 beatEl.textContent="じゃん";tone(440,0.06,"square",0.06);
 setTimeout(()=>{beatEl.textContent="けん";tone(440,0.06,"square",0.06)},280);
 setTimeout(()=>{
 beatEl.textContent="ぽん！";if(!jplay(JAU.pon))tone(920,0.08,"sine",0.13);vibJ(18);
-eveView.classList.remove("shaking");youView.classList.remove("shaking");
+eveView.classList.remove("shaking");youView.classList.remove("shaking");if(ar)ar.classList.remove("shaking");
 setHand(youView,youImg,youEmo,you);setHand(eveView,eveImg,eveEmo,eve);
 reveal(you,eve);
 document.querySelectorAll(".handbtn").forEach(x=>x.disabled=false);
