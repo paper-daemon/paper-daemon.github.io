@@ -301,3 +301,12 @@ html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transiti
  .filter-btn .filter-num{margin-left:auto}
  .explorer-rail{overflow:visible}
 }
+
+/* Do not let the miniature system-status marquee expand the mobile viewport. */
+@media(max-width:620px){
+ .system-bar{justify-content:flex-start;overflow:hidden;padding-inline:16px;white-space:nowrap}
+ .system-bar span:nth-child(3){display:none}
+ .system-bar>span:first-child{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+ .hero-title .line{white-space:normal}
+ .display-brand{overflow-wrap:anywhere}
+}
