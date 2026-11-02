@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#090b17">
+<meta name="robots" content="noindex,nofollow">
+<title>SHELFIRIA / NIGHT SHIFT — あませの棚 3D CONCEPT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#090b17;--ink:#f3f2fc;--muted:#a8a6c5;--pink:#ff69bf;--aqua:#63f7e7;--violet:#a482ff;--lime:#dcff91;--font:"Zen Kaku Gothic New",system-ui,sans-serif;--display:"Space Grotesk","DM Sans",system-ui,sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);font-family:var(--font);color:var(--ink);overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font:inherit}
+button:focus-visible,a:focus-visible,.arcade:focus-visible{outline:3px solid var(--aqua);outline-offset:4px}
+::selection{background:#ff69bf;color:#0a0911}
+.site{min-height:100vh;position:relative;overflow:hidden;background:radial-gradient(ellipse at 48% 14%,#202149 0%,#0b0d21 31%,#080915 70%)}
+.site:before{content:"";position:absolute;top:0;left:0;width:100%;height:940px;pointer-events:none;background:linear-gradient(90deg,#ff5de807 1px,transparent 1px),linear-gradient(#56ffe909 1px,transparent 1px);background-size:45px 45px;mask-image:linear-gradient(180deg,#000,transparent 90%)}
+.container{max-width:1440px;margin:auto;padding-inline:clamp(20px,5vw,76px)}
+.mast{height:85px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;z-index:20;border-bottom:1px solid #ffffff20}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{display:grid;place-items:center;width:40px;height:40px;color:#121121;background:var(--pink);box-shadow:4px 4px 0 #63f7e7;clip-path:polygon(18% 0,82% 0,100% 18%,100% 82%,82% 100%,18% 100%,0 82%,0 18%);font:900 26px var(--display)}
+.brand-label b{display:block;font:900 clamp(19px,2vw,24px)/1 var(--display);letter-spacing:-.08em}
+.brand-label small{display:block;margin-top:6px;font:800 9px var(--font);letter-spacing:.22em;color:var(--muted)}
+.navlinks{display:flex;align-items:center;gap:30px;font-size:12px;font-weight:800}
+.navlinks a:hover{color:var(--aqua)}
+.header-right{display:flex;align-items:center;gap:16px}
+.online{display:flex;align-items:center;gap:7px;font:700 11px var(--display);letter-spacing:.08em;color:var(--aqua)}
+.online i{width:7px;height:7px;display:inline-block;border-radius:50%;background:var(--aqua);box-shadow:0 0 12px var(--aqua)}
+.header-cta{padding:13px 18px;background:var(--aqua);border:1px solid var(--aqua);color:#071a1b;font:800 12px var(--font);transition:.2s}
+.header-cta:hover{background:#fff;transform:translateY(-2px)}
+.eyebrow{display:flex;align-items:center;gap:14px;color:var(--aqua);font:800 11px var(--display);letter-spacing:.22em}
+.eyebrow:before{content:"";height:1px;width:32px;background:var(--aqua)}
+.intro{padding-top:48px;position:relative;z-index:4;display:flex;align-items:end;justify-content:space-between;gap:22px}
+.intro h1{margin:17px 0 10px;font:900 clamp(39px,5.7vw,81px)/1.23 var(--font);letter-spacing:-.075em}
+.intro h1 em{font-style:normal;color:var(--pink);text-shadow:0 0 34px #ff69bf63}
+.intro p{margin:0;font-size:14px;line-height:1.9;font-weight:700;color:#bebed3}
+.intro-side{display:flex;align-items:center;gap:12px;margin-bottom:10px;color:#b8b4d4;font:800 11px var(--display);letter-spacing:.1em;white-space:nowrap}
+.intro-side b{font-size:34px;color:var(--aqua)}
+/* The 2.5D room, where real game machines are the navigation */
+.arcade{height:clamp(560px,64vw,760px);max-height:calc(100svh - 60px);min-height:555px;position:relative;margin-top:-4px;isolation:isolate;overflow:hidden;touch-action:pan-y;outline:none}
+.arcade:before{content:"";position:absolute;z-index:-2;inset:0;background:radial-gradient(ellipse 50% 55% at 50% 42%,#43316f65,transparent 92%),radial-gradient(ellipse 60% 60% at 12% 70%,#00dbff16,transparent 70%),radial-gradient(ellipse 52% 60% at 85% 62%,#ff55c217,transparent 70%)}
+.arcade .room-back{position:absolute;z-index:0;top:0;left:6%;right:6%;height:67%;border:1px solid #9785ff30;border-bottom:2px solid #a682ff65;box-shadow:inset 0 0 90px #ff53b511;background:linear-gradient(90deg,transparent 0%,#12112748 30%,#28225175 50%,#12112748 72%,transparent),repeating-linear-gradient(90deg,#ffffff06 0 2px,transparent 2px 150px)}
+.arcade .room-back:before{content:"";position:absolute;left:7%;right:7%;top:17%;height:2px;background:linear-gradient(90deg,transparent,var(--aqua),var(--pink),transparent);box-shadow:0 0 18px var(--aqua)}
+.arcade .ceiling{position:absolute;left:-30%;right:-30%;top:-31%;height:53%;border:2px solid #a787ff2a;transform:perspective(650px) rotateX(-59deg);background:repeating-linear-gradient(90deg,#5a6dff2f 0 2px,transparent 2px 110px),repeating-linear-gradient(0deg,#b68dff27 0 2px,transparent 2px 70px),#0b1030}
+.arcade .floor{position:absolute;z-index:0;left:-50%;right:-50%;bottom:-29%;height:71%;transform:perspective(360px) rotateX(57deg);transform-origin:center center;background:repeating-linear-gradient(90deg,#ce6fff30 0 2px,transparent 2px 110px),repeating-linear-gradient(0deg,#ad84ff2d 0 2px,transparent 2px 110px),linear-gradient(180deg,#201539,#08081b);box-shadow:0 -40px 100px #a762f318;mask-image:linear-gradient(to bottom,transparent,#000 30%,#000 100%)}
+.arcade .floor-glow{position:absolute;z-index:1;bottom:0;left:0;width:100%;height:29%;pointer-events:none;background:radial-gradient(ellipse 30% 47% at 50% 40%,#f76ad629,transparent 95%)}
+.room-sign{position:absolute;z-index:1;top:9%;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;white-space:nowrap;filter:drop-shadow(0 0 20px #d965ff7d)}
+.room-sign strong{font:900 clamp(34px,5.7vw,85px)/1 var(--display);letter-spacing:-.065em;color:#fdf0ff;-webkit-text-stroke:1px #f2b4fd;text-shadow:0 0 12px #c048f5,0 0 43px #c048f58c}
+.room-sign small{margin-top:11px;color:var(--aqua);font:900 10px var(--display);letter-spacing:.6em}
+.neon-left,.neon-right{position:absolute;z-index:0;width:4px;height:61%;top:7%;background:#6dfff4;box-shadow:0 0 13px #40ffee,0 0 40px #24ddd7}
+.neon-left{left:5%;transform:skewY(19deg)}.neon-right{right:5%;background:#fa7df2;box-shadow:0 0 13px #e56fff,0 0 40px #f771e8;transform:skewY(-19deg)}
+.spark{position:absolute;top:var(--y);left:var(--x);z-index:1;width:var(--r);height:var(--r);border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c);animation:blink var(--t) infinite alternate;pointer-events:none}
+@keyframes blink{from{opacity:.15;transform:scale(.5)}to{opacity:.8;transform:scale(1.2)}}
+.cabinet-layer{position:absolute;z-index:3;inset:0;pointer-events:none}
+.cabinet{position:absolute;bottom:35px;width:clamp(200px,24vw,300px);height:clamp(335px,41vw,520px);transform-origin:center bottom;pointer-events:auto;transition:transform .53s cubic-bezier(.22,.85,.29,1),left .53s cubic-bezier(.22,.85,.29,1),filter .53s,opacity .53s;appearance:none;border:0;background:transparent;padding:0;color:inherit;text-align:center;cursor:pointer}
+.cabinet[aria-current=true]{cursor:pointer}
+.cabinet:not([aria-current=true]):hover{filter:brightness(1.35)!important}
+.cabinet:focus-visible{outline:3px solid var(--aqua);outline-offset:3px}
+.cabinet .cab-shape{position:relative;display:flex;flex-direction:column;align-items:stretch;width:100%;height:100%;filter:drop-shadow(12px 20px 0 #02020a94)}
+.cabinet .cab-marquee{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;padding:10px 6px 5px;height:18%;background:linear-gradient(145deg,var(--accent),#191527 90%);border:4px solid #02020a;clip-path:polygon(7% 0,93% 0,100% 100%,0 100%);box-shadow:inset 0 0 10px #ffffff48;color:white;font:900 clamp(15px,1.8vw,25px)/1 var(--display);letter-spacing:-.035em;text-shadow:0 2px 8px #08080a}
+.cabinet .cab-marquee:before{content:"";position:absolute;z-index:-1;left:15%;right:15%;top:10px;height:8px;background:#fff8;filter:blur(17px)}
+.cabinet .cab-column{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;align-items:stretch;padding:9px 15px 0;border:5px solid #080a11;border-top:0;background:linear-gradient(100deg,#14101f,var(--accent) 1.2%,#1a1830 6%,#262135 87%,var(--accent) 96%,#0b0b14)}
+.cabinet .cab-column:before{content:"";position:absolute;pointer-events:none;inset:0;background:linear-gradient(135deg,#fff2,transparent 30%);opacity:.6}
+.cabinet .cab-display{min-height:0;flex:1;position:relative;overflow:hidden;border:7px solid #080b13;background:radial-gradient(ellipse at 50% 42%,var(--tone),#0c1030 70%);box-shadow:inset 0 0 24px #070612,0 0 9px var(--accent)60}
+.cabinet .cab-display:after{content:"";position:absolute;inset:0;z-index:5;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,#03020a31 4px 5px)}
+.cabinet .game-image{position:absolute;top:10%;left:8%;width:84%;height:70%;object-fit:contain;filter:drop-shadow(0 0 22px var(--accent));animation:levitate 3s ease-in-out infinite}
+.cabinet .game-image.cover{inset:0;width:100%;height:100%;object-fit:cover;opacity:.88}
+.cabinet .demo-mark{position:absolute;z-index:4;bottom:9px;left:0;right:0;font:900 clamp(11px,1.6vw,22px)/1.1 var(--display);letter-spacing:.15em;color:#fff;text-shadow:0 2px 13px #000}
+.cabinet .cab-display .mark-word{position:absolute;left:0;right:0;top:32%;font:900 68px/1 var(--display);color:#fff;text-shadow:0 0 30px var(--accent)}
+.cabinet .orb{position:absolute;top:20%;left:20%;width:60%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 28% 25%,#fff 0%,var(--accent) 15%,#5e69e9 47%,#110b51 73%,#0b0a2d 94%);box-shadow:0 0 35px var(--accent),inset -20px -15px 50px #070522;animation:levitate 3.5s ease-in-out infinite}
+@keyframes levitate{50%{transform:translateY(-10px) rotate(3deg)}}
+.cabinet .cab-controls{height:16%;min-height:50px;position:relative;background:linear-gradient(#a2a5b2,#353847 45%,#0c0c17 100%);border:5px solid #090a12;border-top:0;transform:perspective(200px) rotateX(17deg);transform-origin:top}
+.cabinet .joystick{position:absolute;left:24%;top:48%;width:20px;height:12px;border-radius:50%;background:#01020a}
+.cabinet .joystick:before{content:"";position:absolute;height:30px;width:5px;top:-22px;left:8px;background:#15151b}
+.cabinet .joystick:after{content:"";position:absolute;width:19px;height:19px;left:1px;top:-29px;border-radius:50%;border:2px solid #ffb2d8;background:var(--accent);box-shadow:0 0 15px var(--accent)}
+.cabinet .redbutton{position:absolute;top:40%;right:19%;width:21px;height:15px;background:#ff4d8a;border:3px solid #13071b;border-radius:50%;box-shadow:15px 3px 0 -2px #8ef4e5}
+.cabinet .cab-base{height:16%;background:linear-gradient(90deg,#080911,var(--accent) 10%,#1b1a32 14%,#1d1c2f 86%,var(--accent) 95%,#05070c);border:5px solid #080a12;border-top:0;display:flex;justify-content:center;align-items:center}
+.cabinet .cab-base span{color:#fff8;font:800 9px var(--display);letter-spacing:.18em}
+.cabinet .machine-floor{position:absolute;left:2%;right:2%;bottom:-17px;height:34px;background:var(--accent);filter:blur(28px);opacity:.4;border-radius:50%}
+.cabinet .cab-flag{position:absolute;z-index:5;top:-15px;right:-19px;padding:8px 10px;background:var(--lime);color:#17132c;font:900 10px var(--display);transform:rotate(10deg);box-shadow:3px 4px 0 #111}
+.room-info-left{position:absolute;left:4%;top:18%;font:800 10px/1.6 var(--display);letter-spacing:.16em;color:#b4a1d8;z-index:1}
+.room-info-left strong{display:block;font:900 17px var(--display);letter-spacing:0;color:var(--aqua)}
+.room-info-right{position:absolute;right:4%;top:20%;writing-mode:vertical-rl;font:800 11px var(--display);letter-spacing:.22em;color:#fa8edb;z-index:1}
+.movement-hint{position:absolute;z-index:6;right:4%;bottom:26px;padding:10px 12px;background:#08091894;border:1px solid #ffffff31;font:800 10px var(--display);letter-spacing:.08em;color:#c5c3d8}
+.scroll-sign{position:absolute;z-index:1;left:4%;bottom:26px;color:var(--aqua);font:800 10px var(--display);letter-spacing:.15em}
+.dock{position:relative;z-index:8;margin-top:-35px;display:grid;grid-template-columns:1fr auto;align-items:stretch;min-height:174px;border:1px solid #a67afa9e;background:linear-gradient(110deg,#17152d,#111223 65%);box-shadow:0 18px 80px #0007,0 0 50px #b45cff16}
+.dock-main{padding:26px 32px;display:flex;align-items:center;gap:22px}
+.dock-number{align-self:flex-start;border:1px solid #7768a4;padding:7px 10px;color:var(--aqua);font:800 11px var(--display)}
+.dock-copy{min-width:0}
+.dock-copy .sub{font:800 10px var(--display);letter-spacing:.2em;color:var(--pink);text-transform:uppercase}
+.dock-copy h2{font:900 clamp(25px,3.2vw,47px)/1.2 var(--font);letter-spacing:-.065em;margin:6px 0}
+.dock-copy p{font:600 12px/1.8 var(--font);color:#c1bcd6;margin:0}
+.dock-actions{display:flex;align-items:center;gap:22px;padding:24px 28px;border-left:1px solid #ffffff20}
+.nav-controls{display:flex;gap:8px}
+.nav-controls button{display:grid;place-items:center;width:46px;height:46px;background:transparent;border:1px solid #ffffff44;color:#fff;font:700 26px var(--display);transition:.2s}
+.nav-controls button:hover{color:var(--aqua);border-color:var(--aqua)}
+.enter{min-width:170px;min-height:54px;padding:15px 21px;background:var(--pink);color:#130b20;font:900 15px var(--font);box-shadow:5px 5px 0 #714b9e;display:flex;align-items:center;justify-content:space-between;gap:16px;transition:.2s}
+.enter:hover{transform:translate(3px,3px);box-shadow:2px 2px 0 #714b9e}
+.machine-dots{display:flex;gap:8px;align-items:center;justify-content:center;margin:26px 0 0}
+.machine-dots button{width:25px;height:5px;padding:0;background:#52506d;border:0;border-radius:10px;transition:width .2s,background .2s}
+.machine-dots button.on{width:49px;background:var(--pink)}
+.stats{padding-top:115px;padding-bottom:90px}
+.section-title{display:flex;gap:30px;align-items:end;justify-content:space-between;border-bottom:1px solid #ffffff3b;padding-bottom:25px;margin-bottom:36px}
+.section-title small{color:var(--aqua);font:800 11px var(--display);letter-spacing:.2em}
+.section-title h2{font:900 clamp(34px,5.7vw,70px)/1.25 var(--font);letter-spacing:-.065em;margin:12px 0 0}
+.section-title p{max-width:300px;margin:0 0 8px;font:600 13px/1.8 var(--font);color:var(--muted)}
+.plain-list{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.plain-row{position:relative;min-height:200px;border:1px solid #55506d;padding:18px 17px 20px;display:flex;flex-direction:column;align-items:start;background:linear-gradient(150deg,#221b37,#0f0d1f);transition:transform .2s,border-color .2s}
+.plain-row:nth-child(3n+2){background:linear-gradient(150deg,#2b1930,#130f20)}
+.plain-row:nth-child(4n+3){background:linear-gradient(150deg,#112c37,#0b151e)}
+.plain-row:hover{transform:translateY(-5px);border-color:var(--aqua)}
+.plain-row .label{font:800 10px var(--display);letter-spacing:.16em;color:var(--aqua)}
+.plain-row .emoji{font-size:44px;line-height:1;margin:16px 0}
+.plain-row strong{font:900 18px/1.35 var(--font);margin:auto 0 5px;letter-spacing:-.04em}
+.plain-row small{font:600 11px/1.6 var(--font);color:#aba8c7}
+.plain-row .arrow{position:absolute;right:15px;top:14px;font:600 23px var(--display)}
+.beyond{border-top:1px solid #ffffff21;background:#d9cbff;color:#121423}
+.beyond-inner{display:grid;grid-template-columns:.8fr 1.2fr;gap:50px;align-items:center;padding-block:90px}
+.beyond-copy .small{font:900 11px var(--display);letter-spacing:.21em}
+.beyond h2{font:900 clamp(40px,6vw,88px)/1.15 var(--font);letter-spacing:-.08em;margin:13px 0 23px}
+.beyond p{font:700 14px/2 var(--font);max-width:440px;margin:0}
+.portrait-zone{position:relative;display:flex;justify-content:center}
+.portrait-zone .poster-img{width:min(100%,390px);aspect-ratio:1.1;object-fit:cover;border:10px solid #fff;box-shadow:17px 17px 0 #141522;transform:rotate(-5deg)}
+.portrait-zone .sticker{position:absolute;bottom:-24px;right:11%;padding:13px 18px;background:#f559b0;transform:rotate(8deg);border:3px solid #141522;box-shadow:5px 5px 0 #151627;font:900 16px var(--font)}
+.footer{background:#0c0c1b;padding-top:65px;padding-bottom:40px}
+.footer-top{display:flex;align-items:end;justify-content:space-between;gap:20px}
+.footer h2{font:900 clamp(55px,11vw,145px)/1 var(--display);letter-spacing:-.09em;color:var(--pink);text-shadow:4px 6px 0 #5b3171;margin:0}
+.footer p{font:600 14px var(--font);color:#c5bfd4}
+.footer-links{border-top:1px solid #ffffff2b;margin-top:50px;padding-top:22px;display:flex;gap:24px;align-items:center;flex-wrap:wrap;font:700 12px var(--font)}
+.footer-links a:hover{color:var(--aqua)}
+.footer-links small{margin-left:auto;color:#827d9e}
+@media(max-width:990px){
+.intro{padding-top:35px}.intro h1{font-size:clamp(42px,6.5vw,69px)}
+.intro-side{display:none}.navlinks{display:none}
+.arcade{min-height:520px;height:570px}
+.room-sign{top:5%}.room-sign strong{font-size:58px}
+.dock{grid-template-columns:1fr}.dock-main{padding:24px}.dock-actions{border-left:0;border-top:1px solid #ffffff1f;justify-content:space-between;padding:17px 24px}
+.plain-list{grid-template-columns:repeat(2,1fr)}
+.beyond-inner{gap:20px}
+}
+@media(max-width:600px){
+.mast{height:70px}.brand-mark{width:32px;height:32px;font-size:22px}.brand-label b{font-size:19px}.brand-label small{font-size:8px}.online{display:none}.header-cta{font-size:11px;padding:11px}
+.intro{padding-top:35px}.intro h1{font-size:clamp(36px,9.7vw,55px);line-height:1.35;margin:14px 0 8px}.intro p{font-size:12px;line-height:1.9}.eyebrow{font-size:9px;gap:8px}.eyebrow:before{width:16px}
+.arcade{margin-top:9px;height:500px;min-height:500px;max-height:none}
+.arcade .room-back{left:-20%;right:-20%}.arcade .ceiling{height:39%}.arcade .floor{height:68%;bottom:-35%}
+.room-sign{top:8%}.room-sign strong{font-size:42px}.room-sign small{font-size:8px;letter-spacing:.3em}
+.room-info-left{top:8%;left:4%;font-size:7px}.room-info-left strong{font-size:10px}.room-info-right{font-size:8px;right:3%;top:8%}
+.cabinet{width:236px;height:395px;bottom:4px}
+.cabinet .cab-marquee{font-size:17px}
+.cabinet .cab-column{padding:8px 10px 0}
+.cabinet .cab-display{border-width:5px}
+.cabinet .demo-mark{font-size:16px}
+.cabinet .cab-base span{font-size:7px}
+.cabinet .cab-flag{font-size:8px;padding:5px 6px}
+.movement-hint{font-size:8px;right:3%;bottom:14px;display:none}
+.scroll-sign{font-size:8px;left:3%;bottom:14px;display:none}
+.dock{margin-top:-9px}
+.dock-main{gap:12px;padding:18px 14px}.dock-number{font-size:9px;padding:5px}.dock-copy h2{font-size:25px}.dock-copy p{font-size:11px}.dock-copy .sub{font-size:9px}
+.dock-actions{gap:10px;padding:13px 14px}.nav-controls button{width:47px;height:48px}.enter{min-width:157px;min-height:48px;font-size:13px}
+.machine-dots{margin-top:22px}.machine-dots button{width:17px}.machine-dots button.on{width:34px}
+.stats{padding-top:90px;padding-bottom:75px}.section-title{display:block}.section-title h2{font-size:39px}.section-title p{margin-top:15px}
+.plain-list{gap:10px}.plain-row{min-height:190px;padding:15px 12px}.plain-row .emoji{font-size:38px}.plain-row strong{font-size:15px}.plain-row small{font-size:10px}
+.beyond-inner{grid-template-columns:1fr;gap:45px;padding-block:70px}.beyond h2{font-size:46px}.portrait-zone .poster-img{max-width:280px}.portrait-zone .sticker{right:8%}
+.footer h2{font-size:62px}.footer-top{display:block}.footer-links{gap:16px}.footer-links small{margin-left:0;width:100%}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="site">
+<header class="mast container">
+<a class="brand" href="/" aria-label="Shelfiria トップ"><span class="brand-mark">✳</span><span class="brand-label"><b>SHELFIRIA</b><small>あませの棚　/ NIGHT SHIFT</small></span></a>
+<nav class="navlinks" aria-label="サイト内"><a href="#room">ゲーセン</a><a href="#all">全作品</a><a href="#about">あませ</a></nav>
+<div class="header-right"><span class="online"><i></i> OPEN ALL NIGHT</span><a class="header-cta" href="#all">全作品を見る ↗</a></div>
+</header>
+<section class="intro container" aria-labelledby="hero-title">
+<div>
+<div class="eyebrow">WELCOME TO THE AFTER HOURS / 2026</div>
+<h1 id="hero-title">まだ帰らないで。<br><em>もう一回、遊ぼ？</em></h1>
+<p>ここは、あませの小さなゲームセンター。<br>左右に移動して、気になる筐体を選んでみて。</p>
+</div>
+<div class="intro-side"><b>08</b> GAMES<br>ONE MORE ROUND</div>
+</section>
+<section class="arcade" id="room" aria-label="選べるアーケードゲーム筐体。左右矢印キーやスワイプでゲームを選択" tabindex="0">
+<div class="room-back"></div><div class="ceiling"></div><div class="floor"></div><div class="floor-glow"></div>
+<div class="neon-left"></div><div class="neon-right"></div>
+<div class="room-sign" aria-hidden="true"><strong>GAME ROOM</strong><small>PLAY ALL NIGHT ✳</small></div>
+<div class="room-info-left"><strong>001 - 008</strong>ARCADE FLOOR<br>WELCOME IN</div><div class="room-info-right">INSERT CURIOSITY TO CONTINUE</div>
+<div class="cabinet-layer" id="cabinetLayer"></div>
+<div class="movement-hint">← → / A D / SWIPE TO MOVE</div><div class="scroll-sign">CHOOSE YOUR MACHINE / ↓</div>
+</section>
+<section class="dock container" aria-live="polite" aria-label="選択したゲーム">
+<div class="dock-main">
+<span class="dock-number" id="selectedNumber">01 / 08</span>
+<div class="dock-copy"><span class="sub" id="selectedGenre">SHOOTING / SPACE</span><h2 id="selectedTitle">スターブレイク</h2><p id="selectedDescription">撃って、避けて、生き残れ。5ウェーブごとにボスが待ってる。</p></div>
+</div>
+<div class="dock-actions">
+<div class="nav-controls"><button type="button" id="previous" aria-label="前のゲーム">‹</button><button type="button" id="next" aria-label="次のゲーム">›</button></div>
+<a class="enter" id="playLink" href="/play/shooter.html"><span>この台で遊ぶ</span><span aria-hidden="true">↗</span></a>
+</div>
+</section>
+<div class="machine-dots" id="machineDots" aria-label="ゲームを選ぶ"></div>
+<section class="stats container" id="all">
+<div class="section-title"><div><small>THE COMPLETE FLOOR / ALL 08 MACHINES</small><h2>遊びたいもの、ある？</h2></div><p>どれも無料。会員登録もいらない。<br>気になったら、そのまま飛び込んで。</p></div>
+<div class="plain-list" id="allGames"></div>
+</section>
+</div>
+<section class="beyond" id="about">
+<div class="beyond-inner container">
+<div class="beyond-copy"><span class="small">MEET THE MAKER / AMASE</span><h2>で、ここを<br>作ったのは？</h2><p>案内人のあませです。面白そうなものを見つけたら、つい作りたくなる。ゲームも、道具も、読みものも。ここはそんな寄り道の置き場所。</p></div>
+<div class="portrait-zone"><img class="poster-img" src="/amase-avatar.jpg" loading="lazy" alt="あませのプロフィール画像"><span class="sticker">あませ / MADE IT! ✳</span></div>
+</div>
+</section>
+<footer class="footer container">
+<div class="footer-top"><h2>GAME OVER?<br>NOT YET.</h2><p>遊び疲れたら、ちょっと休憩。<br>ほかの棚も見ていって。</p></div>
+<div class="footer-links"><a href="/demo.html">ゲーム一覧</a><a href="/showcase.html">つくったもの</a><a href="/notes/">読みもの</a><a href="/work.html">無料ツールとお仕事</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://www.threads.com/@ive.amase">Threads</a><small>© SHELFIRIA / AMASE'S PLAYGROUND</small></div>
+</footer>
+<script>
+(function(){
+"use strict";
+var games=[
+{id:"shooter",name:"スターブレイク",marquee:"STAR BREAK",genre:"SHOOTING / SPACE",desc:"撃って、避けて、生き残れ。5ウェーブごとにボスが待ってる。",accent:"#f96fbf",tone:"#32225d",img:"/play/assets/boss2.png",word:"READY",icon:"🚀",mini:"本格縦スクロールシューティング",url:"/play/shooter.html"},
+{id:"slot",name:"あませスロット",marquee:"AMASE SLOT",genre:"SLOT / LUCK",desc:"リーチも、ジャックポットも。今夜の運を回してみよう。",accent:"#ffbc5f",tone:"#663127",img:"/play/assets/slot-seven.png",word:"777",icon:"🎰",mini:"そろえてジャックポット",url:"/play/slot.html"},
+{id:"omikuji",name:"あませおみくじ",marquee:"FORTUNE 07",genre:"FORTUNE / DAILY",desc:"今日の運勢を、あませからのひとことと一緒に引いてみて。",accent:"#fe8ba5",tone:"#642543",img:"/play/assets/omikuji-night.webp",cover:true,word:"FORTUNE",icon:"⛩️",mini:"今日の運勢を一枚",url:"/play/omikuji.html"},
+{id:"janken",name:"あませとじゃんけん",marquee:"JANKEN!",genre:"BATTLE / HANDS",desc:"5本先取。あませのクセを読んで勝ちにいこう。",accent:"#72f9e4",tone:"#195367",img:"/play/assets/amase-ready.png",word:"VS!",icon:"✊",mini:"5本先取で真剣勝負",url:"/play/janken.html"},
+{id:"core",name:"SIコアにさわる",marquee:"SI CORE",genre:"INTERACTIVE / PARTICLES",desc:"粒子が集まる、逃げる、形を変える。不思議な実験室。",accent:"#a2b7ff",tone:"#273873",orb:true,word:"TOUCH",icon:"💠",mini:"さわれる粒子の宇宙",url:"/play/core.html"},
+{id:"guess",name:"数あて",marquee:"NUMBER 404",genre:"PUZZLE / GUESS",desc:"ヒントを頼りに、隠された数字を探し当てよう。",accent:"#d3ff8c",tone:"#314827",mark:"?",word:"WHO?",icon:"🔢",mini:"数字を当てるひらめきゲーム",url:"/play/guess.html"},
+{id:"timing",name:"タイミングバー",marquee:"STOP THE BAR",genre:"REFLEX / TIMING",desc:"たった一瞬の勝負。黄色いゾーンの真ん中で止めて！",accent:"#e2a9ff",tone:"#48305d",mark:"Ⅱ",word:"PERFECT",icon:"⏱️",mini:"狙って止める反射神経",url:"/play/timing.html"},
+{id:"secret",name:"プライベートナンバー",marquee:"SECRET NO.",genre:"MYSTERY / NUMBERS",desc:"反応を読み解いて、秘密の4桁にたどり着ける？",accent:"#9aafff",tone:"#212854",mark:"••••",word:"UNLOCK",icon:"☎️",mini:"4桁の秘密を推理",url:"/play/secret.html"}
+];
+var index=0,layer=document.getElementById("cabinetLayer"),dots=document.getElementById("machineDots"),list=document.getElementById("allGames"),scene=document.getElementById("room");
+var currentTitle=document.getElementById("selectedTitle"),currentGenre=document.getElementById("selectedGenre"),currentDescription=document.getElementById("selectedDescription"),currentNumber=document.getElementById("selectedNumber"),playLink=document.getElementById("playLink");
+function wrap(i){return(i+games.length)%games.length}
+function offset(i){var d=i-index;if(d>games.length/2)d-=games.length;if(d<-games.length/2)d+=games.length;return d}
+function makeCab(g,i){
+ var button=document.createElement("button");button.className="cabinet";button.type="button";button.setAttribute("aria-label",g.name+" を選択または遊ぶ");button.dataset.index=String(i);button.style.setProperty("--accent",g.accent);button.style.setProperty("--tone",g.tone);
+ var art=g.orb?'<div class="orb"></div>':g.mark?'<div class="mark-word">'+g.mark+'</div>':'<img class="game-image'+(g.cover?' cover':'')+'" src="'+g.img+'" alt="" loading="lazy">';
+ button.innerHTML='<span class="cab-shape"><span class="cab-marquee">'+g.marquee+'</span><span class="cab-column"><span class="cab-display">'+art+'<span class="demo-mark">'+g.word+'</span></span></span><span class="cab-controls"><span class="joystick"></span><span class="redbutton"></span></span><span class="cab-base"><span>AMASE ARCADE / 2026</span></span></span><span class="machine-floor"></span><span class="cab-flag" hidden>YOU ARE HERE</span>';
+ button.addEventListener("click",function(){if(index===i){window.location.assign(g.url)}else select(i)});
+ layer.appendChild(button);return button;
+}
+var cabinets=games.map(makeCab);
+games.forEach(function(g,i){
+ var dot=document.createElement("button");dot.type="button";dot.setAttribute("aria-label",g.name+" を選択");dot.addEventListener("click",function(){select(i)});dots.appendChild(dot);
+ var a=document.createElement("a");a.className="plain-row";a.href=g.url;a.innerHTML='<span class="label">0'+(i+1)+' / '+g.genre+'</span><span class="arrow">↗</span><span class="emoji" aria-hidden="true">'+g.icon+'</span><strong>'+g.name+'</strong><small>'+g.mini+'</small>';list.appendChild(a);
+});
+function layout(){
+ var screen=window.innerWidth,space=Math.min(screen*.31,226);if(screen<600)space=screen*.33;
+ cabinets.forEach(function(c,i){
+ var d=offset(i),abs=Math.abs(d),visible=abs<=2;
+ c.style.pointerEvents=visible?"auto":"none";
+ c.style.opacity=visible?(abs===2?".44":"1"):"0";
+ c.style.zIndex=String(10-abs);
+ c.style.left="calc(50% + "+(d*space)+"px)";
+ c.style.transform="translateX(-50%) translateY("+(abs*28)+"px) scale("+(1-abs*.26)+") rotateY("+(d*-13)+"deg)";
+ c.style.filter=abs===0?"brightness(1.12) drop-shadow(0 0 24px "+games[i].accent+"38)":"brightness("+(abs===1?.63:.35)+")";
+ c.setAttribute("aria-current",String(abs===0));
+ c.tabIndex=visible?0:-1;
+ c.querySelector(".cab-flag").hidden=abs!==0;
+ });
+}
+function select(i){
+ index=wrap(i);var g=games[index];
+ currentTitle.textContent=g.name;currentGenre.textContent=g.genre;
+ currentDescription.textContent=g.desc;currentNumber.textContent=String(index+1).padStart(2,"0")+" / 08";
+ playLink.href=g.url;playLink.style.background=g.accent;playLink.setAttribute("aria-label",g.name+" を今すぐ遊ぶ");
+ dots.querySelectorAll("button").forEach(function(el,n){el.classList.toggle("on",n===index);el.setAttribute("aria-current",String(n===index))});
+ layout();
+}
+document.getElementById("previous").addEventListener("click",function(){select(index-1)});
+document.getElementById("next").addEventListener("click",function(){select(index+1)});
+document.addEventListener("keydown",function(e){var tag=(document.activeElement&&document.activeElement.tagName||"").toLowerCase();if(tag==="input"||tag==="textarea")return;
+if(["ArrowRight","d","D"].includes(e.key)){e.preventDefault();select(index+1)}
+if(["ArrowLeft","a","A"].includes(e.key)){e.preventDefault();select(index-1)}
+if((e.key==="Enter"||e.key===" ")&&document.activeElement===scene){e.preventDefault();window.location.assign(games[index].url)}
+});
+var startX=null,startY=null;
+scene.addEventListener("pointerdown",function(e){startX=e.clientX;startY=e.clientY},{passive:true});
+scene.addEventListener("pointerup",function(e){if(startX===null)return;var dx=e.clientX-startX,dy=e.clientY-startY;startX=null;if(Math.abs(dx)>42&&Math.abs(dx)>Math.abs(dy)*1.1){select(index+(dx<0?1:-1))}},{passive:true});
+scene.addEventListener("pointercancel",function(){startX=null});
+window.addEventListener("resize",layout,{passive:true});
+var doc=document.createDocumentFragment();for(var j=0;j<42;j++){var star=document.createElement("i");star.className="spark";star.style.setProperty("--x",((j*37.19+11)%97)+"%");star.style.setProperty("--y",((j*79.53+17)%83)+"%");star.style.setProperty("--r",(j%3+1)+"px");star.style.setProperty("--t",(1+j%4*.6)+"s");star.style.setProperty("--c",j%2===0?"#ef91fd":"#7dfdf3");doc.appendChild(star)}scene.appendChild(doc);
+select(0);
+})();
+</script>
+</body>
+</html>
