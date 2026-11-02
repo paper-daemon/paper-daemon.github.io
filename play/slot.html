@@ -132,6 +132,7 @@ function loadAudio(){
   AU.win=mkAudio('/play/assets/se-slot-win.'+ext,0.6);
   AU.jackpot=mkAudio('/play/assets/se-slot-jackpot.'+ext,0.7);
   AU.coin=mkAudio('/play/assets/se-slot-coin.'+ext,0.5);
+  AU.bonus=mkAudio('/play/assets/se-slot-bonus.'+ext,0.65);
 }
 loadAudio();
 function usable(a){return !!a&&a.networkState!==3}
@@ -394,7 +395,7 @@ function judge(finals,inBonus){
     if(bonusFlag){
       setLamp(true);
       msg.textContent='★ ランプが光った！ 次の回転で'+bonusFlag+'ボーナス突入！';
-      se('reach',SE_FALLBACK.reach);vib([40,60,40,60,120]);
+      se('bonus',SE_FALLBACK.jackpot);vib([40,60,40,60,120]);
       save();
     }
   }
