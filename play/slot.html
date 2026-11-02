@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>あませスロット | Shelfiria</title>
-<meta name="description" content="Shelfiriaの遊び場。レバーを引いて3つの絵をそろえるジャグラー風スロット。ランプが光ればボーナス。所持1000枚を超えると、筐体の受け皿にコインが溜まっていきます。">
+<meta name="description" content="Shelfiriaの遊び場。レバーを引いて3つの絵をそろえるジャグラー風スロット。ランプが光ればボーナス。所持500枚を超えると、筐体の受け皿にコインが溜まっていきます。">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="Shelfiria"><meta property="og:image" content="https://paper-daemon.github.io/og-slot.jpg"><meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/site.css?v=20261101-1">
 <style>
@@ -83,7 +83,7 @@ button,a,[role="button"]{touch-action:manipulation}
 <div class="howto">
 <p>配当（BET10のとき）：7 7 7＝300／★★★＝ジャックポット全額／◆◆◆ 200／●●● 120／▲▲▲ 100／ベルの3つ 60／チェリーの3つ 40／どれか2つ 15／チェリーが1つでも 5。BETを上げると配当も比例して上がります。</p>
 <p>ボーナス：たまに星ランプが光ります。光ったら次の回転からボーナス開始。BIGは15ゲーム、REG（バケ）は8ゲーム、どちらも回すのは無料で小当たりが続きます。ボーナス中は上の絵が動き出します。</p>
-<p>ジャックポットは通常時1回まわすごとに少しずつ貯まります。コインとプールはこの端末に保存されます。コインが尽きたら100枚補充されます。所持コインが1000枚を超えると、払い出し口からコインが出てきて筐体の受け皿に溜まっていきます。いっぱいになると前面に溢れます。受け皿を触るとコインが跳ねます。</p>
+<p>ジャックポットは通常時1回まわすごとに少しずつ貯まります。コインとプールはこの端末に保存されます。コインが尽きたら100枚補充されます。所持コインが500枚を超えると、払い出し口からコインが出てきて筐体の受け皿に溜まっていきます。一度出たコインは、残高が減ってもそのまま残ります。いっぱいになると前面に溢れます。受け皿を触るとコインが跳ねます。</p>
 </div>
 </section>
 </main>
@@ -308,7 +308,7 @@ reelEls.forEach((el,i)=>setReel(i,currentIdx[i]));
 draw();renderPile(0);
 </script>
 <script>
-/* 筐体トレイ内コイン平積み：1000枚から払い出し口に溜まり、満杯で前面に溢れる。
+/* 筐体トレイ内コイン平積み：500枚から払い出し口に溜まり、満杯で前面に溢れる。出たコインは消えない。
    落ちたら即ロック（揺れ・滑り・吸い戻し無し）。列ごとの高さ管理で静かに積む。 */
 (function(){
 try{
@@ -334,7 +334,7 @@ function resize(){
   stacks=[];for(let c=0;c<COLS;c++)stacks.push(0);
   for(const cell of cells)stacks[cell.col]=Math.max(stacks[cell.col],cell.row+1);
 }
-function targetFor(bal){return bal>=1000?Math.min(CAP,5+Math.floor((bal-1000)/52)):0}
+function targetFor(bal){return bal>=500?Math.min(CAP,5+Math.floor((bal-500)/52)):0}
 function counted(){let n=cells.length;for(const f of falling)n++;return n+0}
 function pickCol(){
   let best=-1,bs=1e9;const mid=(COLS-1)/2;
@@ -367,7 +367,7 @@ function syncTray(bal,rain){
   const target=targetFor(bal);
   let diff=target-counted()-owed;
   if(diff>0){if(reduced){prefill(target)}else owed+=diff}
-  else if(diff<0){const cut=Math.min(owed,-diff);owed-=cut;removeQ+=(-diff-cut);if(reduced){prefill(target);removeQ=0}}
+  /* 残高が減っても、出たコインは消さない（純弥FB） */
   if(rain>0&&!reduced){const rn=Math.min(8,rain);for(let i=0;i<rn;i++)setTimeout(()=>{spawnFall(counted()+owed>=CAP);wake()},i*55)}
   wake();
 }
@@ -476,10 +476,10 @@ const fill=new THREE.DirectionalLight(0xbfd0ff,0.5);fill.position.set(-30,24,30)
 const camera=new THREE.PerspectiveCamera(30,2,0.1,300);
 camera.position.set(0,26,47);camera.lookAt(0,4.5,0);
 /* 世界座標：トレイ内寸は x -43..43、床 y=0、奥行きレーン2列 */
-const COLS=7,LANES=2,CAP=48,MAXLV=6,R=5.6,THICK=1.8,LVH=1.66;
+const COLS=8,LANES=2,CAP=48,MAXLV=6,R=4.6,THICK=1.5,LVH=1.38;
 const colX=c=>(c-(COLS-1)/2)*(86/COLS);
-const laneZ=l=>l===0?-5.9:5.9;
-const cellX=(c,l)=>colX(c)+(l===1?2.8:0);
+const laneZ=l=>l===0?-5.0:5.0;
+const cellX=(c,l)=>colX(c)+(l===1?2.5:0);
 const cellY=lv=>THICK/2+lv*LVH;
 const tex=new THREE.TextureLoader().load('/play/assets/slot-coin.png');
 tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=4;
@@ -493,12 +493,27 @@ scene.add(mesh);
 const TINTS=[new THREE.Color(1,1,1),new THREE.Color(1.06,0.99,0.86),new THREE.Color(0.94,0.9,0.82)];
 for(let i=0;i<MAXI;i++)mesh.setColorAt(i,TINTS[i%3]);
 if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;
+
+/* トレイの膜：コインの手前に透明なガラス膜（ツヤ・反射つき）。コインは内側に溜まって見える */
+const scv=document.createElement('canvas');scv.width=256;scv.height=64;
+const sgx=scv.getContext('2d');const grd=sgx.createLinearGradient(0,0,256,0);
+grd.addColorStop(0,'rgba(255,255,255,0)');grd.addColorStop(0.34,'rgba(255,255,255,0)');
+grd.addColorStop(0.46,'rgba(255,255,255,0.85)');grd.addColorStop(0.56,'rgba(255,255,255,0.22)');
+grd.addColorStop(0.68,'rgba(255,255,255,0)');grd.addColorStop(1,'rgba(255,255,255,0)');
+sgx.fillStyle=grd;sgx.fillRect(0,0,256,64);
+const streakTex=new THREE.CanvasTexture(scv);
+const film=new THREE.Mesh(new THREE.PlaneGeometry(86,13.5),
+  new THREE.MeshPhysicalMaterial({color:0xf4faff,transparent:true,opacity:0.22,roughness:0.05,metalness:0,clearcoat:1,clearcoatRoughness:0.06,envMapIntensity:2.8,depthWrite:false}));
+film.position.set(0,5.4,11.6);film.rotation.x=-0.09;film.renderOrder=5;scene.add(film);
+const streak=new THREE.Mesh(new THREE.PlaneGeometry(86,13.5),
+  new THREE.MeshBasicMaterial({map:streakTex,transparent:true,opacity:0.27,depthWrite:false}));
+streak.position.set(0,5.4,11.75);streak.rotation.x=-0.09;streak.renderOrder=6;scene.add(streak);
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let cells=[],stacks=[],reserved=[],falling=[],spilling=[],fading=[];
 let owed=0,removeQ=0,spawnT=0,removeT=0,running=false,lastT=0;
 function resetStacks(){stacks=[];reserved=[];for(let c=0;c<COLS;c++){stacks.push([0,0]);reserved.push([0,0])}}
 resetStacks();
-function targetFor(bal){return bal>=1000?Math.min(CAP,5+Math.floor((bal-1000)/52)):0}
+function targetFor(bal){return bal>=500?Math.min(CAP,5+Math.floor((bal-500)/52)):0}
 function counted(){return cells.length+falling.length}
 function pickCell(){
   let best=null,bs=1e9;const mid=(COLS-1)/2;
@@ -590,7 +605,7 @@ function syncTray(bal,rain){
   const target=targetFor(bal);
   let diff=target-counted()-owed;
   if(diff>0){if(reduced){prefill(target)}else owed+=diff}
-  else if(diff<0){const cut=Math.min(owed,-diff);owed-=cut;removeQ+=(-diff-cut);if(reduced){prefill(target);removeQ=0}}
+  /* 残高が減っても、出たコインは消さない（純弥FB）：減方向の同期はしない */
   if(rain>0&&!reduced){const rn=Math.min(8,rain);for(let i=0;i<rn;i++)setTimeout(()=>{spawnFall(counted()+owed>=CAP);wake()},i*55)}
   wake();
 }
