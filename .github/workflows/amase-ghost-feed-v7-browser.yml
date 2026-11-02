@@ -1,0 +1,42 @@
+name: Amase Ghost Feed V7 browser integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'preview/amase-ghost-feed-v7/**'
+      - 'tests/amase-ghost-feed-v7-browser.mjs'
+      - '.github/workflows/amase-ghost-feed-v7-browser.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  v7-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start test server
+        run: |
+          python3 -m http.server 4173 >/tmp/ghostfeed.log 2>&1 &
+          for i in {1..20}; do
+            curl -fsS http://127.0.0.1:4173/preview/amase-ghost-feed-v7/index.html >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/ghostfeed.log
+          exit 1
+      - name: Test desktop and mobile real interactions
+        run: node tests/amase-ghost-feed-v7-browser.mjs
+      - name: Save screenshots for inspection
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: amase-ghost-feed-v7-visual-tests
+          path: artifacts/ghost-feed-v7/
+          if-no-files-found: ignore
