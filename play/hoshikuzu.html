@@ -27,6 +27,10 @@ button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touc
   .page-hero .page-lead{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .section{padding-top:10px}
 }
+
+.break-btn{font:700 1rem var(--sans,inherit);color:#fff;background:var(--red,#ff4b33);border:3px solid var(--ink,#131847);border-radius:999px;padding:10px 34px;cursor:pointer;box-shadow:4px 4px 0 var(--ink,#131847)}
+.break-btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink,#131847)}
+.break-btn:disabled{opacity:.55;cursor:wait}
 </style>
 <script data-goatcounter="https://shelfiria.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script><script src="/analytics-out.js" defer></script>
 <meta property="og:type" content="website"><meta property="og:site_name" content="Shelfiria"><meta property="og:title" content="星屑の小瓶 | Shelfiria"><meta property="og:description" content="星の砂が入った小さなガラス瓶。傾けると中身が流れます。触って遊べるおもちゃ。"><meta property="og:image" content="https://paper-daemon.github.io/og-hoshikuzu.jpg"><meta property="og:url" content="https://paper-daemon.github.io/play/hoshikuzu.html"><meta name="twitter:card" content="summary_large_image">
@@ -42,7 +46,8 @@ button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touc
 <section class="section tone-white">
 <div class="hoshi-stage">
 <div id="stage3d"><p id="gl-loading">ガラスを磨いています…</p></div>
-<p class="hoshi-note">星の砂は一粒ずつ立体で敷き詰めてあります。傾けると表面の粒が雪崩れて、星が転がって、光の粒がきらめきます。速く振ると中身が舞います。</p>
+<div style="margin-top:14px"><button id="breakBtn" type="button" class="break-btn">こわす</button></div>
+<p class="hoshi-note">星の砂は一粒ずつ立体で敷き詰めてあります。傾けると表面の粒が雪崩れて、星が転がって、光の粒がきらめきます。速く振ると中身が舞います。「こわす」を押すと瓶が砕けて、「もどす」できれいに元に戻ります。</p>
 </div>
 </section>
 </main>
@@ -221,6 +226,197 @@ function init(){
     new THREE.CylinderGeometry(62.9, 62.9, 26, 48, 1, true, -0.78, 1.56),
     new THREE.MeshStandardMaterial({ map: makeLabel(), roughness: .85, side: THREE.DoubleSide }));
   label.position.y = 44; body.add(label);
+
+  // ---- Stage 3: shatter & restore (additive; the approved glass build above is untouched) ----
+  const shardMat = new THREE.MeshPhysicalMaterial({ color: 0xe8fbff, metalness: 0, roughness: .04, transparent: true, opacity: .34, clearcoat: 1, clearcoatRoughness: .08, envMapIntensity: 2.3, side: THREE.DoubleSide, depthWrite: false });
+  const shards = [];
+  const shardGroup = new THREE.Group(); shardGroup.visible = false; scene.add(shardGroup);
+  {
+    const bandIdx = [[0,3],[3,5],[5,6],[6,7],[7,9],[9,11],[11,13],[13,15]];
+    const SECT = 8;
+    for (const [i0, i1] of bandIdx){
+      for (let sIdx = 0; sIdx < SECT; sIdx++){
+        const a0 = sIdx / SECT * Math.PI * 2, a1 = (sIdx + 1) / SECT * Math.PI * 2, aM = (a0 + a1) / 2;
+        const pos = [], idxA = [];
+        const rows = [];
+        for (let i = i0; i <= i1; i++) rows.push(profile[i]);
+        rows.forEach((pt, ri) => {
+          for (let c = 0; c <= 2; c++){
+            const a = a0 + (a1 - a0) * c / 2;
+            pos.push(Math.cos(a) * pt.x, pt.y, Math.sin(a) * pt.x);
+          }
+        });
+        for (let ri = 0; ri < rows.length - 1; ri++){
+          for (let c = 0; c < 2; c++){
+            const a = ri * 3 + c, b = a + 3;
+            idxA.push(a, b, a + 1, b, b + 1, a + 1);
+          }
+        }
+        const g = new THREE.BufferGeometry();
+        g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+        g.setIndex(idxA); g.computeVertexNormals();
+        g.computeBoundingBox();
+        const cen = new THREE.Vector3(); g.boundingBox.getCenter(cen);
+        g.translate(-cen.x, -cen.y, -cen.z);
+        const m = new THREE.Mesh(g, shardMat);
+        m.visible = false; shardGroup.add(m);
+        g.computeBoundingSphere();
+        shards.push({ mesh: m, home: cen.clone(), restY: Math.max(5, g.boundingSphere.radius * .48), vel: new THREE.Vector3(), angVel: new THREE.Vector3(), settled: false, fromP: new THREE.Vector3(), fromQ: new THREE.Quaternion() });
+      }
+    }
+    // cork as one rigid piece
+    const cg = new THREE.CylinderGeometry(19.5, 21.5, 36, 48);
+    const cm = new THREE.Mesh(cg, cork.material);
+    cm.visible = false; shardGroup.add(cm);
+    shards.push({ mesh: cm, home: new THREE.Vector3(0, 178, 0), vel: new THREE.Vector3(), angVel: new THREE.Vector3(), settled: false, fromP: new THREE.Vector3(), fromQ: new THREE.Quaternion(), isCork: true });
+  }
+  let hState = 'intact'; // intact | broken | restoring
+  let restoreT = 0;
+  const snapPos = new Float32Array(0);
+  let snapArr = null;
+  const breakBtn = document.getElementById('breakBtn');
+  let audioCtx = null;
+  function clink(freq, delay, gain, dur){
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const tA = audioCtx.currentTime + delay;
+      const o = audioCtx.createOscillator(), gn = audioCtx.createGain();
+      o.type = 'sine'; o.frequency.value = freq;
+      gn.gain.setValueAtTime(gain, tA);
+      gn.gain.exponentialRampToValueAtTime(.0001, tA + dur);
+      o.connect(gn); gn.connect(audioCtx.destination);
+      o.start(tA); o.stop(tA + dur + .02);
+    } catch (e) {}
+  }
+  const _v1 = new THREE.Vector3(), _v2 = new THREE.Vector3(), _q1 = new THREE.Quaternion();
+  function doBreak(){
+    if (hState !== 'intact') return;
+    hState = 'broken';
+    snapArr = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++){ snapArr[i * 3] = P[i].x; snapArr[i * 3 + 1] = P[i].y; snapArr[i * 3 + 2] = P[i].z; }
+    scene.updateMatrixWorld(true);
+    glass.visible = false; cork.visible = false; label.visible = false;
+    column.visible = false; surface.visible = false; glints.visible = false; bedMesh.visible = false;
+    // shards start exactly where the glass is now
+    body.getWorldQuaternion(_q1);
+    for (const sh of shards){
+      _v1.copy(sh.home); body.localToWorld(_v1);
+      sh.mesh.position.copy(_v1);
+      sh.mesh.quaternion.copy(_q1);
+      sh.mesh.visible = true; sh.settled = false;
+      const dir = Math.atan2(_v1.z, _v1.x);
+      const sp = 24 + Math.random() * 66;
+      sh.vel.set(Math.cos(dir) * sp, 55 + Math.random() * 95, Math.sin(dir) * sp);
+      sh.angVel.set((Math.random() - .5) * 9, (Math.random() - .5) * 9, (Math.random() - .5) * 9);
+    }
+    shardGroup.visible = true;
+    // particles: move to world frame and burst out
+    scene.attach(grainMesh); scene.attach(starMesh);
+    grainMesh.position.set(0, 0, 0); grainMesh.quaternion.identity(); grainMesh.scale.set(1, 1, 1);
+    starMesh.position.set(0, 0, 0); starMesh.quaternion.identity(); starMesh.scale.set(1, 1, 1);
+    for (let i = 0; i < N; i++){
+      const p = P[i];
+      _v1.set(p.x, p.y, p.z); body.localToWorld(_v1);
+      p.x = _v1.x; p.y = _v1.y; p.z = _v1.z;
+      const dir = Math.atan2(p.z, p.x + .001), sp = 26 + Math.random() * 78;
+      p.vx = Math.cos(dir) * sp; p.vz = Math.sin(dir) * sp; p.vy = 55 + Math.random() * 125;
+      p.asleep = 0;
+    }
+    for (let i = 0; i < 7; i++) clink(2300 + Math.random() * 3000, Math.random() * .09, .06, .16);
+    clink(340, 0, .05, .2);
+    breakBtn.textContent = 'もどす';
+  }
+  function doRestore(){
+    if (hState !== 'broken') return;
+    hState = 'restoring'; restoreT = 0;
+    scene.updateMatrixWorld(true);
+    for (const sh of shards){ sh.fromP.copy(sh.mesh.position); sh.fromQ.copy(sh.mesh.quaternion); }
+    for (let i = 0; i < N; i++){ const p = P[i]; p.fx = p.x; p.fy = p.y; p.fz = p.z; }
+    breakBtn.disabled = true; breakBtn.textContent = 'もどしています…';
+    for (let i = 0; i < 5; i++) clink(1300 + i * 420, i * .13, .045, .22);
+  }
+  breakBtn.addEventListener('click', () => { if (hState === 'intact') doBreak(); else if (hState === 'broken') doRestore(); });
+  function shardStep(dt){
+    for (const sh of shards){
+      if (sh.settled) continue;
+      const m = sh.mesh;
+      sh.vel.y -= 300 * dt;
+      m.position.addScaledVector(sh.vel, dt);
+      m.rotation.x += sh.angVel.x * dt; m.rotation.y += sh.angVel.y * dt; m.rotation.z += sh.angVel.z * dt;
+      const floorY = sh.isCork ? 13 : sh.restY;
+      if (m.position.y < floorY){
+        m.position.y = floorY;
+        if (Math.abs(sh.vel.y) > 26){ sh.vel.y = -sh.vel.y * .3; clink(2800 + Math.random() * 2200, 0, .018, .07); }
+        else sh.vel.y = 0;
+        sh.vel.x *= .72; sh.vel.z *= .72; sh.angVel.multiplyScalar(.62);
+        if (sh.vel.lengthSq() < 30 && sh.angVel.lengthSq() < .5) sh.settled = true;
+      }
+      if (m.position.x > 250) { m.position.x = 250; sh.vel.x *= -.4; }
+      if (m.position.x < -250) { m.position.x = -250; sh.vel.x *= -.4; }
+      if (m.position.z > 190) { m.position.z = 190; sh.vel.z *= -.4; }
+      if (m.position.z < -110) { m.position.z = -110; sh.vel.z *= -.4; }
+    }
+  }
+  function worldStep(dt){
+    for (let i = 0; i < N; i++){
+      const p = P[i];
+      if (p.asleep > 4) continue;
+      p.vy -= 300 * dt;
+      p.vx *= .995; p.vz *= .995;
+      p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
+      const fy = p.r + 1;
+      if (p.y < fy){
+        p.y = fy;
+        if (p.vy < 0) p.vy = -p.vy * (p.star ? .2 : .07);
+        p.vx *= .8; p.vz *= .8;
+        p.rx += p.vz * dt * 1.1; p.rz -= p.vx * dt * 1.1;
+      }
+      if (p.x > 245) { p.x = 245; p.vx *= -.35; }
+      if (p.x < -245) { p.x = -245; p.vx *= -.35; }
+      if (p.z > 185) { p.z = 185; p.vz *= -.35; }
+      if (p.z < -105) { p.z = -105; p.vz *= -.35; }
+      const spd = Math.abs(p.vx) + Math.abs(p.vy) + Math.abs(p.vz);
+      if (p.y <= fy + .5 && spd < 6) p.asleep++; else if (spd >= 6) p.asleep = 0;
+    }
+  }
+  function restoreStep(dt){
+    restoreT += dt / 1.15;
+    const k = Math.min(1, restoreT);
+    const e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    const arc = Math.sin(k * Math.PI);
+    scene.updateMatrixWorld(true);
+    body.getWorldQuaternion(_q1);
+    for (const sh of shards){
+      _v1.copy(sh.home); body.localToWorld(_v1);
+      sh.mesh.position.lerpVectors(sh.fromP, _v1, e);
+      sh.mesh.position.y += arc * 26;
+      sh.mesh.quaternion.slerpQuaternions(sh.fromQ, _q1, e);
+    }
+    for (let i = 0; i < N; i++){
+      const p = P[i];
+      _v1.set(snapArr[i * 3], snapArr[i * 3 + 1], snapArr[i * 3 + 2]); body.localToWorld(_v1);
+      p.x = p.fx + (_v1.x - p.fx) * e;
+      p.y = p.fy + (_v1.y - p.fy) * e + arc * 18;
+      p.z = p.fz + (_v1.z - p.fz) * e;
+    }
+    if (k >= 1){
+      for (const sh of shards) sh.mesh.visible = false;
+      shardGroup.visible = false;
+      glass.visible = true; cork.visible = true; label.visible = true;
+      column.visible = true; surface.visible = true; glints.visible = true; bedMesh.visible = true;
+      body.attach(grainMesh); body.attach(starMesh);
+      grainMesh.position.set(0, 0, 0); grainMesh.quaternion.identity(); grainMesh.scale.set(1, 1, 1);
+      starMesh.position.set(0, 0, 0); starMesh.quaternion.identity(); starMesh.scale.set(1, 1, 1);
+      for (let i = 0; i < N; i++){
+        const p = P[i];
+        p.x = snapArr[i * 3]; p.y = snapArr[i * 3 + 1]; p.z = snapArr[i * 3 + 2];
+        p.vx = 0; p.vy = 0; p.vz = 0; p.asleep = 0;
+      }
+      updateBed();
+      hState = 'intact';
+      breakBtn.disabled = false; breakBtn.textContent = 'こわす';
+    }
+  }
 
   // ---- sand column (child of bottle; its top surface stays world-level) ----
   const sandMaps = makeSandMaps(); const sandTex = sandMaps.map;
@@ -440,6 +636,7 @@ function init(){
     { const gh = Math.hypot(gB.x, gB.z);
       if (gh > 4){ pileX = gB.x / gh; pileZ = gB.z / gh; }
       pileAmt = THREE.MathUtils.clamp(gh / 300, 0, 1) * 6; }
+    if (hState === 'intact'){
     const colAttr = colGeo.attributes.position, surfAttr = surfGeo.attributes.position;
     for (let s = 0; s <= SEG; s++){
       const x = colAttr.getX(colTopStart + s), z = colAttr.getZ(colTopStart + s);
@@ -450,10 +647,14 @@ function init(){
     surfAttr.setY(0, surfY(0, 0));
     colAttr.needsUpdate = true; surfAttr.needsUpdate = true;
     colGeo.computeVertexNormals(); surfGeo.computeVertexNormals();
+    }
 
     // particles — simulated in the BOTTLE frame: gravity rotates inside the
     // bottle as it tilts, so grains slide down the surface slope, stars roll,
     // and shaking flings them with the bottle's own angular motion.
+    if (hState === 'restoring') restoreStep(dt);
+    else if (hState === 'broken'){ shardStep(dt); worldStep(dt); }
+    if (hState === 'intact'){
     const shake = Math.min(2.2, Math.abs(velZ) * 26 * step + Math.abs(velX) * 20 * step);
     const omZ = velZ * 60, omX = velX * 60;              // angular velocity, rad/s
     for (let i = 0; i < N; i++){
@@ -503,6 +704,7 @@ function init(){
       p.rz -= p.vx * dt * (p.star ? 1.1 : .3);
       p.rot += p.vx * .1 * dt;
     }
+    }
     for (let i = 0; i < NG; i++){
       const p = P[i];
       dummy.position.set(p.x, p.y, p.z);
@@ -524,7 +726,7 @@ function init(){
     // bed + glints follow the surface while anything moves (skip when fully settled)
     bedTick++;
     const boost = Math.min(1, Math.abs(velZ) * 9 + Math.abs(velX) * 9 + Math.abs(slVZ) * .012 + Math.abs(slVX) * .012);
-    if (bedTick < 90 || boost > .004 || pileAmt > .2) updateBed();
+    if (hState === 'intact' && (bedTick < 90 || boost > .004 || pileAmt > .2)) updateBed();
     glMat.uniforms.uTime.value = t;
     glMat.uniforms.uBoost.value = boost;
 
