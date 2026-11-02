@@ -310,3 +310,15 @@ html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transiti
  .hero-title .line{white-space:normal}
  .display-brand{overflow-wrap:anywhere}
 }
+
+/* Full real archive is revealed on demand, not rendered as 100+ cards upfront. */
+.archive-controls{margin-top:25px;border-top:1px solid #6982ba54;padding-top:20px}
+.archive-action{border:1px solid #8deef6b3;background:#182d4b;color:#b8ffff;box-shadow:0 0 20px #61d6ff22;border-radius:6px;padding:14px 20px;font:900 12px var(--j);transition:.2s;min-height:46px}
+.archive-action:hover:not(:disabled){color:#14122d;background:linear-gradient(115deg,#7cf5ec,#dba9ff);box-shadow:0 0 25px #7df9f477}
+.archive-action:disabled{cursor:default;opacity:.7}
+.archive-action[hidden]{display:none}
+.archive-vault{display:flex;align-items:center;justify-content:space-between;gap:22px;margin-top:19px;padding:22px 25px;border:1px dashed #b083f5a0;border-radius:10px;background:radial-gradient(ellipse at 96% 0,#824ded38,transparent 65%),#1a1837a9}
+.archive-vault small{font:800 10px var(--ui);letter-spacing:.15em;color:#d9a7ff}
+.archive-vault p{margin:8px 0 0;font:700 12px/1.7 var(--j);color:#afbddc}
+.archive-expand{background:linear-gradient(110deg,#29204c,#233b56);color:#ffd6f4;border-color:#d196ffa6;flex:none}
+@media(max-width:620px){.archive-vault{display:flex;flex-direction:column;align-items:stretch;padding:18px;gap:18px}.archive-expand{width:100%}}
