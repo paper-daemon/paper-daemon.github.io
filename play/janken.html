@@ -51,7 +51,7 @@
 <section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — JANKEN</p><h1>あませとじゃんけん</h1><p class="page-lead">あませとじゃんけん。5本先取でマッチ勝利です。あませは負けず嫌いなので、負けた次はあなたの前の手を狩りに来るクセがあります。前の手を読んで裏をかくのがコツ。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
 <div class="jk-stage">
-<div class="stage-wrap"><video id="stageVid" src="/play/assets/stage-idle3.mp4" autoplay muted loop playsinline preload="auto"></video></div>
+<div class="stage-wrap"><video poster="/play/assets/stage-art-new.jpg" id="stageVid" src="/play/assets/stage-idle3.mp4" autoplay muted loop playsinline preload="auto"></video></div>
 <div class="bgm-row" style="max-width:none;margin:0 0 4px"><button class="bgm-toggle" id="bgmBtn" type="button">♪ BGM</button></div>
 <div class="duel2">
 <div class="fighter"><p class="who">AMASE</p><div class="handview" id="eveView"><span class="emo" id="eveEmo">✊</span><img id="eveImg" src="/play/assets/hand-rock.png" alt="あませの手" onerror="this.remove()"></div></div>
@@ -104,11 +104,13 @@ function setHand(view,imgEl,emoEl,h,map){
   else{emoEl.textContent=HANDEMO[h]}
 }
 const fxv=document.getElementById('fxVideo');
-function playVictoryFx(){
-  const src='/play/assets/janken-victory-fx.mp4';
-  const go=()=>{try{fxv.currentTime=0;const p=fxv.play();if(p&&p.catch)p.catch(()=>{});fxv.classList.add('on');fxv.onended=()=>fxv.classList.remove('on');setTimeout(()=>fxv.classList.remove('on'),3700)}catch(e){}};
+const RESULT_FX={win:[],lose:['/play/assets/fx-lose-1.mp4','/play/assets/fx-lose-2.mp4','/play/assets/fx-lose-3.mp4'],draw:['/play/assets/fx-draw-1.mp4','/play/assets/fx-draw-2.mp4'],mtake:['/play/assets/fx-mtake-1.mp4'],mwin:[]};
+function playFxSrc(src,blend){fxv.style.mixBlendMode=blend?'screen':'normal';
+  const go=()=>{try{fxv.currentTime=0;const p=fxv.play();if(p&&p.catch)p.catch(()=>{});fxv.classList.add('on');fxv.onended=()=>fxv.classList.remove('on');setTimeout(()=>fxv.classList.remove('on'),4500)}catch(e){}};
   if(fxv.dataset.src!==src){fxv.dataset.src=src;fxv.src=src;fxv.addEventListener('canplay',function h(){fxv.removeEventListener('canplay',h);go()});fxv.load()}else go();
 }
+function playResultFx(kind){const arr=RESULT_FX[kind];if(!arr||!arr.length)return;playFxSrc(arr[Math.floor(Math.random()*arr.length)],false);}
+function playVictoryFx(){playFxSrc('/play/assets/janken-victory-fx.mp4',true);}
 const NAMES=["グー","チョキ","パー"];
 let w=0,l=0,d=0,streak=0,mpYou=0,mpEve=0,lastYou=-1,lastOut="";
 let matchYou=Number(localStorage.getItem("jkMatchYou")||0),matchEve=Number(localStorage.getItem("jkMatchEve")||0);
@@ -132,12 +134,12 @@ const eveView=document.getElementById("eveView"),youView=document.getElementById
 const eveImg=document.getElementById("eveImg"),youImg=document.getElementById("youImg"),eveEmo=document.getElementById("eveEmo"),youEmo=document.getElementById("youEmo");
 function reveal(you,eve){
 let out;
-if(you===eve){out="draw";d++;streak=0;result.textContent="あいこ";if(!jplay(JAU.draw))tone(520,0.09,"sine",0.1);setTimeout(()=>jplayV(JV.draw),520)}
+if(you===eve){out="draw";d++;streak=0;result.textContent="あいこ";playResultFx("draw");if(!jplay(JAU.draw))tone(520,0.09,"sine",0.1);setTimeout(()=>jplayV(JV.draw),520)}
 else if((you-eve+3)%3===2){out="win";w++;streak++;mpYou++;result.textContent="あなたの勝ち！";if(!jplay(JAU.win)){tone(784,0.12,"sine",0.12);tone(1047,0.18,"sine",0.12,0.1)}vibJ(30);setTimeout(()=>jplayV(JV.lose),520)}
-else{out="lose";l++;streak=0;mpEve++;result.textContent="あませの勝ち";if(!jplay(JAU.lose))tone(262,0.14,"triangle",0.1);vibJ([20,40,20]);setTimeout(()=>jplayV(JV.win),520)}
+else{out="lose";l++;streak=0;mpEve++;result.textContent="あませの勝ち";playResultFx("lose");if(!jplay(JAU.lose))tone(262,0.14,"triangle",0.1);vibJ([20,40,20]);setTimeout(()=>jplayV(JV.win),520)}
 let lineArr=LINES[out];
 if(mpYou>=5){matchYou++;localStorage.setItem("jkMatchYou",matchYou);result.textContent="マッチ獲得！！ あなたの勝ち";lineArr=LINES.matchWin;mpYou=0;mpEve=0;playVictoryFx();vibJ([50,40,50,40,120]);tone(784,0.12,"sine",0.12);tone(988,0.12,"sine",0.12,0.1);tone(1318,0.26,"sine",0.12,0.2);setTimeout(()=>jplay(JVO.mlose),2100)}
-else if(mpEve>=5){matchEve++;localStorage.setItem("jkMatchEve",matchEve);result.textContent="マッチはあませのもの…";lineArr=LINES.matchLose;mpYou=0;mpEve=0;setTimeout(()=>jplay(JVO.mwin),2100)}
+else if(mpEve>=5){matchEve++;localStorage.setItem("jkMatchEve",matchEve);result.textContent="マッチはあませのもの…";lineArr=LINES.matchLose;mpYou=0;mpEve=0;playResultFx("mtake");setTimeout(()=>jplay(JVO.mwin),2100)}
 else if(out==="win"&&streak>=5){playVictoryFx()}
 line.textContent=lineArr[Math.floor(Math.random()*lineArr.length)];
 lastYou=you;lastOut=out;
