@@ -157,17 +157,51 @@ let W=520,H=374;
 function resize(){const r=cv.getBoundingClientRect();const dpr=Math.min(2,window.devicePixelRatio||1);W=Math.max(280,r.width||520);H=Math.round(W*0.72);cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cv.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0)}
 resize();addEventListener('resize',resize);
 function makeSprite(rgb){const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');const gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(0.22,'rgba('+rgb+',0.95)');gr.addColorStop(0.55,'rgba('+rgb+',0.30)');gr.addColorStop(1,'rgba('+rgb+',0)');g.fillStyle=gr;g.fillRect(0,0,64,64);return c}
-const SPR=[makeSprite('148,178,255'),makeSprite('110,214,255'),makeSprite('255,178,120')];
+const SPR=[makeSprite('148,178,255'),makeSprite('110,214,255'),makeSprite('255,178,120'),makeSprite('255,150,190')];
 const N=(W<420||innerWidth<760)?760:1150,pts=[];
-for(let i=0;i<N;i++){const y=1-(i/(N-1))*2,r=Math.sqrt(Math.max(0,1-y*y)),th=i*2.39996;const rnd=Math.random;pts.push({ox:Math.cos(th)*r,oy:y,oz:Math.sin(th)*r,dx:0,dy:0,dz:0,vx:0,vy:0,vz:0,px:-999,py:-999,ps:1,spr:rnd()<0.62?0:(rnd()<0.78?1:2),sz:0.8+rnd()*1.5+(rnd()<0.06?1.3:0),twp:rnd()*6.28,tws:0.6+rnd()*1.6})}
+for(let i=0;i<N;i++){const y=1-(i/(N-1))*2,r=Math.sqrt(Math.max(0,1-y*y)),th=i*2.39996;const rnd=Math.random;pts.push({ox:Math.cos(th)*r,oy:y,oz:Math.sin(th)*r,ang:Math.atan2(y,Math.cos(th)*r),dx:0,dy:0,dz:0,vx:0,vy:0,vz:0,px:-999,py:-999,ps:1,spr:rnd()<0.62?0:(rnd()<0.78?1:2),sz:0.8+rnd()*1.5+(rnd()<0.06?1.3:0),twp:rnd()*6.28,tws:0.6+rnd()*1.6})}
 const sparks=[];for(let i=0;i<26;i++)sparks.push({a:Math.random()*6.28,r:0.16+Math.random()*0.26,sp:0.004+Math.random()*0.010,sz:1+Math.random()*1.6});
-/* ============ あませボイス受け口（素材は manifest 方式で後から差し込む） ============
-   /play/assets/amase-core/manifest.json が {カテゴリ: [ファイル,...]} を返すと有効化される。
-   カテゴリ: greet（初回タッチ）/ tap / rapid（連打）/ stroke（なでる）/ press（長押し）/ idle（放置時まれに）
-   manifest が無い・空の間は無音（見た目の反応は全部動く）。 */
+/* ============ 訪問者メモリ（localStorage） ============ */
+const MEMKEY='amaseCore.v1';
+let MEM={v:0,last:0,t:0,gap:0,m100:0};
+try{const raw=localStorage.getItem(MEMKEY);if(raw)MEM=Object.assign(MEM,JSON.parse(raw))}catch(e){}
+(function(){const now=Date.now();if(!MEM.last||now-MEM.last>30*60*1000){MEM.gap=MEM.last?(now-MEM.last)/86400000:0;MEM.v++;MEM.last=now;saveMem()}})();
+function saveMem(){try{localStorage.setItem(MEMKEY,JSON.stringify({v:MEM.v,last:MEM.last,t:MEM.t,m100:MEM.m100}))}catch(e){}}
+/* ============ 台詞テーブル（正本 shelf-core-voice-lines.md・番号→タグ/プール/条件） ============ */
+const LT={1:{t:'happy',p:'greet'},2:{t:'warm',p:'greet'},3:{t:'shy',p:'greet'},
+4:{t:'normal',p:'tap'},5:{t:'ticklish',p:'tap'},6:{t:'normal',p:'tap'},7:{t:'happy',p:'tap'},8:{t:'shy',p:'tap'},9:{t:'happy',p:'tap'},10:{t:'ticklish',p:'tap'},11:{t:'normal',p:'tap'},12:{t:'warm',p:'tap'},13:{t:'normal',p:'tap'},14:{t:'shy',p:'tap'},15:{t:'happy',p:'tap'},16:{t:'warm',p:'tap'},17:{t:'shy',p:'tap'},18:{t:'happy',p:'tap'},
+19:{t:'panic',p:'rapid'},20:{t:'panic',p:'rapid'},21:{t:'flee',p:'rapid'},22:{t:'flee',p:'rapid'},23:{t:'ticklish',p:'rapid'},24:{t:'panic',p:'rapid'},25:{t:'flee',p:'rapid'},
+26:{t:'rare',p:'rare'},27:{t:'rare',p:'rare'},28:{t:'rare',p:'rare'},29:{t:'rare',p:'rare'},30:{t:'rare',p:'rare'},
+31:{t:'happy',p:'morning'},32:{t:'happy',p:'morning'},33:{t:'sleepy',p:'morning'},
+34:{t:'normal',p:'noon'},35:{t:'warm',p:'noon'},36:{t:'happy',p:'noon'},
+37:{t:'warm',p:'evening'},38:{t:'happy',p:'evening'},39:{t:'warm',p:'evening'},
+40:{t:'shy',p:'night'},41:{t:'sleepy',p:'night'},42:{t:'shy',p:'night'},43:{t:'warm',p:'night'},44:{t:'sleepy',p:'night'},
+45:{t:'happy',p:'return'},46:{t:'sad',p:'return'},47:{t:'warm',p:'return'},
+48:{t:'happy',p:'rep',c:'v2'},49:{t:'warm',p:'rep',c:'v2'},50:{t:'happy',p:'rep',c:'v3'},51:{t:'happy',p:'rep',c:'gap2'},52:{t:'sad',p:'rep',c:'gap7'},53:{t:'warm',p:'rep',c:'v5'},54:{t:'shy',p:'rep',c:'v5'},
+55:{t:'rare',p:'milestone'},
+56:{t:'ticklish',p:'stroke'},57:{t:'warm',p:'stroke'},58:{t:'shy',p:'stroke'},59:{t:'warm',p:'stroke'},
+60:{t:'happy',p:'press'},61:{t:'panic',p:'press'},62:{t:'happy',p:'press'},63:{t:'shy',p:'press'}};
+function condOk(c){if(!c)return true;if(c==='v2')return MEM.v>=2;if(c==='v3')return MEM.v>=3;if(c==='v5')return MEM.v>=5;if(c==='gap2')return MEM.gap>=2&&MEM.gap<7;if(c==='gap7')return MEM.gap>=7;return true}
+function timePool(){const h=new Date().getHours();return h>=5&&h<11?'morning':h>=11&&h<17?'noon':h>=17&&h<23?'evening':'night'}
+/* ============ ボイス受け口（manifest方式） ============ */
 const VOICE_BASE='/play/assets/amase-core/';
-const voice={lines:null,unlocked:false,playing:false,cat:null,last:{},el:null,actx:null,analyser:null,env:0,lastSpeak:0};
-fetch(VOICE_BASE+'manifest.json').then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{voice.lines=j}).catch(()=>{voice.lines=null});
+const voice={byNum:{},byCat:{},unlocked:false,playing:false,cat:null,lastN:0,el:null,actx:null,analyser:null,env:0,lastSpeak:0};
+fetch(VOICE_BASE+'manifest.json').then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{
+  for(const cat of Object.keys(j)){const arr=j[cat];if(!Array.isArray(arr))continue;voice.byCat[cat]=[];
+    for(const e of arr){let f=null,n=0,t=null;
+      if(typeof e==='string')f=e;else if(e&&typeof e==='object'){f=e.f||e.file;n=e.n||e.num||0;t=e.t||e.tag||null}
+      if(!f)continue;
+      if(!n){const m=String(f).match(/(\d{1,2})(?=\.[a-z0-9]+$)/i);if(m)n=parseInt(m[1],10)}
+      const meta=n&&LT[n]?LT[n]:null;
+      const item={f:f,n:n,tag:t||(meta?meta.t:'normal'),pool:meta?meta.p:cat,cond:meta?meta.c:null};
+      voice.byCat[cat].push(item);if(n)voice.byNum[n]=item;
+    }}
+}).catch(()=>{});
+function poolItems(pool){const out=[];for(const n of Object.keys(voice.byNum)){const it=voice.byNum[n];if(it.pool===pool&&condOk(it.cond))out.push(it)}
+  if(!out.length&&voice.byCat[pool])return voice.byCat[pool].slice();return out}
+function pickFrom(items){if(!items.length)return null;let c=items.filter(i=>i.n!==voice.lastN);if(!c.length)c=items;return c[Math.floor(Math.random()*c.length)]}
+const tagFx={name:'normal',until:0,from:0};
+function fireTag(tag,durMs){tagFx.name=tag;tagFx.from=performance.now();tagFx.until=tagFx.from+(durMs||2200)}
 function voiceUnlock(){
   if(voice.unlocked)return;voice.unlocked=true;
   try{
@@ -178,22 +212,39 @@ function voiceUnlock(){
     voice.el.addEventListener('error',()=>{voice.playing=false});
   }catch(e){voice.el=null}
 }
-function speak(cat){
-  if(!voice.unlocked||!voice.lines)return false;
-  if(voice.playing){
-    if(cat==='rapid'&&voice.cat==='tap'&&performance.now()-voice.lastSpeak<800){try{voice.el.pause()}catch(e){}voice.playing=false}
-    else return false;
-  }
-  const arr=voice.lines[cat];if(!arr||!arr.length)return false;
-  let pick=arr[Math.floor(Math.random()*arr.length)];
-  if(arr.length>1&&pick===voice.last[cat])pick=arr[(arr.indexOf(pick)+1)%arr.length];
-  voice.last[cat]=pick;
+function playItem(it,catLabel){
+  if(!it||voice.playing)return false;
   if(!voice.el)voiceUnlock();if(!voice.el)return false;
   if(voice.actx&&voice.actx.state==='suspended')voice.actx.resume();
-  voice.el.src=pick.charAt(0)==='/'?pick:VOICE_BASE+pick;
-  voice.playing=true;voice.cat=cat;voice.lastSpeak=performance.now();
+  voice.el.src=it.f.charAt(0)==='/'?it.f:VOICE_BASE+it.f;
+  voice.playing=true;voice.cat=catLabel;voice.lastN=it.n||0;voice.lastSpeak=performance.now();
+  fireTag(it.tag,2600);
   const pr=voice.el.play();if(pr&&pr.catch)pr.catch(()=>{voice.playing=false});
+  voice.el.onloadedmetadata=()=>{if(voice.el&&isFinite(voice.el.duration))fireTag(it.tag,voice.el.duration*1000+350)};
   return true;
+}
+let lastTouchAt=performance.now(),hadReturnGap=false;
+function speak(trigger){
+  if(!voice.unlocked||voice.playing)return false;
+  if(trigger==='greet'){
+    if(MEM.v<=1)return playItem(pickFrom(poolItems('greet')),'greet');
+    const reps=poolItems('rep');if(reps.length){reps.sort((a,b)=>(b.cond?1:0)-(a.cond?1:0));return playItem(pickFrom(reps.slice(0,3)),'greet')}
+    return playItem(pickFrom(poolItems('tap')),'tap');
+  }
+  if(trigger==='tap'){
+    if(!MEM.m100&&MEM.t>=100){const ms=poolItems('milestone');if(ms.length){MEM.m100=1;saveMem();return playItem(pickFrom(ms),'rare')}}
+    if(hadReturnGap){hadReturnGap=false;if(Math.random()<0.6){const rp=poolItems('return');if(rp.length)return playItem(pickFrom(rp),'tap')}}
+    if(Math.random()<0.06){const rr=poolItems('rare');if(rr.length)return playItem(pickFrom(rr),'rare')}
+    let pool=poolItems('tap');const tp=poolItems(timePool());
+    if(tp.length&&Math.random()<0.45)return playItem(pickFrom(tp),'tap');
+    return playItem(pickFrom(pool),'tap');
+  }
+  if(trigger==='rapid'){
+    if(voice.playing&&voice.cat==='tap'&&performance.now()-voice.lastSpeak<800){try{voice.el.pause()}catch(e){}voice.playing=false}
+    if(voice.playing)return false;
+    return playItem(pickFrom(poolItems('rapid')),'rapid');
+  }
+  return playItem(pickFrom(poolItems(trigger)),trigger);
 }
 const tbuf=new Uint8Array(256);
 function voiceRMS(){
@@ -202,13 +253,13 @@ function voiceRMS(){
   return 0.45+0.35*Math.sin(performance.now()*0.021)+0.2*Math.sin(performance.now()*0.0073);
 }
 /* ============ 触り方の分類と気分 ============ */
-const ptrs=new Map();let hover=null;
+const ptrs=new Map();let hover=null,lastPtr=null;
 let mood={excite:0,warm:0,squash:0,squashV:0,purr:0};
-let taps=[],lastTouchAt=0,lastIdleVoiceAt=0,greeted=false,nextShiver=4000,shiverAt=-9999,lookTilt=0,lookTarget=0,nextLook=7000;
+let taps=[],lastIdleVoiceAt=0,greeted=false,nextShiver=4000,shiverAt=-9999,lookTilt=0,lookTarget=0,nextLook=7000;
 const gestures=new Map();
 function ptrPos(e){const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
 cv.addEventListener('pointermove',e=>{
-  const p=ptrPos(e);
+  const p=ptrPos(e);lastPtr=p;
   if(e.pointerType==='mouse'&&e.buttons===0){hover=p;const g=gestures.get(e.pointerId);if(!g)ptrs.set(e.pointerId,p)}
   else{ptrs.set(e.pointerId,p);hover=null}
   const g=gestures.get(e.pointerId);
@@ -218,9 +269,11 @@ cv.addEventListener('pointermove',e=>{
 });
 cv.addEventListener('pointerdown',e=>{
   voiceUnlock();
-  const p=ptrPos(e);ptrs.set(e.pointerId,p);hover=null;
+  const p=ptrPos(e);ptrs.set(e.pointerId,p);hover=null;lastPtr=p;
   gestures.set(e.pointerId,{t0:performance.now(),lx:p.x,ly:p.y,path:0,kind:null});
+  if(performance.now()-lastTouchAt>90000)hadReturnGap=true;
   lastTouchAt=performance.now();
+  MEM.t++;saveMem();
   pop=1.08;squashKick(0.7);
   rings.push({r:10,a:0.55});
   for(const pt of pts){if(pt.px<0)continue;const ddx=pt.px-p.x,ddy=pt.py-p.y,d=Math.sqrt(ddx*ddx+ddy*ddy);if(d<170&&d>0.1){const f=(1-d/170);const s=f*f*0.24/(pt.ps);pt.vx+=ddx/d*s;pt.vy+=ddy/d*s}}
@@ -243,13 +296,12 @@ cv.addEventListener('pointerup',endPtr);cv.addEventListener('pointercancel',endP
 cv.addEventListener('pointerleave',e=>{ptrs.delete(e.pointerId);gestures.delete(e.pointerId);if(e.pointerType==='mouse')hover=null});
 const rings=[];
 let run=true;new IntersectionObserver(en=>{run=en[0].isIntersecting}).observe(cv);
-let spin=0.6,pop=1,t=0,last=0,ema=16,step=1,adapted=false,peakCool=0;
+let spin=0.6,pop=1,t=0,last=0,ema=16,step=1,adapted=false,peakCool=0,offX=0,offY=0;
 function frame(now){
 if(!reduced)requestAnimationFrame(frame);
 if(!run||document.hidden)return;
 const dt=last?Math.min(50,now-last):16;last=now;t+=dt;ema=ema*0.96+dt*0.04;
 if(!adapted&&t>2500&&ema>26){step=1.45;adapted=true}
-/* 気分の減衰と自発行動 */
 mood.excite*=Math.pow(0.55,dt/1000);mood.warm+=(((mood.excite>0.25||mood.purr>0)?1:0)-mood.warm)*Math.min(1,dt/300);mood.purr*=Math.pow(0.4,dt/1000);
 mood.squashV+=(0-mood.squash)*0.045*dt/16.7;mood.squashV*=Math.pow(0.86,dt/16.7);mood.squash+=mood.squashV;
 if(t>nextShiver){shiverAt=t;nextShiver=t+6000+Math.random()*7000}
@@ -257,24 +309,43 @@ if(t>nextLook){lookTarget=(Math.random()-0.5)*0.5;nextLook=t+8000+Math.random()*
 lookTilt+=(lookTarget-lookTilt)*Math.min(1,dt/900);if(Math.abs(lookTarget)>0.01&&Math.random()<dt/4000)lookTarget=0;
 const shiver=(t-shiverAt>=0&&t-shiverAt<420)?Math.sin((t-shiverAt)/420*3.14)*0.012:0;
 spin+=reduced?0:0.0032*(1+1.7*mood.excite);pop+=(1-pop)*0.06;
-/* ボイス連動 */
 const ve=voiceRMS();voice.env+=(ve-voice.env)*Math.min(1,dt/60);
 if(voice.playing&&voice.env>0.52&&t>peakCool){rings.push({r:14,a:0.4});peakCool=t+150}
-if(voice.unlocked&&!voice.playing&&now-lastTouchAt>22000&&now-lastIdleVoiceAt>65000&&run&&Math.random()<dt/90000){if(speak('idle'))lastIdleVoiceAt=now}
+/* 感情タグ演出パラメータ */
+const fxA=(now<tagFx.until)?Math.min(1,(now-tagFx.from)/130)*Math.min(1,Math.max(0,(tagFx.until-now)/380)+0.25):0;
+const TG=tagFx.name;
+const P={tint:-1,tintA:0,spiky:0,jit:0,droop:0,sink:0,swell:1,dim:1,flee:0,bounce:0};
+if(fxA>0){
+  if(TG==='happy'){P.tint=2;P.tintA=0.20*fxA;P.bounce=Math.sin(Math.min(1,(now-tagFx.from)/600)*3.14)*0.05*fxA}
+  else if(TG==='ticklish'){P.jit=0.010*fxA;P.tint=2;P.tintA=0.08*fxA}
+  else if(TG==='shy'){P.tint=3;P.tintA=0.30*fxA;P.swell=1+0.055*Math.sin(Math.min(1,(now-tagFx.from)/900)*3.14)*fxA}
+  else if(TG==='panic'){P.jit=0.020*fxA;P.spiky=fxA}
+  else if(TG==='flee'){P.flee=fxA;P.jit=0.006*fxA}
+  else if(TG==='sleepy'){P.dim=1-0.30*fxA;P.droop=fxA;P.sink=6*fxA}
+  else if(TG==='warm'){P.tint=2;P.tintA=0.26*fxA}
+  else if(TG==='sad'){P.tint=0;P.tintA=0.22*fxA;P.dim=1-0.22*fxA;P.sink=9*fxA}
+  else if(TG==='rare'){P.tint=(Math.floor(t/260)%3===0)?2:((Math.floor(t/260)%3===1)?3:1);P.tintA=0.34*fxA;P.swell=1+0.11*Math.sin(Math.min(1,(now-tagFx.from)/1100)*3.14)*fxA}
+}
+/* flee: タッチ位置から中心が逃げる／warm: 触った側へ寄る */
+let wantX=0,wantY=0;
+if(P.flee>0&&lastPtr){const dx=W/2-lastPtr.x,dy=H/2-lastPtr.y,dl=Math.sqrt(dx*dx+dy*dy);const ang=dl<10?(t*0.0021)%6.283:Math.atan2(dy,dx);wantX=Math.cos(ang)*30*P.flee;wantY=Math.sin(ang)*30*P.flee}
+offX+=(wantX-offX)*Math.min(1,dt/110);offY+=(wantY-offY)*Math.min(1,dt/110);
 const tilt=Math.sin(t*0.00021)*0.16+lookTilt,cY=Math.cos(spin),sY=Math.sin(spin),cX=Math.cos(tilt),sX=Math.sin(tilt);
-const cx=W/2,cy=H/2,breath=1+0.022*Math.sin(t*0.0011)+0.010*Math.sin(t*0.00037);
-const R=Math.min(W,H)*0.345*breath*pop*(1+0.05*voice.env);
-const Rx=R*(1+0.06*mood.squash),Ry=R*(1-0.09*mood.squash);
+const cx=W/2+offX,cy=H/2+offY+P.sink+(P.droop?10*P.droop:0),breath=1+0.022*Math.sin(t*0.0011)+0.010*Math.sin(t*0.00037);
+const R=Math.min(W,H)*0.345*breath*pop*(1+0.05*voice.env)*P.swell*(1+P.bounce);
+const Rx=R*(1+0.06*mood.squash),Ry=R*(1-0.09*mood.squash)*(P.droop?1-0.07*P.droop:1);
 ctx.clearRect(0,0,W,H);
 ctx.globalCompositeOperation='lighter';
 const pulse=0.75+0.25*Math.sin(t*0.0016);
 const gs=R*1.15*(0.9+0.1*pulse)*(1+0.3*voice.env);
-ctx.globalAlpha=0.34*pulse+0.25*voice.env;ctx.drawImage(SPR[0],cx-gs/2,cy-gs/2,gs,gs);
-ctx.globalAlpha=0.85;const ns=R*0.30*(0.92+0.08*Math.sin(t*0.0023))*(1+0.55*voice.env);ctx.drawImage(SPR[mood.warm>0.5?2:2],cx-ns/2,cy-ns/2,ns,ns);
+ctx.globalAlpha=(0.34*pulse+0.25*voice.env)*P.dim;ctx.drawImage(SPR[0],cx-gs/2,cy-gs/2,gs,gs);
+ctx.globalAlpha=0.85*P.dim;const ns=R*0.30*(0.92+0.08*Math.sin(t*0.0023))*(1+0.55*voice.env);ctx.drawImage(SPR[2],cx-ns/2,cy-ns/2,ns,ns);
 if(mood.warm>0.03){ctx.globalAlpha=0.16*mood.warm;const ws=R*2.05;ctx.drawImage(SPR[2],cx-ws/2,cy-ws/2,ws,ws)}
+if(P.tint>=0&&P.tintA>0){ctx.globalAlpha=P.tintA;const ts2=R*2.3;ctx.drawImage(SPR[P.tint],cx-ts2/2,cy-ts2/2,ts2,ts2)}
 ctx.globalAlpha=1;
-for(const s of sparks){s.a+=s.sp*(reduced?0:1)*(1+2.2*voice.env);const bx=Math.cos(s.a)*s.r,by=Math.sin(s.a)*s.r*0.92,bz=Math.sin(s.a+1.3)*0.3;const rx=bx*cY-bz*sY,rz=bx*sY+bz*cX;const ps=1/(1+rz*0.38);const sx=cx+rx*Rx*ps,sy=cy+by*Ry*ps;const d=s.sz*3.4*ps*(1+0.4*voice.env);ctx.globalAlpha=0.75;ctx.drawImage(SPR[1],sx-d/2,sy-d/2,d,d)}
+for(const s of sparks){s.a+=s.sp*(reduced?0:1)*(1+2.2*voice.env);const bx=Math.cos(s.a)*s.r,by=Math.sin(s.a)*s.r*0.92,bz=Math.sin(s.a+1.3)*0.3;const rx=bx*cY-bz*sY,rz=bx*sY+bz*cX;const ps=1/(1+rz*0.38);const sx=cx+rx*Rx*ps,sy=cy+by*Ry*ps;const d=s.sz*3.4*ps*(1+0.4*voice.env);ctx.globalAlpha=0.75*P.dim;ctx.drawImage(SPR[1],sx-d/2,sy-d/2,d,d)}
 ctx.globalAlpha=1;
+const warmPull=(TG==='warm'&&fxA>0)?lastPtr:null;
 for(let fi=0;fi<N;fi+=step){const p=pts[Math.floor(fi)];
 const y1=p.oy*cX-p.oz*sX,z1=p.oy*sX+p.oz*cX;
 const bx=p.ox*cY-z1*sY,bz=p.ox*sY+z1*cY,by=y1;
@@ -283,18 +354,21 @@ if(p.px>=0){
   for(const q of ptrs.values()){const ddx=p.px-q.x,ddy=p.py-q.y,d2=ddx*ddx+ddy*ddy;
     if(d2<14400&&d2>0.01){const d=Math.sqrt(d2),f=(1-d/120);
       if(strokeMode){const s=f*f*0.020/p.ps;p.vx-=ddx/d*s;p.vy-=ddy/d*s}
-      else{const s=f*f*0.055/p.ps;p.vx+=ddx/d*s+(-ddy/d)*s*0.55;p.vy+=ddy/d*s+(ddx/d)*s*0.55}}
+      else{const s=f*f*(0.055*(P.flee>0?1.9:1))/p.ps;p.vx+=ddx/d*s+(-ddy/d)*s*0.55;p.vy+=ddy/d*s+(ddx/d)*s*0.55}}
     else if(d2<36100&&d2>=14400){const d=Math.sqrt(d2),f=(1-d/190)*0.010/p.ps;p.vx-=ddx/d*f;p.vy-=ddy/d*f}}
   if(hover){const ddx=p.px-hover.x,ddy=p.py-hover.y,d2=ddx*ddx+ddy*ddy;if(d2<32400&&d2>0.01){const d=Math.sqrt(d2),f=(1-d/180)*0.012/p.ps;p.vx-=ddx/d*f;p.vy-=ddy/d*f}}
+  if(warmPull){const ddx=p.px-warmPull.x,ddy=p.py-warmPull.y,d2=ddx*ddx+ddy*ddy;if(d2<25600&&d2>0.01){const d=Math.sqrt(d2),f=(1-d/160)*0.016/p.ps;p.vx-=ddx/d*f;p.vy-=ddy/d*f}}
 }
 p.vx+=(0-p.dx)*0.030;p.vy+=(0-p.dy)*0.030;p.vz+=(0-p.dz)*0.030;
 p.vx*=0.90;p.vy*=0.90;p.vz*=0.90;
-p.dx+=p.vx+(shiver?(Math.random()-0.5)*shiver:0);p.dy+=p.vy+(shiver?(Math.random()-0.5)*shiver:0);p.dz+=p.vz;
-const wx=bx+p.dx,wy=by+p.dy,wz=bz+p.dz;
+let jx=0,jy=0;if(P.jit>0){jx=(Math.random()-0.5)*P.jit*2;jy=(Math.random()-0.5)*P.jit*2}
+p.dx+=p.vx+(shiver?(Math.random()-0.5)*shiver:0)+jx;p.dy+=p.vy+(shiver?(Math.random()-0.5)*shiver:0)+jy;p.dz+=p.vz;
+let wx=bx+p.dx,wy=by+p.dy,wz=bz+p.dz;
+if(P.spiky>0){const m=1+P.spiky*0.15*Math.sin(p.ang*6+t*0.045);wx*=m;wy*=m}
 const ps=1/(1+wz*0.38);p.ps=ps;
 const sx=cx+wx*Rx*ps,sy=cy+wy*Ry*ps;p.px=sx;p.py=sy;
 const front=1-(wz+1)/2;
-let a=0.16+0.84*front;a*=0.82+0.18*Math.sin(t*0.002*p.tws+p.twp);a*=1+0.35*voice.env*front;if(a>1)a=1;
+let a=(0.16+0.84*front)*P.dim;a*=0.82+0.18*Math.sin(t*0.002*p.tws+p.twp);a*=1+0.35*voice.env*front;if(a>1)a=1;
 const d=p.sz*7.2*ps*(0.75+0.45*front)*(1+0.5*mood.excite*Math.random()*0.3);
 ctx.globalAlpha=a;ctx.drawImage(SPR[p.spr],sx-d/2,sy-d/2,d,d);
 }
