@@ -8,73 +8,87 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="Shelfiria"><meta property="og:image" content="https://paper-daemon.github.io/og-shooter.jpg"><meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/site.css?v=20261101-1">
 <style>
-.sb-stage{max-width:480px;margin:0 auto;text-align:center}
-.sb-wrap{position:relative;border:3px solid var(--ink);border-radius:18px;box-shadow:8px 8px 0 var(--ink);overflow:hidden;background:#070a24;line-height:0}
-canvas#sb{width:100%;height:auto;display:block;touch-action:none}
-.sb-hud{display:flex;justify-content:space-between;gap:8px;margin-top:12px;font:700 .8rem var(--mono);color:var(--ink-dim);flex-wrap:wrap}
-.sb-btns{display:flex;gap:10px;justify-content:center;margin-top:12px;flex-wrap:wrap}
-.legend{color:var(--muted);font-size:.82rem;line-height:2;margin-top:14px}
-.sb-stages{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+/* 全面ステージ方式（SIコア「大きく遊ぶ」と同型・純弥指示 2026-11-02）：1画面目＝画面いっぱいのステージ、説明は下のセクションへ */
+.sb-full{position:relative;height:100vh;height:100svh;height:100dvh;min-height:520px;overflow:hidden;background:#070a24;display:flex;flex-direction:column;isolation:isolate;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.sb-top{position:relative;z-index:6;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:calc(10px + env(safe-area-inset-top)) 14px 0;pointer-events:none}
+.sb-chip{pointer-events:auto;display:inline-flex;align-items:center;gap:9px;color:#eef1ff;background:rgba(10,12,38,.55);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:7px 14px 7px 8px;font:700 .78rem var(--sans);backdrop-filter:blur(6px);text-decoration:none}
+.sb-chip img{width:26px;height:26px;border-radius:50%;object-fit:cover;display:block}
+.sb-chip.link{padding:9px 16px}
+.sb-title{position:relative;z-index:4;text-align:center;pointer-events:none;padding:4px 20px 0}
+.sb-title p{margin:0;color:#aebaff;font:800 .6rem var(--mono);letter-spacing:.22em}
+.sb-title h1{margin:2px 0 0;color:#fff;font:900 1.3rem/1.2 var(--disp);text-shadow:0 2px 18px rgba(20,24,80,.8)}
+body.sb-playing .sb-title{display:none}
+.sb-hud{position:relative;z-index:4;display:flex;justify-content:center;gap:9px;flex-wrap:nowrap;font:700 .66rem var(--mono);color:#cdd6ff;padding:6px 6px 0;overflow:hidden}
+.sb-hud span{white-space:nowrap}
+.sb-screen{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:4px 8px}
+.sb-wrap{position:relative;line-height:0;display:flex;align-items:center;justify-content:center}
+canvas#sb{display:block;touch-action:none;border-radius:10px}
+.sb-ui{position:relative;z-index:6;padding:0 12px calc(10px + env(safe-area-inset-bottom))}
+.sb-stages{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+.sb-stages .button{flex:1 1 30%;min-height:40px;padding:6px 2px;font-size:.7rem;line-height:1.2}
 .sb-stages .button.sel{outline:3px solid var(--red);outline-offset:1px}
 .sb-stages .button:disabled{opacity:.45;cursor:not-allowed}
-.sb-stages .button{min-height:48px;padding:10px 14px}
-.sb-btns .button{min-height:52px;padding:12px 18px;font-size:.95rem}
-#bombBtn{order:-1;flex:1 1 100%;min-height:64px;font-size:1.15rem;font-weight:900;background:var(--red);color:#fff;border-color:var(--ink)}
+.sb-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.sb-btns .button{min-height:48px;padding:10px 16px;font-size:.95rem}
+#bombBtn{order:-1;flex:1 1 100%;min-height:56px;font-size:1.1rem;font-weight:900;background:var(--red);color:#fff;border-color:var(--ink)}
+.sb-scroll{position:absolute;right:14px;top:50%;transform:translateY(-50%);z-index:5;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#dfe6ff;background:rgba(10,12,38,.55);border:1px solid rgba(255,255,255,.28);border-radius:50%;font:800 .95rem var(--sans);text-decoration:none;backdrop-filter:blur(6px)}
+body.sb-playing .sb-scroll{display:none}
+.legend{color:var(--muted);font-size:.85rem;line-height:2}
 /* 選択膜禁止（純弥指示：連打・長押しでコピー選択膜を出さない） */
 html,body{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 button,a,[role="button"]{touch-action:manipulation}
-/* プレイ中スクロール完全停止（純弥再FB 2026-11-02）：body固定＋JSのtouchmove遮断と併用 */
+body{overscroll-behavior:none}
+/* プレイ中スクロール完全停止（純弥再FB 2026-11-02）：bodyロック＋JSのtouchmove遮断と併用 */
 body.sb-playing{overflow:hidden;touch-action:none}
-body.sb-playing .page-hero{display:none}
-
-/* モバイル1画面化（純弥基準：操作にスクロール不要・2026-11-02） */
-@media (max-width:640px){
-  .site-head{padding:8px 12px;gap:8px;flex-wrap:nowrap}
-  .head-actions{display:none}
-  .brand-avatar{width:30px;height:30px}
-  .site-head nav{gap:12px}
-  .site-head nav a{font-size:.82rem}
-  .page-hero{padding:12px 0 2px}
-  .page-hero h1{font-size:1.45rem}
-  .page-hero .page-lead{display:none}
-  .page-hero .eyebrow{display:none}
-  .section{padding-top:4px}
-  .sb-stage{display:flex;flex-direction:column;touch-action:none}
-  body{overscroll-behavior:none}
-  .sb-wrap{width:min(96vw,calc((100vh - 250px)*0.6774));width:min(96vw,calc((100svh - 250px)*0.6774));margin-left:auto;margin-right:auto}
-  .sb-hud{margin-top:4px;font-size:.72rem;order:2}
-  .sb-btns{margin-top:4px;gap:8px;order:3}
-  .sb-stages{margin-top:4px;gap:5px;order:4}
-  .sb-stages button{flex:1 1 30%;padding:5px 1px;font-size:.68rem;line-height:1.2;min-height:0}
-  .legend{display:none}
-  #bombBtn{height:42px}
-  #pauseBtn,#focusBtn{height:38px}
-}
-@media (max-width:640px) and (max-height:780px){
-  .sb-wrap{width:min(96vw,calc((100vh - 282px)*0.6774));width:min(96vw,calc((100svh - 282px)*0.6774))}
+@media (max-height:780px){
+  .sb-title h1{font-size:1.05rem}
+  .sb-title p{display:none}
+  .sb-stages .button{min-height:34px}
+  #bombBtn{min-height:48px}
+  .sb-btns .button{min-height:40px}
 }
 </style>
 <script data-goatcounter="https://shelfiria.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script><script src="/analytics-out.js" defer></script>
 </head>
 <body>
-<header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>Shelfiria</strong></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
-<main class="page">
-<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — STAR BREAK</p><h1>スターブレイク</h1><p class="page-lead">縦スクロールの弾幕シューティング。全3ステージ——ステージごとに編隊ウェーブを抜けた先にボスがいて、ボスごとに名前付きの「詠唱」を5つ、弾幕のパターンごと切り替えて放ってきます。進むほど先のスタート地点（次のステージや中間地点）が開いていき、奥の地点から始めるほど難易度も上がります。Shiftの低速移動では当たり判定が中心の点だけになり、弾をかするグレイズでもスコアが入ります。</p></section>
-<section class="section" style="border-bottom:none;padding-top:16px">
-<div class="sb-stage">
-<div class="sb-wrap"><canvas id="sb" width="420" height="620"></canvas></div>
+<main>
+<section class="sb-full" id="sbFull" aria-label="スターブレイク">
+<div class="sb-top">
+<a class="sb-chip" href="/"><img src="/amase-avatar.jpg" alt=""><span>Shelfiria</span></a>
+<a class="sb-chip link" href="/demo.html">あそぶ一覧 →</a>
+</div>
+<div class="sb-title"><p>PLAY — STAR BREAK</p><h1>スターブレイク</h1></div>
 <div class="sb-hud"><span>SCORE <b id="hudScore">0</b></span><span>HI <b id="hudHi">0</b></span><span>WAVE <b id="hudWave">-</b></span><span>❤ <b id="hudLife">3</b> ／ 💣 <b id="hudBomb">3</b></span><span>GRAZE <b id="hudGraze">0</b></span></div>
+<div class="sb-screen"><div class="sb-wrap"><canvas id="sb" width="420" height="620"></canvas></div></div>
+<div class="sb-ui">
 <div class="sb-stages" id="stageRow"><button class="button soft" type="button" data-point="0">ステージ1 最初から</button><button class="button soft" type="button" data-point="1">ステージ1 中間から</button><button class="button soft" type="button" data-point="2">ステージ2 最初から</button><button class="button soft" type="button" data-point="3">ステージ2 中間から</button><button class="button soft" type="button" data-point="4">ステージ3 最初から</button><button class="button soft" type="button" data-point="5">ステージ3 中間から</button></div>
 <div class="sb-btns"><button class="button soft" id="bombBtn" type="button">▶ スタート</button><button class="button soft" id="pauseBtn" type="button">一時停止</button><button class="button soft" id="focusBtn" type="button">低速（タッチ用）</button></div>
-<p class="legend">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1102-12</span></p>
 </div>
+<a class="sb-scroll" href="#about" aria-label="下の説明へスクロール">↓</a>
 </section>
+<section class="section" id="about"><div class="page">
+<p class="eyebrow">PLAY — STAR BREAK</p>
+<h2 style="font-size:clamp(1.55rem,3.4vw,2.3rem);margin:0 0 14px">縦スクロール弾幕、画面いっぱいで。</h2>
+<p style="max-width:44rem;line-height:1.95;color:var(--ink-dim);margin:0">縦スクロールの弾幕シューティング。全3ステージ——ステージごとに編隊ウェーブを抜けた先にボスがいて、ボスごとに名前付きの「詠唱」を5つ、弾幕のパターンごと切り替えて放ってきます。進むほど先のスタート地点（次のステージや中間地点）が開いていき、奥の地点から始めるほど難易度も上がります。Shiftの低速移動では当たり判定が中心の点だけになり、弾をかするグレイズでもスコアが入ります。</p>
+<p class="legend" style="margin-top:22px">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1102-13</span></p>
+<p style="margin-top:26px"><a class="button soft" href="/demo.html">あそぶ一覧へ →</a></p>
+</div></section>
 </main>
 <footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>Shelfiria</strong></span></div><nav><a href="/">トップ</a><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a><a href="https://coconala.com/users/3185601">ココナラ</a></nav></footer>
 <script>
 'use strict';
 const cv=document.getElementById('sb'),ctx=cv.getContext('2d');
 const W=420,H=620;
+// fit the 420x620 field into the stage screen area, always at the exact aspect (JS-driven, like core's resize)
+const sbScreen=document.querySelector('.sb-screen');
+function fitCanvas(){
+  if(!sbScreen)return;
+  const r=sbScreen.getBoundingClientRect();
+  const s=Math.min((r.width-16)/W,(r.height-8)/H);
+  if(s>0){cv.style.width=Math.floor(W*s)+'px';cv.style.height=Math.floor(H*s)+'px';}
+}
+addEventListener('resize',fitCanvas);
+requestAnimationFrame(fitCanvas);
 const $=id=>document.getElementById(id);
 const hudScore=$('hudScore'),hudHi=$('hudHi'),hudWave=$('hudWave'),hudLife=$('hudLife'),hudBomb=$('hudBomb'),hudGraze=$('hudGraze');
 let hi=+(localStorage.getItem('sbBest')||0);
@@ -509,6 +523,7 @@ function syncChrome(){
   // the big bar under the field is the main action: START before the game, BOMB during play
   const bb=$('bombBtn');
   if(bb)bb.textContent=mode==='play'?'ボム（X）':mode==='over'?'コンテニュー':'▶ スタート';
+  requestAnimationFrame(fitCanvas);
 }
 function startGame(pi){
   if(pi===undefined)pi=selPoint;
