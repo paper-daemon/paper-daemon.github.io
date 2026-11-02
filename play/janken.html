@@ -21,10 +21,10 @@
 .pips{letter-spacing:.18em}
 .prev{font-size:.8rem;color:var(--muted);min-height:1.4em;margin-top:2px}
 .duel2{display:flex;justify-content:center;gap:8px;align-items:center;margin:4px 0}
-.fighter{width:42%;max-width:190px;text-align:center}
+.fighter{width:58%;max-width:230px;text-align:center}
 .fighter .who{font:700 .68rem var(--mono);color:var(--muted);letter-spacing:.14em}
 .handview{position:relative;display:flex;align-items:center;justify-content:center}
-.handview img{width:100%;max-width:168px;aspect-ratio:1/1;object-fit:cover;border-radius:22px;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink)}
+.handview img{width:100%;max-width:200px;aspect-ratio:1/1;object-fit:cover;border-radius:22px;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink)}
 .handview .emo{font-size:5.2rem;line-height:1}
 .handview.shaking{animation:jkshake .26s ease-in-out infinite}
 @keyframes jkshake{0%,100%{transform:translateY(0)}50%{transform:translateY(-13px)}}
@@ -53,7 +53,6 @@
 <div class="stage-wrap"><video poster="/play/assets/hand2-rock.jpg" id="stageVid" src="/play/assets/hand-idle2.mp4" autoplay muted loop playsinline preload="auto"></video><p class="stage-plate"><small>AMASE&rsquo;S STAGE</small>あませのステージ</p></div>
 <div class="bgm-row" style="max-width:none;margin:0 0 4px"><button class="bgm-toggle" id="bgmBtn" type="button">♪ BGM</button></div>
 <div class="duel2">
-<div class="fighter"><p class="who">AMASE</p><div class="handview" id="eveView"><span class="emo" id="eveEmo">✊</span><img id="eveImg" src="/play/assets/hand2-rock.jpg" alt="あませの手" onerror="this.remove()"></div></div>
 <div class="fighter"><p class="who">YOU</p><div class="handview" id="youView"><span class="emo" id="youEmo">✊</span><img id="youImg" src="/play/assets/player-hand2-rock.jpg" alt="あなたの手" onerror="this.remove()"></div></div>
 </div>
 <p class="beat" id="beat"></p>
@@ -122,8 +121,8 @@ if(lastOut==="win"&&lastYou>=0&&Math.random()<0.55)return (lastYou+2)%3;
 return Math.floor(Math.random()*3);
 }
 let busy=false;
-const eveView=document.getElementById("eveView"),youView=document.getElementById("youView"),beatEl=document.getElementById("beat");
-const eveImg=document.getElementById("eveImg"),youImg=document.getElementById("youImg"),eveEmo=document.getElementById("eveEmo"),youEmo=document.getElementById("youEmo");
+const youView=document.getElementById("youView"),beatEl=document.getElementById("beat");
+const youImg=document.getElementById("youImg"),youEmo=document.getElementById("youEmo");
 function reveal(you,eve){
 let out;
 if(you===eve){out="draw";d++;streak=0;result.textContent="あいこ";playResultFx("draw");if(!jplay(JAU.draw))tone(520,0.09,"sine",0.1);setTimeout(()=>jplayV(JV.draw),520)}
@@ -140,7 +139,7 @@ paintScore();
 const THROW={0:{src:"/play/assets/hand-throw2-rock.mp4",at:1200},1:{src:"/play/assets/hand-throw2-scissors.mp4",at:1300},2:{src:"/play/assets/hand-throw2-paper.mp4",at:1500}};
 const stageVid=document.getElementById("stageVid");
 function toIdle(){if(!stageVid)return;stageVid.loop=true;if(!stageVid.src.includes("hand-idle2"))stageVid.src="/play/assets/hand-idle2.mp4";const p=stageVid.play();if(p)p.catch(()=>{});}
-setHand(youView,youImg,youEmo,0,YOUIMG);setHand(eveView,eveImg,eveEmo,0);
+setHand(youView,youImg,youEmo,0,YOUIMG);
 const jkStart=document.getElementById("jkStart");
 let chant=null;
 function setHandsEnabled(on){document.querySelectorAll(".handbtn").forEach(x=>x.disabled=!on);}
@@ -150,21 +149,21 @@ if(busy||chant)return;busy=true;jBgmStart();if(!window.__greeted){window.__greet
 const eve=pickEve();
 chant={eve: eve};
 beatEl.textContent="じゃん・けん！";result.textContent="手を選んでね";line.textContent="あませ「いくよ？」";
-setHand(youView,youImg,youEmo,0,YOUIMG);setHand(eveView,eveImg,eveEmo,0);
+setHand(youView,youImg,youEmo,0,YOUIMG);
 jkStart.style.display="none";setHandsEnabled(true);busy=false;
 });
 document.querySelectorAll(".handbtn").forEach(b=>b.addEventListener("click",()=>{
 if(busy||!chant)return;busy=true;
 const you=Number(b.dataset.h);const eve=chant.eve;chant=null;
 setHandsEnabled(false);
-eveView.classList.add("shaking");youView.classList.add("shaking");
-setHand(youView,youImg,youEmo,0,YOUIMG);setHand(eveView,eveImg,eveEmo,0);
+youView.classList.add("shaking");
+setHand(youView,youImg,youEmo,0,YOUIMG);
 let done=false;
 const finish=()=>{
 if(done)return;done=true;
 beatEl.textContent="ぽん！";if(!jplayV(JV.pon)&&!jplay(JAU.pon))tone(920,0.08,"sine",0.13);vibJ(18);
-eveView.classList.remove("shaking");youView.classList.remove("shaking");
-setHand(youView,youImg,youEmo,you,YOUIMG);setHand(eveView,eveImg,eveEmo,eve);
+youView.classList.remove("shaking");
+setHand(youView,youImg,youEmo,you,YOUIMG);
 reveal(you,eve);
 busy=false;
 jkStart.textContent="もう一回";jkStart.style.display="";
