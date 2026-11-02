@@ -33,7 +33,7 @@ canvas#sb{width:100%;height:auto;display:block;touch-action:none}
 <div class="sb-hud"><span>SCORE <b id="hudScore">0</b></span><span>HI <b id="hudHi">0</b></span><span>WAVE <b id="hudWave">-</b></span><span>❤ <b id="hudLife">3</b> ／ 💣 <b id="hudBomb">3</b></span><span>GRAZE <b id="hudGraze">0</b></span></div>
 <div class="sb-stages" id="stageRow"><button class="button soft" type="button" data-point="0">ステージ1 最初から</button><button class="button soft" type="button" data-point="1">ステージ1 中間から</button><button class="button soft" type="button" data-point="2">ステージ2 最初から</button><button class="button soft" type="button" data-point="3">ステージ2 中間から</button><button class="button soft" type="button" data-point="4">ステージ3 最初から</button><button class="button soft" type="button" data-point="5">ステージ3 中間から</button></div>
 <div class="sb-btns"><button class="button soft" id="bombBtn" type="button">▶ スタート</button><button class="button soft" id="pauseBtn" type="button">一時停止</button><button class="button soft" id="focusBtn" type="button">低速（タッチ用）</button></div>
-<p class="legend">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1102-5</span></p>
+<p class="legend">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1102-6</span></p>
 </div>
 </section>
 </main>
@@ -405,7 +405,7 @@ function syncChrome(){
   if(row)row.style.display=mode==='play'?'none':'flex';
   // the big bar under the field is the main action: START before the game, BOMB during play
   const bb=$('bombBtn');
-  if(bb)bb.textContent=mode==='play'?'ボム（X）':'▶ スタート';
+  if(bb)bb.textContent=mode==='play'?'ボム（X）':mode==='over'?'コンテニュー':'▶ スタート';
 }
 function startGame(pi){
   if(pi===undefined)pi=selPoint;
@@ -416,6 +416,8 @@ function startGame(pi){
 }
 let primed=false;
 function primeAudio(){if(primed)return;primed=true;try{for(const k of['bgmBoss','bgmBoss2','bgmBoss3']){const a=AU[k];if(a){a.load();const v0=a.volume;a.volume=0;const pr=a.play();if(pr&&pr.then)pr.then(()=>{if(AU.cur!==a){a.pause();a.currentTime=0;}a.volume=v0;}).catch(()=>{a.volume=v0;});}}for(const k in AU.se)AU.se[k].load();}catch(e){}}
+function continueGame(){const keep=score,keepG=graze;startGame((stage-1)*2);score=keep;graze=keepG;power=Math.max(2,power);lives=3;bombs=3;hud();}
+function tapAction(){const now=performance.now();if(now-(window.__lastTapAct||0)<450)return;window.__lastTapAct=now;if(mode==='title')startGame(selPoint);else if(mode==='over')continueGame();else if(mode==='clear'&&stage<3)startGame(stage*2);}
 function hud(){
   hudScore.textContent=score;hudHi.textContent=hi;
   hudWave.textContent=mode==='play'?(boss?'BOSS':stage+'-'+wave):'-';
@@ -700,7 +702,7 @@ function draw(){
     ctx.fillText('Shiftで低速：判定は中心の点だけ',W/2,352);
     ctx.fillText('弾をかすってグレイズ +300点',W/2,378);
     ctx.fillText('ボム：Xキー／大ボタン／ダブルタップ',W/2,404);
-    ctx.fillStyle='#ffe066';ctx.font='700 16px sans-serif';ctx.fillText('スタートボタン or Enterで開始',W/2,428);
+    ctx.fillStyle='#ffe066';ctx.font='700 16px sans-serif';ctx.fillText('タップ or スタートボタンで開始',W/2,428);
     ctx.fillStyle='#9fb4ff';ctx.font='13px sans-serif';ctx.fillText('HI-SCORE '+hi,W/2,462);
   }
   if(mode==='over'){
@@ -708,7 +710,7 @@ function draw(){
     ctx.textAlign='center';ctx.fillStyle='#fff';ctx.font='900 34px sans-serif';ctx.fillText('GAME OVER',W/2,250);
     ctx.font='16px sans-serif';ctx.fillStyle='#dfe8ff';
     ctx.fillText('SCORE '+score,W/2,300);ctx.fillText('STAGE '+stage+' ／ GRAZE '+graze,W/2,330);
-    ctx.fillStyle='#ffe066';ctx.font='700 15px sans-serif';ctx.fillText('もう一度：スタート or Enter',W/2,382);
+    ctx.fillStyle='#ffe066';ctx.font='700 15px sans-serif';ctx.fillText('タップでコンテニュー（ステージ最初から・スコアそのまま）',W/2,382);
   }
   if(mode==='clear'){
     ctx.fillStyle='rgba(4,6,20,.55)';ctx.fillRect(0,0,W,H);
@@ -741,7 +743,7 @@ addEventListener('keydown',e=>{
   if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key))e.preventDefault();
   keys[e.key]=true;keys[e.key.length===1?e.key.toLowerCase():e.key]=true;
   if(e.key==='x'||e.key==='X')useBomb();
-  if(e.key==='Enter'&&mode!=='play'){if(mode==='clear'&&stage<3)startGame(stage*2);else startGame(selPoint);}
+  if(e.key==='Enter'&&mode!=='play'){if(mode==='over')continueGame();else if(mode==='clear'&&stage<3)startGame(stage*2);else startGame(selPoint);}
   if(e.key==='Escape'&&mode==='play')togglePause();
 });
 addEventListener('keyup',e=>{keys[e.key]=false;keys[e.key.length===1?e.key.toLowerCase():e.key]=false;});
@@ -752,7 +754,7 @@ const _step=step;
 step=function(){if(!paused)_step();};
 // touch: drag to move; quick double-tap (short, stationary) = bomb
 let touchId=null,tapStart=null,lastTapEnd=0;
-cv.addEventListener('touchstart',e=>{e.preventDefault();const t=e.changedTouches[0];touchId=t.identifier;tapStart={t:performance.now(),x:t.clientX,y:t.clientY,moved:false};moveTouch(t);},{passive:false});
+cv.addEventListener('touchstart',e=>{e.preventDefault();if(mode!=='play')tapAction();const t=e.changedTouches[0];touchId=t.identifier;tapStart={t:performance.now(),x:t.clientX,y:t.clientY,moved:false};moveTouch(t);},{passive:false});
 cv.addEventListener('touchmove',e=>{e.preventDefault();for(const t of e.changedTouches)if(t.identifier===touchId){if(tapStart&&Math.hypot(t.clientX-tapStart.x,t.clientY-tapStart.y)>14)tapStart.moved=true;moveTouch(t);}},{passive:false});
 cv.addEventListener('touchend',e=>{
   touchId=null;
@@ -763,6 +765,7 @@ cv.addEventListener('touchend',e=>{
   }
   tapStart=null;
 });
+cv.addEventListener('mousedown',()=>{if(mode!=='play')tapAction();});
 function moveTouch(t){
   if(mode!=='play')return;
   const r=cv.getBoundingClientRect();
@@ -783,7 +786,7 @@ function updateStageUI(){
 for(const b of stageBtns)b.addEventListener('click',()=>{if(b.disabled)return;selPoint=+b.dataset.point;selStage=pointStage(selPoint);updateStageUI();});
 updateStageUI();
 syncChrome();
-$('bombBtn').addEventListener('click',()=>{if(mode==='play'){useBomb();}else if(mode==='clear'&&stage<3){startGame(stage*2);}else{startGame(selPoint);}});
+$('bombBtn').addEventListener('click',()=>{if(mode==='play'){useBomb();}else if(mode==='over'){continueGame();}else if(mode==='clear'&&stage<3){startGame(stage*2);}else{startGame(selPoint);}});
 $('pauseBtn').addEventListener('click',()=>{if(mode==='play')togglePause();});
 $('focusBtn').addEventListener('click',()=>{focusTouch=!focusTouch;$('focusBtn').textContent=focusTouch?'低速：ON':'低速（タッチ用）';});
 hud();
