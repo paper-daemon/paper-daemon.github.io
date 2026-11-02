@@ -46,6 +46,10 @@
     try{localStorage.setItem("amase-v8-saved",JSON.stringify([...saved]))}catch(e){}
     render();
   });
+  document.querySelectorAll("[data-category-link]").forEach(link=>link.addEventListener("click",()=>{
+    const kind=link.dataset.categoryLink;
+    if(Object.hasOwn(kinds,kind)){selection=kind;searchTerm="";search.value="";limit=14;render()}
+  }));
   $("randomGame").addEventListener("click",()=>{
     const list=records.filter(x=>x.kind==="game");if(list.length)location.href=list[Math.floor(Math.random()*list.length)].href;
   });
