@@ -178,15 +178,21 @@ function countUp(el,from,to,dur){
 }
 /* win celebration videos (screen-blended); silently absent until files land */
 const fxVideo=document.getElementById('fxVideo');
-function playFx(jackpot){
-  const src=jackpot?'/play/assets/jackpot-fx.mp4':'/play/assets/win-fx.mp4';
-  if(fxVideo.dataset.src!==src){fxVideo.dataset.src=src;fxVideo.src=src}
-  if(fxVideo.networkState===3)return false;
+function showFx(){
   try{fxVideo.currentTime=0;const p=fxVideo.play();if(p&&p.catch)p.catch(()=>{});
     fxVideo.classList.add('on');
     fxVideo.onended=()=>fxVideo.classList.remove('on');
-    setTimeout(()=>fxVideo.classList.remove('on'),4500);
-    return true}catch(e){return false}
+    setTimeout(()=>fxVideo.classList.remove('on'),4600);
+  }catch(e){}
+}
+function playFx(jackpot){
+  const src=jackpot?'/play/assets/jackpot-fx.mp4':'/play/assets/win-fx.mp4';
+  if(fxVideo.dataset.src!==src){
+    fxVideo.dataset.src=src;fxVideo.src=src;
+    fxVideo.addEventListener('canplay',function h(){fxVideo.removeEventListener('canplay',h);showFx()});
+    fxVideo.load();
+  }else showFx();
+  return true;
 }
 function sparkles(n){
   for(let i=0;i<n;i++){
