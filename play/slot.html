@@ -7,28 +7,40 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="Shelfiria"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/site.css?v=20261101-1">
 <style>.slot-stage{max-width:520px;margin:0 auto;text-align:center}
-.machine{background:linear-gradient(180deg,#2b2150,#171233);border:3px solid var(--ink);border-radius:22px;box-shadow:8px 8px 0 var(--ink);padding:26px 22px;color:#fff}
+.machine{background:linear-gradient(180deg,#2b2150,#171233);border:3px solid var(--ink);border-radius:22px;box-shadow:8px 8px 0 var(--ink);padding:26px 22px;color:#fff;position:relative;overflow:hidden}
+.machine.celebrate{animation:machineGlow .5s ease-in-out 6 alternate}
+@keyframes machineGlow{from{box-shadow:8px 8px 0 var(--ink),0 0 0 0 rgba(245,179,1,0)}to{box-shadow:8px 8px 0 var(--ink),0 0 42px 10px rgba(245,179,1,.8)}}
 .reels{display:flex;gap:12px;justify-content:center;margin:8px 0 18px}
-.reel{width:96px;height:110px;background:#fffdf4;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:3rem;color:#171233;box-shadow:inset 0 -8px 0 rgba(19,24,71,.12)}
-.reel.spin{animation:reelShake .12s linear infinite}
-@keyframes reelShake{0%{transform:translateY(-2px)}50%{transform:translateY(2px)}100%{transform:translateY(-2px)}}
+.reel{width:96px;height:110px;background:#fffdf4;border-radius:14px;overflow:hidden;position:relative;box-shadow:inset 0 -8px 0 rgba(19,24,71,.12),inset 0 8px 0 rgba(19,24,71,.08)}
+.reel .strip{position:absolute;left:0;top:0;width:100%;will-change:transform}
+.reel .cell{height:110px;display:flex;align-items:center;justify-content:center;font-size:3rem;color:#171233;line-height:1}
+.reel .cell img{width:88px;height:88px;object-fit:contain;display:none}
+.reel.art .cell img{display:block}
+.reel.art .cell .glyph{display:none}
+.reel.fast .strip{filter:blur(2.5px)}
 .reel.win{outline:4px solid #f5b301}
+.reel.reach{animation:reachPulse .3s ease-in-out infinite alternate}
+@keyframes reachPulse{from{box-shadow:0 0 0 0 rgba(245,179,1,.0)}to{box-shadow:0 0 22px 6px rgba(245,179,1,.75)}}
 .coins{font:700 1rem var(--mono);letter-spacing:.06em}
 .msg{min-height:1.8em;font-weight:700;color:#ffd98a;margin:10px 0 0}
 .pay{margin:18px auto 0;font-size:.8rem;color:var(--muted);line-height:2;text-align:left;max-width:340px}
 .jp{font:700 1rem var(--mono);color:#ffe066;letter-spacing:.06em;margin-top:2px}
-.reel.reach{animation:reachPulse .3s ease-in-out infinite alternate}
-@keyframes reachPulse{from{box-shadow:0 0 0 0 rgba(245,179,1,.0)}to{box-shadow:0 0 22px 6px rgba(245,179,1,.75)}}
 .bet-btns{display:flex;gap:8px;justify-content:center;margin:12px 0 2px}
 .bet-btns button{font:700 .85rem var(--mono);padding:7px 16px;border:2px solid #fff;border-radius:999px;background:transparent;color:#fff;cursor:pointer}
-.bet-btns button.on{background:#f5b301;border-color:#f5b301;color:#171233}</style>
+.bet-btns button.on{background:#f5b301;border-color:#f5b301;color:#171233}
+.bgm-toggle{position:absolute;top:10px;right:12px;background:transparent;border:2px solid rgba(255,255,255,.5);color:#fff;border-radius:999px;width:38px;height:38px;font-size:1rem;cursor:pointer}
+.bgm-toggle.off{opacity:.45}
+.sparkle{position:absolute;pointer-events:none;font-size:1.3rem;animation:sparkleFly 1.1s ease-out forwards}
+@keyframes sparkleFly{0%{transform:translateY(0) scale(.6);opacity:1}100%{transform:translateY(-150px) scale(1.25);opacity:0}}
+</style>
 </head>
 <body>
 <header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>Shelfiria</strong></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
 <main class="page">
 <section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — SLOT</p><h1>あませスロット</h1><p class="page-lead">ボタンを押して3つの絵をそろえるだけ。賭けるたびにジャックポットが貯まっていき、★3つで総取り。2つそろうと3つ目がゆっくり止まるリーチ演出つき。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
-<div class="slot-stage"><div class="machine">
+<div class="slot-stage"><div class="machine" id="machine">
+<button class="bgm-toggle" id="bgmBtn" type="button" aria-label="BGM切り替え">♪</button>
 <p class="coins">COINS <span id="coins">100</span></p>
 <p class="jp">★ JACKPOT <span id="jp">500</span></p>
 <div class="bet-btns" role="group" aria-label="BET">
@@ -36,53 +48,158 @@
 <button type="button" data-bet="30">BET 30</button>
 <button type="button" data-bet="50">BET 50</button>
 </div>
-<div class="reels"><div class="reel" id="r0">★</div><div class="reel" id="r1">◆</div><div class="reel" id="r2">●</div></div>
+<div class="reels"><div class="reel" id="r0"></div><div class="reel" id="r1"></div><div class="reel" id="r2"></div></div>
 <button class="button primary" id="spinBtn" type="button" style="font-size:1.05rem;padding:14px 38px">まわす</button>
 <p class="msg" id="msg">3つそろえば当たり。★3つでジャックポット総取り。</p>
 </div>
 <p class="pay">配当（BET10のとき）：★★★ ジャックポット全額 ／ ◆◆◆ 200 ／ ●●● 120 ／ ▲▲▲ 100 ／ どれか2つ 15。BETを上げると配当も比例して上がります。<br>ジャックポットは1回まわすごとに少しずつ貯まります。コインとプールはこの端末に保存されます。コインが尽きたら100枚もらえます。</p></div>
 </section>
 </main>
-<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>Shelfiria</strong></span></div><nav><a href="/">トップ</a><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
-<script>let AC=null;function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>Shelfiria</strong></span></div><nav><a href="/">トップ</a><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/@ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
+<script>
+'use strict';
+/* ---------- fallback beeps (used until audio files land, and if they fail) ---------- */
+let AC=null;function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC}
 function tone(f,d,type,v,when){const ac=audio();if(!ac)return;const t=ac.currentTime+(when||0);const o=ac.createOscillator(),g=ac.createGain();o.type=type||"sine";o.frequency.value=f;g.gain.setValueAtTime(v||0.12,t);g.gain.exponentialRampToValueAtTime(0.001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02)}
-const SYMS=["★","◆","●","▲"],W=[2,4,5,6];
-let coins=Number(localStorage.getItem("slotCoins"));if(Number.isNaN(coins))coins=100;if(coins<=0)coins=100;
-let jp=Number(localStorage.getItem("slotJP"));if(!jp||jp<500)jp=500;
+/* ---------- file audio (Star Break-grade), graceful fallback ---------- */
+const oggOk=(()=>{const a=document.createElement('audio');return !!(a.canPlayType&&a.canPlayType('audio/ogg; codecs="vorbis"').replace(/no/,''))})();
+function mkAudio(src,vol,loop){const a=new Audio();a.preload='auto';a.src=src;a.volume=vol;if(loop)a.loop=true;return a}
+const AU={};
+function loadAudio(){
+  const ext=oggOk?'ogg':'mp3';
+  AU.bgm=mkAudio('/play/assets/bgm_slot_loop.'+ext,0.32,true);
+  AU.spin=mkAudio('/play/assets/se-slot-spin.'+ext,0.5);
+  AU.stop=mkAudio('/play/assets/se-slot-stop.'+ext,0.6);
+  AU.reach=mkAudio('/play/assets/se-slot-reach.'+ext,0.55);
+  AU.win=mkAudio('/play/assets/se-slot-win.'+ext,0.6);
+  AU.jackpot=mkAudio('/play/assets/se-slot-jackpot.'+ext,0.7);
+  AU.coin=mkAudio('/play/assets/se-slot-coin.'+ext,0.5);
+}
+loadAudio();
+function usable(a){return !!a&&a.networkState!==3}
+function playFile(a){if(!usable(a))return false;try{a.currentTime=0;const p=a.play();if(p&&p.catch)p.catch(()=>{});return true}catch(e){return false}}
+let bgmOn=true,bgmStarted=false;
+function startBgm(){if(!bgmOn||bgmStarted)return;if(usable(AU.bgm)){try{const p=AU.bgm.play();if(p&&p.catch)p.catch(()=>{});bgmStarted=true}catch(e){}}}
+function se(name,fallback){if(playFile(AU[name]))return;if(fallback)fallback()}
+const SE_FALLBACK={
+  spin(){tone(300,0.06,'square',0.05)},
+  stop(){tone(520,0.07,'sine',0.1)},
+  reach(){tone(740,0.1,'sine',0.11);tone(880,0.14,'sine',0.11,0.12)},
+  win(){tone(784,0.12,'sine',0.12);tone(988,0.12,'sine',0.12,0.1);tone(1318,0.22,'sine',0.12,0.2)},
+  jackpot(){tone(784,0.12,'sine',0.12);tone(988,0.12,'sine',0.12,0.1);tone(1175,0.12,'sine',0.12,0.2);tone(1568,0.3,'sine',0.13,0.3)},
+  coin(){tone(1568,0.06,'square',0.06);tone(2093,0.09,'square',0.06,0.05)}
+};
+document.getElementById('bgmBtn').addEventListener('click',function(){
+  bgmOn=!bgmOn;this.classList.toggle('off',!bgmOn);
+  if(!bgmOn){if(AU.bgm)AU.bgm.pause()}
+  else{bgmStarted=false;startBgm()}
+});
+/* ---------- game state (unchanged balance) ---------- */
+const SYMS=['★','◆','●','▲'],W=[2,4,5,6];
+const ART=['/play/assets/slot-star.png','/play/assets/slot-dia.png','/play/assets/slot-orb.png','/play/assets/slot-gem.png'];
+let coins=Number(localStorage.getItem('slotCoins'));if(Number.isNaN(coins))coins=100;if(coins<=0)coins=100;
+let jp=Number(localStorage.getItem('slotJP'));if(!jp||jp<500)jp=500;
 let bet=10;
-const reels=[0,1,2].map(i=>document.getElementById("r"+i)),msg=document.getElementById("msg"),btn=document.getElementById("spinBtn"),cEl=document.getElementById("coins"),jpEl=document.getElementById("jp");
-function save(){localStorage.setItem("slotCoins",coins);localStorage.setItem("slotJP",jp)}
+const reelEls=[0,1,2].map(i=>document.getElementById('r'+i)),msg=document.getElementById('msg'),btn=document.getElementById('spinBtn'),cEl=document.getElementById('coins'),jpEl=document.getElementById('jp'),machine=document.getElementById('machine');
+function save(){localStorage.setItem('slotCoins',coins);localStorage.setItem('slotJP',jp)}
 function draw(){cEl.textContent=coins;jpEl.textContent=jp}
-function pick(){let t=W.reduce((a,b)=>a+b,0),r=Math.random()*t;for(let i=0;i<4;i++){if((r-=W[i])<0)return SYMS[i]}return "●"}
-document.querySelectorAll(".bet-btns button").forEach(b=>{b.addEventListener("click",()=>{if(spinning)return;document.querySelectorAll(".bet-btns button").forEach(x=>x.classList.remove("on"));b.classList.add("on");bet=Number(b.dataset.bet);tone(600,0.05,"sine",0.08)})});
+function pick(){let t=W.reduce((a,b)=>a+b,0),r=Math.random()*t;for(let i=0;i<4;i++){if((r-=W[i])<0)return i}return 2}
+/* art: if all 4 symbol images load, switch reels to art rendering */
+let artReady=false;
+(function(){let ok=0;ART.forEach(src=>{const im=new Image();im.onload=()=>{ok++;if(ok===4){artReady=true;reelEls.forEach(el=>el.classList.add('art'))}};im.src=src})})();
+/* ---------- reel strips ---------- */
+const CELL=110;
+function cellHTML(idx){return '<div class="cell"><span class="glyph">'+SYMS[idx]+'</span><img src="'+ART[idx]+'" alt=""></div>'}
+function buildStrip(finalIdx,loops){
+  const seq=[];const total=loops*4+finalIdx+1;
+  for(let i=0;i<total;i++)seq.push(i===total-1?finalIdx:Math.floor(Math.random()*4));
+  return {html:seq.map(cellHTML).join(''),cells:total};
+}
+const currentIdx=[0,1,2];
+function setReel(i,idx){const el=reelEls[i];el.innerHTML='<div class="strip">'+cellHTML(idx)+'</div>';currentIdx[i]=idx}
+reelEls.forEach((el,i)=>setReel(i,currentIdx[i]));
+function spinReel(i,finalIdx,duration,done){
+  const el=reelEls[i];
+  const loops=3+Math.floor(duration/500);
+  const built=buildStrip(finalIdx,loops);
+  el.innerHTML='<div class="strip">'+built.html+'</div>';
+  const strip=el.firstChild;
+  const dist=(built.cells-1)*CELL;
+  const t0=performance.now();
+  el.classList.add('fast');
+  function easeOutCubic(x){return 1-Math.pow(1-x,3)}
+  function tick(now){
+    let p=(now-t0)/duration;if(p>1)p=1;
+    const e=easeOutCubic(p);
+    strip.style.transform='translateY('+(-dist*e)+'px)';
+    if(p>0.55)el.classList.remove('fast');
+    if(p<1){requestAnimationFrame(tick)}
+    else{
+      /* settle bounce */
+      strip.style.transition='transform .12s ease-out';strip.style.transform='translateY('+(-dist+5)+'px)';
+      setTimeout(()=>{strip.style.transform='translateY('+(-dist)+'px)';setReel(i,finalIdx);done()},130);
+    }
+  }
+  requestAnimationFrame(tick);
+}
+/* ---------- spin flow ---------- */
 let spinning=false;
-btn.addEventListener("click",()=>{
-if(spinning)return;
-if(coins<bet){msg.textContent="コイン不足。100枚あげるから、もう一回押して。";coins=100;draw();save();return}
-spinning=true;coins-=bet;jp+=Math.ceil(bet/2);draw();save();msg.textContent="…";
-reels.forEach(r=>{r.classList.add("spin");r.classList.remove("win","reach")});
-const finals=[pick(),pick(),pick()];
-const reach=finals[0]===finals[1];
-reels.forEach((r,i)=>{
-const iv=setInterval(()=>{r.textContent=SYMS[Math.floor(Math.random()*4)];tone(300+Math.random()*200,0.03,"square",0.03)},70);
-let stopAt=700+i*350;
-if(i===2&&reach)stopAt=700+2*350+1100;
-setTimeout(()=>{clearInterval(iv);r.textContent=finals[i];r.classList.remove("spin");tone(520,0.07,"sine",0.1);
-if(i===1&&reach){msg.textContent="リーチ！！";reels[2].classList.add("reach");tone(740,0.1,"sine",0.11);tone(880,0.14,"sine",0.11,0.12)}
-if(i===2){reels[2].classList.remove("reach");judge(finals)}},stopAt);
+document.querySelectorAll('.bet-btns button').forEach(b=>{b.addEventListener('click',()=>{if(spinning)return;document.querySelectorAll('.bet-btns button').forEach(x=>x.classList.remove('on'));b.classList.add('on');bet=Number(b.dataset.bet);tone(600,0.05,'sine',0.08)})});
+btn.addEventListener('click',()=>{
+  if(spinning)return;
+  startBgm();
+  if(coins<bet){msg.textContent='コイン不足。100枚あげるから、もう一回押して。';coins=100;draw();save();return}
+  spinning=true;coins-=bet;jp+=Math.ceil(bet/2);draw();save();msg.textContent='…';
+  machine.classList.remove('celebrate');
+  reelEls.forEach(r=>r.classList.remove('win','reach'));
+  se('spin',SE_FALLBACK.spin);
+  const finals=[pick(),pick(),pick()];
+  const reachPair=finals[0]===finals[1];
+  let stopped=0;
+  finals.forEach((f,i)=>{
+    let dur=750+i*380;
+    if(i===2&&reachPair)dur=750+2*380+1150;
+    spinReel(i,f,dur,()=>{
+      se('stop',SE_FALLBACK.stop);
+      stopped++;
+      if(i===1&&reachPair){msg.textContent='リーチ！！';reelEls[2].classList.add('reach');se('reach',SE_FALLBACK.reach)}
+      if(i===2)reelEls[2].classList.remove('reach');
+      if(stopped===3)judge(finals);
+    });
+  });
 });
-});
+function countUp(el,from,to,dur){
+  const t0=performance.now();
+  function tick(now){let p=(now-t0)/dur;if(p>1)p=1;el.textContent=Math.round(from+(to-from)*p);if(p<1)requestAnimationFrame(tick)}
+  requestAnimationFrame(tick);
+}
+function sparkles(n){
+  for(let i=0;i<n;i++){
+    const s=document.createElement('span');s.className='sparkle';s.textContent='✦';
+    s.style.left=(15+Math.random()*70)+'%';s.style.top=(55+Math.random()*20)+'%';s.style.color=['#ffe066','#f5b301','#fff3b0'][i%3];
+    machine.appendChild(s);setTimeout(()=>s.remove(),1200);
+  }
+}
 function judge(finals){
-const[a,b,c]=finals;const m=bet/10;let win=0,label="";
-if(a===b&&b===c){
-if(a==="★"){win=jp;label="★★★ JACKPOT!! +"+win;jp=500}
-else{win=(a==="◆"?200:a==="●"?120:100)*m;label="3つそろった！ +"+win}
+  const[a,b,c]=finals.map(i=>SYMS[i]);const m=bet/10;let win=0,label='',isJp=false;
+  if(a===b&&b===c){
+    if(a==='★'){win=jp;label='★★★ JACKPOT!! +'+win;jp=500;isJp=true}
+    else{win=(a==='◆'?200:a==='●'?120:100)*m;label='3つそろった！ +'+win}
+  }
+  else if(a===b||b===c||a===c){win=Math.round(15*m);label='2つそろった +'+win}
+  if(win>0){
+    const before=coins;coins+=win;
+    reelEls.forEach(r=>r.classList.add('win'));
+    if(isJp){se('jackpot',SE_FALLBACK.jackpot);machine.classList.add('celebrate');sparkles(14)}
+    else se('win',SE_FALLBACK.win);
+    se('coin',SE_FALLBACK.coin);
+    countUp(cEl,before,coins,600);
+    jpEl.textContent=jp;
+  }
+  else{label='はずれ。またどうぞ。';draw()}
+  msg.textContent=label;save();spinning=false;
 }
-else if(a===b||b===c||a===c){win=Math.round(15*m);label="2つそろった +"+win}
-if(win>0){coins+=win;reels.forEach(r=>r.classList.add("win"));tone(784,0.12,"sine",0.12);tone(988,0.12,"sine",0.12,0.1);tone(1318,0.22,"sine",0.12,0.2)}
-else{label="はずれ。またどうぞ。"}
-msg.textContent=label;draw();save();spinning=false;
-}
-draw();</script>
+draw();
+</script>
 <script src="/ad-overlay.js" defer></script>
 </body></html>
