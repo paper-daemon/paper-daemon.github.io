@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>星屑の小瓶（試作）| Shelfiria</title>
+<title>星屑の小瓶 | Shelfiria</title>
 <meta name="description" content="Shelfiriaの展示1号・試作。星の砂が入った小さなガラス瓶を、指で傾けて遊ぶおもちゃ。まずは見た目と光だけ。">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847">
 <link rel="stylesheet" href="/site.css?v=20261101-1">
@@ -27,7 +27,7 @@
 <section class="section tone-white">
 <div class="hoshi-stage">
 <div id="stage3d"><p id="gl-loading">ガラスを磨いています…</p></div>
-<p class="hoshi-note">試作メモ（段2）：中の星の砂と星が、傾きに合わせて流れて、舞って、積もるようになりました。砕けて戻る仕掛け（段3）はまだ入っていません。</p>
+<p class="hoshi-note">星の砂は一粒ずつ立体で敷き詰めてあります。傾けると表面の粒が雪崩れて、星が転がって、光の粒がきらめきます。速く振ると中身が舞います。</p>
 </div>
 </section>
 </main>
@@ -58,34 +58,78 @@ const makeBackdrop = () => canvasTex(1024, 640, (g, w, h) => {
   blob(850, 420, 300, 'rgba(255,170,205,.48)'); blob(180, 470, 260, 'rgba(255,205,110,.52)');
   blob(520, 330, 240, 'rgba(190,165,255,.40)'); blob(430, 90, 150, 'rgba(160,240,215,.45)');
 });
-const makeSandTex = () => canvasTex(512, 512, (g, w, h) => {
-  g.fillStyle = '#e9bcc8'; g.fillRect(0, 0, w, h);
+const makeSandMaps = () => {
   let s = 11; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
-  const cols = ['#f2a7c3', '#fbd98a', '#8ecfeb', '#f5b183', '#cf9fe8', '#ffffff', '#ffd76e', '#f6c9da', '#ffe9c9'];
-  // uneven color fields, like mixed sand poured in and settled
-  for (let i = 0; i < 46; i++){
-    const x = rnd() * w, y = rnd() * h, r = 40 + rnd() * 110, col = cols[(rnd() * cols.length) | 0];
-    const rg = g.createRadialGradient(x, y, 0, x, y, r);
-    rg.addColorStop(0, col + '2e'); rg.addColorStop(1, col + '00');
-    g.fillStyle = rg; g.fillRect(x - r, y - r, r * 2, r * 2);
+  const FAMS = [
+    ['#f7c948', '#ffd76e', '#d18d1f'], ['#f28bb4', '#f8b7d0', '#c95d8c'],
+    ['#6fc3e7', '#a8dcf5', '#3d94c2'], ['#ffffff', '#fff6e8', '#d9c9a8'],
+    ['#c79bf0', '#dec3f7', '#9a6bcc'], ['#f59e5c', '#ffb877', '#cc7433']
+  ];
+  const famW = (y, x) => { // soft regional bias: gold high, pink mid, blue low, sparkles everywhere
+    const n = Math.sin(x * .011 + 2.1) * Math.cos(y * .013 - .7);
+    const t = y / 1024;
+    const wts = [
+      .30 - t * .10 + n * .05, .30 + n * .04, .16 + t * .14 - n * .03,
+      .06, .08 - t * .02, .10
+    ];
+    let sum = 0; for (const w of wts) sum += Math.max(0, w);
+    let pick = rnd() * sum;
+    for (let i = 0; i < wts.length; i++){ pick -= Math.max(0, wts[i]); if (pick <= 0) return i; }
+    return 1;
+  };
+  // one shared layout of irregular grains
+  const grains = [];
+  for (let i = 0; i < 9000; i++){
+    const x = rnd() * 1024, y = rnd() * 1024, r = 5 + rnd() * 7;
+    const pts = [];
+    const n = 7, rot = rnd() * 6.28;
+    for (let k = 0; k < n; k++){ const a = rot + k / n * 6.283, rr = r * (.72 + rnd() * .5); pts.push([Math.cos(a) * rr, Math.sin(a) * rr]); }
+    grains.push({ x, y, r, pts, fam: famW(y, x), li: rnd() });
   }
-  // packed grains at readable scale: shadow, body, glint
-  for (let i = 0; i < 5200; i++){
-    const x = rnd() * w, y = rnd() * h, r = 2.6 + rnd() * 3.8, col = cols[(rnd() * cols.length) | 0];
-    g.fillStyle = 'rgba(110,60,75,.4)'; g.beginPath(); g.arc(x, y + r * .38, r * .92, 0, 6.29); g.fill();
-    g.fillStyle = col; g.beginPath(); g.arc(x, y, r, 0, 6.29); g.fill();
-    if (rnd() < .34){ g.fillStyle = 'rgba(255,255,255,.8)'; g.beginPath(); g.arc(x - r * .28, y - r * .32, r * .34, 0, 6.29); g.fill(); }
-  }
-  // fine filler between the grains
-  for (let i = 0; i < 5000; i++){
-    g.fillStyle = rnd() < .5 ? 'rgba(255,255,255,.35)' : 'rgba(120,70,80,.28)';
-    g.fillRect(rnd() * w, rnd() * h, 1.6, 1.6);
-  }
-  // depth: slightly darker toward the bottom of the bottle
-  const grad = g.createLinearGradient(0, h, 0, 0);
-  grad.addColorStop(0, 'rgba(90,45,60,.22)'); grad.addColorStop(.45, 'rgba(90,45,60,0)');
-  g.fillStyle = grad; g.fillRect(0, 0, w, h);
-});
+  const draw = (g, w, h, bump) => {
+    if (bump){ g.fillStyle = '#000'; g.fillRect(0, 0, w, h); }
+    else {
+      g.fillStyle = '#e0a3b5'; g.fillRect(0, 0, w, h);
+      for (let i = 0; i < 40; i++){
+        const x = rnd() * w, y = rnd() * h, r = 50 + rnd() * 130, f = FAMS[(rnd() * 3) | 0];
+        const rg = g.createRadialGradient(x, y, 0, x, y, r);
+        rg.addColorStop(0, f[0] + '30'); rg.addColorStop(1, f[0] + '00');
+        g.fillStyle = rg; g.fillRect(x - r, y - r, r * 2, r * 2);
+      }
+    }
+    for (const gr of grains){
+      const f = FAMS[gr.fam];
+      g.beginPath();
+      gr.pts.forEach((pt, k) => { const X = gr.x + pt[0], Y = gr.y + pt[1]; k ? g.lineTo(X, Y) : g.moveTo(X, Y); });
+      g.closePath();
+      if (bump){
+        const rg = g.createRadialGradient(gr.x - gr.r * .2, gr.y - gr.r * .2, gr.r * .1, gr.x, gr.y, gr.r * 1.05);
+        rg.addColorStop(0, 'rgba(255,255,255,.95)'); rg.addColorStop(.7, 'rgba(160,160,160,.55)'); rg.addColorStop(1, 'rgba(0,0,0,0)');
+        g.fillStyle = rg; g.fill();
+      } else {
+        g.fillStyle = 'rgba(96,45,62,.62)';
+        g.save(); g.translate(0, gr.r * .34); g.fill(); g.restore();
+        g.fillStyle = f[gr.li < .5 ? 0 : 1]; g.fill();
+        g.beginPath();
+        gr.pts.forEach((pt, k) => { const X = gr.x + pt[0] * .62 - gr.r * .16, Y = gr.y + pt[1] * .62 - gr.r * .2; k ? g.lineTo(X, Y) : g.moveTo(X, Y); });
+        g.closePath(); g.fillStyle = gr.li < .5 ? f[1] : f[0]; g.globalAlpha = .68; g.fill(); g.globalAlpha = 1;
+        if (gr.li > .68){ g.fillStyle = 'rgba(255,255,255,.9)'; g.beginPath(); g.arc(gr.x - gr.r * .26, gr.y - gr.r * .3, gr.r * .2, 0, 6.29); g.fill(); }
+        g.strokeStyle = f[2] + '88'; g.lineWidth = 1.1; g.stroke();
+      }
+    }
+    if (!bump){
+      for (let i = 0; i < 6000; i++){
+        g.fillStyle = rnd() < .5 ? 'rgba(255,255,255,.32)' : 'rgba(120,70,80,.25)';
+        g.fillRect(rnd() * w, rnd() * h, 1.8, 1.8);
+      }
+      const grad = g.createLinearGradient(0, h, 0, 0);
+      grad.addColorStop(0, 'rgba(90,45,60,.28)'); grad.addColorStop(.45, 'rgba(90,45,60,0)');
+      g.fillStyle = grad; g.fillRect(0, 0, w, h);
+    }
+  };
+  const mk = bump => canvasTex(1024, 1024, (g, w, h) => draw(g, w, h, bump));
+  return { map: mk(false), bump: mk(true) };
+};
 const makeCork = () => canvasTex(256, 256, (g, w, h) => {
   g.fillStyle = '#d9a05e'; g.fillRect(0, 0, w, h);
   let s = 23; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
@@ -164,7 +208,7 @@ function init(){
   label.position.y = 44; body.add(label);
 
   // ---- sand column (child of bottle; its top surface stays world-level) ----
-  const sandTex = makeSandTex();
+  const sandMaps = makeSandMaps(); const sandTex = sandMaps.map;
   const SEG = 64;
   const rings = [ { y: 2, r: 44 }, { y: 26, r: 52 }, { y: 52, r: 54 }, { y: FILL_Y, r: 54 } ];
   const colPos = [], colUv = [], colIdx = [];
@@ -172,7 +216,7 @@ function init(){
     for (let s = 0; s <= SEG; s++){
       const a = s / SEG * Math.PI * 2;
       colPos.push(Math.cos(a) * ring.r, ring.y, Math.sin(a) * ring.r);
-      colUv.push(s / SEG * 3, ri / (rings.length - 1));
+      colUv.push(s / SEG * 2, ri / (rings.length - 1));
     }
   });
   for (let ri = 0; ri < rings.length - 1; ri++){
@@ -185,7 +229,7 @@ function init(){
   colGeo.setAttribute('position', new THREE.Float32BufferAttribute(colPos, 3));
   colGeo.setAttribute('uv', new THREE.Float32BufferAttribute(colUv, 2));
   colGeo.setIndex(colIdx); colGeo.computeVertexNormals();
-  const column = new THREE.Mesh(colGeo, new THREE.MeshStandardMaterial({ map: sandTex, bumpMap: sandTex, bumpScale: 1.4, roughness: .92 }));
+  const column = new THREE.Mesh(colGeo, new THREE.MeshStandardMaterial({ map: sandTex, bumpMap: sandMaps.bump, bumpScale: 2.6, roughness: .95 }));
   body.add(column);
   // surface fan (center + top ring), positions updated per-frame
   const surfPos = [0, FILL_Y, 0], surfUv = [.5, .5], surfIdx = [];
@@ -198,13 +242,13 @@ function init(){
   surfGeo.setAttribute('position', new THREE.Float32BufferAttribute(surfPos, 3));
   surfGeo.setAttribute('uv', new THREE.Float32BufferAttribute(surfUv, 2));
   surfGeo.setIndex(surfIdx); surfGeo.computeVertexNormals();
-  const surface = new THREE.Mesh(surfGeo, new THREE.MeshStandardMaterial({ map: sandTex, bumpMap: sandTex, bumpScale: 1.4, roughness: .92 }));
+  const surface = new THREE.Mesh(surfGeo, new THREE.MeshStandardMaterial({ map: sandTex, bumpMap: sandMaps.bump, bumpScale: 2.6, roughness: .95 }));
   body.add(surface);
   const colTopStart = (rings.length - 1) * (SEG + 1); // first vertex of top ring in column geometry
 
   // ---- particles (grains + stars), simulated in WORLD frame ----
   let seed = 5; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-  const NG = 520, NS = 40, N = NG + NS;
+  const NG = 520, NS = 56, N = NG + NS;
   const P = [];
   for (let i = 0; i < N; i++){
     const star = i >= NG;
@@ -218,7 +262,7 @@ function init(){
   }
   const grainMesh = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 1),
     new THREE.MeshPhysicalMaterial({ roughness: .32, metalness: .05, clearcoat: .55, clearcoatRoughness: .45, envMapIntensity: 1.25, flatShading: true }), NG);
-  const palette = ['#f2a7c3', '#fbd98a', '#8ecfeb', '#f5b183', '#cf9fe8', '#ffffff', '#ffd76e'].map(h => new THREE.Color(h));
+  const palette = ['#f28bb4', '#f7c948', '#6fc3e7', '#f59e5c', '#c79bf0', '#ffffff', '#ffd76e'].map(h => new THREE.Color(h));
   for (let i = 0; i < NG; i++){ const cc = palette[i % palette.length].clone();
     cc.offsetHSL((rnd() - .5) * .02, (rnd() - .5) * .08, (rnd() - .5) * .09); grainMesh.setColorAt(i, cc); }
   grainMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); body.add(grainMesh);
@@ -227,10 +271,71 @@ function init(){
   starShape.closePath();
   const starMesh = new THREE.InstancedMesh(
     new THREE.ExtrudeGeometry(starShape, { depth: 3, bevelEnabled: true, bevelSize: 1, bevelThickness: 1 }),
-    new THREE.MeshPhysicalMaterial({ metalness: .3, roughness: .42, envMapIntensity: 1.1 }), NS);
-  const starCols = ['#fff3d6', '#ffe9a8', '#fff8ec', '#ffd9e8', '#f6e3b8', '#ffffff'].map(h => new THREE.Color(h));
+    new THREE.MeshPhysicalMaterial({ metalness: .45, roughness: .34, envMapIntensity: 1.25 }), NS);
+  const starCols = ['#ffd76e', '#ffca3a', '#ffb7d5', '#fff3d6', '#f6e3b8', '#ffe9a8'].map(h => new THREE.Color(h));
   for (let i = 0; i < NS; i++) starMesh.setColorAt(i, starCols[i % starCols.length]);
   starMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); body.add(starMesh);
+  // ---- static bed of real grains covering the sand surface (kills the printed look) ----
+  const BED = 2400;
+  const bedMesh = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 0),
+    new THREE.MeshStandardMaterial({ roughness: .34, metalness: .05, envMapIntensity: 1.3, flatShading: true }), BED);
+  const bedDat = [];
+  {
+    const bf = ['#f7c948', '#ffd76e', '#f28bb4', '#f8b7d0', '#6fc3e7', '#a8dcf5', '#ffffff', '#c79bf0', '#f59e5c'];
+    const bcol = bf.map(h => new THREE.Color(h));
+    for (let i = 0; i < BED; i++){
+      const a = rnd() * 6.283, rr = Math.sqrt(rnd()) * 51;
+      const x = Math.cos(a) * rr, z = Math.sin(a) * rr;
+      const field = Math.sin(x * .055 + 2.1) * Math.cos(z * .05 - .7);
+      let ci = (rnd() * 3) | 0; // gold / pink / blue families with regional drift
+      if (field > .45) ci = 0; else if (field < -.5) ci = 2;
+      if (rnd() < .07) ci = 6; else if (rnd() < .06) ci = 7; else if (rnd() < .09) ci = 8;
+      const cc = bcol[ci].clone(); cc.offsetHSL((rnd() - .5) * .02, (rnd() - .5) * .1, (rnd() - .5) * .1);
+      bedMesh.setColorAt(i, cc);
+      bedDat.push({ x, z, s: 1.15 + rnd() * 1.95, rx: rnd() * 3.1, ry: rnd() * 3.1, rz: rnd() * 3.1 });
+    }
+  }
+  bedMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); body.add(bedMesh);
+  // ---- glint points: twinkle on the surface, brighter while the bottle moves ----
+  const GLN = 260;
+  const glPos = new Float32Array(GLN * 3), glPhase = new Float32Array(GLN);
+  const glDat = [];
+  for (let i = 0; i < GLN; i++){
+    const a = rnd() * 6.283, rr = Math.sqrt(rnd()) * 50;
+    glDat.push({ x: Math.cos(a) * rr, z: Math.sin(a) * rr });
+    glPhase[i] = rnd();
+  }
+  const glGeo = new THREE.BufferGeometry();
+  glGeo.setAttribute('position', new THREE.BufferAttribute(glPos, 3));
+  glGeo.setAttribute('aPhase', new THREE.BufferAttribute(glPhase, 1));
+  const glMat = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    uniforms: { uTime: { value: 0 }, uBoost: { value: 0 } },
+    vertexShader: 'attribute float aPhase; varying float vA; uniform float uTime; uniform float uBoost;' +
+      'void main(){ float tw = sin(uTime * (1.3 + aPhase * 2.4) + aPhase * 39.0); vA = pow(0.5 + 0.5 * tw, 7.0) * (0.30 + uBoost);' +
+      ' vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_PointSize = (2.2 + aPhase * 3.4) * (320.0 / -mv.z); gl_Position = projectionMatrix * mv; }',
+    fragmentShader: 'varying float vA;' +
+      'void main(){ vec2 d = gl_PointCoord - 0.5; float a = smoothstep(0.5, 0.05, length(d)) * vA;' +
+      ' gl_FragColor = vec4(1.0, 0.96, 0.86, a); }'
+  });
+  const glints = new THREE.Points(glGeo, glMat); glints.frustumCulled = false; body.add(glints);
+  let bedTick = 0;
+  function updateBed(){
+    for (let i = 0; i < BED; i++){
+      const b = bedDat[i];
+      dummy.position.set(b.x, surfY(b.x, b.z) + b.s * .38, b.z);
+      dummy.scale.set(b.s, b.s * .78, b.s);
+      dummy.rotation.set(b.rx, b.ry, b.rz);
+      dummy.updateMatrix();
+      bedMesh.setMatrixAt(i, dummy.matrix);
+    }
+    bedMesh.instanceMatrix.needsUpdate = true;
+    for (let i = 0; i < GLN; i++){
+      const gd = glDat[i];
+      glPos[i * 3] = gd.x; glPos[i * 3 + 1] = surfY(gd.x, gd.z) + 1.5; glPos[i * 3 + 2] = gd.z;
+    }
+    glGeo.attributes.position.needsUpdate = true;
+  }
 
   // interaction
   let angZ = 0, angX = 0, velZ = 0, velX = 0, tgtZ = 0, tgtX = .02;
@@ -338,7 +443,7 @@ function init(){
     const omZ = velZ * 60, omX = velX * 60;              // angular velocity, rad/s
     for (let i = 0; i < N; i++){
       const p = P[i];
-      const fy = surfY(p.x, p.z) + p.r;
+      const fy = surfY(p.x, p.z) + p.r + 1.1;
       const onFloor = p.y <= fy + .6;
       // tangential gravity along the surface (decides hold vs avalanche)
       const gdn = gB.x * plNx + gB.y * plNy + gB.z * plNz;
@@ -401,6 +506,12 @@ function init(){
     }
     grainMesh.instanceMatrix.needsUpdate = true;
     starMesh.instanceMatrix.needsUpdate = true;
+    // bed + glints follow the surface while anything moves (skip when fully settled)
+    bedTick++;
+    const boost = Math.min(1, Math.abs(velZ) * 9 + Math.abs(velX) * 9 + Math.abs(slVZ) * .012 + Math.abs(slVX) * .012);
+    if (bedTick < 90 || boost > .004 || pileAmt > .2) updateBed();
+    glMat.uniforms.uTime.value = t;
+    glMat.uniforms.uBoost.value = boost;
 
     renderer.render(scene, camera);
     if (first){ first = false; loading.style.display = 'none'; }
