@@ -41,7 +41,7 @@ body.sb-playing .page-hero{display:none}
   .section{padding-top:4px}
   .sb-stage{display:flex;flex-direction:column;touch-action:none}
   body{overscroll-behavior:none}
-  .sb-wrap{width:min(96vw,calc((100vh - 250px)*0.6774));width:min(96vw,calc((100dvh - 250px)*0.6774));margin-left:auto;margin-right:auto}
+  .sb-wrap{width:min(96vw,calc((100vh - 250px)*0.6774));width:min(96vw,calc((100svh - 250px)*0.6774));margin-left:auto;margin-right:auto}
   .sb-hud{margin-top:4px;font-size:.72rem;order:2}
   .sb-btns{margin-top:4px;gap:8px;order:3}
   .sb-stages{margin-top:4px;gap:5px;order:4}
@@ -51,7 +51,7 @@ body.sb-playing .page-hero{display:none}
   #pauseBtn,#focusBtn{height:38px}
 }
 @media (max-width:640px) and (max-height:780px){
-  .sb-wrap{width:min(96vw,calc((100vh - 282px)*0.6774));width:min(96vw,calc((100dvh - 282px)*0.6774))}
+  .sb-wrap{width:min(96vw,calc((100vh - 282px)*0.6774));width:min(96vw,calc((100svh - 282px)*0.6774))}
 }
 </style>
 <script data-goatcounter="https://shelfiria.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script><script src="/analytics-out.js" defer></script>
@@ -66,7 +66,7 @@ body.sb-playing .page-hero{display:none}
 <div class="sb-hud"><span>SCORE <b id="hudScore">0</b></span><span>HI <b id="hudHi">0</b></span><span>WAVE <b id="hudWave">-</b></span><span>❤ <b id="hudLife">3</b> ／ 💣 <b id="hudBomb">3</b></span><span>GRAZE <b id="hudGraze">0</b></span></div>
 <div class="sb-stages" id="stageRow"><button class="button soft" type="button" data-point="0">ステージ1 最初から</button><button class="button soft" type="button" data-point="1">ステージ1 中間から</button><button class="button soft" type="button" data-point="2">ステージ2 最初から</button><button class="button soft" type="button" data-point="3">ステージ2 中間から</button><button class="button soft" type="button" data-point="4">ステージ3 最初から</button><button class="button soft" type="button" data-point="5">ステージ3 中間から</button></div>
 <div class="sb-btns"><button class="button soft" id="bombBtn" type="button">▶ スタート</button><button class="button soft" id="pauseBtn" type="button">一時停止</button><button class="button soft" id="focusBtn" type="button">低速（タッチ用）</button></div>
-<p class="legend">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1102-11</span></p>
+<p class="legend">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1102-12</span></p>
 </div>
 </section>
 </main>
