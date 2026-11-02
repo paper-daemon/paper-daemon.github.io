@@ -230,7 +230,7 @@ function playItem(it,catLabel){
 }
 let lastTouchAt=performance.now(),hadReturnGap=false;
 function speak(trigger){
-  if(!voice.unlocked||voice.playing)return false;
+  if(!voice.unlocked||(voice.playing&&trigger!=='rapid'))return false;
   if(trigger==='greet'){
     if(MEM.v<=1)return playItem(pickFrom(poolItems('greet')),'greet');
     const reps=poolItems('rep');if(reps.length){reps.sort((a,b)=>(b.cond?1:0)-(a.cond?1:0));return playItem(pickFrom(reps.slice(0,3)),'greet')}
