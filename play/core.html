@@ -7,8 +7,10 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="Shelfiria"><meta property="og:title" content="SIコアにさわる | Shelfiria"><meta property="og:description" content="画面いっぱいのSIコア。触り方で反応が変わる、あませの粒子コア。"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/site.css?v=20261101-1">
 <style>
-.core-stage{position:relative;height:100vh;height:100svh;height:100dvh;min-height:480px;overflow:hidden;background:#0b0e2c;isolation:isolate}
-.core-stage canvas{display:block;width:100%;height:100%;touch-action:none;cursor:pointer}
+.core-stage{position:relative;height:100vh;height:100svh;height:100dvh;min-height:480px;overflow:hidden;background:#0b0e2c;isolation:isolate;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.core-stage canvas{display:block;width:100%;height:100%;touch-action:none;cursor:pointer;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.core-stage img{-webkit-touch-callout:none;-webkit-user-drag:none}
+.core-scroll{position:absolute;right:14px;top:50%;transform:translateY(-50%);z-index:5;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#dfe6ff;background:rgba(10,12,38,.55);border:1px solid rgba(255,255,255,.28);border-radius:50%;font:800 .95rem var(--sans);text-decoration:none;backdrop-filter:blur(6px)}
 .core-stage:after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 90% at 50% 42%,transparent 55%,rgba(4,5,20,.5) 100%);z-index:3}
 .core-top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:calc(12px + env(safe-area-inset-top)) 16px 0;z-index:5;pointer-events:none}
 .core-chip{pointer-events:auto;display:inline-flex;align-items:center;gap:9px;color:#eef1ff;background:rgba(10,12,38,.55);border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:7px 14px 7px 8px;font:700 .78rem var(--sans);backdrop-filter:blur(6px);text-decoration:none}
@@ -46,9 +48,10 @@
 <p class="core-hint" id="coreHint">タップ ・ なでる ・ 長押し ・ 連打 で反応が変わります</p>
 <span class="core-meta left" id="coreStats">VISIT - ・ TOUCH -</span>
 <span class="core-meta right" id="coreFps">FPS --</span>
+<a class="core-scroll" href="#about" aria-label="下の説明へスクロール">↓</a>
 </section>
 
-<section class="section"><div class="page">
+<section class="section" id="about"><div class="page">
 <p class="eyebrow">PLAY — TECH</p>
 <h2 style="font-size:clamp(1.55rem,3.4vw,2.3rem);margin:0 0 14px">画面いっぱいの、SIコア。</h2>
 <p style="max-width:44rem;line-height:1.95;color:var(--ink-dim);margin:0">トップページのSIコアを、そのまま大きくした拡大版です。前面はシアン、背面は藍紫に沈む最大1,500個の粒子の宝石球で、中心には琥珀の核が灯ります。触り方で反応が変わります。軽く触れば粒が逃げ、なでれば寄ってきて、長押しでは潰れたように弾け、連打すると慌てて散ります。あませの台詞（全63種・時間帯や再訪で変化）に連動して、照れてピンクに染まったり、トゲトゲになったり、逃げたりもします。</p>
@@ -341,6 +344,7 @@ ctx.globalCompositeOperation='source-over';
 requestAnimationFrame(frame);
 })();
 </script>
+<script>(function(){var st=document.getElementById('stage');if(!st)return;st.addEventListener('contextmenu',function(e){e.preventDefault()});st.addEventListener('selectstart',function(e){e.preventDefault()});st.addEventListener('dragstart',function(e){e.preventDefault()});})();</script>
 <script src="/enhance.js" defer></script>
 <script src="/ad-overlay.js" defer></script>
 </body></html>
