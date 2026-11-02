@@ -80,7 +80,7 @@
 <video class="fx-video" id="fxVideo" muted playsinline preload="auto"></video>
 <button class="bgm-toggle" id="bgmBtn" type="button" aria-label="BGM切り替え">♪</button>
 <div class="panel">
-<img id="panelImg" src="/play/assets/cabinet-panel.png" alt="">
+<img id="panelImg" src="/play/assets/cabinet-panel.jpg" alt="">
 <div class="lamp" id="lamp"><span class="lamp-star">★</span><img id="lampImg" src="/play/assets/star-lamp.png" alt=""></div>
 <div class="panel-title">AMASE SLOT</div>
 </div>
@@ -174,7 +174,7 @@ function draw(){cEl.textContent=coins;jpEl.textContent=jp;if(bonus)bonusLeftEl.t
 function pick(){let t=W.reduce((a,b)=>a+b,0),r=Math.random()*t;for(let i=0;i<4;i++){if((r-=W[i])<0)return i}return 2}
 /* art availability */
 (function(){let ok=0;ART.forEach(src=>{const im=new Image();im.onload=()=>{ok++;if(ok===4)reelEls.forEach(el=>el.classList.add('art'))};im.src=src})})();
-(function(){const im=new Image();im.onload=()=>machine.classList.add('art-panel');im.src='/play/assets/cabinet-panel.png'})();
+(function(){const im=new Image();im.onload=()=>machine.classList.add('art-panel');im.src='/play/assets/cabinet-panel.jpg'})();
 (function(){const im=new Image();im.onload=()=>machine.classList.add('art-lamp');im.src='/play/assets/star-lamp.png'})();
 let coinArt=false;(function(){const im=new Image();im.onload=()=>{coinArt=true;renderPile()};im.src='/play/assets/slot-coin.png'})();
 /* ---------- coin pile ---------- */
