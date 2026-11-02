@@ -31,7 +31,7 @@ canvas#sb{width:100%;height:auto;display:block;touch-action:none}
 <div class="sb-wrap"><canvas id="sb" width="420" height="620"></canvas></div>
 <div class="sb-hud"><span>SCORE <b id="hudScore">0</b></span><span>HI <b id="hudHi">0</b></span><span>WAVE <b id="hudWave">-</b></span><span>❤ <b id="hudLife">3</b> ／ 💣 <b id="hudBomb">3</b></span><span>GRAZE <b id="hudGraze">0</b></span></div>
 <div class="sb-stages" id="stageRow"><button class="button soft" type="button" data-point="0">ステージ1 最初から</button><button class="button soft" type="button" data-point="1">ステージ1 中間から</button><button class="button soft" type="button" data-point="2">ステージ2 最初から</button><button class="button soft" type="button" data-point="3">ステージ2 中間から</button><button class="button soft" type="button" data-point="4">ステージ3 最初から</button><button class="button soft" type="button" data-point="5">ステージ3 中間から</button></div>
-<div class="sb-btns"><button class="button primary" id="startBtn" type="button">スタート</button><button class="button soft" id="bombBtn" type="button">ボム（X）</button><button class="button soft" id="pauseBtn" type="button">一時停止</button><button class="button soft" id="focusBtn" type="button">低速（タッチ用）</button></div>
+<div class="sb-btns"><button class="button soft" id="bombBtn" type="button">▶ スタート</button><button class="button soft" id="pauseBtn" type="button">一時停止</button><button class="button soft" id="focusBtn" type="button">低速（タッチ用）</button></div>
 <p class="legend">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加</p>
 </div>
 </section>
@@ -117,7 +117,7 @@ function loadAudio(){
     const oggOk=!!(probe.canPlayType&&probe.canPlayType('audio/ogg; codecs="vorbis"'));
     const bext=oggOk?'ogg':'mp3';
     const mk=(src,vol)=>{const a=new Audio(src);a.loop=true;a.volume=vol;return a;};
-    AU.bgmStage=mk('/play/assets/bgm_stage_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
+    AU.bgmStage=mk('/play/assets/bgm_stage_'+(oggOk?'loop.ogg':'full.mp3'),0.42);AU.bgmStage.preload='auto';
     AU.bgmBoss=mk('/play/assets/bgm_boss_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
     AU.bgmBoss2=mk('/play/assets/bgm_boss2_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
     AU.bgmBoss3=mk('/play/assets/bgm_boss3_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
@@ -137,8 +137,10 @@ function playBgm(track,bossId){
     if(!want)return;
     if(AU.cur===want){if(want.paused)want.play().catch(()=>{});return;}
     stopBgm();AU.cur=want;
-    if(want.readyState>=2){want.currentTime=0;want.play().catch(()=>{});}
-    else want.addEventListener('canplay',()=>{if(AU.cur===want)want.play().catch(()=>{});},{once:true});
+    // play immediately: when this runs inside the start-tap chain the browser allows sound.
+    // (Deferring to canplay loses the user-gesture and Android Chrome silently blocks it.)
+    try{want.currentTime=0;}catch(e){}
+    want.play().catch(()=>{want.addEventListener('canplay',()=>{if(AU.cur===want&&want.paused)want.play().catch(()=>{});},{once:true});});
   }catch(e){}
 }
 function stopBgm(){try{for(const k of ['bgmStage','bgmBoss','bgmBoss2','bgmBoss3'])if(AU[k])AU[k].pause();AU.cur=null;}catch(e){}}
@@ -400,6 +402,9 @@ function syncChrome(){
   // stage select belongs to the pre-game screens only; it must never crowd the play field
   const row=$('stageRow');
   if(row)row.style.display=mode==='play'?'none':'flex';
+  // the big bar under the field is the main action: START before the game, BOMB during play
+  const bb=$('bombBtn');
+  if(bb)bb.textContent=mode==='play'?'ボム（X）':'▶ スタート';
 }
 function startGame(pi){
   if(pi===undefined)pi=selPoint;
@@ -761,7 +766,7 @@ function moveTouch(t){
   player.x=Math.max(14,Math.min(W-14,(t.clientX-r.left)/r.width*W));
   player.y=Math.max(20,Math.min(H-16,(t.clientY-r.top)/r.height*H-46));
 }
-$('startBtn').addEventListener('click',()=>{if(mode==='clear'&&stage<3)startGame(stage*2);else startGame(selPoint);});
+
 // start-point select (stage start / midpoint, unlocked by progress)
 const stageBtns=[...document.querySelectorAll('#stageRow button')];
 function updateStageUI(){
@@ -775,7 +780,7 @@ function updateStageUI(){
 for(const b of stageBtns)b.addEventListener('click',()=>{if(b.disabled)return;selPoint=+b.dataset.point;selStage=pointStage(selPoint);updateStageUI();});
 updateStageUI();
 syncChrome();
-$('bombBtn').addEventListener('click',()=>{useBomb();});
+$('bombBtn').addEventListener('click',()=>{if(mode==='play'){useBomb();}else if(mode==='clear'&&stage<3){startGame(stage*2);}else{startGame(selPoint);}});
 $('pauseBtn').addEventListener('click',()=>{if(mode==='play')togglePause();});
 $('focusBtn').addEventListener('click',()=>{focusTouch=!focusTouch;$('focusBtn').textContent=focusTouch?'低速：ON':'低速（タッチ用）';});
 hud();
