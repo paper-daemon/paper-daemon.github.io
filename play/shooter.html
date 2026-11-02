@@ -35,7 +35,7 @@ canvas#sb{width:100%;height:auto;display:block;touch-action:none}
 <p id="bgmStat" style="margin:8px 0 0;font-size:.78rem;color:#7a7468">BGM: －</p>
 <p id="sndHint" style="display:none;margin:8px 0 0;font-size:.85rem;color:#b3402e;font-weight:700">♪ 音が出ていない場合は、画面をタップすると出ます</p>
 <div class="sb-btns"><button class="button soft" id="bombBtn" type="button">▶ スタート</button><button class="button soft" id="pauseBtn" type="button">一時停止</button><button class="button soft" id="focusBtn" type="button">低速（タッチ用）</button></div>
-<p class="legend">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1102-8</span></p>
+<p class="legend">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1102-9</span></p>
 </div>
 </section>
 </main>
@@ -119,14 +119,14 @@ function loadAudio(){
     const probe=new Audio();
     const oggOk=!!(probe.canPlayType&&probe.canPlayType('audio/ogg; codecs="vorbis"'));
     const bext=oggOk?'ogg':'mp3';
-    const mk=(base,vol)=>{const a=new Audio('/play/assets/'+base+(oggOk?'loop.ogg':'full.mp3'));a.loop=true;a.volume=vol;a.preload='auto';a.dataset.alt='/play/assets/'+base+(oggOk?'full.mp3':'loop.ogg');return a;};
-    AU.bgmStage=mk('bgm_stage_',0.42);
+    const mk=(base,vol,pre)=>{const a=new Audio('/play/assets/'+base+(oggOk?'loop.ogg':'full.mp3'));a.loop=true;a.volume=vol;a.preload=pre||'metadata';a.dataset.alt='/play/assets/'+base+(oggOk?'full.mp3':'loop.ogg');return a;};
+    AU.bgmStage=mk('bgm_stage_',0.42,'auto');
     AU.bgmBoss=mk('bgm_boss_',0.42);
     AU.bgmBoss2=mk('bgm_boss2_',0.42);
     AU.bgmBoss3=mk('bgm_boss3_',0.42);
-    for(const k in SE_MAP){const a=new Audio('/play/assets/se-'+SE_MAP[k]+'.'+bext);a.volume=0.5;a.preload='auto';AU.se[k]=a;
+    for(const k in SE_MAP){const a=new Audio('/play/assets/se-'+SE_MAP[k]+'.'+bext);a.volume=0.5;a.preload='metadata';AU.se[k]=a;
       const n=(k==='shot')?4:(k==='boomS'||k==='hit')?3:2,pool=[];
-      for(let i=0;i<n;i++){const e=new Audio('/play/assets/se-'+SE_MAP[k]+'.'+bext);e.volume=0.5;e.preload='auto';pool.push(e);}
+      for(let i=0;i<n;i++){const e=new Audio('/play/assets/se-'+SE_MAP[k]+'.'+bext);e.volume=0.5;e.preload='none';pool.push(e);}
       pool.idx=0;AU.sePool[k]=pool;}
   }catch(e){/* assets not present yet */}
 }
@@ -166,11 +166,9 @@ async function unlockAudio(){
   if(unlocking)return;unlocking=true;
   try{
     const els=[];
-    for(const k of ['bgmStage','bgmBoss','bgmBoss2','bgmBoss3'])if(AU[k])els.push(AU[k]);
     for(const k in AU.sePool)for(const e of AU.sePool[k])els.push(e);
     for(const a of els){
       if(a.__unlocked)continue;
-      if(a===AU.cur){a.__unlocked=true;continue;}
       const v0=a.volume;a.volume=0;
       try{await a.play();a.pause();try{a.currentTime=0;}catch(e){}a.__unlocked=true;}
       catch(e){}
@@ -189,6 +187,7 @@ function healAudio(){
   }catch(e){}
 }
 document.addEventListener('pointerdown',healAudio,{capture:true});
+const WD={lastCT:-1,stuck:0,restarts:0,cur:null};
 setInterval(()=>{
   try{
     const h=document.getElementById('sndHint');
@@ -196,13 +195,23 @@ setInterval(()=>{
     const playing=typeof mode!=='undefined'&&mode==='play'&&AU.cur;
     if(playing){
       const a=AU.cur;
+      if(WD.cur!==a){WD.cur=a;WD.lastCT=-1;WD.stuck=0;WD.restarts=0;}
       if(a.error||a.networkState===3){
         if(!a.__fb){a.__fb=1;const alt=a.dataset.alt;if(alt){a.src=alt;a.load();}}
         a.play().catch(()=>{});
       }else if(a.paused){a.play().catch(()=>{});}
+      else{
+        if(a.readyState<2||a.currentTime===WD.lastCT)WD.stuck++;else WD.stuck=0;
+        WD.lastCT=a.currentTime;
+        if(WD.stuck>=5){
+          WD.stuck=0;
+          if(WD.restarts<2){WD.restarts++;a.load();a.play().catch(()=>{});}
+          else if(!a.__fb){a.__fb=1;const alt=a.dataset.alt;if(alt){a.src=alt;a.load();a.play().catch(()=>{});}}
+        }
+      }
     }
     if(h)h.style.display=(playing&&AU.cur.paused)?'':'none';
-    if(st)st.textContent=!AU.cur?'BGM: －':AU.cur.error||AU.cur.networkState===3?'BGM: 読み込み直し中…':AU.cur.paused?'BGM: 停止中（タップで再開）':'BGM: 再生中♪';
+    if(st)st.textContent=!AU.cur?'BGM: －':AU.cur.error||AU.cur.networkState===3?'BGM: 読み込み直し中…':AU.cur.readyState<2?'BGM: 読み込み中…':AU.cur.paused?'BGM: 停止中（タップで再開）':'BGM: 再生中♪ '+Math.floor(AU.cur.currentTime/60)+':'+String(Math.floor(AU.cur.currentTime%60)).padStart(2,'0');
   }catch(e){}
 },800);
 function reset(full){
