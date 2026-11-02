@@ -248,3 +248,12 @@ img{max-width:100%;display:block}
 .bottom-nav a:hover{color:#fff}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}}
+
+/* Dense archive toggle: same live entries, different information density. */
+.archive-grid.dense{grid-template-columns:1fr}
+.archive-grid.dense .archive-card{min-height:108px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px}
+.archive-grid.dense .archive-card .row{grid-column:1/-1}
+.archive-grid.dense .archive-card strong{margin:1px 0;grid-column:1;grid-row:2}
+.archive-grid.dense .archive-card p{margin:0;grid-column:1;grid-row:3}
+.archive-grid.dense .archive-card a{grid-column:2;grid-row:2/4;align-self:center}
+@media(max-width:560px){.archive-grid.dense .archive-card{display:flex;min-height:110px}.archive-grid.dense .archive-card a{align-self:flex-start}}
