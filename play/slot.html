@@ -318,7 +318,7 @@ reelEls.forEach((el,i)=>setReel(i,currentIdx[i]));
 draw();renderPile(0);
 </script>
 <script>
-/* 筐体トレイ内コイン平積み：500枚から払い出し口に溜まり、満杯で前面に溢れる。出たコインは消えない。
+/* 筐体トレイ内コイン平積み：500枚を超えると払い出し口に溜まり、満杯で前面に溢れる。出たコインは消えない。
    落ちたら即ロック（揺れ・滑り・吸い戻し無し）。列ごとの高さ管理で静かに積む。 */
 (function(){
 try{
@@ -344,7 +344,7 @@ function resize(){
   stacks=[];for(let c=0;c<COLS;c++)stacks.push(0);
   for(const cell of cells)stacks[cell.col]=Math.max(stacks[cell.col],cell.row+1);
 }
-function targetFor(bal){return bal>=500?Math.min(CAP,5+Math.floor((bal-500)/52)):0}
+function targetFor(bal){return bal>500?Math.min(CAP,5+Math.floor((bal-500)/52)):0}
 function counted(){let n=cells.length;for(const f of falling)n++;return n+0}
 function pickCol(){
   let best=-1,bs=1e9;const mid=(COLS-1)/2;
@@ -523,7 +523,7 @@ let cells=[],stacks=[],reserved=[],falling=[],spilling=[],fading=[];
 let owed=0,removeQ=0,spawnT=0,removeT=0,running=false,lastT=0;
 function resetStacks(){stacks=[];reserved=[];for(let c=0;c<COLS;c++){stacks.push([0,0]);reserved.push([0,0])}}
 resetStacks();
-function targetFor(bal){return bal>=500?Math.min(CAP,5+Math.floor((bal-500)/52)):0}
+function targetFor(bal){return bal>500?Math.min(CAP,5+Math.floor((bal-500)/52)):0}
 function counted(){return cells.length+falling.length}
 function pickCell(){
   let best=null,bs=1e9;const mid=(COLS-1)/2;
