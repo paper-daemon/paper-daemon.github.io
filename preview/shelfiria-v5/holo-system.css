@@ -326,3 +326,8 @@ html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transiti
 /* Mobile screenshot audit: fixed back-to-top participates in an expanded mobile visual viewport.
    Footer already contains an accessible #top link, so hide the redundant floating control. */
 @media(max-width:620px){.back-to-top{display:none}}
+
+/* The hero decoration previously extended 90px past the right edge.
+   At 390px viewport: 372px content edge + 90px ornament = 462px scroll width.
+   Keep the ornament within the viewport on mobile. */
+@media(max-width:620px){.hero-left::before{inset:-35px 0 0 0;opacity:.12}}
