@@ -32,9 +32,10 @@ canvas#sb{width:100%;height:auto;display:block;touch-action:none}
 <div class="sb-wrap"><canvas id="sb" width="420" height="620"></canvas></div>
 <div class="sb-hud"><span>SCORE <b id="hudScore">0</b></span><span>HI <b id="hudHi">0</b></span><span>WAVE <b id="hudWave">-</b></span><span>❤ <b id="hudLife">3</b> ／ 💣 <b id="hudBomb">3</b></span><span>GRAZE <b id="hudGraze">0</b></span></div>
 <div class="sb-stages" id="stageRow"><button class="button soft" type="button" data-point="0">ステージ1 最初から</button><button class="button soft" type="button" data-point="1">ステージ1 中間から</button><button class="button soft" type="button" data-point="2">ステージ2 最初から</button><button class="button soft" type="button" data-point="3">ステージ2 中間から</button><button class="button soft" type="button" data-point="4">ステージ3 最初から</button><button class="button soft" type="button" data-point="5">ステージ3 中間から</button></div>
+<p id="bgmStat" style="margin:8px 0 0;font-size:.78rem;color:#7a7468">BGM: －</p>
 <p id="sndHint" style="display:none;margin:8px 0 0;font-size:.85rem;color:#b3402e;font-weight:700">♪ 音が出ていない場合は、画面をタップすると出ます</p>
 <div class="sb-btns"><button class="button soft" id="bombBtn" type="button">▶ スタート</button><button class="button soft" id="pauseBtn" type="button">一時停止</button><button class="button soft" id="focusBtn" type="button">低速（タッチ用）</button></div>
-<p class="legend">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1102-7</span></p>
+<p class="legend">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1102-8</span></p>
 </div>
 </section>
 </main>
@@ -118,11 +119,11 @@ function loadAudio(){
     const probe=new Audio();
     const oggOk=!!(probe.canPlayType&&probe.canPlayType('audio/ogg; codecs="vorbis"'));
     const bext=oggOk?'ogg':'mp3';
-    const mk=(src,vol)=>{const a=new Audio(src);a.loop=true;a.volume=vol;a.preload='auto';return a;};
-    AU.bgmStage=mk('/play/assets/bgm_stage_'+(oggOk?'loop.ogg':'full.mp3'),0.42);AU.bgmStage.preload='auto';
-    AU.bgmBoss=mk('/play/assets/bgm_boss_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
-    AU.bgmBoss2=mk('/play/assets/bgm_boss2_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
-    AU.bgmBoss3=mk('/play/assets/bgm_boss3_'+(oggOk?'loop.ogg':'full.mp3'),0.42);
+    const mk=(base,vol)=>{const a=new Audio('/play/assets/'+base+(oggOk?'loop.ogg':'full.mp3'));a.loop=true;a.volume=vol;a.preload='auto';a.dataset.alt='/play/assets/'+base+(oggOk?'full.mp3':'loop.ogg');return a;};
+    AU.bgmStage=mk('bgm_stage_',0.42);
+    AU.bgmBoss=mk('bgm_boss_',0.42);
+    AU.bgmBoss2=mk('bgm_boss2_',0.42);
+    AU.bgmBoss3=mk('bgm_boss3_',0.42);
     for(const k in SE_MAP){const a=new Audio('/play/assets/se-'+SE_MAP[k]+'.'+bext);a.volume=0.5;a.preload='auto';AU.se[k]=a;
       const n=(k==='shot')?4:(k==='boomS'||k==='hit')?3:2,pool=[];
       for(let i=0;i<n;i++){const e=new Audio('/play/assets/se-'+SE_MAP[k]+'.'+bext);e.volume=0.5;e.preload='auto';pool.push(e);}
@@ -188,7 +189,22 @@ function healAudio(){
   }catch(e){}
 }
 document.addEventListener('pointerdown',healAudio,{capture:true});
-setInterval(()=>{try{const h=document.getElementById('sndHint');if(h)h.style.display=(typeof mode!=='undefined'&&mode==='play'&&AU.cur&&AU.cur.paused)?'':'none';}catch(e){}},1000);
+setInterval(()=>{
+  try{
+    const h=document.getElementById('sndHint');
+    const st=document.getElementById('bgmStat');
+    const playing=typeof mode!=='undefined'&&mode==='play'&&AU.cur;
+    if(playing){
+      const a=AU.cur;
+      if(a.error||a.networkState===3){
+        if(!a.__fb){a.__fb=1;const alt=a.dataset.alt;if(alt){a.src=alt;a.load();}}
+        a.play().catch(()=>{});
+      }else if(a.paused){a.play().catch(()=>{});}
+    }
+    if(h)h.style.display=(playing&&AU.cur.paused)?'':'none';
+    if(st)st.textContent=!AU.cur?'BGM: －':AU.cur.error||AU.cur.networkState===3?'BGM: 読み込み直し中…':AU.cur.paused?'BGM: 停止中（タップで再開）':'BGM: 再生中♪';
+  }catch(e){}
+},800);
 function reset(full){
   player={x:W/2,y:H-90,invuln:0,shotT:0};
   pshots=[];ebullets=[];enemies=[];items=[];parts=[];boss=null;spawnQ=[];bombT=0;bannerT=0;bannerText='';
