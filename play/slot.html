@@ -34,7 +34,7 @@
   .reel.reach{box-shadow:inset 0 0 0 3px rgba(255,90,40,.85),inset 0 0 22px rgba(255,90,40,.45)}
   #fxVideo{left:15.9%;top:45.9%;width:68.6%;height:19.6%;object-fit:cover;mix-blend-mode:screen;opacity:0;transition:opacity .25s;pointer-events:none;border-radius:14px}
   #fxVideo.on{opacity:.95}
-  .bet-hit{position:absolute;top:77.7%;line-height:1;width:11.5%;aspect-ratio:5/3;border-radius:50%;border:none;background:transparent;cursor:pointer;color:#fff;font:900 4.4cqw var(--sans);text-shadow:0 1px 3px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:0}
+  .bet-hit{position:absolute;top:77.7%;line-height:1;width:11.5%;aspect-ratio:5/3;border-radius:50%;border:none;background:transparent;cursor:pointer;color:#ffe9a8;font:900 3.2cqw var(--sans);letter-spacing:-.12em;text-shadow:0 1px 3px rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:0}
   .bet-hit[data-bet="10"]{left:29.9%} .bet-hit[data-bet="30"]{left:44.3%} .bet-hit[data-bet="50"]{left:58.6%}
   .bet-hit.on{box-shadow:0 0 0 3px rgba(255,230,150,.95),0 0 22px rgba(255,190,40,.85);background:rgba(255,170,30,.18)}
   .lever{left:85.4%;top:43%;width:12.6%;height:20%;cursor:pointer;touch-action:none;z-index:4}
@@ -82,9 +82,9 @@ button,a,[role="button"]{touch-action:manipulation}
   <div class="ov reel" id="r0"></div><div class="ov reel" id="r1"></div><div class="ov reel" id="r2"></div>
   <video class="ov" id="fxVideo" muted playsinline preload="auto"></video>
   <div class="ov led disp-msg" id="msg">レバーを引いてね</div>
-  <button class="bet-hit on" data-bet="10" type="button">10</button>
-  <button class="bet-hit" data-bet="30" type="button">30</button>
-  <button class="bet-hit" data-bet="50" type="button">50</button>
+  <button class="bet-hit on" data-bet="10" type="button" aria-label="ベット：小">●</button>
+  <button class="bet-hit" data-bet="30" type="button" aria-label="ベット：中">●●</button>
+  <button class="bet-hit" data-bet="50" type="button" aria-label="ベット：大">●●●</button>
   <div class="ov lever" id="lever"><div class="base"></div><div class="stick"></div><div class="ball"></div></div>
   <canvas class="ov" id="trayCv" style="left:10.5%;top:84.9%;width:79%;height:15.1%;z-index:3;touch-action:none"></canvas>
 </div>
@@ -223,13 +223,13 @@ function sparkles(n){
 function countUp(el,from,to,dur){const t0=performance.now();function tick(now){let p=(now-t0)/dur;if(p>1)p=1;el.textContent=Math.round(from+(to-from)*p);if(p<1)requestAnimationFrame(tick)}requestAnimationFrame(tick)}
 /* ---- bonus ---- */
 function bonusFinals(type){
+  /* 純弥仕様：ボーナス中は全ゲーム必ず当たる（はずれ無し） */
   const r=Math.random();
   const pair=()=>{const s=pick();let o=pick();if(o===s)o=(s+1)%7;const pos=Math.floor(Math.random()*3);const a=[s,s,s];a[pos]=o;return a};
-  const miss=()=>{const pool=[0,1,2,3,4,5].sort(()=>Math.random()-0.5);return [pool[0],pool[1],pool[2]]};
   if(type==='BIG'){
-    if(r<0.68)return pair();if(r<0.74)return [3,3,3];if(r<0.77)return [2,2,2];if(r<0.785)return [1,1,1];if(r<0.815)return [5,5,5];return miss();
+    if(r<0.82)return pair();if(r<0.88)return [3,3,3];if(r<0.93)return [2,2,2];if(r<0.96)return [1,1,1];return [5,5,5];
   }
-  if(r<0.70)return pair();if(r<0.72)return [3,3,3];if(r<0.74)return [5,5,5];return miss();
+  if(r<0.88)return pair();if(r<0.93)return [3,3,3];return [5,5,5];
 }
 function setLamp(mode){lamp.className='ov lamp'+(mode==='on'?' on':mode==='blink'?' blink':'')}
 const panelVideo=document.getElementById('panelVideo');
