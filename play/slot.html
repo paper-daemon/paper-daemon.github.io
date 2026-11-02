@@ -308,149 +308,146 @@ reelEls.forEach((el,i)=>setReel(i,currentIdx[i]));
 draw();renderPile(0);
 </script>
 <script>
-/* 筐体トレイ内コイン物理：1000枚から中央の払い出し口に溜まり、満杯で前面に溢れる */
+/* 筐体トレイ内コイン平積み：1000枚から払い出し口に溜まり、満杯で前面に溢れる。
+   落ちたら即ロック（揺れ・滑り・吸い戻し無し）。列ごとの高さ管理で静かに積む。 */
 (function(){
 try{
 const cv=document.getElementById('trayCv');if(!cv)return;
 const ctx=cv.getContext('2d');
 const DPR=Math.min(1.5,window.devicePixelRatio||1);
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-let W=300,H=80,R=9,CAP=48;
-let bodies=[],owed=0,spawnT=0,retQ=0,retT=0,running=false,lastT=0,acc=0,actStart=0;
-const img=new Image();let imgOk=false;img.onload=function(){imgOk=true;drawFrame()};img.src='/play/assets/slot-coin.png';
-function surfY(x){const u=x/W;let f=0.56;if(u<0.07)f=0.56-(0.07-u)*7.0;else if(u>0.93)f=0.56-(u-0.93)*7.0;return Math.max(H*0.12,f*H)}
+let W=300,H=80,RX=22,RY=10,PITCH=7,COLS=8,CAP=48,MAXROW=9;
+let cells=[],stacks=[],falling=[],spilling=[],fading=[];
+let owed=0,removeQ=0,spawnT=0,removeT=0,running=false,lastT=0;
+const img=new Image();let imgOk=false;img.onload=function(){imgOk=true;draw()};img.src='/play/assets/slot-coin.png';
+function floorY(){return H*0.74}
+function colX(c){const innerW=W*0.86,x0=(W-innerW)/2+ (COLS>1?(innerW/(COLS-1))*c:innerW/2);return x0}
+function cellY(row){return floorY()-(row+0.55)*PITCH-RY*0.35}
 function resize(){
   const w=cv.clientWidth||300;W=w;H=cv.clientHeight||Math.round(w*0.19);
   cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);ctx.setTransform(DPR,0,0,DPR,0,0);
-  R=Math.max(6.8,Math.min(12,W/38));
-  CAP=Math.round((W/(2*R))*2.2);
+  RX=Math.max(15,Math.min(24,W/13.5));RY=RX*0.38;
+  PITCH=Math.max(5.5,H*0.105);
+  const colW=RX*1.45;COLS=Math.max(4,Math.floor((W*0.86)/colW));
+  MAXROW=Math.max(3,Math.floor((floorY()-H*0.08)/PITCH));
+  CAP=Math.min(48,COLS*MAXROW);
+  stacks=[];for(let c=0;c<COLS;c++)stacks.push(0);
+  for(const cell of cells)stacks[cell.col]=Math.max(stacks[cell.col],cell.row+1);
 }
 function targetFor(bal){return bal>=1000?Math.min(CAP,5+Math.floor((bal-1000)/52)):0}
-function counted(){let n=owed+retQ*0;for(const b of bodies)if(!b.overflow&&b.state!=='return')n++;return n}
-function spawn(overflow){
-  bodies.push({x:W/2+(Math.random()*14-7),y:H*0.10,vx:(Math.random()-0.5)*36,vy:50,a:Math.random()*6.28,va:(Math.random()-0.5)*3,r:R,sleep:0,state:'fall',overflow:!!overflow,dyn:true,born:performance.now()});
+function counted(){let n=cells.length;for(const f of falling)n++;return n+0}
+function pickCol(){
+  let best=-1,bs=1e9;const mid=(COLS-1)/2;
+  for(let c=0;c<COLS;c++){
+    if(stacks[c]>=MAXROW)continue;
+    const s=stacks[c]+Math.abs(c-mid)*0.35+(c%2?0.02:0);
+    if(s<bs){bs=s;best=c}
+  }
+  return best;
+}
+function lockCell(col,shade){
+  const row=stacks[col];stacks[col]++;
+  cells.push({col:col,row:row,shade:shade,jx:(Math.random()*8-4),jy:(Math.random()*2.4-1.2),rot:(Math.random()*0.24-0.12),face:(Math.random()<0.3),sq:1,hop:0});
+}
+function spawnFall(spill){
+  const col=spill?-1:pickCol();
+  if(!spill&&col<0){spawnFall(true);return}
+  const o={x:W/2+(Math.random()*10-5),y:H*0.05,vy:60,col:col,shade:Math.floor(Math.random()*3),rot:(Math.random()-0.5)*1.2,t:0};
+  if(spill){o.x=W/2+(Math.random()*36-18);spilling.push(o)}else falling.push(o);
 }
 function prefill(n){
-  bodies=[];
-  const perRow=Math.max(4,Math.floor((W*0.80)/(2*R)));
-  let placed=0,row=0;
-  while(placed<n&&row<6){
-    const cnt=Math.min(perRow-row*2,n-placed);if(cnt<=0)break;
-    const rowW=cnt*2*R;
-    for(let i=0;i<cnt;i++){
-      const x=W/2-rowW/2+(i+0.5)*2*R + (Math.random()*3-1.5);
-      const y=surfY(x)-R-row*(R*1.5);if(y<R*0.55){placed=n;break}
-      bodies.push({x:x,y:y,vx:0,vy:0,a:Math.random()*6.28,va:0,r:R,sleep:9,state:'rest',overflow:false,dyn:false,born:0});
-      placed++;
-    }
-    row++;
-  }
+  cells=[];falling=[];spilling=[];fading=[];owed=0;removeQ=0;
+  stacks=[];for(let c=0;c<COLS;c++)stacks.push(0);
+  let guard=0;
+  while(cells.length<n&&guard++<500){const c=pickCol();if(c<0)break;lockCell(c,Math.floor(Math.random()*3))}
+  draw();
 }
-function wake(){actStart=performance.now();if(!running){running=true;lastT=performance.now();requestAnimationFrame(frame)}}
+function wake(){if(!running){running=true;lastT=performance.now();requestAnimationFrame(frame)}}
 function syncTray(bal,rain){
-  const target=targetFor(bal);let diff=target-counted();
+  const target=targetFor(bal);
+  let diff=target-counted()-owed;
   if(diff>0){if(reduced){prefill(target)}else owed+=diff}
-  else if(diff<0){owed=Math.max(0,owed+diff);retQ+= -diff - 0; if(reduced){prefill(target);retQ=0}}
-  if(rain>0&&!reduced){const rn=Math.min(8,rain);for(let i=0;i<rn;i++)setTimeout(()=>{spawn(true);wake()},i*60)}
+  else if(diff<0){const cut=Math.min(owed,-diff);owed-=cut;removeQ+=(-diff-cut);if(reduced){prefill(target);removeQ=0}}
+  if(rain>0&&!reduced){const rn=Math.min(8,rain);for(let i=0;i<rn;i++)setTimeout(()=>{spawnFall(counted()+owed>=CAP);wake()},i*55)}
   wake();
-}
-function step(dt){
-  spawnT+=dt*1000;retT+=dt*1000;
-  if(owed>0&&spawnT>55&&bodies.length<CAP+14){spawnT=0;owed--;spawn(false)}
-  if(retQ>0&&retT>40){retT=0;retQ--;
-    let top=null;for(const b of bodies)if(b.state==='rest'&&(!top||b.y<top.y))top=b;
-    if(top){top.state='return';top.sleep=0}else retQ=0}
-  const G=1500;
-  for(const b of bodies){b.touch=false;b.supported=false}
-  for(const b of bodies){
-    if(b.state==='return'){
-      const mx=W/2,my=H*0.05;b.x+=(mx-b.x)*Math.min(1,dt*9);b.y+=(my-b.y)*Math.min(1,dt*9);b.r*=Math.pow(0.02,dt);
-      if(Math.abs(b.x-mx)<4&&Math.abs(b.y-my)<4||b.r<1.2)b.state='dead';
-      continue}
-    if(b.state==='spill'){
-      b.vy+=G*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.a+=b.va*dt;
-      b.vx+=((W/2)-b.x)*0.6*dt;
-      if(b.y>H*1.05)b.state='dead';
-      continue}
-    if(b.sleep>4)continue;
-    b.vy+=G*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.a+=b.va*dt;
-    const fy=surfY(b.x);
-    if(b.y+b.r>fy){b.y=fy-b.r;if(b.vy>70)b.vy=-b.vy*0.26;else b.vy=0;b.vx*=0.84;b.va=b.vx/b.r;
-      if(Math.abs(b.vx)<7)b.vx=0}
-    if(b.x<W*0.045+b.r*0.6){b.x=W*0.045+b.r*0.6;b.vx=Math.abs(b.vx)*0.35}
-    if(b.x>W*0.955-b.r*0.6){b.x=W*0.955-b.r*0.6;b.vx=-Math.abs(b.vx)*0.35}
-  }
-  for(let it=0;it<2;it++){
-    for(let i=0;i<bodies.length;i++){const A=bodies[i];if(A.state!=='fall'&&A.state!=='rest')continue;
-      for(let j=i+1;j<bodies.length;j++){const B=bodies[j];if(B.state!=='fall'&&B.state!=='rest')continue;
-        const dx=B.x-A.x,dy=B.y-A.y,rr=A.r+B.r,d2=dx*dx+dy*dy;
-        if(d2>0.01&&d2<rr*rr){const d=Math.sqrt(d2),ov=(rr-d)/2,nx=dx/d,ny=dy/d;
-          A.touch=true;B.touch=true;if(dy>2)A.supported=true;if(dy<-2)B.supported=true;
-          const aDyn=A.sleep<=4,bDyn=B.sleep<=4;
-          if(aDyn&&bDyn){A.x-=nx*ov*0.6;A.y-=ny*ov*0.6;B.x+=nx*ov*0.6;B.y+=ny*ov*0.6}
-          else if(aDyn){A.x-=nx*ov*1.2;A.y-=ny*ov*1.2}
-          else if(bDyn){B.x+=nx*ov*1.2;B.y+=ny*ov*1.2}
-          const rvx=B.vx-A.vx,rvy=B.vy-A.vy,vn=rvx*nx+rvy*ny;
-          if(vn<0){const rest=vn<-60?0.24:0;const imp=-(1+rest)*vn/2;if(aDyn){A.vx-=imp*nx;A.vy-=imp*ny}if(bDyn){B.vx+=imp*nx;B.vy+=imp*ny}
-            if(Math.abs(vn)>26){A.sleep=0;B.sleep=0}}
-        }}}
-  }
-  let full=true;
-  for(const b of bodies){
-    if(b.state==='fall'||b.state==='rest'){
-      if(b.touch&&b.state==='fall'){b.vx*=0.90;b.vy*=0.90}
-      const sp=Math.abs(b.vx)+Math.abs(b.vy);
-      const onFloor=b.y+b.r>=surfY(b.x)-1.5;
-      if((onFloor||b.supported)&&sp<34){b.vx*=0.80;b.vy*=0.80}
-      if(sp<16&&(onFloor||b.supported||b.state==='rest')){b.sleep+=dt*5;if(b.sleep>3){b.state='rest';b.vx=0;b.vy=0}}
-      else if(b.state==='fall')b.sleep=0;
-      if(b.state==='rest'&&b.y<H*0.40&&(b.overflow||(b.dyn&&counted()>=CAP))&&performance.now()-b.born>400){b.state='spill';b.vx=(W/2-b.x)*0.4;b.vy=-30}
-      if(b.sleep<=4)full=false;
-    }
-  }
-  bodies=bodies.filter(b=>b.state!=='dead');
-  return !(owed>0||retQ>0)&&full&&!bodies.some(b=>b.state==='spill'||b.state==='return');
-}
-function drawCoin(b){
-  ctx.save();ctx.translate(b.x,b.y);ctx.rotate(b.a);
-  if(b.state==='spill'){const k=Math.max(0,Math.min(1,(H*1.02-b.y)/(H*0.22)));ctx.globalAlpha=Math.min(1,k+0.25)}
-  const rr=b.r;
-  if(imgOk)ctx.drawImage(img,-rr,-rr,rr*2,rr*2);
-  else{const g=ctx.createRadialGradient(-rr*0.3,-rr*0.3,rr*0.15,0,0,rr);g.addColorStop(0,'#ffe9a0');g.addColorStop(0.6,'#f2b93c');g.addColorStop(1,'#c07f14');ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,rr,0,6.283);ctx.fill();ctx.fillStyle='#a86f0a';ctx.font='900 '+Math.round(rr*1.05)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('★',0,1)}
-  ctx.restore();ctx.globalAlpha=1;
-}
-function drawFrame(){
-  ctx.clearRect(0,0,W,H);
-  const g=ctx.createRadialGradient(W/2,H*0.10,2,W/2,H*0.10,W*0.17);
-  g.addColorStop(0,'rgba(0,0,0,0.6)');g.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(W/2,H*0.10,W*0.17,H*0.13,0,0,6.283);ctx.fill();
-  const sorted=bodies.slice().sort((a,b)=>a.y-b.y);
-  for(const b of sorted)drawCoin(b);
 }
 function frame(now){
-  const dt=Math.min(0.05,(now-lastT)/1000);lastT=now;acc+=dt;
-  let done=false;const h=1/120;let n=0;
-  while(acc>h&&n<8){done=step(h);acc-=h;n++}
-  if(now-actStart>6000&&owed<=0&&retQ<=0){for(const b of bodies)if(b.state==='fall'){b.state='rest';b.vx=0;b.vy=0;b.sleep=9}done=true}
-  drawFrame();
-  if(done&&owed<=0){running=false;return}
-  requestAnimationFrame(frame);
+  const dt=Math.min(0.05,(now-lastT)/1000);lastT=now;
+  spawnT+=dt*1000;removeT+=dt*1000;
+  if(owed>0&&spawnT>45){spawnT=0;owed--;spawnFall(false)}
+  if(removeQ>0&&removeT>90&&fading.length===0){
+    removeT=0;removeQ--;
+    let top=null;for(const cell of cells)if(!top||cell.row>top.row||(cell.row===top.row&&Math.abs(cell.col-(COLS-1)/2)<Math.abs(top.col-(COLS-1)/2)))top=cell;
+    if(top){cells.splice(cells.indexOf(top),1);stacks[top.col]=Math.max(0,stacks[top.col]-1);fading.push({col:top.col,row:top.row,shade:top.shade,jx:top.jx,jy:top.jy,rot:top.rot,face:top.face,t:0})}
+    else removeQ=0;
+  }
+  const G=1700;
+  for(const f of falling){
+    f.t+=dt;f.vy+=G*dt;f.y+=f.vy*dt;
+    const tx=colX(f.col)+(f.jx||0);f.x+=(tx-f.x)*Math.min(1,dt*7);
+    const ly=cellY(stacks[f.col]);
+    if(f.y>=ly){lockCell(f.col,f.shade);const cell=cells[cells.length-1];cell.sq=0.35;falling.splice(falling.indexOf(f),1)}
+  }
+  for(const s of spilling){
+    s.t+=dt;s.vy+=G*dt;s.y+=s.vy*dt;
+    if(s.y>H+RX){spilling.splice(spilling.indexOf(s),1)}
+  }
+  for(const fd of fading){fd.t+=dt;if(fd.t>0.16)fading.splice(fading.indexOf(fd),1)}
+  for(const cell of cells){if(cell.sq<1)cell.sq=Math.min(1,cell.sq+dt*7);if(cell.hop>0)cell.hop=Math.max(0,cell.hop-dt*6)}
+  draw();
+  if(owed>0||removeQ>0||falling.length||spilling.length||fading.length||cells.some(c=>c.sq<1||c.hop>0)){requestAnimationFrame(frame)}
+  else{running=false;draw()}
 }
-function disturb(x,y){
-  for(const b of bodies){if(b.state!=='rest'&&b.state!=='fall')continue;const dx=b.x-x,dy=b.y-y,d2=dx*dx+dy*dy;
-    if(d2<4900&&d2>1){const d=Math.sqrt(d2),f=(1-d/70)*230;b.vx+=dx/d*f;b.vy+=dy/d*f-90;b.sleep=0;b.state='fall'}}
-  wake();
+function drawCoin(x,y,shade,sq,alpha,rot,face){
+  let ry=RY*(0.55+0.45*sq);if(face)ry=RX*0.8*(0.6+0.4*sq);
+  const w=RX*2,h=ry*2;
+  ctx.save();ctx.globalAlpha=alpha;ctx.translate(x,y);ctx.rotate(rot||0);ctx.translate(-x,-y);
+  if(imgOk){ctx.drawImage(img,x-RX,y-ry,w,h)}
+  else{
+    const g=ctx.createRadialGradient(x-RX*0.3,y-ry*0.4,2,x,y,RX);
+    g.addColorStop(0,'#ffe98a');g.addColorStop(0.7,'#f5b921');g.addColorStop(1,'#c07f0a');
+    ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(x,y,RX,ry,0,0,6.3);ctx.fill();
+    ctx.fillStyle='rgba(146,94,4,.85)';ctx.font='700 '+Math.round(RX*0.95)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('★',x,y+0.5);
+  }
+  if(shade===0){ctx.fillStyle='rgba(255,255,255,0.10)';ctx.beginPath();ctx.ellipse(x,y,RX,ry,0,0,6.3);ctx.fill()}
+  if(shade===2){ctx.fillStyle='rgba(90,50,0,0.13)';ctx.beginPath();ctx.ellipse(x,y,RX,ry,0,0,6.3);ctx.fill()}
+  ctx.restore();
 }
-function evPos(e){const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
-cv.addEventListener('pointerdown',e=>{const p=evPos(e);disturb(p.x,p.y)});
-cv.addEventListener('pointermove',e=>{if(e.buttons>0){const p=evPos(e);disturb(p.x,p.y)}});
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  /* 払い出し口の影（トレイ上部中央） */
+  ctx.save();ctx.fillStyle='rgba(10,8,24,0.55)';
+  ctx.beginPath();ctx.ellipse(W/2,H*0.055,W*0.15,H*0.075,0,0,6.3);ctx.fill();ctx.restore();
+  const sorted=cells.slice().sort((a,b)=>a.row-b.row);
+  for(const cell of sorted){
+    const x=colX(cell.col)+cell.jx+(cell.row%2?RX*0.22:0);
+    const y=cellY(cell.row)+cell.jy-cell.hop*2.2;
+    const isTop=cell.row===stacks[cell.col]-1;
+    drawCoin(x,y,cell.shade,cell.sq,1,cell.rot,isTop&&cell.face);
+  }
+  for(const fd of fading){
+    const x=colX(fd.col)+fd.jx+(fd.row%2?RX*0.22:0);
+    drawCoin(x,cellY(fd.row)+fd.jy,fd.shade,1-fd.t/0.16*0.6,1-fd.t/0.16,fd.rot,fd.face);
+  }
+  for(const f of falling)drawCoin(f.x,f.y,f.shade,1,1,f.rot||0,false);
+  for(const s of spilling){
+    const sc=1+Math.max(0,(s.y-floorY()))*0.0016;
+    ctx.save();ctx.translate(s.x,s.y);ctx.scale(sc,sc);ctx.translate(-s.x,-s.y);
+    drawCoin(s.x,s.y,s.shade,1,s.y>H*0.92?Math.max(0,1-(s.y-H*0.92)/(H*0.35)):1);
+    ctx.restore();
+  }
+}
+cv.addEventListener('pointerdown',function(e){
+  const r=cv.getBoundingClientRect();const x=(e.clientX-r.left),y=(e.clientY-r.top);
+  let best=null,bd=1e9;for(const cell of cells){const cx=colX(cell.col)+cell.jx,cy=cellY(cell.row);const d=(cx-x)*(cx-x)+(cy-y)*(cy-y);if(d<bd){bd=d;best=cell}}
+  if(best&&bd<RX*RX*4){best.hop=1;wake()}
+});
+window.addEventListener('resize',function(){resize();draw()});
 resize();
-new ResizeObserver(()=>{const keep=targetFor(currentBal());resize();if(!running)prefill(Math.min(keep,countedStatic()));drawFrame()}).observe(cv);
-function currentBal(){const v=Number(localStorage.getItem('slotCoins'));return Number.isNaN(v)||v<=0?100:v}
-function countedStatic(){let n=0;for(const b of bodies)if(!b.overflow)n++;return n}
-prefill(targetFor(currentBal()));drawFrame();
+const startBal=parseInt(localStorage.getItem('slotCoins')||'0',10)||0;
+prefill(targetFor(startBal));
 window.__traySync=syncTray;
-}catch(e){/* トレイ演出は飾り。本体は無関係に動く */}
+}catch(err){}
 })();
 </script>
 </body></html>
