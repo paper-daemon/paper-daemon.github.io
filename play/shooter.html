@@ -23,6 +23,28 @@ canvas#sb{width:100%;height:auto;display:block;touch-action:none}
 /* 選択膜禁止（純弥指示：連打・長押しでコピー選択膜を出さない） */
 html,body{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 button,a,[role="button"]{touch-action:manipulation}
+
+/* モバイル1画面化（純弥基準：操作にスクロール不要・2026-11-02） */
+@media (max-width:640px){
+  .site-head{padding:8px 12px;gap:8px;flex-wrap:nowrap}
+  .head-actions{display:none}
+  .brand-avatar{width:30px;height:30px}
+  .site-head nav{gap:12px}
+  .site-head nav a{font-size:.82rem}
+  .page-hero{padding:12px 0 2px}
+  .page-hero h1{font-size:1.45rem}
+  .page-hero .page-lead{display:none}
+  .section{padding-top:8px}
+  .sb-stage{display:flex;flex-direction:column}
+  .sb-wrap{max-width:284px;margin-left:auto;margin-right:auto}
+  .sb-hud{margin-top:8px;font-size:.72rem;order:2}
+  .sb-btns{margin-top:8px;gap:8px;order:3}
+  .sb-stages{margin-top:8px;gap:6px;order:4}
+  .sb-stages button{flex:1 1 44%;padding:6px 2px;font-size:.72rem;line-height:1.25;min-height:0}
+  .legend{order:5}
+  #bombBtn{height:46px}
+  #pauseBtn,#focusBtn{height:42px}
+}
 </style>
 <script data-goatcounter="https://shelfiria.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script><script src="/analytics-out.js" defer></script>
 </head>
