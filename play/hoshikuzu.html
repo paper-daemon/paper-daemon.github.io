@@ -79,8 +79,8 @@ const makeSandMaps = () => {
   };
   // one shared layout of irregular grains
   const grains = [];
-  for (let i = 0; i < 9000; i++){
-    const x = rnd() * 1024, y = rnd() * 1024, r = 5 + rnd() * 7;
+  for (let i = 0; i < 26000; i++){
+    const x = rnd() * 1024, y = rnd() * 1024, r = 2.1 + rnd() * 3.1;
     const pts = [];
     const n = 7, rot = rnd() * 6.28;
     for (let k = 0; k < n; k++){ const a = rot + k / n * 6.283, rr = r * (.72 + rnd() * .5); pts.push([Math.cos(a) * rr, Math.sin(a) * rr]); }
@@ -118,9 +118,9 @@ const makeSandMaps = () => {
       }
     }
     if (!bump){
-      for (let i = 0; i < 6000; i++){
+      for (let i = 0; i < 9000; i++){
         g.fillStyle = rnd() < .5 ? 'rgba(255,255,255,.32)' : 'rgba(120,70,80,.25)';
-        g.fillRect(rnd() * w, rnd() * h, 1.8, 1.8);
+        g.fillRect(rnd() * w, rnd() * h, 1.2, 1.2);
       }
       const grad = g.createLinearGradient(0, h, 0, 0);
       grad.addColorStop(0, 'rgba(90,45,60,.28)'); grad.addColorStop(.45, 'rgba(90,45,60,0)');
@@ -229,7 +229,7 @@ function init(){
   colGeo.setAttribute('position', new THREE.Float32BufferAttribute(colPos, 3));
   colGeo.setAttribute('uv', new THREE.Float32BufferAttribute(colUv, 2));
   colGeo.setIndex(colIdx); colGeo.computeVertexNormals();
-  const column = new THREE.Mesh(colGeo, new THREE.MeshStandardMaterial({ map: sandTex, bumpMap: sandMaps.bump, bumpScale: 2.6, roughness: .95 }));
+  const column = new THREE.Mesh(colGeo, new THREE.MeshStandardMaterial({ map: sandTex, bumpMap: sandMaps.bump, bumpScale: 2.0, roughness: .95 }));
   body.add(column);
   // surface fan (center + top ring), positions updated per-frame
   const surfPos = [0, FILL_Y, 0], surfUv = [.5, .5], surfIdx = [];
@@ -242,19 +242,19 @@ function init(){
   surfGeo.setAttribute('position', new THREE.Float32BufferAttribute(surfPos, 3));
   surfGeo.setAttribute('uv', new THREE.Float32BufferAttribute(surfUv, 2));
   surfGeo.setIndex(surfIdx); surfGeo.computeVertexNormals();
-  const surface = new THREE.Mesh(surfGeo, new THREE.MeshStandardMaterial({ map: sandTex, bumpMap: sandMaps.bump, bumpScale: 2.6, roughness: .95 }));
+  const surface = new THREE.Mesh(surfGeo, new THREE.MeshStandardMaterial({ map: sandTex, bumpMap: sandMaps.bump, bumpScale: 2.0, roughness: .95 }));
   body.add(surface);
   const colTopStart = (rings.length - 1) * (SEG + 1); // first vertex of top ring in column geometry
 
   // ---- particles (grains + stars), simulated in WORLD frame ----
   let seed = 5; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-  const NG = 520, NS = 56, N = NG + NS;
+  const NG = 900, NS = 56, N = NG + NS;
   const P = [];
   for (let i = 0; i < N; i++){
     const star = i >= NG;
     const a = rnd() * 6.283, rr = Math.sqrt(rnd()) * 42;
     P.push({
-      star, r: star ? 3.4 : 1.1 + rnd() * 1.9, rx: 0, rz: 0, asleep: 0,
+      star, r: star ? 3.4 : .5 + rnd() * .85, rx: 0, rz: 0, asleep: 0,
       x: Math.cos(a) * rr, z: Math.sin(a) * rr * .8, y: 0,
       vx: 0, vy: 0, vz: 0, rot: rnd() * 6.28
     });
@@ -276,7 +276,7 @@ function init(){
   for (let i = 0; i < NS; i++) starMesh.setColorAt(i, starCols[i % starCols.length]);
   starMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); body.add(starMesh);
   // ---- static bed of real grains covering the sand surface (kills the printed look) ----
-  const BED = 2400;
+  const BED = 6500;
   const bedMesh = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 0),
     new THREE.MeshStandardMaterial({ roughness: .34, metalness: .05, envMapIntensity: 1.3, flatShading: true }), BED);
   const bedDat = [];
@@ -292,7 +292,7 @@ function init(){
       if (rnd() < .07) ci = 6; else if (rnd() < .06) ci = 7; else if (rnd() < .09) ci = 8;
       const cc = bcol[ci].clone(); cc.offsetHSL((rnd() - .5) * .02, (rnd() - .5) * .1, (rnd() - .5) * .1);
       bedMesh.setColorAt(i, cc);
-      bedDat.push({ x, z, s: 1.15 + rnd() * 1.95, rx: rnd() * 3.1, ry: rnd() * 3.1, rz: rnd() * 3.1 });
+      bedDat.push({ x, z, s: .42 + rnd() * .68, rx: rnd() * 3.1, ry: rnd() * 3.1, rz: rnd() * 3.1 });
     }
   }
   bedMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); body.add(bedMesh);
@@ -323,7 +323,7 @@ function init(){
   function updateBed(){
     for (let i = 0; i < BED; i++){
       const b = bedDat[i];
-      dummy.position.set(b.x, surfY(b.x, b.z) + b.s * .38, b.z);
+      dummy.position.set(b.x, surfY(b.x, b.z) + b.s * .34, b.z);
       dummy.scale.set(b.s, b.s * .78, b.s);
       dummy.rotation.set(b.rx, b.ry, b.rz);
       dummy.updateMatrix();
@@ -443,7 +443,7 @@ function init(){
     const omZ = velZ * 60, omX = velX * 60;              // angular velocity, rad/s
     for (let i = 0; i < N; i++){
       const p = P[i];
-      const fy = surfY(p.x, p.z) + p.r + 1.1;
+      const fy = surfY(p.x, p.z) + p.r + .45;
       const onFloor = p.y <= fy + .6;
       // tangential gravity along the surface (decides hold vs avalanche)
       const gdn = gB.x * plNx + gB.y * plNy + gB.z * plNz;
