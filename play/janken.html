@@ -51,7 +51,7 @@
 <section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — JANKEN</p><h1>あませとじゃんけん</h1><p class="page-lead">あませとじゃんけん。5本先取でマッチ勝利です。あませは負けず嫌いなので、負けた次はあなたの前の手を狩りに来るクセがあります。前の手を読んで裏をかくのがコツ。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
 <div class="jk-stage">
-<div class="stage-wrap"><video id="stageVid" src="/play/assets/stage-idle2.mp4" poster="/play/assets/poster-idle.jpg" autoplay muted loop playsinline preload="auto"></video></div>
+<div class="stage-wrap"><video id="stageVid" src="/play/assets/stage-idle3.mp4" autoplay muted loop playsinline preload="auto"></video></div>
 <div class="bgm-row" style="max-width:none;margin:0 0 4px"><button class="bgm-toggle" id="bgmBtn" type="button">♪ BGM</button></div>
 <div class="duel2">
 <div class="fighter"><p class="who">AMASE</p><div class="handview" id="eveView"><span class="emo" id="eveEmo">✊</span><img id="eveImg" src="/play/assets/hand-rock.png" alt="あませの手" onerror="this.remove()"></div></div>
@@ -80,6 +80,7 @@ const oggOkJ=(()=>{const a=document.createElement('audio');return !!(a.canPlayTy
 const EXTJ=oggOkJ?'ogg':'mp3';
 function mkA(s,v,loop){const a=new Audio();a.preload='auto';a.src=s;a.volume=v;if(loop)a.loop=true;return a}
 const JAU={bgm:mkA('/play/assets/bgm_janken_loop.'+EXTJ,0.3,true),pon:mkA('/play/assets/se-janken-pon.'+EXTJ,0.6),win:mkA('/play/assets/se-janken-win.'+EXTJ,0.6),lose:mkA('/play/assets/se-janken-lose.'+EXTJ,0.55),draw:mkA('/play/assets/se-janken-draw.'+EXTJ,0.55)};
+const JVO={jan:mkA('/play/assets/voice-jan.'+EXTJ,0.95),pon:mkA('/play/assets/voice-pon.'+EXTJ,0.95),win:mkA('/play/assets/voice-win.'+EXTJ,0.95),lose:mkA('/play/assets/voice-lose.'+EXTJ,0.95),draw:mkA('/play/assets/voice-draw.'+EXTJ,0.95),mwin:mkA('/play/assets/voice-matchwin.'+EXTJ,0.95),mlose:mkA('/play/assets/voice-matchlose.'+EXTJ,0.95)};
 function jplay(a){if(!a||a.networkState===3)return false;try{a.currentTime=0;const p=a.play();if(p&&p.catch)p.catch(()=>{});return true}catch(e){return false}}
 let jBgmOn=true,jBgmStarted=false;
 function jBgmStart(){if(jBgmStarted||!jBgmOn)return;if(JAU.bgm&&JAU.bgm.networkState!==3){try{const p=JAU.bgm.play();if(p&&p.catch)p.catch(()=>{});jBgmStarted=true}catch(e){}}}
@@ -121,22 +122,22 @@ const eveView=document.getElementById("eveView"),youView=document.getElementById
 const eveImg=document.getElementById("eveImg"),youImg=document.getElementById("youImg"),eveEmo=document.getElementById("eveEmo"),youEmo=document.getElementById("youEmo");
 function reveal(you,eve){
 let out;
-if(you===eve){out="draw";d++;streak=0;result.textContent="あいこ";if(!jplay(JAU.draw))tone(520,0.09,"sine",0.1)}
-else if((you-eve+3)%3===2){out="win";w++;streak++;mpYou++;result.textContent="あなたの勝ち！";if(!jplay(JAU.win)){tone(784,0.12,"sine",0.12);tone(1047,0.18,"sine",0.12,0.1)}vibJ(30)}
-else{out="lose";l++;streak=0;mpEve++;result.textContent="あませの勝ち";if(!jplay(JAU.lose))tone(262,0.14,"triangle",0.1);vibJ([20,40,20])}
+if(you===eve){out="draw";d++;streak=0;result.textContent="あいこ";if(!jplay(JAU.draw))tone(520,0.09,"sine",0.1);setTimeout(()=>jplay(JVO.draw),520)}
+else if((you-eve+3)%3===2){out="win";w++;streak++;mpYou++;result.textContent="あなたの勝ち！";if(!jplay(JAU.win)){tone(784,0.12,"sine",0.12);tone(1047,0.18,"sine",0.12,0.1)}vibJ(30);setTimeout(()=>jplay(JVO.lose),520)}
+else{out="lose";l++;streak=0;mpEve++;result.textContent="あませの勝ち";if(!jplay(JAU.lose))tone(262,0.14,"triangle",0.1);vibJ([20,40,20]);setTimeout(()=>jplay(JVO.win),520)}
 let lineArr=LINES[out];
-if(mpYou>=5){matchYou++;localStorage.setItem("jkMatchYou",matchYou);result.textContent="マッチ獲得！！ あなたの勝ち";lineArr=LINES.matchWin;mpYou=0;mpEve=0;playVictoryFx();vibJ([50,40,50,40,120]);tone(784,0.12,"sine",0.12);tone(988,0.12,"sine",0.12,0.1);tone(1318,0.26,"sine",0.12,0.2)}
-else if(mpEve>=5){matchEve++;localStorage.setItem("jkMatchEve",matchEve);result.textContent="マッチはあませのもの…";lineArr=LINES.matchLose;mpYou=0;mpEve=0}
+if(mpYou>=5){matchYou++;localStorage.setItem("jkMatchYou",matchYou);result.textContent="マッチ獲得！！ あなたの勝ち";lineArr=LINES.matchWin;mpYou=0;mpEve=0;playVictoryFx();vibJ([50,40,50,40,120]);tone(784,0.12,"sine",0.12);tone(988,0.12,"sine",0.12,0.1);tone(1318,0.26,"sine",0.12,0.2);setTimeout(()=>jplay(JVO.mlose),2100)}
+else if(mpEve>=5){matchEve++;localStorage.setItem("jkMatchEve",matchEve);result.textContent="マッチはあませのもの…";lineArr=LINES.matchLose;mpYou=0;mpEve=0;setTimeout(()=>jplay(JVO.mwin),2100)}
 else if(out==="win"&&streak>=5){playVictoryFx()}
 line.textContent=lineArr[Math.floor(Math.random()*lineArr.length)];
 lastYou=you;lastOut=out;
 paintScore();
 }
-const THROW={0:[["a",2800],["b",5500]],1:[["a",4800],["b",4600]],2:[["b",4800]]};
+const THROW={0:[["a",2700],["b",5250]],1:[["a",4500],["b",4300]],2:[["b",4400]]};
 const stageVid=document.getElementById("stageVid");
-function toIdle(){if(!stageVid)return;stageVid.loop=true;if(!stageVid.src.includes("stage-idle2"))stageVid.src="/play/assets/stage-idle2.mp4";const p=stageVid.play();if(p)p.catch(()=>{});}
+function toIdle(){if(!stageVid)return;stageVid.loop=true;if(!stageVid.src.includes("stage-idle3"))stageVid.src="/play/assets/stage-idle3.mp4";const p=stageVid.play();if(p)p.catch(()=>{});}
 document.querySelectorAll(".handbtn").forEach(b=>b.addEventListener("click",()=>{
-if(busy)return;busy=true;jBgmStart();
+if(busy)return;busy=true;jBgmStart();jplay(JVO.jan);
 const you=Number(b.dataset.h);const eve=pickEve();
 document.querySelectorAll(".handbtn").forEach(x=>x.disabled=true);
 setHand(youView,youImg,youEmo,0,YOUIMG);setHand(eveView,eveImg,eveEmo,0);
@@ -147,7 +148,7 @@ const vname="/play/assets/stage-"+["rock","scissors","paper"][eve]+"-"+pv[0]+".m
 let done=false;
 const finish=()=>{
 if(done)return;done=true;
-beatEl.textContent="ぽん！";if(!jplay(JAU.pon))tone(920,0.08,"sine",0.13);vibJ(18);
+beatEl.textContent="ぽん！";if(!jplay(JVO.pon)&&!jplay(JAU.pon))tone(920,0.08,"sine",0.13);vibJ(18);
 eveView.classList.remove("shaking");youView.classList.remove("shaking");
 setHand(youView,youImg,youEmo,you,YOUIMG);setHand(eveView,eveImg,eveEmo,eve);
 reveal(you,eve);
