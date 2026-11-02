@@ -179,7 +179,7 @@ addChip();paintTries();
 if(locked.every(x=>x)){
 done=true;document.getElementById("openBtn").disabled=true;
 hint.textContent="開いた！ "+tries+"回で開錠 ランク "+rank();
-const b=getBest();if(!b||tries<b){localStorage.setItem(bestKey(),tries);hint.textContent+=" ベスト更新！"}
+const b=getBest();if(!b||tries<b){localStorage.setItem(bestKey(),tries);hint.textContent+=" ベスト更新！";paintTries()}
 const t=TREASURES[Math.floor(Math.random()*TREASURES.length)];
 document.getElementById("treasure").textContent=t[0];document.getElementById("treasureName").textContent=t[1];
 sub.textContent="中には「"+t[1]+"」が入っていました。";
