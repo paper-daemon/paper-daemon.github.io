@@ -51,19 +51,19 @@
 <section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — JANKEN</p><h1>あませとじゃんけん</h1><p class="page-lead">あませとじゃんけん。5本先取でマッチ勝利です。あませは負けず嫌いなので、負けた次はあなたの前の手を狩りに来るクセがあります。前の手を読んで裏をかくのがコツ。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
 <div class="jk-stage">
-<div class="stage-wrap"><video id="stageVid" src="/play/assets/stage-idle.mp4" poster="/play/assets/poster-idle.jpg" autoplay muted loop playsinline preload="auto"></video></div>
+<div class="stage-wrap"><video id="stageVid" src="/play/assets/stage-idle2.mp4" poster="/play/assets/poster-idle.jpg" autoplay muted loop playsinline preload="auto"></video></div>
 <div class="bgm-row" style="max-width:none;margin:0 0 4px"><button class="bgm-toggle" id="bgmBtn" type="button">♪ BGM</button></div>
 <div class="duel2">
 <div class="fighter"><p class="who">AMASE</p><div class="handview" id="eveView"><span class="emo" id="eveEmo">✊</span><img id="eveImg" src="/play/assets/hand-rock.png" alt="あませの手" onerror="this.remove()"></div></div>
-<div class="fighter"><p class="who">YOU</p><div class="handview" id="youView"><span class="emo" id="youEmo">✊</span><img id="youImg" src="/play/assets/hand-rock.png" alt="あなたの手" onerror="this.remove()"></div></div>
+<div class="fighter"><p class="who">YOU</p><div class="handview" id="youView"><span class="emo" id="youEmo">✊</span><img id="youImg" src="/play/assets/player-hand-rock.png" alt="あなたの手" onerror="this.remove()"></div></div>
 </div>
 <p class="beat" id="beat"></p>
 <p class="result" id="result">手を選んでね</p>
 <p class="eve-line" id="eveLine">あませ「本気で来ていいよ。負けず嫌いだから」</p>
 <div class="hands">
-<button class="handbtn" data-h="0" type="button"><img src="/play/assets/hand-rock.png" alt="" onerror="this.outerHTML='✊'">グー</button>
-<button class="handbtn" data-h="1" type="button"><img src="/play/assets/hand-scissors.png" alt="" onerror="this.outerHTML='✌️'">チョキ</button>
-<button class="handbtn" data-h="2" type="button"><img src="/play/assets/hand-paper.png" alt="" onerror="this.outerHTML='✋'">パー</button>
+<button class="handbtn" data-h="0" type="button"><img src="/play/assets/player-hand-rock.png" alt="" onerror="this.outerHTML='✊'">グー</button>
+<button class="handbtn" data-h="1" type="button"><img src="/play/assets/player-hand-scissors.png" alt="" onerror="this.outerHTML='✌️'">チョキ</button>
+<button class="handbtn" data-h="2" type="button"><img src="/play/assets/player-hand-paper.png" alt="" onerror="this.outerHTML='✋'">パー</button>
 </div>
 <video id="fxVideo" muted playsinline preload="auto"></video>
 <div class="match"><span>YOU <span class="pips" id="pipsYou">○○○○○</span></span><span>先取5本でマッチ</span><span><span class="pips" id="pipsEve">○○○○○</span> EVE</span></div>
@@ -86,9 +86,10 @@ function jBgmStart(){if(jBgmStarted||!jBgmOn)return;if(JAU.bgm&&JAU.bgm.networkS
 document.getElementById('bgmBtn').addEventListener('click',function(){jBgmOn=!jBgmOn;this.classList.toggle('off',!jBgmOn);if(!jBgmOn){JAU.bgm.pause();jBgmStarted=false}else jBgmStart()});
 function vibJ(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
 const HANDIMG=['/play/assets/hand-rock.png','/play/assets/hand-scissors.png','/play/assets/hand-paper.png'];
+const YOUIMG=['/play/assets/player-hand-rock.png','/play/assets/player-hand-scissors.png','/play/assets/player-hand-paper.png'];
 const HANDEMO=['✊','✌️','✋'];
-function setHand(view,imgEl,emoEl,h){
-  if(imgEl){imgEl.src=HANDIMG[h];emoEl.style.display='none';imgEl.style.display=''}
+function setHand(view,imgEl,emoEl,h,map){
+  if(imgEl){imgEl.src=(map||HANDIMG)[h];emoEl.style.display='none';imgEl.style.display=''}
   else{emoEl.textContent=HANDEMO[h]}
 }
 const fxv=document.getElementById('fxVideo');
@@ -133,12 +134,12 @@ paintScore();
 }
 const THROW={0:[["a",2800],["b",5500]],1:[["a",4800],["b",4600]],2:[["b",4800]]};
 const stageVid=document.getElementById("stageVid");
-function toIdle(){if(!stageVid)return;stageVid.loop=true;if(!stageVid.src.includes("stage-idle"))stageVid.src="/play/assets/stage-idle.mp4";const p=stageVid.play();if(p)p.catch(()=>{});}
+function toIdle(){if(!stageVid)return;stageVid.loop=true;if(!stageVid.src.includes("stage-idle2"))stageVid.src="/play/assets/stage-idle2.mp4";const p=stageVid.play();if(p)p.catch(()=>{});}
 document.querySelectorAll(".handbtn").forEach(b=>b.addEventListener("click",()=>{
 if(busy)return;busy=true;jBgmStart();
 const you=Number(b.dataset.h);const eve=pickEve();
 document.querySelectorAll(".handbtn").forEach(x=>x.disabled=true);
-setHand(youView,youImg,youEmo,0);setHand(eveView,eveImg,eveEmo,0);
+setHand(youView,youImg,youEmo,0,YOUIMG);setHand(eveView,eveImg,eveEmo,0);
 eveView.classList.add("shaking");youView.classList.add("shaking");
 beatEl.textContent="じゃん";tone(440,0.06,"square",0.06);
 const vs=THROW[eve];const pv=vs.length>1?(Math.random()<0.65?vs[0]:vs[1]):vs[0];
@@ -148,7 +149,7 @@ const finish=()=>{
 if(done)return;done=true;
 beatEl.textContent="ぽん！";if(!jplay(JAU.pon))tone(920,0.08,"sine",0.13);vibJ(18);
 eveView.classList.remove("shaking");youView.classList.remove("shaking");
-setHand(youView,youImg,youEmo,you);setHand(eveView,eveImg,eveEmo,eve);
+setHand(youView,youImg,youEmo,you,YOUIMG);setHand(eveView,eveImg,eveEmo,eve);
 reveal(you,eve);
 document.querySelectorAll(".handbtn").forEach(x=>x.disabled=false);
 busy=false;
@@ -160,6 +161,7 @@ else setTimeout(finish,560);
 setTimeout(finish,pv[1]);
 setTimeout(finish,pv[1]+3500);
 }));
+setHand(youView,youImg,youEmo,0,YOUIMG);setHand(eveView,eveImg,eveEmo,0);
 paintScore();</script>
 <script src="/ad-overlay.js" defer></script>
 </body></html>
