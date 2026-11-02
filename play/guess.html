@@ -2,85 +2,221 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>数あて | Shelfiria</title>
-<meta name="description" content="Shelfiriaの小さな遊び場。1から100の数字を当てるおもちゃ。大きい小さいのヒントと範囲ゲージつき。">
+<title>金庫開け | Shelfiria</title>
+<meta name="description" content="Shelfiriaの小さな遊び場。ダイヤルをカチカチ回して暗証番号を合わせ、あませの金庫を開けるゲーム。合った桁は重いカチッでロック。">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="Shelfiria"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/site.css?v=20261101-1">
-<style>.guess-stage{max-width:520px;margin:0 auto;text-align:center;background:#fff;border:3px solid var(--ink);border-radius:22px;box-shadow:8px 8px 0 var(--ink);padding:30px 22px 32px;position:relative;overflow:hidden}
-.guess-stage:before{content:"";position:absolute;top:0;left:0;right:0;height:8px;background:linear-gradient(90deg,#2b50c8,#6ee7ff)}
-.gauge{height:22px;border:2px solid var(--ink);border-radius:999px;position:relative;background:#fff;margin:20px 0 6px}
-.gauge .lo,.gauge .hi{position:absolute;top:0;bottom:0;background:rgba(43,80,200,.22)}
-.gauge .cur{position:absolute;top:-6px;width:4px;height:30px;background:#d23b2a;border-radius:2px}
-input[type=number]{font:700 1.4rem var(--mono);width:130px;padding:10px;border:2px solid var(--ink);border-radius:12px;text-align:center}
-.hint{font-weight:900;font-size:1.25rem;min-height:1.6em;margin:14px 0 4px}
-.sub{color:var(--muted);font-size:.85rem;min-height:1.5em}
-.diff-btns{display:flex;gap:8px;justify-content:center;margin:6px 0 2px;flex-wrap:wrap}
+<style>
+.safe-stage{max-width:520px;margin:0 auto;text-align:center;background:#fff;border:3px solid var(--ink);border-radius:22px;box-shadow:8px 8px 0 var(--ink);padding:28px 20px 30px;position:relative;overflow:hidden}
+.safe-stage:before{content:"";position:absolute;top:0;left:0;right:0;height:8px;background:linear-gradient(90deg,#2b50c8,#6ee7ff);z-index:3}
+.diff-btns{display:flex;gap:8px;justify-content:center;margin:2px 0 14px;flex-wrap:wrap}
 .diff-btns button{font:700 .82rem var(--disp);padding:7px 14px;border:2px solid var(--ink);border-radius:999px;background:#fff;cursor:pointer}
 .diff-btns button.on{background:var(--ink);color:#fff}
-.temp{font-weight:900;font-size:1.05rem;min-height:1.5em;margin:2px 0}
-.hist{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px;min-height:26px}
-.chip{font:700 .78rem var(--mono);padding:3px 9px;border-radius:999px;border:2px solid var(--ink)}
-.chip.up{background:#dbe7ff}.chip.down{background:#ffe1d6}.chip.hit{background:#ffe066}
+.safe-wrap{perspective:1100px;width:min(340px,88vw);margin:6px auto 4px;aspect-ratio:1/1.04;position:relative}
+.interior{position:absolute;inset:0;border-radius:18px;background:radial-gradient(circle at 50% 42%,#3a2f10 0%,#191204 55%,#0a0701 100%);border:3px solid #0c0c14;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.interior .glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,rgba(255,205,70,.5),transparent 62%);opacity:0;transition:opacity 1.2s ease .5s}
+.safe-wrap.open .interior .glow{opacity:1}
+.treasure{font-size:4.2rem;line-height:1;filter:drop-shadow(0 6px 18px rgba(255,190,40,.55));transform:scale(.6);opacity:0;transition:transform .9s cubic-bezier(.2,1.6,.4,1) .8s,opacity .5s ease .8s;position:relative;z-index:1}
+.safe-wrap.open .treasure{transform:scale(1);opacity:1}
+.treasure-name{color:#ffd968;font-weight:900;font-size:1.05rem;opacity:0;transition:opacity .6s ease 1.3s;position:relative;z-index:1;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+.safe-wrap.open .treasure-name{opacity:1}
+.spark{position:absolute;width:7px;height:7px;border-radius:50%;background:#ffe066;opacity:0;z-index:1;pointer-events:none}
+.safe-wrap.open .spark{animation:sparkle 1.5s ease-out var(--dl,1s) both}
+@keyframes sparkle{0%{opacity:0;transform:translate(0,0) scale(.4)}25%{opacity:1}100%{opacity:0;transform:translate(var(--dx,0),var(--dy,-46px)) scale(1.15)}}
+.door{position:absolute;inset:0;border-radius:18px;background:linear-gradient(145deg,#3d4356 0%,#23283a 48%,#171b29 100%);border:3px solid #0c0c14;box-shadow:inset 0 2px 0 rgba(255,255,255,.22),inset 0 -14px 30px rgba(0,0,0,.5),6px 10px 24px rgba(10,10,30,.35);transform-origin:left center;transition:transform 1.9s cubic-bezier(.65,0,.25,1) .15s;display:flex;flex-direction:column;align-items:center;padding:16px 12px 14px;z-index:2;backface-visibility:hidden}
+.safe-wrap.open .door{transform:rotateY(-103deg);pointer-events:none}
+.rivet{position:absolute;width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#9aa3bb,#454c63 70%);box-shadow:inset 0 -2px 3px rgba(0,0,0,.6)}
+.r1{top:10px;left:10px}.r2{top:10px;right:10px}.r3{bottom:10px;left:10px}.r4{bottom:10px;right:10px}
+.plate{font:700 .68rem var(--mono);letter-spacing:.28em;color:#aeb7cf;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.16);border-radius:6px;padding:4px 10px 4px 13px;margin-bottom:10px}
+.handle{width:64px;height:64px;margin:2px 0 12px;position:relative;transition:transform .8s cubic-bezier(.6,0,.3,1);flex:none}
+.safe-wrap.unlocking .handle{transform:rotate(540deg)}
+.handle .ring{position:absolute;inset:0;border-radius:50%;border:7px solid #c8cfdf;box-shadow:0 3px 8px rgba(0,0,0,.55),inset 0 2px 4px rgba(255,255,255,.5)}
+.handle .spoke{position:absolute;left:50%;top:50%;width:56px;height:8px;margin:-4px 0 0 -28px;border-radius:99px;background:linear-gradient(#dfe5f2,#98a2bb);box-shadow:0 2px 4px rgba(0,0,0,.4)}
+.handle .spoke.s2{transform:rotate(60deg)}
+.handle .spoke.s3{transform:rotate(120deg)}
+.handle .hub{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f2f5fb,#8b95ae 75%);box-shadow:0 2px 5px rgba(0,0,0,.5)}
+.dials{display:flex;gap:10px;justify-content:center}
+.dial{display:flex;flex-direction:column;align-items:center;gap:5px}
+.dial button{width:52px;height:26px;border-radius:8px;border:2px solid #0c0c14;background:linear-gradient(#4a5169,#2c3247);color:#dfe5f2;font-size:.8rem;cursor:pointer;line-height:1;padding:0;touch-action:manipulation}
+.dial button:active{transform:translateY(1px)}
+.dial button:disabled{opacity:.28;cursor:default}
+.reel-win{width:56px;height:114px;border-radius:12px;border:3px solid #0c0c14;background:linear-gradient(#0d0f16,#1a1e2c 50%,#0d0f16);overflow:hidden;position:relative;cursor:grab;touch-action:none;box-shadow:inset 0 10px 14px rgba(0,0,0,.85),inset 0 -10px 14px rgba(0,0,0,.85)}
+.reel-win:before{content:"";position:absolute;left:0;right:0;top:38px;height:38px;border-top:2px solid rgba(255,224,102,.0);border-bottom:2px solid rgba(255,224,102,0);background:rgba(255,255,255,.05);z-index:2;pointer-events:none}
+.reel-strip{will-change:transform}
+.reel-strip span{display:block;height:38px;line-height:38px;font:700 1.55rem var(--mono);color:#8f99b3;text-align:center}
+.reel-strip span.cur{color:#fff;text-shadow:0 0 12px rgba(140,180,255,.65)}
+.dial.locked .reel-win{border-color:#8a6a10;box-shadow:0 0 0 2px #ffd94d,0 0 18px rgba(255,205,50,.55),inset 0 10px 14px rgba(0,0,0,.85),inset 0 -10px 14px rgba(0,0,0,.85);cursor:default}
+.dial.locked .reel-strip span.cur{color:#ffd94d;text-shadow:0 0 14px rgba(255,205,50,.8)}
+.dial.locked .lockmark{color:#ffd94d}
+.lockmark{font-size:.72rem;height:1em;color:transparent;transition:color .2s}
+.dial.pop .reel-win{animation:pop .32s ease}
+@keyframes pop{35%{transform:scale(1.07)}}
+.safe-wrap.shake .door{animation:shake .45s ease}
+@keyframes shake{15%{transform:translateX(-7px) rotate(-.4deg)}35%{transform:translateX(6px) rotate(.4deg)}55%{transform:translateX(-5px)}75%{transform:translateX(4px)}100%{transform:translateX(0)}}
+.hint{font-weight:900;font-size:1.22rem;min-height:1.6em;margin:16px 0 2px}
+.sub{color:var(--muted);font-size:.85rem;min-height:1.5em;margin:2px 0}
+.btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.hist{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:14px;min-height:26px}
+.chip{font:700 .78rem var(--mono);padding:3px 9px;border-radius:999px;border:2px solid var(--ink);background:#eef1f8;letter-spacing:.14em}
+.chip b{color:#b78a1e}
+.chip.full{background:#ffe066}
+@media (prefers-reduced-motion:reduce){.door{transition-duration:.3s}.handle{transition-duration:.2s}.treasure{transition-duration:.2s}}
 </style>
 <script data-goatcounter="https://shelfiria.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script><script src="/analytics-out.js" defer></script>
 </head>
 <body>
 <header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>Shelfiria</strong></span></a><nav aria-label="main"><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
 <main class="page">
-<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — GUESS</p><h1>数あて</h1><p class="page-lead">あませが思い浮かべた数字を当てるおもちゃ。ヒントは「より大きい／より小さい」に加えて、近さで変わる“温度”。難易度は 50／100／500 から選べます。</p></section>
+<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — SAFE</p><h1>金庫開け</h1><p class="page-lead">あませの金庫の暗証番号を、ダイヤルをカチカチ回して合わせるゲーム。合った桁は重い「カチッ」で金色にロックします。全桁そろえば、重い扉が開きます。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
-<div class="guess-stage">
+<div class="safe-stage">
 <div class="diff-btns" role="group" aria-label="難易度">
-<button type="button" data-max="50">かんたん 1〜50</button>
-<button type="button" data-max="100" class="on">ふつう 1〜100</button>
-<button type="button" data-max="500">むずかしい 1〜500</button>
+<button type="button" data-digits="2">かんたん 2桁</button>
+<button type="button" data-digits="3" class="on">ふつう 3桁</button>
+<button type="button" data-digits="4">むずかしい 4桁</button>
 </div>
-<p style="font-weight:700" id="introLine">あませが 1〜100 の数字を1つ思い浮かべました。当ててみて。</p>
-<div class="gauge"><div class="lo" id="gLo" style="left:0;width:0"></div><div class="hi" id="gHi" style="right:0;width:0"></div><div class="cur" id="gCur" style="left:50%" hidden></div></div>
-<p class="sub" id="rangeLabel">範囲：1 〜 100</p>
-<p class="hint" id="hint">数字を入れて「当てる」</p>
-<p class="temp" id="temp"></p>
-<p class="sub" id="tries">試行 0 回 ｜ ベスト <span id="best">-</span> 回</p>
-<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-<input type="number" id="num" min="1" max="100" inputmode="numeric" placeholder="1-100">
-<button class="button primary" id="goBtn" type="button">当てる</button>
-<button class="button soft" id="resetBtn" type="button">新しい数字</button>
+<div class="safe-wrap" id="safeWrap">
+<div class="interior" aria-hidden="true"><div class="glow"></div><div class="treasure" id="treasure">🫙</div><div class="treasure-name" id="treasureName">星屑の小瓶</div></div>
+<div class="door" id="door">
+<span class="rivet r1"></span><span class="rivet r2"></span><span class="rivet r3"></span><span class="rivet r4"></span>
+<div class="plate">AMASE&nbsp;SAFE</div>
+<div class="handle" aria-hidden="true"><div class="ring"></div><div class="spoke"></div><div class="spoke s2"></div><div class="spoke s3"></div><div class="hub"></div></div>
+<div class="dials" id="dials"></div>
 </div>
-<div class="hist" id="hist" aria-label="これまでの予想"></div></div>
+</div>
+<p class="hint" id="hint">ダイヤルを回して「開ける」</p>
+<p class="sub" id="sub">桁ごとに上下ボタン／スワイプ／ホイールで回せます。0から始まる番号もあります。</p>
+<p class="sub" id="tries">試行 0 回 ｜ ベスト - 回</p>
+<div class="btn-row">
+<button class="button primary" id="openBtn" type="button">開ける</button>
+<button class="button soft" id="resetBtn" type="button">新しい金庫</button>
+</div>
+<div class="hist" id="hist" aria-label="これまでの試行"></div>
+</div>
 </section>
 </main>
 <footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>Shelfiria</strong></span></div><nav><a href="/">トップ</a><a href="/demo.html" aria-current="page">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a></nav></footer>
-<script>let AC=null;function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC}
-function tone(f,d,type,v,when){const ac=audio();if(!ac)return;const t=ac.currentTime+(when||0);const o=ac.createOscillator(),g=ac.createGain();o.type=type||"sine";o.frequency.value=f;g.gain.setValueAtTime(v||0.12,t);g.gain.exponentialRampToValueAtTime(0.001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02)}
-let maxN=100,target=1+Math.floor(Math.random()*100),lo=1,hi=100,tries=0,done=false;
-const hint=document.getElementById("hint"),tempEl=document.getElementById("temp"),triesEl=document.getElementById("tries"),num=document.getElementById("num"),rangeLabel=document.getElementById("rangeLabel"),gLo=document.getElementById("gLo"),gHi=document.getElementById("gHi"),gCur=document.getElementById("gCur"),hist=document.getElementById("hist"),introLine=document.getElementById("introLine");
-function bestKey(){return "guessBest"+maxN}
+<script>
+let AC=null;
+function audio(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function tone(f,d,type,v,when,slideTo){const ac=audio();if(!ac)return;const t=ac.currentTime+(when||0);const o=ac.createOscillator(),g=ac.createGain();o.type=type||"sine";o.frequency.setValueAtTime(f,t);if(slideTo)o.frequency.exponentialRampToValueAtTime(slideTo,t+d);g.gain.setValueAtTime(v||0.1,t);g.gain.exponentialRampToValueAtTime(0.001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+0.02)}
+function noise(dur,v,freq,when){const ac=audio();if(!ac)return;const t=ac.currentTime+(when||0);const len=Math.floor(ac.sampleRate*dur);const buf=ac.createBuffer(1,len,ac.sampleRate);const ch=buf.getChannelData(0);for(let i=0;i<len;i++)ch[i]=(Math.random()*2-1)*(1-i/len);const src=ac.createBufferSource();src.buffer=buf;const f=ac.createBiquadFilter();f.type="bandpass";f.frequency.value=freq;f.Q.value=1.1;const g=ac.createGain();g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(0.001,t+dur);src.connect(f);f.connect(g);g.connect(ac.destination);src.start(t)}
+function tick(){noise(0.03,0.22,2600);tone(1900,0.02,"square",0.03)}
+function clunk(delay){noise(0.16,0.5,300,delay||0);tone(82,0.22,"sine",0.4,delay||0);tone(1240,0.05,"square",0.06,(delay||0)+0.01)}
+function rattle(){for(let i=0;i<3;i++){noise(0.05,0.3,700,i*0.07)}tone(140,0.16,"sawtooth",0.07)}
+function buzz(p){if(navigator.vibrate)try{navigator.vibrate(p)}catch(e){}}
+const CELL=38;
+let digits=3,code=[],vals=[],locked=[],tries=0,done=false;
+const wrap=document.getElementById("safeWrap"),dialsEl=document.getElementById("dials"),hint=document.getElementById("hint"),sub=document.getElementById("sub"),triesEl=document.getElementById("tries"),hist=document.getElementById("hist");
+const TREASURES=[["🫙","星屑の小瓶"],["🗝️","金の鍵"],["💌","あませの手紙"],["💎","蒼い宝石"],["👑","ちいさな王冠"],["🔔","猫の鈴"],["🧸","金のくまさん"],["🍾","祝いのシャンパン"]];
+function bestKey(){return "safeBest"+digits}
 function getBest(){return Number(localStorage.getItem(bestKey())||0)}
-function paint(){const span=maxN-1;gLo.style.width=((lo-1)/span*100)+"%";gHi.style.width=((maxN-hi)/span*100)+"%";rangeLabel.textContent="範囲："+lo+" 〜 "+hi;const b=getBest();triesEl.innerHTML="試行 "+tries+" 回 ｜ ベスト "+(b>0?b:"-")+" 回（"+(maxN===50?"かんたん":maxN===100?"ふつう":"むずかしい")+"）"}
-function tempOf(v){const r=Math.abs(v-target)/maxN;
-if(r<=0.02)return["激アツ！","#d23b2a",880];
-if(r<=0.06)return["あつい","#e06a1b",660];
-if(r<=0.15)return["ぬるい","#b78a1e",520];
-if(r<=0.35)return["つめたい","#2b6fc8",392];
-return["極寒…","#274b9f",330];}
-function reset(){target=1+Math.floor(Math.random()*maxN);lo=1;hi=maxN;tries=0;done=false;hint.textContent="新しい数字にしました";tempEl.textContent="";gCur.hidden=true;hist.innerHTML="";introLine.textContent="あませが 1〜"+maxN+" の数字を1つ思い浮かべました。当ててみて。";num.max=maxN;num.placeholder="1-"+maxN;paint();num.value="";num.focus()}
-document.getElementById("resetBtn").addEventListener("click",reset);
-document.querySelectorAll(".diff-btns button").forEach(b=>{b.addEventListener("click",()=>{document.querySelectorAll(".diff-btns button").forEach(x=>x.classList.remove("on"));b.classList.add("on");maxN=Number(b.dataset.max);reset();})});
-function addChip(v,kind){const s=document.createElement("span");s.className="chip "+kind;s.textContent=v+(kind==="up"?" ↑":kind==="down"?" ↓":" ◎");hist.appendChild(s)}
-function rank(){const opt=Math.ceil(Math.log2(maxN+1));if(tries<=opt)return"S（読み切り！）";if(tries<=opt+2)return"A";if(tries<=opt+5)return"B";return"C";}
-function guess(){
-if(done)return;const v=Number(num.value);
-if(!v||v<1||v>maxN){hint.textContent="1〜"+maxN+"で入れてね";return}
-tries++;gCur.hidden=false;gCur.style.left="calc("+((v-1)/(maxN-1)*100)+"% - 2px)";
-if(v===target){done=true;addChip(v,"hit");const tp=tempOf(v);hint.textContent="正解！ "+target+" でした（"+tries+"回） ランク "+rank();tempEl.textContent="";tone(784,0.12,"sine",0.12);tone(1047,0.2,"sine",0.12,0.1);
-const b=getBest();if(!b||tries<b){localStorage.setItem(bestKey(),tries);hint.textContent+=" ベスト更新！"}
-}else{const tp=tempOf(v);tempEl.textContent=tp[0];tempEl.style.color=tp[1];
-if(v<target){lo=Math.max(lo,v+1);hint.textContent=v+" より大きい";addChip(v,"up")}else{hi=Math.min(hi,v-1);hint.textContent=v+" より小さい";addChip(v,"down")}
-tone(tp[2],0.09,"triangle",0.1)}
-paint();num.select();
+function paintTries(){const b=getBest();triesEl.textContent="試行 "+tries+" 回 ｜ ベスト "+(b>0?b:"-")+" 回（"+(digits===2?"かんたん":digits===3?"ふつう":"むずかしい")+"）"}
+function buildDials(){
+dialsEl.innerHTML="";vals=[];locked=[];
+for(let i=0;i<digits;i++){
+vals.push(0);locked.push(false);
+const d=document.createElement("div");d.className="dial";d.dataset.i=i;
+const up=document.createElement("button");up.type="button";up.textContent="▲";up.setAttribute("aria-label",(i+1)+"桁目を増やす");
+const win=document.createElement("div");win.className="reel-win";win.tabIndex=0;win.setAttribute("role","spinbutton");win.setAttribute("aria-label",(i+1)+"桁目");
+const strip=document.createElement("div");strip.className="reel-strip";
+let html="";for(let r=0;r<3;r++)for(let n=0;n<10;n++)html+="<span data-v='"+n+"'>"+n+"</span>";
+strip.innerHTML=html;win.appendChild(strip);
+const down=document.createElement("button");down.type="button";down.textContent="▼";down.setAttribute("aria-label",(i+1)+"桁目を減らす");
+const mark=document.createElement("div");mark.className="lockmark";mark.textContent="🔒";
+d.appendChild(up);d.appendChild(win);d.appendChild(down);d.appendChild(mark);
+dialsEl.appendChild(d);
+strip.dataset.idx=10;
+setStrip(d,10,false);
+up.addEventListener("click",()=>step(i,1));
+down.addEventListener("click",()=>step(i,-1));
+win.addEventListener("wheel",e=>{e.preventDefault();step(i,e.deltaY>0?-1:1)},{passive:false});
+win.addEventListener("keydown",e=>{if(e.key==="ArrowUp"){e.preventDefault();step(i,1)}if(e.key==="ArrowDown"){e.preventDefault();step(i,-1)}});
+let py=null,acc=0;
+win.addEventListener("pointerdown",e=>{py=e.clientY;acc=0;win.setPointerCapture(e.pointerId)});
+win.addEventListener("pointermove",e=>{if(py===null)return;const dy=py-e.clientY;acc+=dy;py=e.clientY;while(acc>=24){step(i,1);acc-=24}while(acc<=-24){step(i,-1);acc+=24}});
+win.addEventListener("pointerup",()=>{py=null});win.addEventListener("pointercancel",()=>{py=null});
 }
-document.getElementById("goBtn").addEventListener("click",guess);
-num.addEventListener("keydown",e=>{if(e.key==="Enter")guess()});
-paint();</script>
+}
+function setStrip(dialEl,idx,anim){
+const strip=dialEl.querySelector(".reel-strip");
+strip.style.transition=anim?"transform .16s cubic-bezier(.25,1.4,.45,1)":"none";
+strip.style.transform="translateY("+(-(idx-1)*CELL)+"px)";
+strip.querySelectorAll("span").forEach((s,k)=>s.classList.toggle("cur",k===idx));
+}
+function step(i,dir){
+if(done||locked[i])return;
+audio();
+const dialEl=dialsEl.children[i],strip=dialEl.querySelector(".reel-strip");
+let idx=Number(strip.dataset.idx)+dir;
+vals[i]=(vals[i]+dir+10)%10;
+strip.dataset.idx=idx;setStrip(dialEl,idx,true);tick();buzz(6);
+setTimeout(()=>{let j=Number(strip.dataset.idx);if(j<10||j>19){j=10+vals[i];strip.dataset.idx=j;setStrip(dialEl,j,false)}},180);
+}
+function rank(){const s=digits+2,a=digits+5,b=digits+9;if(tries<=s)return"S（鮮やか！）";if(tries<=a)return"A";if(tries<=b)return"B";return"C"}
+function addChip(){
+const s=document.createElement("span");s.className="chip"+(locked.every(x=>x)?" full":"");
+s.innerHTML=vals.map((v,i)=>locked[i]?"<b>"+v+"</b>":String(v)).join("");
+hist.appendChild(s);
+}
+function openSafe(){
+wrap.classList.add("unlocking");
+noise(0.3,0.4,500,0.55);clunk(0.8);
+setTimeout(()=>{wrap.classList.add("open");tone(60,1.4,"sine",0.22,0,38)},850);
+tone(784,0.14,"sine",0.1,1.5);tone(988,0.14,"sine",0.1,1.62);tone(1319,0.3,"sine",0.11,1.74);
+buzz([40,60,40,60,120]);
+}
+function attempt(){
+if(done)return;audio();
+tries++;
+let newLocks=0;
+for(let i=0;i<digits;i++){if(!locked[i]&&vals[i]===code[i]){locked[i]=true;newLocks++;
+const dialEl=dialsEl.children[i];dialEl.classList.add("locked","pop");
+dialEl.querySelectorAll("button").forEach(b=>b.disabled=true);
+setTimeout(()=>dialEl.classList.remove("pop"),340);
+}}
+addChip();paintTries();
+if(locked.every(x=>x)){
+done=true;document.getElementById("openBtn").disabled=true;
+hint.textContent="開いた！ "+tries+"回で開錠 ランク "+rank();
+const b=getBest();if(!b||tries<b){localStorage.setItem(bestKey(),tries);hint.textContent+=" ベスト更新！"}
+const t=TREASURES[Math.floor(Math.random()*TREASURES.length)];
+document.getElementById("treasure").textContent=t[0];document.getElementById("treasureName").textContent=t[1];
+sub.textContent="中には「"+t[1]+"」が入っていました。";
+buildSparks();openSafe();
+}else if(newLocks>0){
+clunk(0);buzz([30,40,60]);
+hint.textContent="カチッ！ "+newLocks+"個のダイヤルが止まった（残り "+locked.filter(x=>!x).length+"桁）";
+sub.textContent="合った桁は金色にロック。残りの桁を回して合わせよう。";
+}else{
+rattle();buzz(50);
+wrap.classList.remove("shake");void wrap.offsetWidth;wrap.classList.add("shake");
+hint.textContent="ガチャッ… どの桁も合っていない";
+sub.textContent="金庫はうんともすんとも言わない。数字を変えて、もう一度。";
+}
+}
+function buildSparks(){
+const interior=wrap.querySelector(".interior");
+interior.querySelectorAll(".spark").forEach(s=>s.remove());
+for(let i=0;i<10;i++){const s=document.createElement("span");s.className="spark";
+s.style.left=(18+Math.random()*64)+"%";s.style.top=(30+Math.random()*40)+"%";
+s.style.setProperty("--dx",(Math.random()*70-35)+"px");s.style.setProperty("--dy",(-30-Math.random()*50)+"px");s.style.setProperty("--dl",(0.9+Math.random()*0.5)+"s");
+interior.appendChild(s)}
+}
+function reset(){
+code=[];for(let i=0;i<digits;i++)code.push(Math.floor(Math.random()*10));
+tries=0;done=false;
+wrap.classList.remove("open","unlocking","shake");
+document.getElementById("openBtn").disabled=false;
+hist.innerHTML="";buildDials();
+hint.textContent="ダイヤルを回して「開ける」";
+sub.textContent=digits+"桁の暗証番号です。桁ごとに上下ボタン／スワイプ／ホイールで回せます。0から始まる番号もあります。";
+paintTries();
+}
+document.getElementById("openBtn").addEventListener("click",attempt);
+document.getElementById("resetBtn").addEventListener("click",reset);
+document.querySelectorAll(".diff-btns button").forEach(b=>{b.addEventListener("click",()=>{document.querySelectorAll(".diff-btns button").forEach(x=>x.classList.remove("on"));b.classList.add("on");digits=Number(b.dataset.digits);reset()})});
+reset();
+</script>
 <script src="/ad-overlay.js" defer></script>
 </body></html>
