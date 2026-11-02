@@ -63,7 +63,7 @@ function render(){
 categoriesEl.addEventListener("click",e=>{
  const btn=e.target.closest("button[data-kind]");
  if(!btn)return;
- active=btn.dataset.kind;render();if(window.innerWidth<620)$("explorerTop").scrollIntoView({behavior:"smooth",block:"start"});
+ active=btn.dataset.kind;render();
 });
 searchField.addEventListener("input",()=>{search=searchField.value.trim();render()});
 $("gridButton").addEventListener("click",()=>{view="grid";render()});
