@@ -288,3 +288,43 @@ body.holo-home .tone-white .feature-grid>.feature-card:nth-child(n+4) h3{font-si
 body:before{display:none}
 a.feature-card:hover,a.note-row:hover{transform:none}
 }
+
+/* v4.1 decorative layer — interchangeable transparent VECTOR assets, NO text baked in */
+body.holo-home .hero-v2:after{
+content:"";position:absolute;z-index:4;pointer-events:none;
+right:-53px;bottom:8px;width:clamp(110px,13vw,170px);aspect-ratio:3/4;
+background:url("/preview/retro-holo-assets/pixel-cat-holo.svg") center/contain no-repeat;
+filter:drop-shadow(0 0 14px #54e9fa60);opacity:.89;
+animation:holo-float 5s ease-in-out infinite;
+}
+body.holo-home .hero-v2 .core-panel{
+background-image:
+url("/preview/retro-holo-assets/holo-orbit.svg"),
+radial-gradient(ellipse at 50% 43%,#3d22828a,transparent 68%),
+linear-gradient(145deg,#101439,#0b1031);
+background-size:96% auto,auto,auto;
+background-repeat:no-repeat,no-repeat,no-repeat;
+background-position:50% 40%,center,center;
+}
+body.holo-home .tone-white .feature-grid>.feature-card:nth-child(-n+3):before{
+inset:0;width:auto;height:auto;border:0;opacity:.72;filter:none;
+background:url("/preview/retro-holo-assets/holo-frame.svg") center/100% 100% no-repeat;
+}
+.section-head:after{
+height:23px;opacity:.9;margin-top:8px;
+background:url("/preview/retro-holo-assets/holo-divider.svg") center/100% 100% no-repeat;
+}
+body.holo-home .hero-v2>div:first-child:before{
+content:"";position:absolute;inset:-30% -6% 0 -10%;z-index:-1;pointer-events:none;opacity:.29;
+background:url("/preview/retro-holo-assets/holo-orbit.svg") center/contain no-repeat;
+}
+@keyframes holo-float{50%{transform:translateY(-8px);filter:drop-shadow(0 0 22px #c87dfb70)}}
+@media(max-width:980px){
+body.holo-home .hero-v2:after{right:6px;top:35px;bottom:auto;width:94px;opacity:.48}
+body.holo-home .hero-v2>div:first-child:before{inset:0 0 0 -12%;opacity:.17}
+}
+@media(max-width:560px){
+body.holo-home .hero-v2:after{top:40px;width:72px;right:0;opacity:.23}
+.section-head:after{height:15px}
+}
+@media(prefers-reduced-motion:reduce){body.holo-home .hero-v2:after{animation:none}}
