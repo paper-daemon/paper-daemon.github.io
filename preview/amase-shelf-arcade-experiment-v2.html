@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SHELFIRIA / あませの棚 — PLAYGROUND LAB</title>
+<meta name="description" content="あませの小さな遊び場。ゲームも、実験も、読みものも。退屈に反撃しよう。">
+<meta name="theme-color" content="#f5f0e6">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#161820;--cream:#f5f0e6;--paper:#fffcf5;--acid:#eaff65;--coral:#ff674f;--blue:#b7c8ff;--line:rgba(22,24,32,.19);--sans:"Zen Kaku Gothic New",system-ui,sans-serif;--display:"Space Grotesk","DM Sans",sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--cream)}
+body{margin:0;color:var(--ink);background:var(--cream);font-family:var(--sans);overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+a:focus-visible,button:focus-visible{outline:3px solid #275bee;outline-offset:4px}
+::selection{background:var(--coral);color:#fff}
+.shell{max-width:1480px;margin:auto;padding-inline:clamp(20px,5.5vw,88px)}
+.top-ribbon{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--ink);color:#fbf8ec;height:30px;padding:0 max(22px,calc((100vw - 1350px)/2));font:600 10px var(--display);letter-spacing:.18em;text-transform:uppercase}
+.top-ribbon span:nth-child(2){color:var(--acid)}
+.mast{height:93px;display:flex;align-items:center;gap:18px;border-bottom:1px solid var(--ink)}
+.logo{display:flex;align-items:center;gap:12px;min-width:fit-content}
+.logo-glyph{display:grid;place-items:center;background:var(--coral);border:2px solid var(--ink);height:42px;width:42px;transform:rotate(-12deg);box-shadow:4px 4px 0 var(--ink);font:900 30px var(--display)}
+.logo-type{display:flex;flex-direction:column;gap:2px}
+.logo-type b{font:800 23px var(--display);letter-spacing:-.06em}
+.logo-type small{font:700 10px var(--sans);letter-spacing:.22em}
+.mast nav{display:flex;align-items:center;gap:clamp(14px,2.4vw,42px);margin-left:auto;font:900 12px var(--sans)}
+.mast nav a{position:relative}
+.mast nav a:after{content:"";position:absolute;bottom:-7px;left:0;right:100%;height:3px;background:var(--coral);transition:right .2s}
+.mast nav a:hover:after{right:0}
+.mast-cta{display:flex;align-items:center;gap:13px;background:var(--ink);color:#fff;border:2px solid var(--ink);padding:13px 19px;font:800 13px var(--sans);margin-left:20px;transition:transform .2s,box-shadow .2s}
+.mast-cta:hover{transform:translate(-3px,-3px);box-shadow:5px 5px 0 var(--coral)}
+.hero{min-height:700px;display:grid;grid-template-columns:minmax(0,1fr) minmax(440px,.88fr);gap:clamp(18px,3vw,70px);align-items:center;position:relative;padding-top:45px;padding-bottom:80px}
+.hero:before{content:"";position:absolute;inset:0 auto 0 -45vw;width:48vw;background:repeating-linear-gradient(0deg,transparent 0 19px,rgba(22,24,32,.015) 20px);z-index:0;pointer-events:none}
+.hero>*{position:relative}
+.kicker{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font:700 11px var(--display);letter-spacing:.16em}
+.kicker i{display:block;width:37px;height:2px;background:var(--ink)}
+.kicker .pill{border:1px solid var(--ink);padding:7px 12px;transform:rotate(-4deg);background:#fff}
+.hero h1{margin:36px 0 18px;font-weight:900;font-size:clamp(74px,8.3vw,142px);letter-spacing:-.12em;line-height:1.08}
+.hero h1 .line{display:block;white-space:nowrap}
+.hero h1 .line-second{position:relative;letter-spacing:-.1em}
+.hero h1 em{font-style:normal;position:relative;z-index:1}
+.hero h1 em:after{position:absolute;z-index:-1;content:"";left:-.02em;right:-.01em;height:.24em;bottom:.04em;background:var(--acid);transform:rotate(-3deg)}
+.hero h1 .punct{color:var(--coral);margin-left:-.07em}
+.hero-intro{max-width:470px;font-size:clamp(15px,1.3vw,18px);line-height:2;font-weight:700;letter-spacing:.02em}
+.hero-actions{display:flex;align-items:center;gap:22px;margin:32px 0 48px;flex-wrap:wrap}
+.main-action{display:inline-flex;align-items:center;justify-content:space-between;min-width:230px;gap:30px;padding:18px 21px;background:var(--coral);border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink);font:900 15px var(--sans);transition:transform .2s,box-shadow .2s}
+.main-action span:last-child{font:700 22px var(--display)}
+.main-action:hover{transform:translate(3px,3px);box-shadow:3px 3px 0 var(--ink)}
+.small-action{font:800 13px var(--sans);border-bottom:2px solid var(--ink);padding:8px 0}
+.hero-aside{border-top:1px solid var(--line);padding-top:15px;display:flex;align-items:center;gap:18px;max-width:445px;font-size:11px;font-weight:800;letter-spacing:.06em}
+.hero-aside span:first-child{display:inline-grid;place-items:center;width:35px;height:35px;border:1.5px solid var(--ink);border-radius:50%;font:900 18px var(--display)}
+.stage{position:relative;align-self:center;margin:0 auto;width:min(100%,600px);padding:40px 30px 20px}
+.stage:before{content:"";position:absolute;inset:13% 0 0 3%;border-radius:50%;background:var(--blue);filter:blur(0);transform:rotate(-18deg);z-index:0}
+.stage:after{content:"";position:absolute;width:170px;height:170px;right:-20px;top:-30px;background:radial-gradient(var(--ink) 1px,transparent 1.8px);background-size:13px 13px;z-index:0;opacity:.17;transform:rotate(12deg)}
+.cabinet{position:relative;z-index:2;max-width:490px;margin:auto;filter:drop-shadow(17px 22px 0 #16182022);transform:rotate(3deg);transition:transform .22s ease}
+.cabinet:hover{transform:rotate(0deg) translateY(-7px)}
+.cab-top{height:90px;background:var(--coral);border:5px solid var(--ink);border-radius:50px 50px 8px 8px;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:inset 0 -10px 0 #c84738}
+.cab-top:before,.cab-top:after{content:"★";position:absolute;color:var(--acid);font:900 27px var(--display)}
+.cab-top:before{left:25px}.cab-top:after{right:25px}
+.cab-top strong{font:900 clamp(28px,3.4vw,46px)/1 var(--display);letter-spacing:-.07em;color:#fff;text-shadow:3px 3px 0 var(--ink)}
+.cab-body{border:6px solid var(--ink);border-top:0;background:var(--ink);padding:17px 15px 13px}
+.cab-screen{aspect-ratio:1.12;overflow:hidden;position:relative;background:radial-gradient(ellipse at 50% 45%,#744cbd 0%,#261d54 42%,#10122a 95%);border:4px solid #6f778e;box-shadow:inset 0 0 35px #000}
+.cab-screen:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.16) 4px 5px);pointer-events:none;z-index:6}
+.starscape{position:absolute;inset:0;pointer-events:none}
+.starscape span{position:absolute;left:var(--x);top:var(--y);width:var(--s);height:var(--s);border-radius:50%;background:#f9faff;box-shadow:0 0 6px #b9d0ff;animation:twinkle calc(1.4s + var(--delay)) infinite alternate}
+@keyframes twinkle{from{opacity:.15;transform:scale(.5)}to{opacity:1;transform:scale(1.3)}}
+.cab-screen .boss{position:absolute;width:52%;height:auto;object-fit:contain;left:24%;top:1%;filter:drop-shadow(0 0 15px #fa58c7);animation:bossfloat 3s ease-in-out infinite;z-index:2}
+.cab-screen .player{position:absolute;width:30%;height:auto;object-fit:contain;left:35%;bottom:10%;filter:drop-shadow(0 8px 15px #669dff);animation:playerfloat 2s ease-in-out infinite;z-index:3}
+@keyframes bossfloat{50%{transform:translate(8px,12px)}}@keyframes playerfloat{50%{transform:translate(-9px,-9px)}}
+.cab-screen .hud{position:absolute;z-index:4;color:#eaff65;font:800 10px var(--display);letter-spacing:.18em;top:14px;left:14px}
+.cab-screen .score{right:14px;left:auto;color:white}
+.screen-start{position:absolute;bottom:21px;right:13px;z-index:7;padding:11px 15px;background:var(--acid);color:var(--ink);border:2px solid var(--ink);box-shadow:4px 4px 0 #fff8;font:900 13px var(--display);animation:flash 1.5s infinite alternate}
+@keyframes flash{from{background:#fff}to{background:var(--acid)}}
+.screen-start:hover{transform:translateY(-3px)}
+.cab-control{height:75px;background:#e8e4da;border:6px solid var(--ink);border-top:0;display:flex;align-items:center;justify-content:space-between;padding:0 26px}
+.cab-control .joystick{position:relative;background:var(--ink);border-radius:50%;width:44px;height:22px;transform:rotate(-8deg)}
+.cab-control .joystick:before{content:"";position:absolute;width:9px;height:30px;background:var(--ink);top:-22px;left:18px}
+.cab-control .joystick:after{content:"";position:absolute;width:28px;height:28px;background:var(--coral);border:3px solid var(--ink);border-radius:50%;top:-38px;left:9px}
+.cab-control .dot{display:inline-block;width:27px;height:27px;background:var(--coral);border:3px solid var(--ink);border-radius:50%;box-shadow:4px 4px 0 #221f34}
+.cab-control .dot.yellow{background:var(--acid);margin-right:9px}
+.cab-control small{font:900 9px var(--display);letter-spacing:.1em}
+.cab-foot{height:45px;background:var(--coral);border:6px solid var(--ink);border-top:0;display:flex;align-items:center;justify-content:center;color:#fff;font:900 12px var(--display);letter-spacing:.26em}
+.ring-stamp{position:absolute;left:-26px;top:25%;width:135px;height:135px;border:3px dashed var(--ink);background:var(--acid);border-radius:50%;display:grid;place-items:center;text-align:center;z-index:4;font:900 16px/1.1 var(--display);transform:rotate(-20deg);box-shadow:5px 5px 0 var(--ink);pointer-events:none}
+.portrait-sticker{position:absolute;right:-18px;bottom:30px;z-index:5;width:121px;transform:rotate(-10deg);filter:drop-shadow(3px 7px 0 #1b1b1a30)}
+.portrait-sticker img{width:100%;aspect-ratio:1;object-fit:cover;border:5px solid #fff;box-shadow:0 0 0 2px var(--ink)}
+.portrait-sticker span{display:block;background:var(--acid);border:2px solid var(--ink);font:900 11px var(--sans);padding:5px;text-align:center;margin-top:-1px}
+.sticker-spark{position:absolute;top:20px;right:8px;font:900 68px var(--display);color:var(--coral);transform:rotate(15deg);z-index:4;pointer-events:none}
+.ticker{background:var(--acid);border-block:2px solid var(--ink);overflow:hidden;display:flex;white-space:nowrap;align-items:center;min-height:52px}
+.ticker-track{flex:none;display:flex;align-items:center;gap:36px;font:900 15px var(--display);letter-spacing:.05em;animation:marquee 28s linear infinite}
+.ticker-track b{font-weight:900;font-size:24px;color:var(--coral);-webkit-text-stroke:1px var(--ink)}
+@keyframes marquee{to{transform:translateX(-50%)}}
+.playzone{padding-top:110px;padding-bottom:104px}
+.section-lead{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;margin-bottom:35px}
+.section-index{font:900 12px var(--display);letter-spacing:.13em;display:flex;gap:12px;align-items:center}
+.section-index:before{content:"";width:31px;height:3px;background:var(--coral)}
+.section-lead h2{margin:12px 0 0;font-size:clamp(45px,5.2vw,82px);font-weight:900;letter-spacing:-.08em;line-height:1.12}
+.section-lead p{max-width:300px;font:700 14px/1.85 var(--sans);margin:0 0 6px}
+.editorial-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:19px}
+.poster{position:relative;display:block;overflow:hidden;border:3px solid var(--ink);isolation:isolate}
+.poster:focus-visible{outline-offset:7px}
+.poster-shoot{min-height:535px;background:radial-gradient(circle at 51% 63%,#6558c9,#171431 65%);color:#fff}
+.poster-shoot:before{content:"";position:absolute;inset:0;background:radial-gradient(#e8e6ff 1px,transparent 2px);background-size:23px 21px;opacity:.4;transform:rotate(-13deg) scale(1.2)}
+.poster-shoot:after{content:"";position:absolute;width:450px;height:450px;background:#b26bda38;border:2px solid #cebaff55;border-radius:50%;top:25%;left:19%;transform:rotate(15deg);box-shadow:0 0 0 48px #8c6bd012,0 0 0 96px #8c6bd009}
+.poster-shoot .cover-top{position:absolute;top:25px;left:28px;right:25px;display:flex;justify-content:space-between;z-index:4;font:900 11px var(--display);letter-spacing:.14em}
+.poster-shoot h3{position:absolute;top:73px;left:27px;z-index:4;font:900 clamp(44px,5.5vw,82px)/.86 var(--display);letter-spacing:-.09em;margin:0;text-shadow:5px 5px 0 #db4973}
+.poster-shoot .enemy{position:absolute;width:49%;top:25%;right:8%;z-index:2;filter:drop-shadow(0 0 25px #f064df)}
+.poster-shoot .fighter{position:absolute;width:31%;bottom:7%;left:25%;z-index:3;filter:drop-shadow(0 0 32px #6c91ff);transform:rotate(-13deg)}
+.poster-bottom{position:absolute;left:25px;bottom:22px;right:25px;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;z-index:5;font:800 12px var(--sans)}
+.poster-bottom .poster-cta{background:var(--acid);color:var(--ink);padding:14px 20px;border:2px solid var(--ink);font-weight:900;white-space:nowrap}
+.editorial-right{display:grid;grid-template-rows:1fr 1fr;gap:19px;min-height:535px}
+.poster-slot{background:#ff7052;min-height:260px;padding:24px 26px}
+.poster-slot:before{content:"";position:absolute;border:2px dashed #16182080;top:13px;left:13px;right:13px;bottom:13px;pointer-events:none}
+.poster-slot .eyeline{font:900 11px var(--display);letter-spacing:.16em}
+.poster-slot h3{font:900 clamp(34px,3.5vw,52px)/1 var(--display);letter-spacing:-.08em;margin:8px 0 15px}
+.slot-reels{display:flex;gap:7px;width:75%;max-width:270px}
+.slot-reels span{display:grid;place-items:center;flex:1;height:76px;background:var(--paper);border:3px solid var(--ink);border-radius:9px;box-shadow:3px 4px 0 #14141d;overflow:hidden}
+.slot-reels img{width:70%;height:70%;object-fit:contain}
+.poster-slot .go{position:absolute;right:22px;bottom:22px;font:900 26px var(--display);transition:transform .2s}
+.poster-slot:hover .go{transform:translateX(8px)}
+.poster-fortune{background:#bfd0ff;min-height:260px;padding:24px 26px}
+.poster-fortune .vertical-note{position:absolute;right:22px;top:17px;font:900 13px var(--sans);letter-spacing:.13em;writing-mode:vertical-rl}
+.poster-fortune h3{font:900 40px/1.2 var(--sans);letter-spacing:-.09em;margin:10px 0}
+.paper-slip{position:absolute;bottom:-53px;right:19%;background:#fffbee;border:2px solid var(--ink);width:130px;height:185px;transform:rotate(-13deg);box-shadow:7px 7px 0 #171922;display:flex;flex-direction:column;align-items:center;padding-top:16px;font:900 17px/1.9 var(--sans);transition:transform .2s}
+.paper-slip:before{content:"";width:80px;height:2px;background:var(--coral)}
+.paper-slip strong{font:900 42px var(--sans);color:var(--coral)}
+.poster-fortune:hover .paper-slip{transform:rotate(-4deg) translateY(-11px)}
+.poster-fortune p{position:relative;z-index:2;max-width:190px;font:800 13px/1.8 var(--sans)}
+.next-list{display:grid;grid-template-columns:1fr 1fr;gap:0 30px;margin-top:47px;border-top:2px solid var(--ink)}
+.game-row{display:flex;align-items:center;gap:20px;min-height:110px;border-bottom:1px solid var(--ink);position:relative;transition:padding .2s}
+.game-row:hover{padding-left:9px}
+.game-row .no{font:900 14px var(--display);color:var(--coral)}
+.game-row .g-name{display:block;font:900 clamp(19px,2vw,26px) var(--sans);letter-spacing:-.05em}
+.game-row small{display:block;color:#66676e;font:700 11px var(--sans);margin-top:3px}
+.game-row .arrow{font:500 33px var(--display);margin-left:auto}
+.game-row.feature-last{grid-column:span 2}
+.intermission{position:relative;background:var(--ink);color:var(--paper);min-height:455px;overflow:hidden}
+.intermission:before{content:"SHELFIRIA";position:absolute;white-space:nowrap;left:-40px;bottom:-82px;font:900 clamp(130px,21vw,320px)/1 var(--display);letter-spacing:-.11em;color:rgba(255,255,255,.05)}
+.inter-inner{display:grid;grid-template-columns:1fr 320px;gap:90px;align-items:center;padding-block:80px}
+.inter-inner h2{font:900 clamp(45px,6vw,88px)/1.15 var(--sans);letter-spacing:-.09em;margin:0 0 23px}
+.inter-inner h2 em{font-style:normal;color:var(--acid)}
+.inter-inner p{max-width:540px;font:700 15px/2 var(--sans);color:#e6e5e2}
+.author-panel{background:#fdf9ee;color:var(--ink);padding:16px;transform:rotate(4deg);box-shadow:11px 11px 0 var(--coral);border:2px solid #101016}
+.author-panel img{width:100%;aspect-ratio:1.45;object-fit:cover;object-position:center 25%;filter:saturate(.9)}
+.author-panel .author-tag{display:flex;justify-content:space-between;align-items:center;margin-top:13px;font:900 14px var(--sans)}
+.author-panel .author-tag small{font:800 10px var(--display);letter-spacing:.1em}
+.other-zone{padding-top:110px;padding-bottom:110px}
+.other-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px}
+.other-head{display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--ink);padding-bottom:16px}
+.other-head .number{font:900 12px var(--display);color:var(--coral)}
+.other-head h2{font:900 clamp(36px,4vw,62px)/1 var(--sans);letter-spacing:-.09em;margin:0}
+.other-copy{font:700 13px/1.9 var(--sans);max-width:440px;padding:16px 0}
+.simple-link{display:flex;align-items:center;gap:14px;border-top:1px solid var(--line);padding:22px 0}
+.simple-link strong{font:900 17px/1.5 var(--sans)}
+.simple-link small{display:block;font:700 12px var(--sans);color:#5b5b65;margin-top:4px}
+.simple-link span:last-child{font:600 26px var(--display);margin-left:auto}
+.simple-link:hover strong{text-decoration:underline;text-decoration-color:var(--coral);text-decoration-thickness:3px}
+.view-all{display:inline-block;margin-top:12px;border-bottom:2px solid var(--ink);font:900 13px var(--sans);padding-bottom:8px}
+.footer-area{background:var(--coral);border-top:3px solid var(--ink);padding-block:52px 24px}
+.footer-top{display:flex;align-items:end;justify-content:space-between;gap:18px;padding-bottom:60px;border-bottom:2px solid var(--ink)}
+.footer-top h2{font:900 clamp(54px,10vw,155px)/.9 var(--display);letter-spacing:-.11em;margin:0}
+.footer-top p{font:900 16px var(--sans);max-width:250px}
+.footer-links{display:flex;flex-wrap:wrap;gap:20px;align-items:center;padding-top:25px;font:900 12px var(--sans)}
+.footer-links small{margin-left:auto;font:700 11px var(--display)}
+.mobile-menu{display:none}
+@media(max-width:1120px){
+.hero{grid-template-columns:minmax(0,1fr) minmax(350px,.95fr);min-height:610px}
+.hero h1{font-size:clamp(64px,7.5vw,96px)}
+.stage{padding:30px 5px 20px}
+.ring-stamp{left:-20px;width:112px;height:112px;font-size:13px}
+.portrait-sticker{right:-6px}
+.cab-top{height:70px}
+}
+@media(max-width:840px){
+.top-ribbon{font-size:8px}
+.mast{height:76px}
+.mast nav{display:none}
+.mobile-menu{display:block;margin-left:auto;background:transparent;border:1px solid var(--ink);padding:9px 12px;font:900 12px var(--sans)}
+.mast-cta{margin-left:0}
+.hero{display:block;min-height:0;padding-block:58px 50px}
+.hero h1{font-size:clamp(65px,12vw,115px);margin-top:32px}
+.hero-copy{max-width:620px}
+.stage{margin:40px auto 0;width:min(530px,100%)}
+.inter-inner{grid-template-columns:1fr 230px;gap:35px}
+.other-grid{gap:28px}
+}
+@media(max-width:570px){
+.shell{padding-inline:20px}
+.top-ribbon span:nth-child(2){display:none}
+.top-ribbon{height:26px}
+.mast{height:72px}
+.logo-glyph{width:34px;height:34px;font-size:24px}
+.logo-type b{font-size:20px}
+.logo-type small{font-size:8px}
+.mast-cta{display:none}
+.hero{padding-top:42px}
+.kicker{font-size:9px;gap:10px}
+.hero h1{font-size:clamp(57px,12.1vw,78px);margin:34px 0 15px}
+.hero-intro{font-size:14px;max-width:320px}
+.hero-actions{margin:25px 0 27px}
+.main-action{min-width:220px}
+.hero-aside{font-size:10px}
+.stage{margin-top:36px;padding:35px 18px 20px}
+.cabinet{max-width:365px}
+.cab-top{height:65px;border-width:4px}
+.cab-top strong{font-size:28px}
+.cab-body{border-width:4px;padding:10px}
+.cab-control{height:61px;border-width:4px}
+.cab-foot{height:35px;border-width:4px}
+.cab-top:before,.cab-top:after{font-size:17px}
+.cab-top:before{left:13px}.cab-top:after{right:13px}
+.ring-stamp{top:19%;left:-5px;width:87px;height:87px;font-size:11px;border-width:2px}
+.portrait-sticker{width:79px;right:-8px;bottom:13px}
+.sticker-spark{font-size:45px;top:10px;right:12px}
+.ticker{min-height:45px}
+.ticker-track{font-size:12px}
+.playzone,.other-zone{padding-top:75px;padding-bottom:75px}
+.section-lead{display:block;margin-bottom:26px}
+.section-lead h2{font-size:52px}
+.section-lead p{margin-top:19px}
+.editorial-grid{grid-template-columns:1fr;gap:15px}
+.poster-shoot{min-height:455px}
+.poster-shoot h3{font-size:57px}
+.editorial-right{grid-template-rows:1fr 1fr;min-height:0;gap:15px}
+.poster-slot,.poster-fortune{min-height:252px}
+.poster-fortune h3{font-size:37px}
+.next-list{grid-template-columns:1fr;gap:0;margin-top:32px}
+.game-row{min-height:98px}
+.game-row.feature-last{grid-column:auto}
+.inter-inner{display:flex;flex-direction:column;align-items:start;padding-block:65px 80px;gap:38px}
+.inter-inner h2{font-size:50px}
+.author-panel{max-width:250px;transform:rotate(4deg);margin-left:auto;margin-right:12px}
+.other-grid{grid-template-columns:1fr;gap:64px}
+.footer-top{display:block;padding-bottom:55px}
+.footer-top h2{font-size:62px}
+.footer-top p{margin:18px 0 0;font-size:14px}
+.footer-links{gap:13px}
+.footer-links small{display:block;width:100%;margin-left:0}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="top-ribbon"><span>EST. 2026 / JAPAN</span><span>NOT A SERVICE. A LITTLE UNIVERSE.</span><span>OPEN 24 / 7 ✳</span></div>
+<header class="mast shell">
+<a class="logo" href="/"><span class="logo-glyph" aria-hidden="true">✳</span><span class="logo-type"><b>SHELFIRIA</b><small>あませの棚</small></span></a>
+<nav aria-label="ページ内ナビ"><a href="#play">あそぶ</a><a href="#amase">あませ</a><a href="#read">よむ</a><a href="#make">つくる</a></nav>
+<button class="mobile-menu" id="mobileMenu" type="button" aria-label="メニューを開く" aria-expanded="false">MENU ＋</button>
+<a class="mast-cta" href="/demo.html"><span>遊び場に入る</span><span aria-hidden="true">↗</span></a>
+</header>
+<main>
+<section class="hero shell" aria-label="メインビジュアル">
+<div class="hero-copy">
+<div class="kicker"><i aria-hidden="true"></i><span>AMASE'S LITTLE PLAYGROUND</span><span class="pill">ぜんぶ無料 ✳</span></div>
+<h1><span class="line">退屈に、</span><span class="line line-second"><em>反撃</em>しよ<span class="punct">。</span></span></h1>
+<p class="hero-intro">ちょっと遊んで、ちょっと笑って、<br>ついでに何か見つけて帰る。<br>あませが作った、ブラウザの中の遊び場。</p>
+<div class="hero-actions"><a class="main-action" href="#play"><span>さっそく遊ぶ</span><span aria-hidden="true">↘</span></a><a class="small-action" href="#read">読みものを見る ↗</a></div>
+<div class="hero-aside"><span aria-hidden="true">★</span><span>NO LOGIN / NO DOWNLOAD<br>気になったものから、すぐ触っていい。</span></div>
+</div>
+<div class="stage">
+<span class="sticker-spark" aria-hidden="true">✳</span>
+<div class="ring-stamp" aria-hidden="true">FREE<br>TO<br>PLAY!</div>
+<div class="cabinet" id="cabinet">
+<div class="cab-top"><strong>STAR✳BREAK</strong></div>
+<div class="cab-body"><div class="cab-screen" id="gameScreen"><div class="starscape" id="starscape"></div><span class="hud">STAGE 01</span><span class="hud score">HI 008930</span><img class="boss" src="/play/assets/enemy-carrier.png" alt="" loading="eager"><img class="player" src="/play/assets/player.png" alt="" loading="eager"><a class="screen-start" href="/play/shooter.html">▶ START GAME</a></div></div>
+<div class="cab-control"><div class="joystick" aria-hidden="true"></div><small>INSERT CURIOSITY</small><div aria-hidden="true"><span class="dot yellow"></span><span class="dot"></span></div></div>
+<div class="cab-foot">SHELFIRIA / 01</div>
+</div>
+<div class="portrait-sticker"><img src="/amase-avatar.jpg" alt="あませのプロフィール画像"><span>つくった人：あませ</span></div>
+</div>
+</section>
+<div class="ticker" aria-label="サイトについて"><div class="ticker-track"><span>PLAY WITHOUT A PLAN</span><b>✳</b><span>8 SMALL GAMES</span><b>★</b><span>NO SIGN UP</span><b>✳</b><span>MADE WITH CURIOSITY</span><b>★</b><span>PLAY WITHOUT A PLAN</span><b>✳</b><span>8 SMALL GAMES</span><b>★</b><span>NO SIGN UP</span><b>✳</b><span>MADE WITH CURIOSITY</span><b>★</b></div></div>
+<section id="play" class="playzone shell">
+<div class="section-lead"><div><span class="section-index">01 / THE PLAYROOM</span><h2>何から遊ぶ？</h2></div><p>まずは気になる表紙をタップ。<br>このページから、すぐゲームが始まる。</p></div>
+<div class="editorial-grid">
+<a class="poster poster-shoot" href="/play/shooter.html" aria-label="スターブレイクで遊ぶ">
+<div class="cover-top"><span>FEATURED / 01</span><span>VERTICAL SHOOTER</span></div><h3>STAR<br>BREAK.</h3><img class="enemy" src="/play/assets/boss2.png" alt="" loading="lazy"><img class="fighter" src="/play/assets/player.png" alt="" loading="lazy">
+<div class="poster-bottom"><span>撃って、避けて、ギリギリを楽しむ。<br>5ウェーブごとにボス登場。</span><span class="poster-cta">PLAY NOW ↗</span></div>
+</a>
+<div class="editorial-right">
+<a class="poster poster-slot" href="/play/slot.html"><span class="eyeline">02 / LUCKY MACHINE</span><h3>あませ<br>SLOT!</h3><div class="slot-reels" aria-hidden="true"><span><img src="/play/assets/slot-seven.png" alt=""></span><span><img src="/play/assets/slot-cherry.png" alt=""></span><span><img src="/play/assets/slot-star.png" alt=""></span></div><span class="go">SPIN ↗</span></a>
+<a class="poster poster-fortune" href="/play/omikuji.html"><span class="eyeline">03 / YOUR DAILY FORTUNE</span><h3>今日の運、<br>引いてく？</h3><p>あませからの一言もついてくる。</p><span class="vertical-note">あませおみくじ</span><div class="paper-slip" aria-hidden="true">運勢　其の一<strong>大吉</strong>✿　あたり！</div></a>
+</div>
+</div>
+<div class="next-list" aria-label="そのほかのゲーム">
+<a class="game-row" href="/play/janken.html"><span class="no">04</span><span><span class="g-name">あませとじゃんけん</span><small>5本先取の、ちょっと本気な勝負</small></span><span class="arrow">↗</span></a>
+<a class="game-row" href="/play/guess.html"><span class="no">05</span><span><span class="g-name">数あて</span><small>ヒントを頼りに数字を当てる</small></span><span class="arrow">↗</span></a>
+<a class="game-row" href="/play/timing.html"><span class="no">06</span><span><span class="g-name">止めて！タイミングバー</span><small>反射神経がすべて</small></span><span class="arrow">↗</span></a>
+<a class="game-row" href="/play/secret.html"><span class="no">07</span><span><span class="g-name">プライベートナンバー</span><small>数字を聞き出す、小さな推理ゲーム</small></span><span class="arrow">↗</span></a>
+<a class="game-row feature-last" href="/play/core.html"><span class="no">08</span><span><span class="g-name">SIコアにさわる</span><small>粒子が逃げたり、集まったり。不思議な技術のおもちゃ。</small></span><span class="arrow">↗</span></a>
+</div>
+</section>
+<section class="intermission" id="amase"><div class="inter-inner shell"><div><span class="section-index">02 / FROM THE MAKER</span><h2>好きなものを、<br><em>好きなように。</em></h2><p>気になったことを作って、試して、また作り直す。<br>ゲームも、道具も、文章も、全部その途中で生まれました。完成品の展示場というより、あませの机の引き出しです。</p></div><div class="author-panel"><img src="/amase-avatar.jpg" alt="あませ"><div class="author-tag"><span>あませ / AMASE</span><small>MAKER & HOST ✳</small></div></div></div></section>
+<section class="other-zone shell">
+<div class="other-grid">
+<div id="read"><div class="other-head"><span class="number">03</span><h2>よむ。</h2></div><p class="other-copy">開発の裏側とか、うまくいかなかった話とか。机の上に残ったメモ。</p>
+<a class="simple-link" href="https://note.com/lovely_hosta391/n/nd60d6d53cde9"><span><strong>地味だったので、派手にしてみた</strong><small>デザインを直した記録</small></span><span>↗</span></a>
+<a class="simple-link" href="https://note.com/lovely_hosta391/n/n245dd617e45f"><span><strong>チャットが長くなっても切れない仕組み</strong><small>AgentLink の裏側</small></span><span>↗</span></a>
+<a class="simple-link" href="https://note.com/lovely_hosta391/n/n49bc0eb192bf"><span><strong>ゲームを3つ作り直して、3つ足した</strong><small>ゲーム制作の話</small></span><span>↗</span></a>
+<a class="view-all" href="/notes/">読みものをもっと見る ↗</a>
+</div>
+<div id="make"><div class="other-head"><span class="number">04</span><h2>つくる。</h2></div><p class="other-copy">遊びだけじゃなく、便利な道具も置いてあります。使えるものは、そのまま持っていって。</p>
+<a class="simple-link" href="/video-preflight/"><span><strong>動画プリフライト</strong><small>納品前に動画を一通り点検</small></span><span>↗</span></a>
+<a class="simple-link" href="/n8n-retry-checker/"><span><strong>n8n リトライ・チェッカー</strong><small>失敗の再実行を調べる</small></span><span>↗</span></a>
+<a class="simple-link" href="/showcase.html"><span><strong>つくったものを見る</strong><small>制作と検証の記録</small></span><span>↗</span></a>
+<a class="view-all" href="/work.html">道具と無料ダウンロードを見る ↗</a>
+</div>
+</div>
+</section>
+</main>
+<footer class="footer-area"><div class="shell"><div class="footer-top"><h2>BYE!<br>COME BACK.</h2><p>また退屈になったら、いつでも戻ってきてね。✳</p></div><div class="footer-links"><a href="/">トップ</a><a href="/demo.html">あそぶ</a><a href="/showcase.html">みる</a><a href="/notes/">よむ</a><a href="/work.html">おまけ</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://www.threads.com/@ive.amase">Threads</a><small>© SHELFIRIA / AN AMASE PLAYGROUND</small></div></div></footer>
+<script>
+(function(){
+  var sc=document.getElementById('starscape');
+  if(sc){var frag=document.createDocumentFragment();for(var i=0;i<76;i++){var el=document.createElement('span');var x=((i*73.7+13)%97),y=((i*51.3+17)%93);el.style.setProperty('--x',x+'%');el.style.setProperty('--y',y+'%');el.style.setProperty('--s',((i%3)+1)+'px');el.style.setProperty('--delay',((i%7)*.26)+'s');frag.appendChild(el)}sc.appendChild(frag)}
+  var menu=document.getElementById('mobileMenu'),nav=document.querySelector('.mast nav');
+  if(menu&&nav){menu.addEventListener('click',function(){var open=menu.getAttribute('aria-expanded')==='true';menu.setAttribute('aria-expanded',String(!open));menu.textContent=open?'MENU ＋':'CLOSE ×';nav.style.display=open?'none':'flex';if(!open){nav.style.position='absolute';nav.style.zIndex='99';nav.style.left='0';nav.style.right='0';nav.style.top='100%';nav.style.background='#f5f0e6';nav.style.borderBottom='2px solid #161820';nav.style.padding='22px';nav.style.flexDirection='column';nav.style.alignItems='start';nav.style.gap='18px'}});nav.addEventListener('click',function(e){if(e.target.closest('a')&&innerWidth<841){nav.style.display='none';menu.textContent='MENU ＋';menu.setAttribute('aria-expanded','false')}})}
+})();
+</script>
+</body></html>
