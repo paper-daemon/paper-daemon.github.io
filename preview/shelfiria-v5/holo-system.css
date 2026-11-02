@@ -322,3 +322,7 @@ html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transiti
 .archive-vault p{margin:8px 0 0;font:700 12px/1.7 var(--j);color:#afbddc}
 .archive-expand{background:linear-gradient(110deg,#29204c,#233b56);color:#ffd6f4;border-color:#d196ffa6;flex:none}
 @media(max-width:620px){.archive-vault{display:flex;flex-direction:column;align-items:stretch;padding:18px;gap:18px}.archive-expand{width:100%}}
+
+/* Mobile screenshot audit: fixed back-to-top participates in an expanded mobile visual viewport.
+   Footer already contains an accessible #top link, so hide the redundant floating control. */
+@media(max-width:620px){.back-to-top{display:none}}
