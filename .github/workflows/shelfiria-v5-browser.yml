@@ -1,0 +1,44 @@
+name: Shelfiria v5 interactive browser integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'preview/shelfiria-v5/**'
+      - 'preview/retro-holo-v4/play/**'
+      - 'tests/shelfiria-v5-browser.mjs'
+      - '.github/workflows/shelfiria-v5-browser.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  interactive-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chromium testing tools
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Start preview server
+        run: |
+          python3 -m http.server 4173 > /tmp/shelfiria-v5-http.log 2>&1 &
+          for i in {1..25}; do
+            curl -fsS http://127.0.0.1:4173/preview/shelfiria-v5/index.html >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/shelfiria-v5-http.log
+          exit 1
+      - name: Browser acceptance tests and screenshot capture
+        run: node tests/shelfiria-v5-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shelfiria-v5-browser-screenshots
+          path: artifacts/shelfiria-v5/
+          if-no-files-found: ignore
