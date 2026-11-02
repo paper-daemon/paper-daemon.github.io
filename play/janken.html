@@ -60,6 +60,7 @@
 <p class="beat" id="beat"></p>
 <p class="result" id="result">手を選んでね</p>
 <p class="eve-line" id="eveLine">あませ「本気で来ていいよ。負けず嫌いだから」</p>
+<button id="jkStart" class="button" type="button" style="width:100%;min-height:56px;font-size:1.12rem;font-weight:900;background:var(--red);color:#fff;border-color:var(--ink);margin:2px 0 12px">▶ じゃんけんをはじめる</button>
 <div class="hands">
 <button class="handbtn" data-h="0" type="button"><img src="/play/assets/player-hand-rock.png" alt="" onerror="this.outerHTML='✊'">グー</button>
 <button class="handbtn" data-h="1" type="button"><img src="/play/assets/player-hand-scissors.png" alt="" onerror="this.outerHTML='✌️'">チョキ</button>
@@ -136,15 +137,24 @@ paintScore();
 const THROW={0:[["a",2700],["b",5250]],1:[["a",4500],["b",4300]],2:[["b",4400]]};
 const stageVid=document.getElementById("stageVid");
 function toIdle(){if(!stageVid)return;stageVid.loop=true;if(!stageVid.src.includes("stage-idle3"))stageVid.src="/play/assets/stage-idle3.mp4";const p=stageVid.play();if(p)p.catch(()=>{});}
-document.querySelectorAll(".handbtn").forEach(b=>b.addEventListener("click",()=>{
-if(busy)return;busy=true;jBgmStart();jplay(JVO.jan);
-const you=Number(b.dataset.h);const eve=pickEve();
-document.querySelectorAll(".handbtn").forEach(x=>x.disabled=true);
+const jkStart=document.getElementById("jkStart");
+let chant=null;
+function setHandsEnabled(on){document.querySelectorAll(".handbtn").forEach(x=>x.disabled=!on);}
+setHandsEnabled(false);
+jkStart.addEventListener("click",()=>{
+if(busy||chant)return;busy=true;jBgmStart();jplay(JVO.jan);
+const eve=pickEve();const vs=THROW[eve];const pv=vs.length>1?(Math.random()<0.65?vs[0]:vs[1]):vs[0];
+chant={eve: eve,pv: pv,vname: "/play/assets/stage-"+["rock","scissors","paper"][eve]+"-"+pv[0]+".mp4"};
+beatEl.textContent="じゃん・けん！";result.textContent="手を選んでね";line.textContent="あませ「いくよ？」";
 setHand(youView,youImg,youEmo,0,YOUIMG);setHand(eveView,eveImg,eveEmo,0);
+jkStart.style.display="none";setHandsEnabled(true);busy=false;
+});
+document.querySelectorAll(".handbtn").forEach(b=>b.addEventListener("click",()=>{
+if(busy||!chant)return;busy=true;
+const you=Number(b.dataset.h);const eve=chant.eve;const pv=chant.pv;const vname=chant.vname;chant=null;
+setHandsEnabled(false);
 eveView.classList.add("shaking");youView.classList.add("shaking");
-beatEl.textContent="じゃん";tone(440,0.06,"square",0.06);
-const vs=THROW[eve];const pv=vs.length>1?(Math.random()<0.65?vs[0]:vs[1]):vs[0];
-const vname="/play/assets/stage-"+["rock","scissors","paper"][eve]+"-"+pv[0]+".mp4";
+setHand(youView,youImg,youEmo,0,YOUIMG);setHand(eveView,eveImg,eveEmo,0);
 let done=false;
 const finish=()=>{
 if(done)return;done=true;
@@ -152,17 +162,23 @@ beatEl.textContent="ぽん！";if(!jplay(JVO.pon)&&!jplay(JAU.pon))tone(920,0.08
 eveView.classList.remove("shaking");youView.classList.remove("shaking");
 setHand(youView,youImg,youEmo,you,YOUIMG);setHand(eveView,eveImg,eveEmo,eve);
 reveal(you,eve);
-document.querySelectorAll(".handbtn").forEach(x=>x.disabled=false);
 busy=false;
+jkStart.textContent="もう一回";jkStart.style.display="";
 setTimeout(toIdle,1700);
 };
-setTimeout(()=>{if(!done){beatEl.textContent="けん";tone(440,0.06,"square",0.06)}},Math.min(900,Math.max(280,pv[1]-1400)));
-if(stageVid){stageVid.loop=false;stageVid.src=vname;const p=stageVid.play();if(p)p.catch(()=>setTimeout(finish,560));stageVid.onerror=()=>setTimeout(finish,560);}
-else setTimeout(finish,560);
-setTimeout(finish,pv[1]);
-setTimeout(finish,pv[1]+3500);
+if(stageVid){
+  stageVid.loop=false;
+  let seekDone=false;
+  const arm=()=>{if(seekDone)return;seekDone=true;const pr=stageVid.play();if(pr)pr.catch(()=>setTimeout(finish,700));setTimeout(finish,900);};
+  stageVid.addEventListener("seeked",function h(){stageVid.removeEventListener("seeked",h);arm();});
+  stageVid.onerror=()=>setTimeout(finish,700);
+  if(stageVid.src.indexOf(vname)===-1)stageVid.src=vname;
+  const seekTo=Math.max(0,(pv[1]-900))/1000;
+  const trySeek=()=>{try{stageVid.currentTime=seekTo;}catch(e){} setTimeout(()=>{if(!seekDone)arm();},1400);};
+  if(stageVid.readyState>=1)trySeek();else stageVid.addEventListener("loadedmetadata",function h(){stageVid.removeEventListener("loadedmetadata",h);trySeek();});
+  setTimeout(finish,4200);
+}else setTimeout(finish,900);
 }));
-setHand(youView,youImg,youEmo,0,YOUIMG);setHand(eveView,eveImg,eveEmo,0);
 paintScore();</script>
 <script src="/ad-overlay.js" defer></script>
 </body></html>
