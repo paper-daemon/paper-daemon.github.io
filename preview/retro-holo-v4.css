@@ -328,3 +328,29 @@ body.holo-home .hero-v2:after{top:40px;width:72px;right:0;opacity:.23}
 .section-head:after{height:15px}
 }
 @media(prefers-reduced-motion:reduce){body.holo-home .hero-v2:after{animation:none}}
+
+/* Actual demo's filter controls and dynamically injected cards */
+body.holo-demo .dm-filter{background:#0c132ae8;border-color:#73bcf777;backdrop-filter:blur(20px)}
+body.holo-demo .dm-filter button{
+background:#16223d;color:#c8e1f3;border:1px solid #609de688;
+box-shadow:inset 0 1px 0 #ffffff22;border-radius:8px;
+}
+body.holo-demo .dm-filter button:hover{background:#25385b;color:#fff;border-color:#8febf5}
+body.holo-demo .dm-filter button.active{
+color:#0c1526;background:linear-gradient(95deg,#7af9f2,#f6a0dd);
+border-color:#bdfeff;box-shadow:0 0 18px #75f8f168;
+}
+body.holo-demo .dm-group{border-color:#71b6e535}
+body.holo-demo .dm-group-head small{color:#84fbf3}
+body.holo-demo .dm-group-head h2{color:#fff}
+body.holo-demo .dm-card{
+background:linear-gradient(145deg,#1d2245,#0b162d);
+border:1px solid #7a9ffa89;box-shadow:inset 0 1px #dbe9ff3b,0 8px 21px #0006;
+}
+body.holo-demo .dm-card:hover{color:#fff;transform:translateY(-4px);border-color:#8cfff5;box-shadow:0 9px 27px #0009,0 0 21px #84f7f64a}
+body.holo-demo .dm-card-top small,body.holo-demo .dm-card-top em{color:#93f1ef}
+body.holo-demo .dm-card h3{color:#fff}
+body.holo-demo .dm-card p,body.holo-demo .dm-card-flow{color:#b9c8df}
+body.holo-demo .dm-open{color:#90faef}
+body.holo-demo .dm-summary{color:#b7c8df}
+body.holo-demo .dm-summary b{color:#fff}
