@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="ja">
+<head><base href="/play/">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>あませおみくじ | Shelfiria</title>
+<meta name="description" content="Shelfiriaの小さな遊び場。箱を振って引く、本物仕様のおみくじ。今日の運勢と、あませからの一言をどうぞ。何度でも引けます。">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="Shelfiria"><meta property="og:image" content="https://paper-daemon.github.io/og-amase.png"><meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/site.css?v=20261101-1">
+<link rel="preload" as="image" href="/play/assets/omikuji-night2.webp">
+<link rel="preload" as="image" href="/play/assets/omikuji-tube.webp">
+<style>
+.omikuji-stage{max-width:560px;margin:0 auto;text-align:center}
+[hidden]{display:none!important}
+/* 選択膜の全面禁止（連打・長押しでコピー選択膜を出さない） */
+.omikuji-stage,.omikuji-stage *{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+.omikuji-stage button{touch-action:manipulation}
+.omikuji-stage input,.omikuji-stage textarea{user-select:text;-webkit-user-select:text}
+/* membrane ban (all exhibits) — 棚レーンの全展示展開ぶんを取り込み（冗長だが無害・将来の横展開と一致させる） */
+.omikuji-stage,.omikuji-stage *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.omikuji-stage img{-webkit-user-drag:none}
+button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+/* ---------- night shrine stage ---------- */
+.stage{position:relative;border:2px solid var(--ink);border-radius:18px;box-shadow:8px 8px 0 var(--ink);overflow:hidden;
+ background:
+  linear-gradient(180deg,rgba(16,19,54,.05) 0%,rgba(10,10,30,.10) 62%,rgba(6,6,20,.42) 100%),
+  url("/play/assets/omikuji-night2.webp") center 26%/cover no-repeat,
+  linear-gradient(180deg,#141a4d 0%,#1d245f 52%,#2a2350 78%,#241d3d 100%);
+ padding:18px 12px 14px;color:#eef}
+.stage:before{content:"";position:absolute;left:0;right:0;bottom:0;height:56px;background:linear-gradient(180deg,transparent,rgba(6,6,20,.55));pointer-events:none}
+#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6}
+.tied-line{position:absolute;top:60px;left:0;right:0;height:0;z-index:2;pointer-events:none}
+@keyframes sway{0%,100%{transform:rotate(2.4deg)}50%{transform:rotate(-2.4deg)}}
+.tied-line:before{content:"";position:absolute;top:0;left:4%;right:4%;height:2px;background:linear-gradient(90deg,transparent,rgba(216,196,143,.85) 12%,rgba(216,196,143,.85) 88%,transparent);border-radius:2px}
+.tied-slip{position:absolute;top:0;width:17px;height:44px;background:linear-gradient(180deg,#fffdf4,#f3e8c8);border:1px solid #cbb27a;border-radius:2px;transform-origin:top center;animation:sway 5s ease-in-out infinite;box-shadow:1px 2px 3px rgba(0,0,20,.35)}
+.tied-slip:before{content:"";position:absolute;top:-7px;left:50%;width:26px;height:2px;margin-left:-13px;background:#d8c48f;border-radius:2px}
+/* ---------- mikuji box ---------- */
+.box-zone{position:relative;height:292px;display:flex;align-items:flex-end;justify-content:center;z-index:4}
+.box-hit{position:relative;width:210px;cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+.box-hit:active{cursor:grabbing}
+.box-hit:focus-visible{outline:3px solid var(--yellow);outline-offset:6px;border-radius:12px}
+.box-fig{transform-origin:50% 92%;will-change:transform}
+.tube-img{display:block;height:284px;width:auto;margin:0 auto;pointer-events:none;filter:drop-shadow(0 12px 13px rgba(2,2,16,.5))}
+.draw-stick{position:absolute;left:50%;bottom:196px;width:26px;height:0;margin-left:-13px;z-index:5;opacity:0;pointer-events:none}
+.draw-stick .stick-body{position:absolute;bottom:0;left:50%;width:17px;height:100%;margin-left:-8.5px;background:url("/play/assets/omikuji-stick.webp") center/100% 100% no-repeat;filter:drop-shadow(2px 2px 3px rgba(0,0,20,.35))}
+.draw-stick .stick-num{position:absolute;top:8px;left:50%;transform:translateX(-50%);writing-mode:vertical-rl;font:900 .72rem/1.15 var(--sans);color:#8a2b1d;letter-spacing:.08em;white-space:nowrap}
+.draw-stick.rise{opacity:1;transition:height 1.05s cubic-bezier(.3,.7,.25,1)}
+.draw-stick.fall{opacity:0;transition:opacity .25s ease,height .25s ease}
+/* ---------- shake meter & controls ---------- */
+.shake-row{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:6px;position:relative;z-index:5}
+.shake-label{font:800 .62rem var(--mono);letter-spacing:.12em;color:#c9cdf5}
+.shake-track{width:min(230px,52vw);height:10px;border:1.5px solid rgba(238,240,255,.55);border-radius:99px;overflow:hidden;background:rgba(10,12,36,.5)}
+.shake-fill{height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#ffc531,#ff4b33);transition:width .12s linear}
+.stage-hint{margin:10px auto 2px;font-size:.8rem;color:#c9cdf5;position:relative;z-index:5;min-height:1.6em}
+.controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.draw-btn{font-size:1.02rem;padding:15px 32px;min-width:210px}
+.icon-btn{min-width:52px;padding:0 14px;font-size:1.25rem}
+/* ---------- slip ---------- */
+.slip{margin:36px auto 0;width:min(320px,88vw);background-color:#f9efdb;background-image:url("/play/assets/omikuji-washi.webp");background-size:340px;background-repeat:repeat;border-style:solid;border-color:transparent;border-width:58px 11px 17px;border-image:url("/play/assets/omikuji-slip.webp") 150 30 46 30 fill / 58px 11px 17px / 0 stretch;box-shadow:6px 8px 0 rgba(19,24,71,.22);padding:4px 12px 6px;transform-origin:top center;position:relative;color:var(--ink);text-align:center}
+.slip.unfold{animation:unfold .75s cubic-bezier(.22,1.05,.36,1) both}
+@keyframes unfold{0%{opacity:0;transform:perspective(700px) rotateX(62deg) scaleY(.32)}55%{opacity:1}100%{opacity:1;transform:none}}
+.slip.tied-away{animation:tieAway .8s ease-in both}
+@keyframes tieAway{30%{transform:scaleY(.3) rotate(-4deg)}100%{transform:translate(38vw,-46vh) scale(.16) rotate(9deg);opacity:0}}
+.slip-head{display:flex;justify-content:space-between;align-items:center;font:800 .66rem var(--mono);letter-spacing:.14em;color:#8a6d2f;border-bottom:1.5px solid #d8c48f;padding-bottom:9px}
+.today-tag{display:inline-block;font:800 .62rem var(--mono);letter-spacing:.1em;color:#fff;background:#d23b2a;border-radius:999px;padding:4px 10px}
+.slip-head .prev-tag{background:#585c85}
+.stamp{display:inline-flex;align-items:center;justify-content:center;width:108px;height:108px;border:4px solid #d23b2a;border-radius:50%;color:#d23b2a;font:900 2rem/1.05 var(--sans);transform:rotate(-7deg);margin:14px 0 4px;background:rgba(210,59,42,.05);padding:8px;text-align:center}
+.stamp.slam{animation:slam .38s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes slam{0%{transform:rotate(-7deg) scale(2.1);opacity:0;filter:blur(5px)}60%{opacity:1}100%{transform:rotate(-7deg) scale(1);opacity:1;filter:blur(0)}}
+.fortune-meaning{color:var(--ink-dim);font-size:.88rem;line-height:1.9;margin:8px 2px 0}
+.slip .word{color:var(--ink);line-height:2;margin:12px 0 0;font-size:.94rem;font-weight:700}
+.word-label{font:800 .6rem var(--mono);letter-spacing:.16em;color:#b78a1e}
+.details{margin-top:14px;border-top:1.5px dashed #d8c48f;padding-top:11px;text-align:left}
+.details p{display:flex;gap:10px;margin:6px 0;font-size:.84rem;color:var(--ink-dim);line-height:1.75}
+.details b{flex:0 0 2.6em;color:#8a2b1d;font-weight:900}
+.meters{margin-top:14px;border-top:1.5px dashed #d8c48f;padding-top:12px;text-align:left}
+.meters p{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:.83rem;color:var(--ink-dim)}
+.meters .m-label{flex:0 0 3.6em}
+.meters .m-track{flex:1;height:8px;border-radius:99px;background:rgba(19,24,71,.1);overflow:hidden}
+.meters .m-fill{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#ff8a5c,#d23b2a);transition:width .7s cubic-bezier(.22,.9,.28,1)}
+.meters .m-val{font:800 .72rem var(--mono);color:#8a2b1d;flex:0 0 2.4em;text-align:right;white-space:nowrap}
+.slip .lucky{margin-top:15px;font-size:.85rem;border-top:1.5px dashed #d8c48f;padding-top:13px;text-align:left;line-height:2}
+.slip .lucky b{background:linear-gradient(transparent 62%,var(--yellow) 62%,var(--yellow) 94%,transparent 94%);padding:0 4px}
+.swatch{display:inline-block;width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(19,24,71,.4);vertical-align:-2px;margin-right:5px}
+.slip-actions{margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.slip.gold{box-shadow:6px 8px 0 rgba(160,120,10,.35),0 0 34px rgba(255,205,60,.35)}
+.slip.gold .stamp{border-color:#a67c00;color:#a67c00;background:rgba(201,162,39,.1);width:120px;height:120px}
+.slip.bad .stamp{border-color:#4a4a72;color:#4a4a72;background:rgba(60,60,110,.06)}
+.count-note{margin-top:18px;color:var(--muted);font-size:.8rem}
+/* ---------- dex ---------- */
+.dex-head{display:flex;align-items:center;gap:12px;justify-content:center;margin-top:26px}
+.dex-head .dex-title{font:900 .82rem var(--sans);letter-spacing:.06em}
+.dex-progress{width:130px;height:9px;border:1.5px solid rgba(19,24,71,.4);border-radius:99px;overflow:hidden;background:#fff}
+.dex-progress i{display:block;height:100%;background:linear-gradient(90deg,var(--indigo),var(--violet));transition:width .6s var(--ease)}
+.dex{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.dex span{font:700 .78rem var(--sans);padding:5px 10px;border:2px dashed rgba(19,24,71,.35);border-radius:999px;color:var(--muted);transition:transform .25s var(--ease)}
+.dex span.got{border:2px solid var(--ink);background:#fff;color:var(--ink)}
+.dex span.got.gold{background:#ffe066}
+.dex span.pop{animation:pop .45s cubic-bezier(.2,1.5,.4,1)}
+@keyframes pop{0%{transform:scale(.6)}100%{transform:scale(1)}}
+.dex span .cnt{font:800 .68rem var(--mono);color:#8a2b1d;margin-left:3px}
+.dex-note{font-weight:700;color:#b78a1e;min-height:1.5em;margin-top:8px}
+.tie-note{font-weight:700;color:var(--indigo);min-height:1.5em;margin-top:2px;font-size:.85rem}
+.howto{max-width:560px;margin:22px auto 0;color:var(--muted);font-size:.8rem;line-height:1.95;text-align:center}
+@media (prefers-reduced-motion:reduce){
+ .box.shake2,.slip.unfold,.stamp.slam,.lantern,.lantern .body,.tied-slip{animation:none!important}
+ .meters .m-fill,.dex-progress i{transition:none}
+}
+
+/* モバイル1画面化（純弥基準：操作にスクロール不要・2026-11-02） */
+@media (max-width:640px){
+  .site-head{padding:10px 14px;gap:6px}
+  .head-actions{display:none}
+  .page-hero{padding:16px 0 4px}
+  .page-hero h1{font-size:1.6rem}
+  .page-hero .page-lead{display:none}
+  .section{padding-top:10px}
+}
+</style>
+<script data-goatcounter="https://shelfiria.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script><script src="/analytics-out.js" defer></script>
+<meta name="robots" content="noindex,nofollow"><link rel="stylesheet" href="/preview/retro-holo-v4.css?v=4.1.0"></head>
+<body class="holo-game">
+<header class="site-head"><a class="brand" href="/preview/retro-holo-v4/index.html"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>Shelfiria</strong></span></a><nav aria-label="main"><a href="/preview/retro-holo-v4/demo.html" aria-current="page">あそぶ</a><a href="/preview/retro-holo-v4/showcase.html">みる</a><a href="/preview/retro-holo-v4/notes/">よむ</a><a href="/preview/retro-holo-v4/work.html">おまけ</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="social-mini" href="https://x.com/amase__iv" aria-label="X">X</a><a class="head-cta" href="/preview/retro-holo-v4/demo.html">あそぶ →</a></div></header>
+<main class="page">
+<section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — OMIKUJI</p><h1>あませおみくじ</h1><p class="page-lead">箱を手で振って引く、本物仕様のおみくじ。今日の運勢と、あませからの一言。引いた運勢は図鑑に集まっていきます（全7種）。毎日引くと連続記録も伸びます。</p></section>
+<section class="section" style="border-bottom:none;padding-top:16px">
+<div class="omikuji-stage">
+<div class="stage" id="stage">
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="tied-line" id="tiedLine" aria-hidden="true"></div>
+<div class="box-zone">
+<div class="draw-stick" id="drawStick"><div class="stick-body"><span class="stick-num" id="stickNum"></span></div></div>
+<div class="box-hit" id="boxHit" role="button" tabindex="0" aria-label="おみくじの箱。左右に振ると引けます">
+<div class="box-fig" id="boxFig">
+<img class="tube-img" id="tubeImg" src="/play/assets/omikuji-tube.webp" alt="" draggable="false">
+</div>
+</div>
+</div>
+<div class="shake-row"><span class="shake-label">SHAKE</span><div class="shake-track"><div class="shake-fill" id="shakeFill"></div></div><span class="shake-label" id="shakePct">0%</span></div>
+<p class="stage-hint" id="stageHint">箱を左右に振ってみて。よく振れると、くじが1本出てきます。</p>
+</div>
+<div class="controls">
+<button class="button primary draw-btn" id="drawBtn" type="button">おみくじを引く</button>
+<button class="button soft icon-btn" id="soundBtn" type="button" aria-label="音のオン・オフ">🔊</button>
+</div>
+<div class="slip" id="slip" hidden aria-live="polite">
+<div class="slip-head"><span id="slipNo">第壱番</span><span class="today-tag" id="todayTag" hidden>今日の1回目</span><span class="today-tag prev-tag" id="prevTag" hidden>前回の札</span><span>あませ神社</span></div>
+<div class="stamp" id="fortuneText">大吉</div>
+<p class="fortune-meaning" id="meaningText"></p>
+<p class="word"><span class="word-label">あませの一言</span><br><span id="wordText"></span></p>
+<div class="details" id="details"></div>
+<div class="meters" id="meters"></div>
+<p class="lucky">ラッキーアイテム：<b id="luckyText"></b><br>ラッキーカラー：<span class="swatch" id="colorSwatch"></span><b id="colorText"></b></p>
+<div class="slip-actions">
+<button class="button soft" id="shareBtn" type="button" style="padding:10px 18px;font-size:.85rem">結果をシェア</button>
+<button class="button soft" id="copyBtn" type="button" style="padding:10px 18px;font-size:.85rem">結果をコピー</button>
+<button class="button soft" id="tieBtn" type="button" style="padding:10px 18px;font-size:.85rem" hidden>凶は結んで置いてくる</button>
+</div>
+</div>
+<p class="count-note" id="countNote"></p>
+<div class="dex-head"><span class="dex-title">運勢図鑑</span><div class="dex-progress"><i id="dexBar" style="width:0%"></i></div><span class="dex-title" id="dexCount">0/7</span></div>
+<div class="dex" id="dex" aria-label="運勢図鑑"></div>
+<p class="dex-note" id="dexNote"></p>
+<p class="tie-note" id="tieNote"></p>
+<p class="howto">遊び方：箱を指（マウス）で左右に振ると、振り具合で音と揺れが変わります。ゲージが満ちると自動で1本出ます。「おみくじを引く」ボタンでも同じように引けます。凶が出たら、結んで置いてくる作法もどうぞ。</p>
+</div>
+</section>
+</main>
+<footer class="site-footer"><div class="footer-brand"><img src="/amase-avatar.jpg" alt=""><span><strong>Shelfiria</strong></span></div><nav><a href="/preview/retro-holo-v4/index.html">トップ</a><a href="/preview/retro-holo-v4/demo.html" aria-current="page">あそぶ</a><a href="/preview/retro-holo-v4/showcase.html">みる</a><a href="/preview/retro-holo-v4/notes/">よむ</a><a href="/preview/retro-holo-v4/work.html">おまけ</a><a href="https://www.threads.com/@ive.amase">Threads</a><a href="https://www.instagram.com/ive.amase/">Instagram</a><a href="https://x.com/amase__iv">X</a><a href="https://github.com/paper-daemon">GitHub</a><a href="https://amase-lab.booth.pm/">BOOTH</a><a href="https://coconala.com/users/3185601">ココナラ</a></nav></footer>
+<script>
+(function(){
+'use strict';
+/* ================= data (従来プール・確率は不変) ================= */
+var FORTUNES=[["超大吉",2],["大吉",13],["中吉",22],["小吉",22],["吉",22],["末吉",12],["凶",7]];
+var CATS=["恋愛運","仕事運","金運","健康運"];
+var COLORS=["茜色","群青","若草色","山吹色","藤色","朱色","空色","桃色","金色","銀色"];
+var COLOR_HEX={"茜色":"#b03a2e","群青":"#223a70","若草色":"#a8c256","山吹色":"#f8b500","藤色":"#a594c7","朱色":"#eb471f","空色":"#7ec8e3","桃色":"#f7a8b8","金色":"#c9a227","銀色":"#c0c6cc"};
+var WORDS=[
+"今日は「とりあえず触ってみる」が当たりの日。考える前に一度開いてみて。",
+"細かいところを一個だけ直すと、全体が急に良くなります。一個だけ、ね。",
+"迷ったら軽い方。今日はスピードが正義です。",
+"誰かに一言ありがとうを言うと、運の流れが変わります。たぶん本当。",
+"おやつは我慢しない方がいい日。判断力は糖分から。",
+"新しいものより、積んでたものが輝く日。一個崩していきましょ。",
+"今日の勝ち筋は「早く寝る」。夜更かしは明日の自分への借金です。",
+"気になってたあの件、今日聞くと意外とすんなり進みます。",
+"小さなバグは小さいうちに。放置すると可愛くなくなります。",
+"一回深呼吸。焦ってる時ほど、手はゆっくりで大丈夫。",
+"今日は褒められやすい日。受け取り上手でいきましょ。",
+"「まあいっか」が効く日。完璧じゃなくていいんです。",
+"超大吉の日は、欲張ってOK。やりたかったやつ、今日やりましょ。",
+"誰かの「ありがとう」が聞こえる日。小さい親切が大きく返ります。",
+"止まってた話が動き出す日。返信は早めが吉。",
+"今日のあませはちょっと強気。背中を押します、進んで大丈夫。",
+"運の波が来てます。迷ってた買い物、今日は正解寄り。"
+];
+var LUCKY=["赤いもの","温かい飲み物","片付けた机","新しいタオル","音楽を1曲","窓の外の空","予備の充電ケーブル","短い散歩","お気に入りの文房具","深呼吸3回","銀色の小物","温かいスープ","懐かしい写真","新しい靴下","観葉植物","手書きのメモ"];
+var MEANING={
+"超大吉":"運の天井が抜けている日。迷う時間がもったいないくらい、追い風です。",
+"大吉":"流れは完全にこっち向き。大きめの一歩が、そのまま当たりになります。",
+"中吉":"じわじわ上向く運。急がず、でも止まらずが一番効きます。",
+"小吉":"小さな当たりが連なる日。拾い集めると、けっこう大きな収穫に。",
+"吉":"安定の追い風。いつもの手順を丁寧にやるほど、運が乗ります。",
+"末吉":"最初は地味、後半から効いてくる運。焦って捨てないのが勝ち筋。",
+"凶":"今日は守りの日。無理に攻めず、減点を防ぐだけで十分勝ちです。"
+};
+var DETAILS={
+"超大吉":["思い切って動けば叶う形。口に出すと早い","嬉しい知らせと一緒に来る","意外と高い場所から出る"],
+"大吉":["追い風あり。大きめに狙ってよい","来る。連絡は早めに返して","身近な人の近くにある"],
+"中吉":["半分は自力、半分は流れ。まず一歩","少し遅れるが来る","鞄や棚の奥、もう一度"],
+"小吉":["小さく始めれば続く","来るが、こちらから一言あると早い","昨日と違う場所を探すと出る"],
+"吉":["手順を守れば届く","来る。焦らず待ってよい","定位置の近くにある"],
+"末吉":["今は種まき。芽は後から","遅れる。別件を進めて待つのが吉","諦めた頃にひょっこり出る"],
+"凶":["今日は見送りが正解。明日仕切り直し","来ない日。待つより自分の用事を進めて","今日は出にくい。置き場所の癖を見直して"]
+};
+var DETAIL_LABELS=["願望","待人","失物"];
+var KANJI_NUM=["","壱","弐","参","四","五","六","七","八","九"];
+function kanjiNum(n){if(n===100)return "百";var t=Math.floor(n/10),o=n%10;return (t===1?"拾":(t>1?KANJI_NUM[t]+"拾":""))+(o?KANJI_NUM[o]:"")}
+function pickFortune(){var r=Math.random()*100,i;for(i=0;i<FORTUNES.length;i++){r-=FORTUNES[i][1];if(r<0)return FORTUNES[i][0]}return "吉"}
+function rnd(a){return a[Math.floor(Math.random()*a.length)]}
+
+/* ================= storage ================= */
+function lsGet(k,d){try{var v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var count=Number(localStorage.getItem('omikujiCount')||0)||0;
+var soundOn=lsGet('omikujiSound',true)!==false;
+var tiedCount=lsGet('omikujiTied',0)||0;
+
+/* ================= audio (全て合成) ================= */
+var AC=null,noiseBuf=null;
+function audio(){if(!soundOn)return null;if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){return null}}if(AC.state==='suspended')AC.resume();return AC}
+function getNoise(ac){if(noiseBuf)return noiseBuf;var len=ac.sampleRate*0.4;noiseBuf=ac.createBuffer(1,len,ac.sampleRate);var d=noiseBuf.getChannelData(0);for(var i=0;i<len;i++)d[i]=Math.random()*2-1;return noiseBuf}
+function clatter(inten){var ac=audio();if(!ac)return;inten=Math.min(1,inten);var n=2+Math.floor(inten*3);for(var i=0;i<n;i++){var t=ac.currentTime+Math.random()*0.07;var src=ac.createBufferSource();src.buffer=getNoise(ac);var f=ac.createBiquadFilter();f.type='bandpass';f.frequency.value=1500+Math.random()*1900;f.Q.value=1.1;var g=ac.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.05+inten*0.16,t+0.012);g.gain.exponentialRampToValueAtTime(0.001,t+0.09);src.connect(f);f.connect(g);g.connect(ac.destination);src.start(t);src.stop(t+0.12)}}
+function paper(){var ac=audio();if(!ac)return;var t=ac.currentTime;var src=ac.createBufferSource();src.buffer=getNoise(ac);var f=ac.createBiquadFilter();f.type='bandpass';f.frequency.setValueAtTime(900,t);f.frequency.exponentialRampToValueAtTime(2600,t+0.3);var g=ac.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.07,t+0.06);g.gain.exponentialRampToValueAtTime(0.001,t+0.34);src.connect(f);f.connect(g);g.connect(ac.destination);src.start(t);src.stop(t+0.36)}
+function thunk(big){var ac=audio();if(!ac)return;var t=ac.currentTime;var o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.setValueAtTime(big?210:180,t);o.frequency.exponentialRampToValueAtTime(64,t+0.13);g.gain.setValueAtTime(big?0.26:0.18,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.16);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+0.17)}
+function fanfare(big){var ac=audio();if(!ac)return;var notes=big?[523,659,784,1047,1319]:[523,659,784];notes.forEach(function(fr,i){var t=ac.currentTime+i*0.09;var o=ac.createOscillator(),g=ac.createGain();o.type='triangle';o.frequency.value=fr;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.14,t+0.03);g.gain.exponentialRampToValueAtTime(0.001,t+0.4);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+0.45)})}
+function lowTone(){var ac=audio();if(!ac)return;[196,147].forEach(function(fr,i){var t=ac.currentTime+i*0.16;var o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.value=fr;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.1,t+0.04);g.gain.exponentialRampToValueAtTime(0.001,t+0.32);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+0.35)})}
+function vibrate(p){if(navigator.vibrate){try{navigator.vibrate(p)}catch(e){}}}
+
+/* ================= canvas fx (ambient + confetti, 単一rAF) ================= */
+var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var stage=document.getElementById('stage'),canvas=document.getElementById('fx'),ctx=canvas.getContext('2d');
+var CW=0,CH=0,DPR=1,ambient=[],confetti=[],ambientCap=reduced?0:34,fxRunning=false,stageVisible=true;
+function sizeCanvas(){var r=stage.getBoundingClientRect();DPR=Math.min(1.5,window.devicePixelRatio||1);CW=Math.max(280,Math.floor(r.width));CH=Math.max(280,Math.floor(r.height));canvas.width=CW*DPR;canvas.height=CH*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
+sizeCanvas();window.addEventListener('resize',sizeCanvas);
+function newAmbient(){return{x:Math.random()*CW,y:Math.random()*CH,r:1+Math.random()*2.2,vy:0.12+Math.random()*0.3,vx:(Math.random()-0.5)*0.16,ph:Math.random()*6.28,hue:Math.random()<0.5?'255,190,120':'200,205,255',a:0.25+Math.random()*0.45}}
+function burst(n,gold){if(reduced)return;var cols=gold?['#ffd94d','#c9a227','#fff3b0','#ff4b33']:['#d23b2a','#f5b301','#2b50c8','#3aa655','#e86ab0','#f7e3ae'];for(var i=0;i<n;i++){confetti.push({x:CW/2+(Math.random()-0.5)*70,y:CH*0.42,vx:(Math.random()-0.5)*5.4,vy:-(2.4+Math.random()*4.6),w:5+Math.random()*5,h:8+Math.random()*7,rot:Math.random()*6.28,vr:(Math.random()-0.5)*0.3,col:cols[i%cols.length],life:1,decay:0.004+Math.random()*0.004})}startFx()}
+var frames=0,fpsT=performance.now(),lastFxT=0;
+function fxFrame(now){
+ if(!fxRunning)return;
+ if(!lastFxT)lastFxT=now;
+ var dtF=Math.min(3,Math.max(0.4,(now-lastFxT)/16.667));lastFxT=now;
+ ctx.clearRect(0,0,CW,CH);
+ var i,p;
+ while(ambient.length<ambientCap)ambient.push(newAmbient());
+ for(i=ambient.length-1;i>=0;i--){p=ambient[i];p.y+=p.vy*dtF;p.x+=(p.vx+Math.sin(now*0.001+p.ph)*0.12)*dtF;if(p.y>CH+6){ambient.splice(i,1);continue}ctx.beginPath();ctx.fillStyle='rgba('+p.hue+','+p.a+')';ctx.arc(p.x,p.y,p.r,0,6.2832);ctx.fill()}
+ for(i=confetti.length-1;i>=0;i--){p=confetti[i];p.vy+=0.11*dtF;p.vx*=Math.pow(0.99,dtF);p.x+=p.vx*dtF;p.y+=p.vy*dtF;p.rot+=p.vr*dtF;p.life-=p.decay*dtF;if(p.life<=0||p.y>CH+16){confetti.splice(i,1);continue}ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.globalAlpha=Math.max(0,Math.min(1,p.life));ctx.fillStyle=p.col;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h*Math.abs(Math.sin(p.rot*1.4))+1);ctx.restore()}
+ ctx.globalAlpha=1;
+ frames++;
+ if(now-fpsT>=1000){var fps=frames*1000/(now-fpsT);frames=0;fpsT=now;if(fps<42&&ambientCap>0){ambientCap=Math.max(0,Math.floor(ambientCap*0.6));if(ambient.length>ambientCap)ambient.length=ambientCap}}
+ if((ambientCap>0||confetti.length)&&stageVisible&&!document.hidden){requestAnimationFrame(fxFrame)}else{fxRunning=false;lastFxT=0;ctx.clearRect(0,0,CW,CH)}
+}
+function startFx(){if(fxRunning||reduced&&confetti.length===0)return;if(reduced&&ambientCap===0&&!confetti.length)return;fxRunning=true;frames=0;fpsT=performance.now();requestAnimationFrame(fxFrame)}
+if('IntersectionObserver' in window){new IntersectionObserver(function(en){stageVisible=en[0].isIntersecting;if(stageVisible)startFx()},{threshold:0.05}).observe(stage)}
+document.addEventListener('visibilitychange',function(){if(!document.hidden)startFx()});
+startFx();
+
+/* ================= shake physics ================= */
+var boxHit=document.getElementById('boxHit'),boxFig=document.getElementById('boxFig'),sticksG=document.getElementById('sticksG');
+var shakeFill=document.getElementById('shakeFill'),shakePct=document.getElementById('shakePct'),hint=document.getElementById('stageHint');
+var energy=0,angle=0,vel=0,dragging=false,lastX=0,lastT=0,lastClatter=0,shakeRAF=0,busy=false;
+function renderBox(){boxFig.style.transform='rotate('+angle.toFixed(2)+'deg) translateX('+(angle*0.55).toFixed(1)+'px)';if(sticksG)sticksG.setAttribute('transform','rotate('+(angle*0.9).toFixed(2)+' 110 52)')}
+function shakeLoop(){
+ var decay=dragging?0.995:0.94;
+ if(!dragging){vel+=(-angle*0.055);vel*=0.86;angle+=vel}
+ energy*=dragging?0.992:0.965;
+ var pct=Math.min(100,Math.round(energy));
+ shakeFill.style.width=pct+'%';shakePct.textContent=pct+'%';
+ renderBox();
+ if(energy>=100&&!busy){startDraw();return}
+ if(Math.abs(angle)>0.05||Math.abs(vel)>0.05||energy>0.6||dragging){shakeRAF=requestAnimationFrame(shakeLoop)}
+ else{angle=0;energy=0;shakeFill.style.width='0%';shakePct.textContent='0%';renderBox();shakeRAF=0}
+}
+function kickShake(){if(!shakeRAF)shakeRAF=requestAnimationFrame(shakeLoop)}
+boxHit.addEventListener('pointerdown',function(e){if(busy)return;dragging=true;lastX=e.clientX;lastT=performance.now();try{boxHit.setPointerCapture(e.pointerId)}catch(err){}audio();kickShake()});
+boxHit.addEventListener('pointermove',function(e){if(!dragging||busy)return;var now=performance.now();var dx=e.clientX-lastX;var dt=Math.max(8,now-lastT);lastX=e.clientX;lastT=now;var v=dx/dt;vel+=v*2.4;angle+=v*7;angle=Math.max(-17,Math.min(17,angle));var add=Math.min(9,Math.abs(dx)*0.55);energy=Math.min(115,energy+add);if(Math.abs(dx)>7&&now-lastClatter>90){lastClatter=now;clatter(Math.min(1,Math.abs(dx)/26));if(Math.abs(dx)>20)vibrate(6)}kickShake()});
+function endDrag(){dragging=false;vel+= (Math.random()<0.5?-1:1)*0.4;kickShake()}
+boxHit.addEventListener('pointerup',endDrag);boxHit.addEventListener('pointercancel',endDrag);
+boxHit.addEventListener('keydown',function(e){if(busy)return;if(e.key==='Enter'||e.key===' '){e.preventDefault();nudge()}});
+function nudge(){vel+=(Math.random()<0.5?-3.4:3.4);energy=Math.min(115,energy+34);clatter(0.7);vibrate(10);kickShake()}
+boxHit.addEventListener('click',function(){if(!busy&&energy<40)nudge()});
+
+/* ================= draw sequence ================= */
+var btn=document.getElementById('drawBtn'),slip=document.getElementById('slip'),drawStick=document.getElementById('drawStick'),stickNum=document.getElementById('stickNum');
+var fortuneText=document.getElementById('fortuneText'),meaningText=document.getElementById('meaningText'),wordText=document.getElementById('wordText');
+var luckyText=document.getElementById('luckyText'),colorText=document.getElementById('colorText'),colorSwatch=document.getElementById('colorSwatch');
+var todayTag=document.getElementById('todayTag'),prevTag=document.getElementById('prevTag'),slipNo=document.getElementById('slipNo');
+var tieBtn=document.getElementById('tieBtn'),tieNote=document.getElementById('tieNote');
+var currentResult=null;
+function streakNow(){return Number(localStorage.getItem('omikujiStreak')||0)||0}
+function note(){var s=streakNow();document.getElementById('countNote').textContent=count>0?('これまでに '+count+' 回引きました'+(s>1?(' ｜ '+s+' 日連続で引いています'):'')):""}
+function renderDex(popName){
+ var counts=lsGet('omikujiCounts',{});
+ var dex=Object.keys(counts);
+ lsGet('omikujiDex',[]).forEach(function(n){if(dex.indexOf(n)<0)dex.push(n)});
+ document.getElementById('dex').innerHTML=FORTUNES.map(function(f){var n=f[0];var got=dex.indexOf(n)>=0;return '<span class="'+(got?'got':'')+(n==='超大吉'&&got?' gold':'')+(n===popName?' pop':'')+'">'+(got?(n+'<span class="cnt">×'+(counts[n]||1)+'</span>'):'？？')+'</span>'}).join('');
+ document.getElementById('dexBar').style.width=(dex.length/7*100)+'%';
+ document.getElementById('dexCount').textContent=dex.length+'/7';
+}
+function renderTied(){
+ var line=document.getElementById('tiedLine');line.innerHTML='';
+ var show=Math.min(tiedCount,14);
+ for(var i=0;i<show;i++){var s=document.createElement('span');s.className='tied-slip';s.style.left=(show===1?26:(6+(80/Math.max(1,show-1))*i))+'%';s.style.animationDelay=(-i*0.7)+'s';line.appendChild(s)}
+ tieNote.textContent=tiedCount>0?('結んで置いてきた凶の札：'+tiedCount+' 枚'):'';
+}
+function fillSlip(res,isPrev){
+ fortuneText.textContent=res.f;
+ meaningText.textContent=MEANING[res.f]||'';
+ wordText.textContent=res.word;
+ luckyText.textContent=res.lucky;
+ colorText.textContent=res.color;
+ colorSwatch.style.background=COLOR_HEX[res.color]||'#ccc';
+ slipNo.textContent='第'+kanjiNum(res.no)+'番';
+ document.getElementById('details').innerHTML=DETAIL_LABELS.map(function(l,i){return '<p><b>'+l+'</b><span>'+res.details[i]+'</span></p>'}).join('');
+ document.getElementById('meters').innerHTML=CATS.map(function(c,i){return '<p><span class="m-label">'+c+'</span><span class="m-track"><span class="m-fill" data-v="'+res.meters[i]+'"></span></span><span class="m-val">'+res.meters[i]+'/5</span></p>'}).join('');
+ slip.classList.toggle('gold',res.f==='超大吉');
+ slip.classList.toggle('bad',res.f==='凶');
+ todayTag.hidden=!res.firstToday;
+ prevTag.hidden=!isPrev;
+ tieBtn.hidden=res.f!=='凶'||isPrev;
+ slip.hidden=false;
+ requestAnimationFrame(function(){requestAnimationFrame(function(){
+  var fills=slip.querySelectorAll('.m-fill');
+  for(var i=0;i<fills.length;i++)fills[i].style.width=(Number(fills[i].getAttribute('data-v'))*20)+'%';
+ })});
+}
+function makeResult(firstToday){
+ var f=pickFortune();
+ var bias=f==='超大吉'?4:(f==='大吉'?3:(f==='凶'?1:2));
+ var meters=CATS.map(function(){return Math.max(1,Math.min(5,bias+Math.floor(Math.random()*3)-1))});
+ return {f:f,no:1+Math.floor(Math.random()*100),word:rnd(WORDS),lucky:rnd(LUCKY),color:rnd(COLORS),meters:meters,details:DETAILS[f].slice(),firstToday:!!firstToday,day:new Date().toDateString()};
+}
+function startDraw(){
+ if(busy)return;busy=true;btn.disabled=true;dragging=false;
+ hint.textContent='カラカラ… 1本、出てきます。';
+ slip.classList.remove('tied-away');
+ /* button-less shake burst */
+ var bursts=0;clatter(0.9);
+ var iv=setInterval(function(){vel+=(bursts%2?4.6:-4.6);angle=Math.max(-14,Math.min(14,angle+vel*0.4));clatter(0.8);kickShake();if(++bursts>=4){clearInterval(iv)}},110);
+ setTimeout(function(){
+  var today=new Date().toDateString();
+  var isFirst=localStorage.getItem('omikujiDay')!==today;
+  var res=makeResult(isFirst);
+  currentResult=res;
+  stickNum.textContent='第'+res.no+'番';
+  drawStick.classList.remove('fall');drawStick.style.height='108px';drawStick.classList.add('rise');
+  thunk(false);paper();
+  setTimeout(function(){
+   drawStick.classList.remove('rise');drawStick.classList.add('fall');
+   setTimeout(function(){drawStick.style.height='0'},60);
+   localStorage.setItem('omikujiDay',today);
+   fillSlip(res,false);
+   slip.classList.remove('unfold');void slip.offsetWidth;slip.classList.add('unfold');
+   fortuneText.classList.remove('slam');void fortuneText.offsetWidth;
+   setTimeout(function(){fortuneText.classList.add('slam');thunk(res.f==='超大吉');vibrate(res.f==='凶'?[30,40,30]:18)},reduced?30:330);
+   if(res.f==='超大吉'){burst(110,true);fanfare(true)}
+   else if(res.f==='大吉'){burst(55,false);fanfare(false)}
+   else if(res.f==='凶'){lowTone()}
+   else{paper()}
+   /* records (従来キー互換) */
+   count++;localStorage.setItem('omikujiCount',count);
+   var yday=new Date(Date.now()-86400000).toDateString();var prev=localStorage.getItem('omikujiDayPrev');
+   var s=streakNow();if(prev===today){}else if(prev===yday){s=s+1}else{s=1}
+   localStorage.setItem('omikujiStreak',s);localStorage.setItem('omikujiDayPrev',today);
+   var counts=lsGet('omikujiCounts',{});var isNew=!counts[res.f];counts[res.f]=(counts[res.f]||0)+1;lsSet('omikujiCounts',counts);
+   var dex=lsGet('omikujiDex',[]);if(dex.indexOf(res.f)<0){dex.push(res.f);lsSet('omikujiDex',dex)}
+   lsSet('omikujiLast',res);
+   renderDex(res.f);
+   var dn=document.getElementById('dexNote');
+   if(dex.length>=7){dn.textContent='図鑑コンプリート！ 全7種そろいました';if(isNew)burst(70,false)}
+   else if(isNew){dn.textContent='図鑑に「'+res.f+'」を新規登録（'+dex.length+'/7）'}
+   else{dn.textContent=''}
+   note();
+   hint.textContent='箱はまた振れます。もう一回どうぞ。';
+   btn.textContent='もう一回引く';btn.disabled=false;busy=false;energy=0;
+   slip.scrollIntoView({behavior:reduced?'auto':'smooth',block:'nearest'});
+  },reduced?120:1020);
+ },560);
+}
+btn.addEventListener('click',function(){audio();startDraw()});
+
+/* ================= tie the kyo slip ================= */
+tieBtn.addEventListener('click',function(){
+ if(!currentResult||currentResult.f!=='凶')return;
+ tieBtn.hidden=true;
+ slip.classList.add('tied-away');paper();vibrate([12,40,12]);
+ setTimeout(function(){
+  tiedCount++;lsSet('omikujiTied',tiedCount);renderTied();
+  slip.hidden=true;slip.classList.remove('tied-away');
+  tieNote.textContent='結んで置いてきました（'+tiedCount+' 枚目）。凶は神社に置いてくるのが作法。今日は守りを固めて正解です。';
+  hint.textContent='すっきり。箱はまた振れます。';
+ },reduced?60:780);
+});
+
+/* ================= share / copy ================= */
+function resultText(){
+ if(!currentResult)return '';
+ return '第'+currentResult.no+'番 '+currentResult.f+'｜'+currentResult.word+' ラッキーアイテム：'+currentResult.lucky+'／ラッキーカラー：'+currentResult.color+'（Shelfiria あませおみくじ）';
+}
+function flash(btnEl,label){var old=btnEl.textContent;btnEl.textContent=label;setTimeout(function(){btnEl.textContent=old},1600)}
+document.getElementById('copyBtn').addEventListener('click',function(){
+ var b=this,text=resultText();if(!text)return;
+ function ok(){flash(b,'コピーしました')}
+ function ng(){flash(b,'コピーできませんでした')}
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok).catch(ng)}
+ else{
+  var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy')?ok():ng()}catch(e){ng()}
+  ta.remove();
+ }
+});
+document.getElementById('shareBtn').addEventListener('click',function(){
+ var b=this,text=resultText();if(!text)return;
+ if(navigator.share){navigator.share({title:'あませおみくじ',text:text,url:'https://paper-daemon.github.io/play/omikuji.html'}).catch(function(){})}
+ else if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){flash(b,'リンク代わりにコピーしました')}).catch(function(){flash(b,'シェアできませんでした')})}
+ else{flash(b,'シェアできませんでした')}
+});
+
+/* ================= sound toggle ================= */
+var soundBtn=document.getElementById('soundBtn');
+function renderSound(){soundBtn.textContent=soundOn?'🔊':'🔇';soundBtn.setAttribute('aria-label',soundOn?'音をオフにする':'音をオンにする')}
+soundBtn.addEventListener('click',function(){soundOn=!soundOn;lsSet('omikujiSound',soundOn);renderSound();if(soundOn)clatter(0.5)});
+renderSound();
+
+/* ================= init ================= */
+var stageEl=document.querySelector('.omikuji-stage');
+stageEl.addEventListener('contextmenu',function(e){e.preventDefault()});
+stageEl.addEventListener('selectstart',function(e){e.preventDefault()});
+stageEl.addEventListener('dragstart',function(e){e.preventDefault()});
+note();renderDex(null);renderTied();
+var last=lsGet('omikujiLast',null);
+if(last&&last.f){currentResult=last;fillSlip(last,true);btn.textContent='おみくじを引く'}
+})();
+</script>
+<script src="/ad-overlay.js" defer></script>
+</body></html>
