@@ -450,4 +450,166 @@ window.__traySync=syncTray;
 }catch(err){}
 })();
 </script>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.170.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.170.0/examples/jsm/"}}
+</script>
+<script type="module">
+/* 筐体トレイ内コイン3D：厚みと金属光沢のあるコインが立体回転で落ち、受け皿の中に平積みで固定される。
+   2D版（#trayCv）の初期化後に読み込まれ、成功時だけ表示と __traySync を引き継ぐ（失敗時は2Dのまま）。 */
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+try{
+const oldCv=document.getElementById('trayCv');
+const host=oldCv?oldCv.parentElement:document.body;
+const cv3=document.createElement('canvas');
+cv3.id='tray3d';cv3.className='ov';
+cv3.style.cssText='left:10.5%;top:84.9%;width:79%;height:15.1%;z-index:4;touch-action:none;cursor:pointer';
+host.appendChild(cv3);
+const renderer=new THREE.WebGLRenderer({canvas:cv3,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(1.5,window.devicePixelRatio||1));
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
+const scene=new THREE.Scene();
+const pmrem=new THREE.PMREMGenerator(renderer);
+scene.environment=pmrem.fromScene(new RoomEnvironment(),0.04).texture;
+const key=new THREE.DirectionalLight(0xfff2d8,1.6);key.position.set(28,60,42);scene.add(key);
+const fill=new THREE.DirectionalLight(0xbfd0ff,0.5);fill.position.set(-30,24,30);scene.add(fill);
+const camera=new THREE.PerspectiveCamera(30,2,0.1,300);
+camera.position.set(0,26,47);camera.lookAt(0,4.5,0);
+/* 世界座標：トレイ内寸は x -43..43、床 y=0、奥行きレーン2列 */
+const COLS=7,LANES=2,CAP=48,MAXLV=6,R=5.6,THICK=1.8,LVH=1.66;
+const colX=c=>(c-(COLS-1)/2)*(86/COLS);
+const laneZ=l=>l===0?-5.9:5.9;
+const cellX=(c,l)=>colX(c)+(l===1?2.8:0);
+const cellY=lv=>THICK/2+lv*LVH;
+const tex=new THREE.TextureLoader().load('/play/assets/slot-coin.png');
+tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=4;
+const capMat=new THREE.MeshStandardMaterial({map:tex,metalness:0.75,roughness:0.32});
+const sideMat=new THREE.MeshStandardMaterial({color:0xd9a41c,metalness:1.0,roughness:0.3});
+const geo=new THREE.CylinderGeometry(R,R,THICK,40,1,false);
+const MAXI=80;
+const mesh=new THREE.InstancedMesh(geo,[sideMat,capMat,capMat],MAXI);
+mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+scene.add(mesh);
+const TINTS=[new THREE.Color(1,1,1),new THREE.Color(1.06,0.99,0.86),new THREE.Color(0.94,0.9,0.82)];
+for(let i=0;i<MAXI;i++)mesh.setColorAt(i,TINTS[i%3]);
+if(mesh.instanceColor)mesh.instanceColor.needsUpdate=true;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let cells=[],stacks=[],reserved=[],falling=[],spilling=[],fading=[];
+let owed=0,removeQ=0,spawnT=0,removeT=0,running=false,lastT=0;
+function resetStacks(){stacks=[];reserved=[];for(let c=0;c<COLS;c++){stacks.push([0,0]);reserved.push([0,0])}}
+resetStacks();
+function targetFor(bal){return bal>=1000?Math.min(CAP,5+Math.floor((bal-1000)/52)):0}
+function counted(){return cells.length+falling.length}
+function pickCell(){
+  let best=null,bs=1e9;const mid=(COLS-1)/2;
+  for(let c=0;c<COLS;c++)for(let l=0;l<LANES;l++){
+    if(stacks[c][l]+reserved[c][l]>=MAXLV)continue;
+    const s=stacks[c][l]+reserved[c][l]+Math.abs(c-mid)*0.32+(l===0?0:0.55);
+    if(s<bs){bs=s;best=[c,l]}
+  }
+  return best;
+}
+function lockCell(c,l){
+  const lv=stacks[c][l];stacks[c][l]++;
+  cells.push({c:c,l:l,lv:lv,yaw:Math.random()*6.28,jx:(Math.random()*1.2-0.6),jz:(Math.random()*0.8-0.4),sq:1,hop:0});
+}
+function spawnFall(spill){
+  const p=spill?null:pickCell();
+  if(!spill&&!p){spawnFall(true);return}
+  if(p)reserved[p[0]][p[1]]++;
+  const o={x:(Math.random()*4-2),y:15.5,z:2,vy:26,t:0,rx:Math.random()*6.28,rz:Math.random()*6.28,wx:(Math.random()*7-3.5),wz:(Math.random()*7-3.5),c:p?p[0]:-1,l:p?p[1]:0};
+  if(spill){o.z=4;spilling.push(o)}else falling.push(o);
+}
+function prefill(n){
+  cells=[];falling=[];spilling=[];fading=[];owed=0;removeQ=0;resetStacks();
+  let g=0;while(cells.length<n&&g++<600){const p=pickCell();if(!p)break;lockCell(p[0],p[1]);cells[cells.length-1].sq=1}
+  render();
+}
+const M=new THREE.Matrix4(),Q=new THREE.Quaternion(),E=new THREE.Euler(),V=new THREE.Vector3(),S=new THREE.Vector3();
+function setInst(i,x,y,z,rx,ry,rz,sc){
+  E.set(rx,ry,rz);Q.setFromEuler(E);V.set(x,y,z);S.set(sc,sc,sc);
+  M.compose(V,Q,S);mesh.setMatrixAt(i,M);
+}
+function render(){
+  let i=0;
+  for(const cell of cells){
+    const hopY=cell.hop>0?Math.sin((1-cell.hop)*3.14)*1.6:0;
+    let y=cellY(cell.lv)+hopY,sy=1;
+    if(cell.sq<1){y-=(1-cell.sq)*0.8;sy=0.7+0.3*cell.sq}
+    E.set(0,cell.yaw,0);Q.setFromEuler(E);V.set(cellX(cell.c,cell.l)+cell.jx,y,laneZ(cell.l)+cell.jz);S.set(1,sy,1);
+    M.compose(V,Q,S);mesh.setMatrixAt(i,M);i++;
+  }
+  for(const fd of fading){
+    const k=fd.t/0.16;
+    setInst(i,cellX(fd.c,fd.l)+fd.jx,cellY(fd.lv)-k*1.4,laneZ(fd.l)+fd.jz,0,fd.yaw,0,1-k*0.45);i++;
+  }
+  for(const f of falling){
+    setInst(i,f.x,f.y,f.z,f.rx,0,f.rz,1);i++;
+  }
+  for(const s of spilling){setInst(i,s.x,s.y,s.z,s.rx,0,s.rz,1);i++}
+  mesh.count=i;mesh.instanceMatrix.needsUpdate=true;
+  renderer.render(scene,camera);
+}
+function frame(now){
+  const dt=Math.min(0.05,(now-lastT)/1000);lastT=now;
+  spawnT+=dt*1000;removeT+=dt*1000;
+  if(owed>0&&spawnT>45){spawnT=0;owed--;spawnFall(false)}
+  if(removeQ>0&&removeT>90&&fading.length===0){
+    removeT=0;removeQ--;
+    let top=null;
+    for(const cell of cells)if(!top||cell.lv>top.lv||(cell.lv===top.lv&&Math.abs(cell.c-3.5)<Math.abs(top.c-3.5)))top=cell;
+    if(top){cells.splice(cells.indexOf(top),1);stacks[top.c][top.l]--;fading.push({c:top.c,l:top.l,lv:top.lv,yaw:top.yaw,jx:top.jx,jz:top.jz,t:0})}
+    else removeQ=0;
+  }
+  const G=170;
+  for(let idx=falling.length-1;idx>=0;idx--){
+    const f=falling[idx];f.t+=dt;f.vy+=G*dt;f.y-=f.vy*dt;
+    const tx=cellX(f.c,f.l),tz=laneZ(f.l);
+    f.x+=(tx-f.x)*Math.min(1,dt*6);f.z+=(tz-f.z)*Math.min(1,dt*6);
+    const ly=cellY(stacks[f.c][f.l]);
+    const flat=Math.min(1,Math.max(0,(ly+7-f.y)/7)); /* 地面が近づいたら水平へ寄せる */
+    f.rx+=f.wx*dt*(1-flat*0.92);f.rz+=f.wz*dt*(1-flat*0.92);
+    if(flat>0){f.rx*=Math.pow(0.0018,dt*flat*2.2);f.rz*=Math.pow(0.0018,dt*flat*2.2)}
+    if(f.y<=ly){
+      reserved[f.c][f.l]--;lockCell(f.c,f.l);const cell=cells[cells.length-1];cell.sq=0.3;
+      falling.splice(idx,1);
+    }
+  }
+  for(let idx=spilling.length-1;idx>=0;idx--){
+    const s=spilling[idx];s.t+=dt;s.vy+=G*dt;s.y-=s.vy*dt;s.z+=dt*16;s.rx+=s.wx*dt;s.rz+=s.wz*dt;
+    if(s.y<-30)spilling.splice(idx,1);
+  }
+  for(let idx=fading.length-1;idx>=0;idx--){fading[idx].t+=dt;if(fading[idx].t>0.16)fading.splice(idx,1)}
+  for(const cell of cells){if(cell.sq<1)cell.sq=Math.min(1,cell.sq+dt*6);if(cell.hop>0)cell.hop=Math.max(0,cell.hop-dt*5)}
+  render();
+  if(owed>0||removeQ>0||falling.length||spilling.length||fading.length||cells.some(c=>c.sq<1||c.hop>0))requestAnimationFrame(frame);
+  else{running=false;render()}
+}
+function wake(){if(!running){running=true;lastT=performance.now();requestAnimationFrame(frame)}}
+function syncTray(bal,rain){
+  const target=targetFor(bal);
+  let diff=target-counted()-owed;
+  if(diff>0){if(reduced){prefill(target)}else owed+=diff}
+  else if(diff<0){const cut=Math.min(owed,-diff);owed-=cut;removeQ+=(-diff-cut);if(reduced){prefill(target);removeQ=0}}
+  if(rain>0&&!reduced){const rn=Math.min(8,rain);for(let i=0;i<rn;i++)setTimeout(()=>{spawnFall(counted()+owed>=CAP);wake()},i*55)}
+  wake();
+}
+function resize(){
+  const w=cv3.clientWidth||300,h=cv3.clientHeight||69;
+  renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();render();
+}
+window.addEventListener('resize',resize);
+cv3.addEventListener('pointerdown',function(e){
+  const r=cv3.getBoundingClientRect();const nx=((e.clientX-r.left)/r.width-0.5)*86;
+  let best=null,bd=1e9;for(const cell of cells){const d=Math.abs(cellX(cell.c,cell.l)-nx)+(cell.lv)*-2;if(d<bd){bd=d;best=cell}}
+  if(best){best.hop=1;wake()}
+});
+resize();
+if(oldCv)oldCv.style.display='none';
+window.__traySync=syncTray;
+const startBal=parseInt(localStorage.getItem('slotCoins')||'0',10)||0;
+prefill(targetFor(startBal));
+}catch(err){/* 3Dが使えない環境では2D版のまま */}
+
+</script>
 </body></html>
