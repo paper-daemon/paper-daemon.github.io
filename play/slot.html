@@ -30,6 +30,8 @@
 .bet-btns button.on{background:#f5b301;border-color:#f5b301;color:#171233}
 .bgm-toggle{position:absolute;top:10px;right:12px;background:transparent;border:2px solid rgba(255,255,255,.5);color:#fff;border-radius:999px;width:38px;height:38px;font-size:1rem;cursor:pointer}
 .bgm-toggle.off{opacity:.45}
+.fx-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:screen;opacity:0;pointer-events:none;transition:opacity .25s}
+.fx-video.on{opacity:1}
 .sparkle{position:absolute;pointer-events:none;font-size:1.3rem;animation:sparkleFly 1.1s ease-out forwards}
 @keyframes sparkleFly{0%{transform:translateY(0) scale(.6);opacity:1}100%{transform:translateY(-150px) scale(1.25);opacity:0}}
 </style>
@@ -40,6 +42,7 @@
 <section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — SLOT</p><h1>あませスロット</h1><p class="page-lead">ボタンを押して3つの絵をそろえるだけ。賭けるたびにジャックポットが貯まっていき、★3つで総取り。2つそろうと3つ目がゆっくり止まるリーチ演出つき。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
 <div class="slot-stage"><div class="machine" id="machine">
+<video class="fx-video" id="fxVideo" muted playsinline preload="auto"></video>
 <button class="bgm-toggle" id="bgmBtn" type="button" aria-label="BGM切り替え">♪</button>
 <p class="coins">COINS <span id="coins">100</span></p>
 <p class="jp">★ JACKPOT <span id="jp">500</span></p>
@@ -173,6 +176,18 @@ function countUp(el,from,to,dur){
   function tick(now){let p=(now-t0)/dur;if(p>1)p=1;el.textContent=Math.round(from+(to-from)*p);if(p<1)requestAnimationFrame(tick)}
   requestAnimationFrame(tick);
 }
+/* win celebration videos (screen-blended); silently absent until files land */
+const fxVideo=document.getElementById('fxVideo');
+function playFx(jackpot){
+  const src=jackpot?'/play/assets/jackpot-fx.mp4':'/play/assets/win-fx.mp4';
+  if(fxVideo.dataset.src!==src){fxVideo.dataset.src=src;fxVideo.src=src}
+  if(fxVideo.networkState===3)return false;
+  try{fxVideo.currentTime=0;const p=fxVideo.play();if(p&&p.catch)p.catch(()=>{});
+    fxVideo.classList.add('on');
+    fxVideo.onended=()=>fxVideo.classList.remove('on');
+    setTimeout(()=>fxVideo.classList.remove('on'),4500);
+    return true}catch(e){return false}
+}
 function sparkles(n){
   for(let i=0;i<n;i++){
     const s=document.createElement('span');s.className='sparkle';s.textContent='✦';
@@ -190,8 +205,8 @@ function judge(finals){
   if(win>0){
     const before=coins;coins+=win;
     reelEls.forEach(r=>r.classList.add('win'));
-    if(isJp){se('jackpot',SE_FALLBACK.jackpot);machine.classList.add('celebrate');sparkles(14)}
-    else se('win',SE_FALLBACK.win);
+    if(isJp){se('jackpot',SE_FALLBACK.jackpot);machine.classList.add('celebrate');if(!playFx(true))sparkles(14)}
+    else{se('win',SE_FALLBACK.win);playFx(false)}
     se('coin',SE_FALLBACK.coin);
     countUp(cEl,before,coins,600);
     jpEl.textContent=jp;
