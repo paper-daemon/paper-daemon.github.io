@@ -292,3 +292,12 @@ main,.site-footer{position:relative;z-index:1}
 @media(prefers-reduced-motion:reduce){
 html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
+
+/* Mobile categories: all six controls fit on screen, no hidden horizontal carousel.
+   Prevents off-screen filter controls from being tapped through adjacent content. */
+@media(max-width:620px){
+ .filter-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible;gap:6px}
+ .filter-btn{width:100%;min-width:0;white-space:normal;justify-content:flex-start;padding:10px 11px}
+ .filter-btn .filter-num{margin-left:auto}
+ .explorer-rail{overflow:visible}
+}
