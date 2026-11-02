@@ -46,6 +46,16 @@ for(const config of [
   assert.equal(await page.locator("#mobileNav").getAttribute("data-open"),"false");
  }
  await page.locator("#filterList .filter-btn[data-kind='all']").click();
+ await page.locator("#expandArchive").click();
+ await page.locator("#filterList .filter-btn[data-kind='demo']").waitFor({timeout:8000});
+ const demoCount=Number(await page.locator("#filterList .filter-btn[data-kind='demo'] .filter-num").innerText());
+ assert.equal(demoCount,46,config.label+" full demo manifest");
+ const dlCount=Number(await page.locator("#filterList .filter-btn[data-kind='download'] .filter-num").innerText());
+ assert.equal(dlCount,6,config.label+" six free downloads");
+ await page.locator("#filterList .filter-btn[data-kind='download']").click();
+ assert.equal(await page.locator("#results .catalog-card").count(),6);
+ await page.locator("#filterList .filter-btn[data-kind='all']").click();
+ assert(await page.locator("#results .catalog-card").count()>=26);
  await page.screenshot({path:outDir+"/"+config.label+".png",fullPage:true,animations:"disabled"});
  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
  assert(overflow<=2,config.label+" document overflow "+overflow+"px");
