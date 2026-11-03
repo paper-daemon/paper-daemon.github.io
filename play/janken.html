@@ -92,19 +92,19 @@
 <section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — JANKEN</p><h1>あませとじゃんけん</h1><p class="page-lead">あませとじゃんけん。5本先取でマッチ勝利です。あませは負けず嫌いなので、負けた次はあなたの前の手を狩りに来るクセがあります。前の手を読んで裏をかくのがコツ。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
 <div class="jk-stage">
-<div class="stage-wrap"><video poster="/play/assets/stage-art-new.jpg" id="stageVid" src="/play/assets/stage-idle-new.mp4" autoplay muted loop playsinline preload="auto"></video><video id="fxVideo" poster="/play/assets/stage-art-new.jpg" muted playsinline preload="none"></video></div>
+<div class="stage-wrap"><video poster="/play/assets/stage-art-new.jpg?v=3" id="stageVid" src="/play/assets/stage-idle-new.mp4?v=3" autoplay muted loop playsinline preload="auto"></video><video id="fxVideo" poster="/play/assets/stage-art-new.jpg?v=3" muted playsinline preload="none"></video></div>
 <div class="bgm-row" style="max-width:none;margin:0 0 4px"><button class="bgm-toggle" id="bgmBtn" type="button">♪ BGM</button></div>
 <div class="duel2">
-<div class="fighter"><p class="who">YOU</p><div class="handview" id="youView"><span class="emo" id="youEmo">✊</span><img id="youImg" src="/play/assets/player-hand2-rock.jpg" alt="あなたの手" onerror="this.remove()"></div></div>
+<div class="fighter"><p class="who">YOU</p><div class="handview" id="youView"><span class="emo" id="youEmo">✊</span></div></div>
 </div>
 <p class="beat" id="beat"></p>
 <p class="result" id="result">手を選んでね</p>
 <p class="eve-line" id="eveLine">あませ「本気で来ていいよ。負けず嫌いだから」</p>
 <button id="jkStart" class="button" type="button" style="width:100%;min-height:56px;font-size:1.12rem;font-weight:900;background:var(--red);color:#fff;border-color:var(--ink);margin:2px 0 12px">▶ じゃんけんをはじめる</button>
 <div class="hands">
-<button class="handbtn" data-h="0" type="button"><img src="/play/assets/player-hand2-rock.jpg" alt="" onerror="this.outerHTML='✊'">グー</button>
-<button class="handbtn" data-h="1" type="button"><img src="/play/assets/player-hand2-scissors.jpg" alt="" onerror="this.outerHTML='✌️'">チョキ</button>
-<button class="handbtn" data-h="2" type="button"><img src="/play/assets/player-hand2-paper.jpg" alt="" onerror="this.outerHTML='✋'">パー</button>
+<button class="handbtn" data-h="0" type="button"><span class="hb-emo">✊</span>グー</button>
+<button class="handbtn" data-h="1" type="button"><span class="hb-emo">✌️</span>チョキ</button>
+<button class="handbtn" data-h="2" type="button"><span class="hb-emo">✋</span>パー</button>
 </div>
 <div class="match"><span>YOU <span class="pips" id="pipsYou">○○○○○</span></span><span>先取5本でマッチ</span><span><span class="pips" id="pipsEve">○○○○○</span> EVE</span></div>
 <p class="prev" id="prevLine"></p>
@@ -135,14 +135,9 @@ let jBgmOn=true,jBgmStarted=false;
 function jBgmStart(){if(jBgmStarted||!jBgmOn)return;if(JAU.bgm&&JAU.bgm.networkState!==3){try{const p=JAU.bgm.play();if(p&&p.catch)p.catch(()=>{});jBgmStarted=true}catch(e){}}}
 document.getElementById('bgmBtn').addEventListener('click',function(){jBgmOn=!jBgmOn;this.classList.toggle('off',!jBgmOn);if(!jBgmOn){JAU.bgm.pause();jBgmStarted=false}else jBgmStart()});
 function vibJ(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
-const HANDIMG=['/play/assets/hand2-rock.jpg','/play/assets/hand2-scissors.jpg','/play/assets/hand2-paper.jpg'];
-const YOUIMG=['/play/assets/player-hand2-rock.jpg','/play/assets/player-hand2-scissors.jpg','/play/assets/player-hand2-paper.jpg'];
 const HANDEMO=['✊','✌️','✋'];
-function setHand(view,imgEl,emoEl,h,map){
-  if(imgEl){imgEl.src=(map||HANDIMG)[h];emoEl.style.display='none';imgEl.style.display=''}
-  else{emoEl.textContent=HANDEMO[h]}
-}
-const RESULT_FX={win:['/play/assets/fx-win-1.mp4','/play/assets/fx-win-2.mp4','/play/assets/fx-win-3.mp4'],lose:['/play/assets/fx-lose-1.mp4','/play/assets/fx-lose-2.mp4','/play/assets/fx-lose-3.mp4'],draw:['/play/assets/fx-draw-1.mp4','/play/assets/fx-draw-2.mp4'],mtake:['/play/assets/fx-mtake-1.mp4','/play/assets/fx-mtake-2.mp4'],mwin:['/play/assets/fx-mwin-1.mp4','/play/assets/fx-mwin-2.mp4']};
+function setHand(view,imgEl,emoEl,h){emoEl.textContent=HANDEMO[h];emoEl.style.display=''}
+const RESULT_FX={win:['/play/assets/fx-win-1.mp4?v=3','/play/assets/fx-win-2.mp4?v=3','/play/assets/fx-win-3.mp4?v=3'],lose:['/play/assets/fx-lose-1.mp4?v=3','/play/assets/fx-lose-2.mp4?v=3','/play/assets/fx-lose-3.mp4?v=3'],draw:['/play/assets/fx-draw-1.mp4?v=3','/play/assets/fx-draw-2.mp4?v=3'],mtake:['/play/assets/fx-mtake-1.mp4?v=3','/play/assets/fx-mtake-2.mp4?v=3'],mwin:['/play/assets/fx-mwin-1.mp4?v=3','/play/assets/fx-mwin-2.mp4?v=3']};
 const fxVideo=document.getElementById("fxVideo");let fxTimer=null;
 let pendingFxSrc=null;
 function hideFx(){if(!fxVideo)return;fxVideo.classList.remove("on");if(fxTimer){clearTimeout(fxTimer);fxTimer=null}try{fxVideo.pause()}catch(e){}pendingFxSrc=null;}
@@ -186,10 +181,10 @@ line.textContent=lineArr[Math.floor(Math.random()*lineArr.length)];
 lastYou=you;lastOut=out;
 paintScore();
 }
-const THROW={0:{src:"/play/assets/throw-new-rock.mp4",pon:1.08},1:{src:"/play/assets/throw-new-scissors.mp4",pon:0.98},2:{src:"/play/assets/throw-new-paper.mp4",pon:0.98}};
+const THROW={0:{src:"/play/assets/throw-new-rock.mp4?v=3",pon:1.08},1:{src:"/play/assets/throw-new-scissors.mp4?v=3",pon:0.98},2:{src:"/play/assets/throw-new-paper.mp4?v=3",pon:0.98}};
 const stageVid=document.getElementById("stageVid");
 function toIdle(){if(!stageVid)return;stageVid.loop=true;if(!stageVid.src.includes("stage-idle-new"))stageVid.src="/play/assets/stage-idle-new.mp4";const p=stageVid.play();if(p)p.catch(()=>{});}
-setHand(youView,youImg,youEmo,0,YOUIMG);
+setHand(youView,youImg,youEmo,0);
 const jkStart=document.getElementById("jkStart");
 let chant=null;
 function setHandsEnabled(on){document.querySelectorAll(".handbtn").forEach(x=>x.disabled=!on);}
@@ -199,7 +194,7 @@ if(busy||chant)return;busy=true;hideFx();jBgmStart();if(!window.__greeted){windo
 const eve=pickEve();
 chant={eve: eve};
 beatEl.textContent="じゃん・けん！";result.textContent="手を選んでね";line.textContent="あませ「いくよ？」";
-setHand(youView,youImg,youEmo,0,YOUIMG);
+setHand(youView,youImg,youEmo,0);
 jkStart.style.display="none";setHandsEnabled(true);busy=false;
 });
 document.querySelectorAll(".handbtn").forEach(b=>b.addEventListener("click",()=>{
@@ -207,13 +202,13 @@ if(busy||!chant)return;busy=true;hideFx();
 const you=Number(b.dataset.h);const eve=chant.eve;chant=null;primeFx(fxKindFor(you,eve));
 setHandsEnabled(false);
 youView.classList.add("shaking");
-setHand(youView,youImg,youEmo,0,YOUIMG);
+setHand(youView,youImg,youEmo,0);
 let done=false;
 const finish=()=>{
 if(done)return;done=true;
 beatEl.textContent="ぽん！";if(!jplayV(JV.pon)&&!jplay(JAU.pon))tone(920,0.08,"sine",0.13);vibJ(18);
 youView.classList.remove("shaking");
-setHand(youView,youImg,youEmo,you,YOUIMG);
+setHand(youView,youImg,youEmo,you);
 reveal(you,eve);
 busy=false;
 jkStart.textContent="もう一回";jkStart.style.display="";
