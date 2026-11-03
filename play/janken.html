@@ -186,7 +186,7 @@ line.textContent=lineArr[Math.floor(Math.random()*lineArr.length)];
 lastYou=you;lastOut=out;
 paintScore();
 }
-const THROW={0:{src:"/play/assets/hand-throw2-rock.mp4",pon:1.10},1:{src:"/play/assets/hand-throw2-scissors.mp4",pon:0.85},2:{src:"/play/assets/hand-throw2-paper.mp4",pon:1.55}};
+const THROW={0:{src:"/play/assets/throw-new-rock.mp4",pon:1.08},1:{src:"/play/assets/throw-new-scissors.mp4",pon:0.98},2:{src:"/play/assets/throw-new-paper.mp4",pon:0.98}};
 const stageVid=document.getElementById("stageVid");
 function toIdle(){if(!stageVid)return;stageVid.loop=true;if(!stageVid.src.includes("stage-idle-new"))stageVid.src="/play/assets/stage-idle-new.mp4";const p=stageVid.play();if(p)p.catch(()=>{});}
 setHand(youView,youImg,youEmo,0,YOUIMG);
