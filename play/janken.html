@@ -142,8 +142,9 @@ function setHand(view,imgEl,emoEl,h){emoEl.textContent=HANDEMO[h];emoEl.style.di
 const RESULT_FX={win:['/play/assets/fx-win-1.mp4?v=3','/play/assets/fx-win-2.mp4?v=3','/play/assets/fx-win-3.mp4?v=3'],lose:['/play/assets/fx-lose-1.mp4?v=3','/play/assets/fx-lose-2.mp4?v=3','/play/assets/fx-lose-3.mp4?v=3'],draw:['/play/assets/fx-draw-1.mp4?v=3','/play/assets/fx-draw-2.mp4?v=3'],mtake:['/play/assets/fx-mtake-1.mp4?v=3','/play/assets/fx-mtake-2.mp4?v=3'],mwin:['/play/assets/fx-mwin-1.mp4?v=3','/play/assets/fx-mwin-2.mp4?v=3']};
 const fxVideo=document.getElementById("fxVideo");let fxTimer=null;
 let pendingFxSrc=null;
-function hideFx(){if(!fxVideo)return;fxVideo.classList.remove("on");if(fxTimer){clearTimeout(fxTimer);fxTimer=null}try{fxVideo.pause()}catch(e){}pendingFxSrc=null;}
-function playFxSrc(src){if(!fxVideo||!src)return;if(fxTimer)clearTimeout(fxTimer);if(fxVideo.getAttribute("src")!==src)fxVideo.src=src;try{fxVideo.currentTime=0}catch(e){}fxVideo.classList.add("on");const p=fxVideo.play();if(p)p.catch(()=>hideFx());fxTimer=setTimeout(hideFx,5600);}
+let fxDeferTimer=null,fxDeferredSrc=null;
+function hideFx(){if(!fxVideo)return;fxVideo.classList.remove("on");if(fxTimer){clearTimeout(fxTimer);fxTimer=null}if(fxDeferTimer){clearTimeout(fxDeferTimer);fxDeferTimer=null}fxDeferredSrc=null;try{fxVideo.pause()}catch(e){}pendingFxSrc=null;}
+function playFxSrc(src){if(!fxVideo||!src)return;if(throwVid&&throwVid.classList.contains("on")&&!throwVid.ended&&throwVid.duration&&throwVid.currentTime<throwVid.duration-0.05){fxDeferredSrc=src;if(fxDeferTimer)clearTimeout(fxDeferTimer);const waitMs=Math.max(0,(throwVid.duration-throwVid.currentTime)*1000)+30;fxDeferTimer=setTimeout(()=>{fxDeferTimer=null;const s=fxDeferredSrc;fxDeferredSrc=null;if(s)playFxSrc(s);},waitMs);return;}if(fxTimer)clearTimeout(fxTimer);if(fxVideo.getAttribute("src")!==src)fxVideo.src=src;try{fxVideo.currentTime=0}catch(e){}fxVideo.classList.add("on");const p=fxVideo.play();if(p)p.catch(()=>hideFx());fxTimer=setTimeout(hideFx,5600);}
 if(fxVideo)fxVideo.addEventListener("ended",hideFx);
 function fxKindFor(you,eve){const base=you===eve?"draw":(((you-eve+3)%3===2)?"win":"lose");if(base==="win"&&(mpYou+1>=5||streak+1>=5))return "mwin";if(base==="lose"&&mpEve+1>=5)return "mtake";return base;}
 function primeFx(kind){const arr=RESULT_FX[kind];if(!arr||!arr.length||!fxVideo)return;pendingFxSrc=arr[Math.floor(Math.random()*arr.length)];if(fxVideo.getAttribute("src")!==pendingFxSrc){fxVideo.src=pendingFxSrc;try{fxVideo.load()}catch(e){}}}
@@ -215,7 +216,7 @@ setHand(youView,youImg,youEmo,you);
 reveal(you,eve);
 busy=false;
 jkStart.textContent="もう一回";jkStart.style.display="";
-setTimeout(toIdle,1700);
+const remMs=(throwVid&&throwVid.duration)?Math.max(0,(throwVid.duration-throwVid.currentTime)*1000):0;setTimeout(toIdle,Math.max(1700,remMs+500));
 };
 const th=THROW[eve];
 if(throwVid){
