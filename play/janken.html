@@ -44,6 +44,8 @@
 .bgm-toggle.off{opacity:.5}
 #fxVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none;transition:opacity .15s}
 #fxVideo.on{opacity:1}
+#stageVid2{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none;transition:opacity .12s}
+#stageVid2.on{opacity:1}
 .jk-stage,.jk-stage *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .jk-stage img,.jk-stage video{-webkit-user-drag:none}
 .jk-stage button{touch-action:manipulation}
@@ -92,7 +94,7 @@
 <section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — JANKEN</p><h1>あませとじゃんけん</h1><p class="page-lead">あませとじゃんけん。5本先取でマッチ勝利です。あませは負けず嫌いなので、負けた次はあなたの前の手を狩りに来るクセがあります。前の手を読んで裏をかくのがコツ。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
 <div class="jk-stage">
-<div class="stage-wrap"><video poster="/play/assets/stage-art-new.jpg?v=3" id="stageVid" src="/play/assets/stage-idle-new.mp4?v=3" autoplay muted loop playsinline preload="auto"></video><video id="fxVideo" poster="/play/assets/stage-art-new.jpg?v=3" muted playsinline preload="none"></video></div>
+<div class="stage-wrap"><video poster="/play/assets/stage-poster.jpg" id="stageVid" src="/play/assets/stage-idle-new.mp4?v=3" autoplay muted loop playsinline preload="auto"></video><video id="stageVid2" muted playsinline preload="auto"></video><video id="fxVideo" muted playsinline preload="none"></video></div>
 <div class="bgm-row" style="max-width:none;margin:0 0 4px"><button class="bgm-toggle" id="bgmBtn" type="button">♪ BGM</button></div>
 <div class="duel2">
 <div class="fighter"><p class="who">YOU</p><div class="handview" id="youView"><span class="emo" id="youEmo">✊</span></div></div>
@@ -183,7 +185,8 @@ paintScore();
 }
 const THROW={0:{src:"/play/assets/throw-new-rock.mp4?v=3",pon:1.08},1:{src:"/play/assets/throw-new-scissors.mp4?v=3",pon:0.98},2:{src:"/play/assets/throw-new-paper.mp4?v=3",pon:0.98}};
 const stageVid=document.getElementById("stageVid");
-function toIdle(){if(!stageVid)return;stageVid.loop=true;if(!stageVid.src.includes("stage-idle-new"))stageVid.src="/play/assets/stage-idle-new.mp4";const p=stageVid.play();if(p)p.catch(()=>{});}
+const throwVid=document.getElementById("stageVid2");
+function toIdle(){if(stageVid){stageVid.loop=true;const p=stageVid.play();if(p)p.catch(()=>{});}if(throwVid){throwVid.classList.remove("on");setTimeout(()=>{try{throwVid.pause()}catch(e){}},200);}}
 setHand(youView,youImg,youEmo,0);
 const jkStart=document.getElementById("jkStart");
 let chant=null;
@@ -215,19 +218,20 @@ jkStart.textContent="もう一回";jkStart.style.display="";
 setTimeout(toIdle,1700);
 };
 const th=THROW[eve];
-if(stageVid){
-  stageVid.loop=false;
-  stageVid.onerror=()=>setTimeout(finish,700);
-  if(stageVid.src.indexOf(th.src)===-1)stageVid.src=th.src;
+if(throwVid){
+  throwVid.loop=false;
+  throwVid.onerror=()=>setTimeout(finish,700);
+  if(throwVid.src.indexOf(th.src)===-1)throwVid.src=th.src;
   let armed=false;
   const armThrow=()=>{
     if(armed)return;armed=true;
-    try{if(stageVid.currentTime>0.05)stageVid.currentTime=0;}catch(e){}
-    const pr=stageVid.play();if(pr)pr.catch(()=>{});
-    const tick=()=>{if(done)return;if(stageVid.currentTime>=th.pon){finish();return}if(stageVid.requestVideoFrameCallback)stageVid.requestVideoFrameCallback(tick);else setTimeout(tick,40);};
-    if(stageVid.requestVideoFrameCallback)stageVid.requestVideoFrameCallback(tick);else setTimeout(tick,40);
+    try{if(throwVid.currentTime>0.05)throwVid.currentTime=0;}catch(e){}
+    throwVid.classList.add("on");
+    const pr=throwVid.play();if(pr)pr.catch(()=>{});
+    const tick=()=>{if(done)return;if(throwVid.currentTime>=th.pon){finish();return}if(throwVid.requestVideoFrameCallback)throwVid.requestVideoFrameCallback(tick);else setTimeout(tick,40);};
+    if(throwVid.requestVideoFrameCallback)throwVid.requestVideoFrameCallback(tick);else setTimeout(tick,40);
   };
-  if(stageVid.readyState>=1)armThrow();else stageVid.addEventListener("loadedmetadata",armThrow,{once:true});
+  if(throwVid.readyState>=1)armThrow();else throwVid.addEventListener("loadedmetadata",armThrow,{once:true});
   setTimeout(finish,4500);
 }else setTimeout(finish,900);
 }));
