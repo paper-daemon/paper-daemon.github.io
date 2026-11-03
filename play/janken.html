@@ -37,7 +37,7 @@
 
 .bgm-row{text-align:right;max-width:560px;margin:0 auto 6px}
 .amase-ready{display:block;margin:2px auto 0;height:158px;width:auto;filter:drop-shadow(0 10px 14px rgba(20,20,60,.22))}
-.stage-wrap{position:relative;max-width:560px;margin:2px auto 8px;border-radius:18px;overflow:hidden;box-shadow:0 14px 30px rgba(20,20,60,.28);background:#171233;line-height:0;border:3px solid var(--ink)}.stage-plate{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(19,24,71,.88);color:#fff;font:900 .8rem var(--sans);letter-spacing:.12em;padding:6px 16px;border-radius:99px;border:2px solid #ffb84d;white-space:nowrap;line-height:1.25;text-align:center}.stage-plate small{display:block;font:700 .58rem var(--mono);letter-spacing:.22em;color:#ffd9a0}
+.stage-wrap{position:relative;max-width:560px;margin:2px auto 8px;border-radius:18px;overflow:hidden;box-shadow:0 14px 30px rgba(20,20,60,.28);background:#171233;line-height:0;border:3px solid var(--ink)}
 .stage-wrap video{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
 .amase-ready.shaking{animation:jkshake .26s ease-in-out infinite}
 .bgm-toggle{border:2px solid var(--ink);background:#fff;border-radius:99px;padding:4px 14px;font:700 .78rem var(--sans);cursor:pointer}
@@ -92,7 +92,7 @@
 <section class="page-hero" style="border-bottom:none;padding-bottom:10px"><p class="eyebrow">PLAY — JANKEN</p><h1>あませとじゃんけん</h1><p class="page-lead">あませとじゃんけん。5本先取でマッチ勝利です。あませは負けず嫌いなので、負けた次はあなたの前の手を狩りに来るクセがあります。前の手を読んで裏をかくのがコツ。</p></section>
 <section class="section" style="border-bottom:none;padding-top:16px">
 <div class="jk-stage">
-<div class="stage-wrap"><video poster="/play/assets/hand2-rock.jpg" id="stageVid" src="/play/assets/hand-idle2.mp4" autoplay muted loop playsinline preload="auto"></video><video id="fxVideo" poster="/play/assets/stage-art-new.jpg" muted playsinline preload="none"></video><p class="stage-plate"><small>AMASE&rsquo;S STAGE</small>あませのステージ</p></div>
+<div class="stage-wrap"><video poster="/play/assets/stage-art-new.jpg" id="stageVid" src="/play/assets/stage-idle-new.mp4" autoplay muted loop playsinline preload="auto"></video><video id="fxVideo" poster="/play/assets/stage-art-new.jpg" muted playsinline preload="none"></video></div>
 <div class="bgm-row" style="max-width:none;margin:0 0 4px"><button class="bgm-toggle" id="bgmBtn" type="button">♪ BGM</button></div>
 <div class="duel2">
 <div class="fighter"><p class="who">YOU</p><div class="handview" id="youView"><span class="emo" id="youEmo">✊</span><img id="youImg" src="/play/assets/player-hand2-rock.jpg" alt="あなたの手" onerror="this.remove()"></div></div>
@@ -188,7 +188,7 @@ paintScore();
 }
 const THROW={0:{src:"/play/assets/hand-throw2-rock.mp4",pon:1.10},1:{src:"/play/assets/hand-throw2-scissors.mp4",pon:0.85},2:{src:"/play/assets/hand-throw2-paper.mp4",pon:1.55}};
 const stageVid=document.getElementById("stageVid");
-function toIdle(){if(!stageVid)return;stageVid.loop=true;if(!stageVid.src.includes("hand-idle2"))stageVid.src="/play/assets/hand-idle2.mp4";const p=stageVid.play();if(p)p.catch(()=>{});}
+function toIdle(){if(!stageVid)return;stageVid.loop=true;if(!stageVid.src.includes("stage-idle-new"))stageVid.src="/play/assets/stage-idle-new.mp4";const p=stageVid.play();if(p)p.catch(()=>{});}
 setHand(youView,youImg,youEmo,0,YOUIMG);
 const jkStart=document.getElementById("jkStart");
 let chant=null;
