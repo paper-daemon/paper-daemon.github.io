@@ -38,7 +38,7 @@ button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touc
 .box-hit{position:relative;width:210px;cursor:grab;touch-action:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 .box-hit:active{cursor:grabbing}
 .box-hit:focus-visible{outline:3px solid var(--yellow);outline-offset:6px;border-radius:12px}
-.box-fig{transform-origin:50% 92%;will-change:transform}
+.box-fig{position:relative;transform-origin:50% 92%;will-change:transform}
 .tube-img{display:block;height:284px;width:auto;margin:0 auto;pointer-events:none;filter:drop-shadow(0 12px 13px rgba(2,2,16,.5))}
 .draw-stick{position:absolute;left:50%;bottom:196px;width:26px;height:0;margin-left:-13px;z-index:5;opacity:0;pointer-events:none}
 .draw-stick .stick-body{position:absolute;bottom:0;left:50%;width:17px;height:100%;margin-left:-8.5px;background:url("/play/assets/omikuji-stick.webp") center/100% 100% no-repeat;filter:drop-shadow(2px 2px 3px rgba(0,0,20,.35))}
@@ -128,10 +128,10 @@ button{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touc
 <canvas id="fx" aria-hidden="true"></canvas>
 <div class="tied-line" id="tiedLine" aria-hidden="true"></div>
 <div class="box-zone">
-<div class="draw-stick" id="drawStick"><div class="stick-body"><span class="stick-num" id="stickNum"></span></div></div>
 <div class="box-hit" id="boxHit" role="button" tabindex="0" aria-label="おみくじの箱。左右に振ると引けます">
 <div class="box-fig" id="boxFig">
 <img class="tube-img" id="tubeImg" src="/play/assets/omikuji-tube.webp" alt="" draggable="false">
+<div class="draw-stick" id="drawStick"><div class="stick-body"><span class="stick-num" id="stickNum"></span></div></div>
 </div>
 </div>
 </div>
@@ -276,7 +276,7 @@ function shakeLoop(){
  var pct=Math.min(100,Math.round(energy));
  shakeFill.style.width=pct+'%';shakePct.textContent=pct+'%';
  renderBox();
- if(energy>=100&&!busy){startDraw();return}
+ if(energy>=100&&!busy){shakeRAF=0;startDraw();return}
  if(Math.abs(angle)>0.05||Math.abs(vel)>0.05||energy>0.6||dragging){shakeRAF=requestAnimationFrame(shakeLoop)}
  else{angle=0;energy=0;shakeFill.style.width='0%';shakePct.textContent='0%';renderBox();shakeRAF=0}
 }
@@ -381,7 +381,7 @@ function startDraw(){
    else{dn.textContent=''}
    note();
    hint.textContent='箱はまた振れます。もう一回どうぞ。';
-   btn.textContent='もう一回引く';btn.disabled=false;busy=false;energy=0;
+   btn.textContent='もう一回引く';btn.disabled=false;busy=false;energy=0;kickShake();
    slip.scrollIntoView({behavior:reduced?'auto':'smooth',block:'nearest'});
   },reduced?120:1020);
  },560);
