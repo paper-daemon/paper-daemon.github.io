@@ -70,7 +70,7 @@ body.sb-playing{overflow:hidden;touch-action:none}
 <p class="eyebrow">PLAY — STAR BREAK</p>
 <h2 style="font-size:clamp(1.55rem,3.4vw,2.3rem);margin:0 0 14px">縦スクロール弾幕、画面いっぱいで。</h2>
 <p style="max-width:44rem;line-height:1.95;color:var(--ink-dim);margin:0">縦スクロールの弾幕シューティング。全3ステージ——ステージごとに編隊ウェーブを抜けた先にボスがいて、ボスごとに名前付きの「詠唱」を5つ、弾幕のパターンごと切り替えて放ってきます。進むほど先のスタート地点（次のステージや中間地点）が開いていき、奥の地点から始めるほど難易度も上がります。Shiftの低速移動では当たり判定が中心の点だけになり、弾をかするグレイズでもスコアが入ります。</p>
-<p class="legend" style="margin-top:22px">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1102-13</span></p>
+<p class="legend" style="margin-top:22px">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1103-14</span></p>
 <p style="margin-top:26px"><a class="button soft" href="/demo.html">あそぶ一覧へ →</a></p>
 </div></section>
 </main>
@@ -295,24 +295,24 @@ function weaverRow(t,n,gap,fl){F(t,'weaver',{n:n||4,gap:gap||46,fromLeft:!!fl});
 function buildWave(st,w){
   spawnQ=[];waveT=0;
   if(st===1){
-    if(w===1){dartRow(10,5,30,true);weaverRow(90,3,50,true);dartRow(190,5,30,false);}
+    if(w===1){dartRow(10,5,30,true);weaverRow(90,3,50,true);weaverRow(190,3,50,false);F(270,'lancer',{x:210});}
     else if(w===2){weaverRow(10,4,46,true);F(100,'lancer',{x:210});dartRow(200,5,29,false);}
-    else if(w===3){dartRow(10,6,26,true);F(140,'carrier');F(200,'orb',{x:210});dartRow(260,4,30,false);}
+    else if(w===3){dartRow(10,6,26,true);F(140,'carrier');F(200,'orb',{x:210});weaverRow(260,3,50,false);}
     else if(w===4){F(10,'orb',{x:130});weaverRow(130,4,46,false);dartRow(270,5,29,true);}
     else if(w===5){F(10,'carrier');dartRow(70,5,30,true);F(200,'orb',{x:290});weaverRow(290,3,50,false);}
     else{dartRow(10,5,29,false);F(120,'orb',{x:120});F(190,'orb',{x:300});F(260,'splitter');}
   }else if(st===2){
-    if(w===1){dartRow(10,6,26,false);dartRow(150,6,26,true);weaverRow(280,3,50,true);}
-    else if(w===2){F(10,'lancer',{x:110});F(100,'lancer',{x:310});dartRow(200,5,29,true);}
+    if(w===1){dartRow(10,6,26,false);weaverRow(150,4,46,true);F(220,'orb',{x:210});weaverRow(280,3,50,true);}
+    else if(w===2){F(10,'lancer',{x:110});F(100,'lancer',{x:310});dartRow(200,3,29,true);F(270,'orb',{x:210});}
     else if(w===3){weaverRow(10,5,42,true);F(130,'orb',{x:210});dartRow(240,6,26,false);}
     else if(w===4){F(10,'splitter');weaverRow(100,4,46,false);F(230,'carrier');}
     else if(w===5){F(10,'lancer',{x:90});F(80,'lancer',{x:330});F(160,'lancer',{x:210});dartRow(240,5,29,true);}
     else if(w===6){F(10,'orb',{x:120});F(70,'orb',{x:300});F(170,'carrier');dartRow(250,6,26,false);}
     else{F(10,'splitter');F(120,'splitter',{x:290});F(210,'lancer',{x:150});weaverRow(290,5,42,true);}
   }else{
-    if(w===1){dartRow(10,6,26,true);dartRow(130,6,26,false);F(250,'lancer',{x:210});}
+    if(w===1){dartRow(10,6,26,true);weaverRow(130,4,46,false);F(250,'lancer',{x:210});}
     else if(w===2){weaverRow(10,5,42,false);weaverRow(120,4,46,true);F(230,'orb',{x:210});}
-    else if(w===3){F(10,'carrier',{x:130});F(100,'carrier',{x:290});dartRow(210,6,26,true);}
+    else if(w===3){F(10,'carrier',{x:130});F(100,'carrier',{x:290});dartRow(210,4,26,true);F(290,'splitter');}
     else if(w===4){F(10,'lancer',{x:100});F(80,'lancer',{x:320});F(160,'splitter');dartRow(250,5,29,false);}
     else if(w===5){F(10,'orb',{x:100});F(80,'orb',{x:210});F(150,'orb',{x:320});weaverRow(240,5,42,true);}
     else if(w===6){F(10,'splitter');F(110,'splitter',{x:280});F(200,'carrier');dartRow(280,6,26,false);}
