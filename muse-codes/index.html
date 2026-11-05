@@ -24,7 +24,10 @@
 {"@type":"Question","name":"What is a Muse invite code?","acceptedAnswer":{"@type":"Answer","text":"A Muse invite code is a 6-character referral code shared by an existing Muse user. A new user who redeems one within 48 hours of joining gets 1 billion Muse tokens, and the sharer gets 1 billion too."}},
 {"@type":"Question","name":"How do I redeem a Muse invite code?","acceptedAnswer":{"@type":"Answer","text":"Sign up at muse.ai/join, then within 48 hours open Muse Settings > General > Redeem invite code and enter the code."}},
 {"@type":"Question","name":"Do Muse invite code tokens expire?","acceptedAnswer":{"@type":"Answer","text":"No. The 1 billion tokens from an invite code are additional tokens with no expiry."}},
-{"@type":"Question","name":"Museの招待コードはどこで入力しますか？","acceptedAnswer":{"@type":"Answer","text":"Muse登録後48時間以内に、設定（Settings）> General > Redeem invite code から入力します。使った側と共有した側の双方に10億トークンが付与されます。"}}
+{"@type":"Question","name":"Museの招待コードはどこで入力しますか？","acceptedAnswer":{"@type":"Answer","text":"Muse登録後48時間以内に、設定（Settings）> General > Redeem invite code から入力します。使った側と共有した側の双方に10億トークンが付与されます。"}},
+{"@type":"Question","name":"Can I redeem a Muse invite code after 48 hours?","acceptedAnswer":{"@type":"Answer","text":"No. The redeem option is only available in the first 48 hours after you join Muse, then it disappears. Join first, and redeem a code right away."}},
+{"@type":"Question","name":"How many Muse invite codes can I redeem?","acceptedAnswer":{"@type":"Answer","text":"One per account. The 1 billion token bonus does not stack."}},
+{"@type":"Question","name":"Why did my Muse invite code not work?","acceptedAnswer":{"@type":"Answer","text":"The code may already be fully redeemed, your account may be past its 48-hour redemption window, or a character may be mistyped (letter O vs number 0). Try another code from the list."}}
 ]}
 </script>
 <style>
@@ -40,6 +43,8 @@ section{padding:34px 0} h2{font-size:1.35rem;margin:0 0 6px} .sub{color:var(--mu
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px} input[type=search]{flex:1;min-width:220px;background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:11px 14px;font-size:1rem}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:9px}
+.card.featured{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 10px 30px rgba(0,0,0,.35)}
+.hint{color:var(--muted);font-size:.82rem;line-height:1.55;margin:0} .hint a{color:var(--accent2)}
 .card-top{display:flex;justify-content:space-between;align-items:center} .label{color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em}
 .fresh{background:var(--accent);color:#fff;font-size:.7rem;border-radius:6px;padding:1px 7px;font-weight:700}
 .code{font-family:ui-monospace,Menlo,monospace;font-size:1.65rem;font-weight:700;letter-spacing:.12em}
@@ -84,10 +89,11 @@ footer{border-top:1px solid var(--line);color:var(--muted);padding:26px 0 44px;f
 <p class="sub">最新の Muse 招待コード一覧。One stream of codes posted by Muse users: posts from the form above join this same list automatically, mixed with codes shared on public community boards, each listed once. If a code has run out, try the next one — every code gives the same 1 billion token bonus.</p>
 <div class="toolbar"><input type="search" id="q" placeholder="Filter codes… (e.g. KUO)" aria-label="Filter invite codes"></div>
 <div class="grid" id="grid">
-<article class="card" data-code="KUOD1S" data-reshare="2026-11-05">
-  <div class="card-top"><span class="label">Muse invite code</span><span class="fresh">NEW</span></div>
+<article class="card featured" data-code="KUOD1S" data-reshare="2026-11-05">
+  <div class="card-top"><span class="label">Muse invite code</span><span class="fresh">FRESH</span></div>
   <div class="code">KUOD1S</div>
   <button class="copy" data-copy="KUOD1S" aria-label="Copy Muse invite code KUOD1S">Copy code</button>
+  <p class="hint">Copy it, join at <a href="https://muse.ai/join">muse.ai/join</a>, then in Muse open <strong>Settings → General → Redeem invite code</strong> — within 48 hours of joining, and both sides get 1 billion tokens.</p>
   <p class="meta">Shared 2026-11-05 · via community share</p>
 </article>
 <article class="card" data-code="LGES7A">
@@ -479,6 +485,10 @@ footer{border-top:1px solid var(--line);color:var(--muted);padding:26px 0 44px;f
 <details><summary>Do the tokens expire?</summary><p>No. Invite-code tokens are additional tokens with no expiry, on top of the regular plan allowance.</p></details>
 <details><summary>Museの招待コードはいつまでに入力すればいいですか？</summary><p>Museに登録してから48時間以内です。設定 → General → Redeem invite code から入力すると、双方に10億トークン（期限なし）が付与されます。</p></details>
 <details><summary>A code did not work. What now?</summary><p>Codes can run out as other people redeem them. Just try the next code in the list — the bonus is the same for every valid code.</p></details>
+<details><summary>Can I redeem a Muse invite code after 48 hours?</summary><p>No. The redeem option is only available in the first 48 hours after you join Muse, then it disappears. Join first, and redeem a code right away.</p></details>
+<details><summary>How many invite codes can I redeem?</summary><p>One per account. The bonus does not stack, so pick any working code and use it within your first 48 hours.</p></details>
+<details><summary>Why did my Muse invite code not work?</summary><p>Common reasons: the code has already been fully redeemed, your account is past its 48-hour window, or a character was mistyped — watch out for letter O vs number 0. Try another code from the list.</p></details>
+<details><summary>招待コードは1人1つまでですか？</summary><p>はい。1アカウントにつき1コードのみ入力でき、特典は重なりません。登録後48時間以内に、どれか1つを使ってください。</p></details>
 </section>
 </main>
 <footer><div class="wrap">
