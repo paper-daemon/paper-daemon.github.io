@@ -17,7 +17,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: agentlink-public-demo-video-build
+  group: agentlink-public-demo-video-build-toolclip-v2
   cancel-in-progress: false
 
 jobs:
@@ -43,8 +43,8 @@ jobs:
           python-version: '3.12'
       - name: Install rendering dependencies
         run: |
-          sudo apt-get update -qq
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq ffmpeg fonts-noto-cjk
+          timeout 180s sudo apt-get update -qq
+          timeout 180s sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq ffmpeg fonts-noto-cjk
           python -m pip install --disable-pip-version-check pillow==11.3.0 pytest==8.4.2
       - name: Render six verified CLI-result videos
         run: |
