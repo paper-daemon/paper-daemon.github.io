@@ -166,7 +166,7 @@ def render(spec: dict, stage: int, output_lines: list[str], source_sha: str) -> 
 
 
 def generate_one(spec: dict, source: Path, output: Path, source_sha: str) -> dict:
-    folder = source / "demos" / spec["folder"]
+    folder = source / spec["directory"] if "directory" in spec else source / "demos" / spec["folder"]
     if not folder.is_dir():
         raise RuntimeError(f"Missing expected public demo: {folder}")
     completed = subprocess.run(
@@ -213,14 +213,14 @@ def generate_one(spec: dict, source: Path, output: Path, source_sha: str) -> dic
         "title": spec["title"],
         "subtitle": spec["subtitle"],
         "command": spec["command"],
-        "github_folder": "demos/" + spec["folder"],
+        "github_folder": str(folder.relative_to(source)),
         "video": "videos/" + video_file.name,
         "poster": "videos/" + poster.name,
         "duration_seconds": 22,
         "exit_code": completed.returncode,
         "source_commit": source_sha,
         "representation": "captured CLI output edited into annotated slides",
-        "output_excerpt": combined[:900],
+        "output_excerpt": combined if len(combined) <= 900 else combined[:450] + "\n[... middle omitted ...]\n" + combined[-450:],
     }
 
 

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080e1c">
+<title>AgentLink | Developer Tools Video Library</title>
+<meta name="description" content="AgentLink公開ツールと実装例12種類の動作テストを日本語の短い動画で紹介。">
+<style>
+:root{font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;color:#f1f7ff;background:#080e1c;color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 0% -10%,#1a3d4a 0%,transparent 50%),#080e1c}
+main{max-width:1320px;margin:auto;padding:28px clamp(18px,4vw,64px) 75px}
+a{color:#8be4ed;text-decoration:none}a:hover{text-decoration:underline}
+nav{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-bottom:72px;font-size:14px}nav strong{font-size:19px;letter-spacing:.14em;color:#fff}
+.eyebrow{font-size:12px;color:#73e2dc;font-weight:800;letter-spacing:.18em}
+h1{font-size:clamp(34px,6vw,65px);line-height:1.13;letter-spacing:-.05em;margin:15px 0 22px}
+.lead{line-height:1.9;color:#b0c2d5;max-width:900px}
+.stats{margin:28px 0 48px;display:flex;gap:12px;flex-wrap:wrap}
+.stat{background:#142435;border:1px solid #32465d;border-radius:9px;padding:12px 17px;color:#b2d2df;font-size:13px}
+.stat b{font-size:21px;color:#9af4ee;margin-right:8px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.card{border:1px solid #32475b;border-radius:17px;overflow:hidden;background:#121e31;box-shadow:0 15px 42px #0004}
+video{width:100%;aspect-ratio:16/9;display:block;background:#080d16}
+.info{padding:20px}.index{color:#6ddee5;font-weight:800;font-size:11px;letter-spacing:.13em}
+h2{font-size:19px;margin:10px 0 9px;letter-spacing:-.03em;line-height:1.45}
+.info p{font-size:13px;color:#b2c4d8;line-height:1.75;min-height:44px;margin:0 0 18px}
+.info a{font-size:13px;font-weight:700}
+details{margin-top:55px;background:#121f31;padding:22px 26px;border:1px solid #2a4055;border-radius:14px;color:#b5c5d8;line-height:1.8;font-size:13px}
+details summary{font-weight:800;color:#fff;cursor:pointer;font-size:15px}
+.footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-top:45px;font-size:12px;color:#90a3bd}
+@media(max-width:1000px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:680px){nav{margin-bottom:41px}.grid{grid-template-columns:1fr}.info p{min-height:0}}
+</style></head><body><main>
+<nav><strong>AGENTLINK</strong><a href="./gallery.html">7つのデモ動画</a><a href="./">ブラウザデモ</a><a href="https://github.com/paper-daemon/AgentLink">GitHub</a></nav>
+<div class="eyebrow">PUBLIC DEVELOPER TOOLS / TEST FILMS</div>
+<h1>小さなツールにも、<br>動く証拠を。</h1>
+<p class="lead">CSV、字幕、動画のマスキング設計、RAGの証拠管理、再試行判定、サイト品質など。AgentLink公開リポジトリのツール11種類と実装例1種類について、公開コードの実行テスト結果を日本語の短い動画にした。</p>
+<div class="stats"><div class="stat"><b>12</b>公開ツール・実装例</div><div class="stat"><b>22秒</b>1動画の長さ</div><div class="stat"><b>19</b>デモ編と合わせたテーマ数</div></div>
+<section id="cards" class="grid" aria-label="ツール動画"></section>
+<details><summary>映像の証拠と限界について</summary><p>各動画は、公開ソースを固定コミットで取得し、そのソースのユニットテストを実行して、実際に得た標準出力を読みやすく編集したもの。実画面の連続録画ではなく、テスト実行ログの映像化です。実データ、顧客システム、非公開AgentLink本体、実際の外部APIは使っていません。</p><a data-href="./tool-videos/tools.json">実行結果と使用したコミットを見る（JSON）</a></details>
+<div class="footer"><a href="./gallery.html">← 実行デモ7本へ戻る</a><a href="https://github.com/paper-daemon/AgentLink/blob/main/tools/README.md">公開ツールの使い方</a><span>AgentLink / 12 public utility clips</span></div>
+</main><script>
+const tools=[
+["csv-quality","CSVの不具合を自動で発見","エンコーディング・区切り文字・重複行をチェック","tools/csv-doctor/README.md"],
+["srt-subtitles","字幕ファイルの品質チェック","SRTの時間・順番・重なりをチェック","tools/srt_doctor.py"],
+["retry-guard","再試行してよいか判断する","結果不明な外部操作は無条件に再送しない","tools/retry_guard.py"],
+["receipt-ledger","実行レシートの矛盾を検出","重複・不正なレシートを発見する","tools/receipt_ledger_check.py"],
+["rag-trace","RAGの証拠を追跡する","検索元や実行記録の欠落を見つける","tools/rag_trace_check.py"],
+["image-model-benchmark","画像モデルを公平に比較","得意な一分野だけで過大評価しない","tools/image_model_benchmark.py"],
+["editorial-depth","文章の深さを自動で検査","文章の厚みや構成を確認する","tools/editorial_depth_check.py"],
+["site-surface","公開サイトの整合性を検査","公開前のリンク・設定の不整合を調べる","tools/site_surface_doctor.py"],
+["url-contract","URL変更の取りこぼしを検出","新旧URLの参照整合性をテスト","tools/url_contract_check.py"],
+["user-bus","Linuxセッションの診断","ユーザーBusの想定状態で診断を確認","tools/user_bus_doctor.py"],
+["video-redaction","動画の伏せ字・ぼかし計画を検証","ffmpegマスキング構成をテスト","tools/video_redaction_filter.py"],
+["side-effect-guard","副作用の二重実行を防ぐ","実行予約とレシートの失敗境界を確認","examples/idempotent-side-effect-guard/README.md"]
+];
+const root=document.getElementById("cards");
+document.querySelectorAll("a[data-href]").forEach(a=>{a.href=a.dataset.href});
+tools.forEach(([slug,title,description,source],i)=>{
+const card=document.createElement("article");card.className="card";card.id=slug;
+const video=document.createElement("video");video.controls=true;video.playsInline=true;video.preload="none";video.poster="tool-videos/"+slug+".jpg";video.src="tool-videos/"+slug+".mp4";video.setAttribute("aria-label",title+"の解説動画");card.appendChild(video);
+const info=document.createElement("div");info.className="info";
+const count=document.createElement("div");count.className="index";count.textContent=String(i+1).padStart(2,"0")+" / PUBLIC TOOL TEST · 22 SEC";info.appendChild(count);
+const h=document.createElement("h2");h.textContent=title;info.appendChild(h);
+const p=document.createElement("p");p.textContent=description;info.appendChild(p);
+const a=document.createElement("a");a.href="https://github.com/paper-daemon/AgentLink/blob/main/"+source;a.textContent="ソースと検証コードを見る";info.appendChild(a);
+card.appendChild(info);root.appendChild(card);
+});
+</script></body></html>
