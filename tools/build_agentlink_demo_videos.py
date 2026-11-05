@@ -220,7 +220,7 @@ def generate_one(spec: dict, source: Path, output: Path, source_sha: str) -> dic
         "exit_code": completed.returncode,
         "source_commit": source_sha,
         "representation": "captured CLI output edited into annotated slides",
-        "output_excerpt": combined[:900],
+        "output_excerpt": combined if len(combined) <= 900 else combined[:450] + "\n[... middle omitted ...]\n" + combined[-450:],
     }
 
 
