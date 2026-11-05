@@ -42,7 +42,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq ffmpeg fonts-noto-cjk
-          python -m pip install --disable-pip-version-check pillow==11.3.0
+          python -m pip install --disable-pip-version-check pillow==11.3.0 pytest==8.4.2
       - name: Render six verified CLI-result videos
         run: |
           python tools/build_agentlink_demo_videos.py \
