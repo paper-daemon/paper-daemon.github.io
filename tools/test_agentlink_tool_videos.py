@@ -30,9 +30,10 @@ class ToolVideoTests(unittest.TestCase):
                 self.assertIn(item["github_folder"].split("/")[0], ("tools", "examples"))
                 self.assertEqual(item["exit_code"], 0)
                 self.assertIn(slug, page)
-                self.assertIn("passed", item["output_excerpt"].lower()
-                              if slug == "side-effect-guard" else
-                              "ran" if "Ran " in item["output_excerpt"] else "not_run")
+                if slug == "side-effect-guard":
+                    self.assertIn("passed", item["output_excerpt"].lower())
+                else:
+                    self.assertIn("Ran ", item["output_excerpt"])
                 path = DIR / f"{slug}.mp4"
                 poster = DIR / f"{slug}.jpg"
                 self.assertTrue(path.is_file())
