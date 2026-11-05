@@ -55,7 +55,7 @@ code{color:#c7f5ec;background:#1b2d41;padding:2px 5px;border-radius:4px}
 </div><div class="note"><strong>映像について：</strong>6本の短編は公開コードを隔離されたCIで実行し、取得した標準出力・テスト結果を字幕付きスライドとして動画にしたもの。デスクトップ画面の生録画ではありません。最初の中断復旧動画のみ、別プロセス実行の端末画面を収録した動画です。いずれも公開OSSのシミュレーションで、非公開AgentLink本体や実際の外部APIの実行保証を示すものではありません。動画を見たあとに元コードから再現できます。</div>
 <div class="footer"><a href="./videos/videos.json">動画生成の検証ログ（JSON）</a><a href="https://github.com/paper-daemon/AgentLink/blob/main/START_HERE.md">一緒に開発する</a><a href="https://github.com/paper-daemon/AgentLink">GitHubで開く</a><span>AgentLink public demo gallery</span></div></div>
 <script>
-document.querySelectorAll("source[data-src]").forEach(source=>{source.src=source.dataset.src});
+document.querySelectorAll("source[data-src]").forEach(source=>{const video=source.parentElement;video.src=source.dataset.src;source.remove()});
 const feature=document.querySelector(".feature video");
 if(feature){feature.outerHTML='<div style="padding:48px;text-align:center"><div style="color:#88e5eb;font-size:15px;letter-spacing:.1em">AGENTLINK / CONTINUITY</div><div style="font-size:30px;font-weight:800;margin:21px auto">中断 → 復旧 → 二重実行なし</div><a class="primary" href="./watch.html">▶ 34秒の実演を再生</a></div>'}
 </script>
