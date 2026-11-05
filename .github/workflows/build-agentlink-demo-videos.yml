@@ -6,6 +6,9 @@ on:
     paths:
       - '.github/workflows/build-agentlink-demo-videos.yml'
       - 'tools/build_agentlink_demo_videos.py'
+      - 'tools/build_agentlink_tool_videos.py'
+      - 'tools/test_agentlink_tool_videos.py'
+      - 'agentlink-continuity/tools.html'
       - 'tools/test_agentlink_video_gallery.py'
       - 'agentlink-continuity/gallery.html'
   workflow_dispatch:
@@ -51,6 +54,14 @@ jobs:
             --output agentlink-continuity/videos
       - name: Validate actual MP4 and catalog links
         run: python tools/test_agentlink_video_gallery.py
+      - name: Render twelve standalone tool and example clips
+        run: |
+          python tools/build_agentlink_tool_videos.py \
+            --source agentlink-source \
+            --source-sha 5d13386df630f7d54a2ac0f31b7d03f60d710bc2 \
+            --output agentlink-continuity/tool-videos
+      - name: Validate twelve playable utility videos
+        run: python tools/test_agentlink_tool_videos.py
       - name: Publish verified video assets
         env:
           GH_PUSH_TOKEN: ${{ github.token }}
@@ -58,7 +69,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A agentlink-continuity/videos
+          git add -A agentlink-continuity/videos agentlink-continuity/tool-videos
           if git diff --cached --quiet; then
             echo 'No video changes; skipping commit.'
             exit 0
