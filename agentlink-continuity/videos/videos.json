@@ -69,7 +69,7 @@
       "exit_code": 0,
       "source_commit": "5d13386df630f7d54a2ac0f31b7d03f60d710bc2",
       "representation": "captured CLI output edited into annotated slides",
-      "output_excerpt": "test_active_lease_blocks_second_worker (test_orchestrator.Tests.test_active_lease_blocks_second_worker) ... ok\ntest_completion_receipt_is_stable (test_orchestrator.Tests.test_completion_receipt_is_stable) ... ok\ntest_completion_requires_valid_lease (test_orchestrator.Tests.test_completion_requires_valid_lease) ... ok\ntest_expired_lease_allows_recovery (test_orchestrator.Tests.test_expired_lease_allows_recovery) ... ok\ntest_idempotent_submit_returns_same_job (test_orchestrator.Tests.test_idempotent_submit_returns_same_job) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.000s\n\nOK"
+      "output_excerpt": "test_active_lease_blocks_second_worker (test_orchestrator.Tests.test_active_lease_blocks_second_worker) ... ok\ntest_completion_receipt_is_stable (test_orchestrator.Tests.test_completion_receipt_is_stable) ... ok\ntest_completion_requires_valid_lease (test_orchestrator.Tests.test_completion_requires_valid_lease) ... ok\ntest_expired_lease_allows_recovery (test_orchestrator.Tests.test_expired_lease_allows_recovery) ... ok\ntest_idempotent_submit_returns_same_job (test_orchestrator.Tests.test_idempotent_submit_returns_same_job) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.001s\n\nOK"
     },
     {
       "slug": "reorder-drift",
@@ -83,7 +83,7 @@
       "exit_code": 0,
       "source_commit": "5d13386df630f7d54a2ac0f31b7d03f60d710bc2",
       "representation": "captured CLI output edited into annotated slides",
-      "output_excerpt": "...                                                                      [100%]\n3 passed in 0.01s"
+      "output_excerpt": "...                                                                      [100%]\n3 passed in 0.04s"
     }
   ]
 }
