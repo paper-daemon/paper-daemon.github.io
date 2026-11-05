@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080e1c">
+<meta name="description" content="AgentLink公開OSSの7種類のデモを、日本語の短い実行動画で見る。実行コマンドと元コードも公開。">
+<title>AgentLink | Public Demo Video Library</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;background:#080e1c;color:#f1f7ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 20% -18%,#204461 0%,transparent 47%),radial-gradient(ellipse at 95% 90%,#102a37 0%,transparent 42%),#080e1c}
+a{color:#83e3f1;text-decoration:none}a:hover{text-decoration:underline}
+.container{max-width:1260px;margin:auto;padding:30px clamp(18px,4vw,64px) 70px}
+nav{display:flex;gap:24px;align-items:center;flex-wrap:wrap;color:#abc2d7;font-size:14px;margin-bottom:70px}
+nav strong{color:#f2f8ff;letter-spacing:.13em;font-size:17px}
+.eyebrow{color:#61dce5;font-size:12px;font-weight:800;letter-spacing:.22em}
+h1{font-size:clamp(35px,6vw,72px);line-height:1.13;letter-spacing:-.055em;margin:19px 0 22px;max-width:970px}
+.lead{color:#b5c5da;line-height:1.9;max-width:840px;font-size:16px}
+.metrics{display:flex;flex-wrap:wrap;gap:12px;margin:32px 0 56px}
+.metric{border:1px solid #2e465b;background:#14253690;padding:12px 20px;border-radius:12px;font-size:13px;color:#bfccdf}
+.metric b{color:#b1f0e8;font-size:21px;margin-right:8px}
+.section{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin:30px 0}
+.section h2{font-size:clamp(24px,3.5vw,34px);margin:0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.card{border-radius:19px;background:#101b2c;border:1px solid #2c4159;overflow:hidden;box-shadow:0 14px 50px #0004}
+.card.feature{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+.visual{background:linear-gradient(110deg,#19304b,#0b1528);position:relative}
+video{width:100%;aspect-ratio:16/9;display:block;background:#000;object-fit:contain}
+.feature .visual{display:flex;align-items:center;justify-content:center;min-height:300px}
+.feature video{max-width:100%;height:auto}
+.content{padding:25px}
+.kicker{color:#6bdce7;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.card h3{font-size:clamp(21px,2.5vw,27px);line-height:1.45;letter-spacing:-.035em;margin:13px 0 10px}
+.card p{color:#aabdd3;line-height:1.8;font-size:14px;margin:0 0 20px}
+.ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:13px}
+.primary{display:inline-flex;align-items:center;justify-content:center;color:#071723;background:#76e3e8;padding:12px 17px;border-radius:10px;font-weight:800}
+.primary:hover{text-decoration:none;background:#a4f1f1}
+small{color:#90a5bf;font-size:11px}
+.note{margin-top:52px;border-top:1px solid #2b4357;padding-top:25px;color:#9eb1c7;font-size:13px;line-height:1.9}
+.footer{display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between;margin-top:48px;color:#869eb7;font-size:12px}
+code{color:#c7f5ec;background:#1b2d41;padding:2px 5px;border-radius:4px}
+@media(max-width:820px){nav{margin-bottom:40px}.grid{grid-template-columns:1fr}.card.feature{display:block}.feature .visual{min-height:0}.content{padding:21px}}
+</style></head><body>
+<div class="container"><nav><strong>AGENTLINK</strong><a href="./">公開デモ</a><a href="https://github.com/paper-daemon/AgentLink">GitHub</a><a href="https://github.com/paper-daemon/AgentLink/blob/main/START_HERE.md">参加ガイド</a></nav>
+<div class="eyebrow">THE PUBLIC DEMO FILM LIBRARY</div>
+<h1>コードを読む前に、<br>動くところを見よう。</h1>
+<p class="lead">AgentLinkの公開Pythonデモ7種類を動画で紹介。CLIの実行結果を記録し、見どころが伝わるよう短い日本語の映像に編集した。元コードと再現コマンドもすべて公開している。</p>
+<div class="metrics"><div class="metric"><b>07</b>公開デモ</div><div class="metric"><b>06</b>自動生成した実行ログ動画</div><div class="metric"><b>01</b>中断・復旧の録画実演</div><div class="metric">実サービス接続・秘密情報なし</div></div>
+<div class="section"><h2>見る・触る・確かめる</h2><small>ブラウザ再生 / 日本語解説 / ソースへ直行</small></div>
+<div class="grid">
+<article class="card feature"><div class="visual"><video controls playsinline preload="metadata" aria-label="中断・復旧実演のプレビュー"><source src="data:," type="video/mp4"></video></div><div class="content"><div class="kicker">FLAGSHIP · 34 SEC · LIVE CLI CAPTURE</div><h3>中断しても、仕事は途切れない。</h3><p>新しいPythonプロセスへ引き継ぎ、外部操作直後に意図的に中断。復旧後も同じ効果を二度走らせない。公開版デモの実演を字幕付きで収録。</p><div class="ctas"><a class="primary" href="./watch.html">実演動画を見る</a><a href="https://github.com/paper-daemon/AgentLink/tree/main/demos/chat-long-turn-continuity">公開コード</a></div></div></article>
+<article class="card"><div class="visual"><video controls playsinline preload="none" poster="videos/agent-evaluation.jpg" aria-label="エージェント評価の動画"><source data-src="videos/agent-evaluation.mp4" type="video/mp4"></video></div><div class="content"><div class="kicker">01 / EVALUATION · 22 SEC</div><h3>エージェント評価・回帰テスト</h3><p>期待結果・必要な証拠・禁止イベントなどを、実際の評価コマンドで確認。</p><div class="ctas"><a href="https://github.com/paper-daemon/AgentLink/tree/main/demos/agent-eval-regression-kit">ソースと実行方法</a></div></div></article>
+<article class="card"><div class="visual"><video controls playsinline preload="none" poster="videos/idempotency-key.jpg" aria-label="二重実行防止の動画"><source data-src="videos/idempotency-key.mp4" type="video/mp4"></video></div><div class="content"><div class="kicker">02 / IDEMPOTENCY · 22 SEC</div><h3>同じ依頼を二重実行しない</h3><p>初回だけ実行し、同じ処理キーでの再試行には元のレシートを返す。</p><div class="ctas"><a href="https://github.com/paper-daemon/AgentLink/tree/main/demos/idempotency-key-simulator">ソースと実行方法</a></div></div></article>
+<article class="card"><div class="visual"><video controls playsinline preload="none" poster="videos/receipt-recovery.jpg" aria-label="レシート照合の動画"><source data-src="videos/receipt-recovery.mp4" type="video/mp4"></video></div><div class="content"><div class="kicker">03 / RECEIPTS · 22 SEC</div><h3>結果が不明なら、安全に止める</h3><p>完了・未開始・結果不明を区別。曖昧な外部操作を安易に再試行しない。</p><div class="ctas"><a href="https://github.com/paper-daemon/AgentLink/tree/main/demos/receipt-replay-simulator">ソースと実行方法</a></div></div></article>
+<article class="card"><div class="visual"><video controls playsinline preload="none" poster="videos/worker-handoff.jpg" aria-label="ワーカー引き継ぎの動画"><source data-src="videos/worker-handoff.mp4" type="video/mp4"></video></div><div class="content"><div class="kicker">04 / LEASE RECOVERY · 22 SEC</div><h3>ワーカーが落ちても引き継ぐ</h3><p>所有権の期限切れを検知し、別のワーカーに作業を引き継ぐ。</p><div class="ctas"><a href="https://github.com/paper-daemon/AgentLink/tree/main/demos/worker-lease-recovery">ソースと実行方法</a></div></div></article>
+<article class="card"><div class="visual"><video controls playsinline preload="none" poster="videos/api-job-orchestrator.jpg" aria-label="APIジョブテストの動画"><source data-src="videos/api-job-orchestrator.mp4" type="video/mp4"></video></div><div class="content"><div class="kicker">05 / JOB ENGINE · 22 SEC</div><h3>APIジョブの二重投入を防ぐ</h3><p>ジョブID、所有権Lease、期限切れの処理、完了レシートの振る舞いを検証。</p><div class="ctas"><a href="https://github.com/paper-daemon/AgentLink/tree/main/demos/reliable-api-job-orchestrator">ソースと実行方法</a></div></div></article>
+<article class="card"><div class="visual"><video controls playsinline preload="none" poster="videos/reorder-drift.jpg" aria-label="再注文変化検出の動画"><source data-src="videos/reorder-drift.mp4" type="video/mp4"></video></div><div class="content"><div class="kicker">06 / DATA PATTERNS · 22 SEC</div><h3>発注サイクルの変化を検出</h3><p>架空の注文履歴から、通常の間隔と再注文の遅れを計算する判定をテスト。</p><div class="ctas"><a href="https://github.com/paper-daemon/AgentLink/tree/main/demos/reorder-drift-detector">ソースと実行方法</a></div></div></article>
+</div><div class="note"><strong>映像について：</strong>6本の短編は公開コードを隔離されたCIで実行し、取得した標準出力・テスト結果を字幕付きスライドとして動画にしたもの。デスクトップ画面の生録画ではありません。最初の中断復旧動画のみ、別プロセス実行の端末画面を収録した動画です。いずれも公開OSSのシミュレーションで、非公開AgentLink本体や実際の外部APIの実行保証を示すものではありません。動画を見たあとに元コードから再現できます。</div>
+<div class="footer"><a href="https://github.com/paper-daemon/AgentLink/blob/main/START_HERE.md">一緒に開発する</a><a href="https://github.com/paper-daemon/AgentLink">GitHubで開く</a><span>AgentLink public demo gallery</span></div></div>
+<script>
+document.querySelectorAll("source[data-src]").forEach(source=>{source.src=source.dataset.src});
+const feature=document.querySelector(".feature video");
+if(feature){feature.outerHTML='<div style="padding:48px;text-align:center"><div style="color:#88e5eb;font-size:15px;letter-spacing:.1em">AGENTLINK / CONTINUITY</div><div style="font-size:30px;font-weight:800;margin:21px auto">中断 → 復旧 → 二重実行なし</div><a class="primary" href="./watch.html">▶ 34秒の実演を再生</a></div>'}
+</script>
+</body></html>
