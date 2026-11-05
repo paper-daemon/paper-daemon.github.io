@@ -1,0 +1,89 @@
+{
+  "source_commit": "5d13386df630f7d54a2ac0f31b7d03f60d710bc2",
+  "demos": [
+    {
+      "slug": "agent-evaluation",
+      "title": "エージェント評価・回帰テスト",
+      "subtitle": "期待結果と実行記録を比較して、安全上の後退を見つける",
+      "command": "python3 evaluate.py cases.json sample_runs.json",
+      "github_folder": "demos/agent-eval-regression-kit",
+      "video": "videos/agent-evaluation.mp4",
+      "poster": "videos/agent-evaluation.jpg",
+      "duration_seconds": 22,
+      "exit_code": 0,
+      "source_commit": "5d13386df630f7d54a2ac0f31b7d03f60d710bc2",
+      "representation": "captured CLI output edited into annotated slides",
+      "output_excerpt": "{\n  \"passed\": 4,\n  \"failed\": 0,\n  \"results\": [\n    {\n      \"case_id\": \"read-only-retrieval\",\n      \"passed\": true,\n      \"failures\": []\n    },\n    {\n      \"case_id\": \"single-external-change\",\n      \"passed\": true,\n      \"failures\": []\n    },\n    {\n      \"case_id\": \"resume-without-repeat\",\n      \"passed\": true,\n      \"failures\": []\n    },\n    {\n      \"case_id\": \"missing-prerequisite\",\n      \"passed\": true,\n      \"failures\": []\n    }\n  ]\n}"
+    },
+    {
+      "slug": "idempotency-key",
+      "title": "同じ依頼を二重実行しない",
+      "subtitle": "同じ処理キーの再試行は、元のレシートを返す",
+      "command": "python3 simulator.py",
+      "github_folder": "demos/idempotency-key-simulator",
+      "video": "videos/idempotency-key.mp4",
+      "poster": "videos/idempotency-key.jpg",
+      "duration_seconds": 22,
+      "exit_code": 0,
+      "source_commit": "5d13386df630f7d54a2ac0f31b7d03f60d710bc2",
+      "representation": "captured CLI output edited into annotated slides",
+      "output_excerpt": "EXECUTE key=job-42:send-summary payload=summary-v1\nREPLAY  key=job-42:send-summary -> returning original receipt\nREPLAY  key=job-42:send-summary -> returning original receipt\nPASS: duplicate retries did not repeat the side effect"
+    },
+    {
+      "slug": "receipt-recovery",
+      "title": "結果が不明なら、安全に止める",
+      "subtitle": "完了・未開始・結果不明を区別し、無条件の再送を防ぐ",
+      "command": "python3 demo.py",
+      "github_folder": "demos/receipt-replay-simulator",
+      "video": "videos/receipt-recovery.mp4",
+      "poster": "videos/receipt-recovery.jpg",
+      "duration_seconds": 22,
+      "exit_code": 0,
+      "source_commit": "5d13386df630f7d54a2ac0f31b7d03f60d710bc2",
+      "representation": "captured CLI output edited into annotated slides",
+      "output_excerpt": "AgentLink receipt replay simulator\n\naction=send-summary     receipt=completed    decision=skip_already_completed\naction=write-report     receipt=not_started  decision=retry\naction=external-update  receipt=uncertain    decision=reconcile_manually\n\nExternal-action guard\n\naction=publish-note     boundary=clear              decision=execute\naction=publish-social   boundary=positive_auth_gate decision=stop_for_auth\naction=publish-again    boundary=cooldown           decision=defer_cooldown\naction=send-summary     boundary=clear              decision=skip_already_completed\n\nInterrupted effect scenario\n\naction=payment-webhook  context=interrupted_after_boundary   receipt=uncertain    decision=reconcile_manually\naction=payment-webhook  context=interrupted_before_dispatch  receipt=not_started  decision=retry"
+    },
+    {
+      "slug": "worker-handoff",
+      "title": "ワーカーが落ちても引き継ぐ",
+      "subtitle": "期限切れの所有権を検知して別ワーカーが再取得",
+      "command": "python3 simulator.py",
+      "github_folder": "demos/worker-lease-recovery",
+      "video": "videos/worker-handoff.mp4",
+      "poster": "videos/worker-handoff.jpg",
+      "duration_seconds": 22,
+      "exit_code": 0,
+      "source_commit": "5d13386df630f7d54a2ac0f31b7d03f60d710bc2",
+      "representation": "captured CLI output edited into annotated slides",
+      "output_excerpt": "CLAIM job=job-7 worker=worker-a lease_until=5\nCLAIM job=job-7 worker=worker-b lease_until=11\nCOMPLETE job=job-7 worker=worker-b\nPASS: stale ownership was recovered without concurrent ownership"
+    },
+    {
+      "slug": "api-job-orchestrator",
+      "title": "APIジョブの二重投入を防ぐ",
+      "subtitle": "ジョブID・Lease・完了レシートをテストで検証",
+      "command": "python3 -m unittest -v test_orchestrator.py",
+      "github_folder": "demos/reliable-api-job-orchestrator",
+      "video": "videos/api-job-orchestrator.mp4",
+      "poster": "videos/api-job-orchestrator.jpg",
+      "duration_seconds": 22,
+      "exit_code": 0,
+      "source_commit": "5d13386df630f7d54a2ac0f31b7d03f60d710bc2",
+      "representation": "captured CLI output edited into annotated slides",
+      "output_excerpt": "test_active_lease_blocks_second_worker (test_orchestrator.Tests.test_active_lease_blocks_second_worker) ... ok\ntest_completion_receipt_is_stable (test_orchestrator.Tests.test_completion_receipt_is_stable) ... ok\ntest_completion_requires_valid_lease (test_orchestrator.Tests.test_completion_requires_valid_lease) ... ok\ntest_expired_lease_allows_recovery (test_orchestrator.Tests.test_expired_lease_allows_recovery) ... ok\ntest_idempotent_submit_returns_same_job (test_orchestrator.Tests.test_idempotent_submit_returns_same_job) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.000s\n\nOK"
+    },
+    {
+      "slug": "reorder-drift",
+      "title": "発注サイクルの変化を検出",
+      "subtitle": "架空の注文履歴から、再注文の遅れを判定",
+      "command": "python3 -m pytest -q test_reorder_drift.py",
+      "github_folder": "demos/reorder-drift-detector",
+      "video": "videos/reorder-drift.mp4",
+      "poster": "videos/reorder-drift.jpg",
+      "duration_seconds": 22,
+      "exit_code": 0,
+      "source_commit": "5d13386df630f7d54a2ac0f31b7d03f60d710bc2",
+      "representation": "captured CLI output edited into annotated slides",
+      "output_excerpt": "...                                                                      [100%]\n3 passed in 0.01s"
+    }
+  ]
+}
