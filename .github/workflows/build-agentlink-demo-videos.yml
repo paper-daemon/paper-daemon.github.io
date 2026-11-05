@@ -1,0 +1,69 @@
+name: Build public AgentLink demo videos
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-agentlink-demo-videos.yml'
+      - 'tools/build_agentlink_demo_videos.py'
+      - 'tools/test_agentlink_video_gallery.py'
+      - 'agentlink-continuity/gallery.html'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: agentlink-public-demo-video-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.repository == 'paper-daemon/paper-daemon.github.io'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out publishing repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - name: Check out pinned public AgentLink examples
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          repository: paper-daemon/AgentLink
+          ref: 5d13386df630f7d54a2ac0f31b7d03f60d710bc2
+          path: agentlink-source
+          persist-credentials: false
+      - name: Install Python 3.12
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
+      - name: Install rendering dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq ffmpeg fonts-noto-cjk
+          python -m pip install --disable-pip-version-check pillow==11.3.0
+      - name: Render six verified CLI-result videos
+        run: |
+          python tools/build_agentlink_demo_videos.py \
+            --source agentlink-source \
+            --source-sha 5d13386df630f7d54a2ac0f31b7d03f60d710bc2 \
+            --output agentlink-continuity/videos
+      - name: Validate actual MP4 and catalog links
+        run: python tools/test_agentlink_video_gallery.py
+      - name: Publish verified video assets
+        env:
+          GH_PUSH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A agentlink-continuity/videos
+          if git diff --cached --quiet; then
+            echo 'No video changes; skipping commit.'
+            exit 0
+          fi
+          git commit -m 'build(video): refresh reproducible AgentLink public demo clips'
+          basic="$(printf 'x-access-token:%s' "$GH_PUSH_TOKEN" | base64 -w0)"
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $basic" push origin HEAD:main
+          echo 'Published video assets. The website deploy may need a separate non-bot push.'
