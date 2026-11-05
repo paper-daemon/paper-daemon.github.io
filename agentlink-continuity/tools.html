@@ -32,7 +32,7 @@ details summary{font-weight:800;color:#fff;cursor:pointer;font-size:15px}
 <p class="lead">CSV、字幕、動画のマスキング設計、RAGの証拠管理、再試行判定、サイト品質など。AgentLink公開リポジトリのツール11種類と実装例1種類について、公開コードの実行テスト結果を日本語の短い動画にした。</p>
 <div class="stats"><div class="stat"><b>12</b>公開ツール・実装例</div><div class="stat"><b>22秒</b>1動画の長さ</div><div class="stat"><b>19</b>デモ編と合わせたテーマ数</div></div>
 <section id="cards" class="grid" aria-label="ツール動画"></section>
-<details><summary>映像の証拠と限界について</summary><p>各動画は、公開ソースを固定コミットで取得し、そのソースのユニットテストを実行して、実際に得た標準出力を読みやすく編集したもの。実画面の連続録画ではなく、テスト実行ログの映像化です。実データ、顧客システム、非公開AgentLink本体、実際の外部APIは使っていません。</p><a href="./tool-videos/tools.json">実行結果と使用したコミットを見る（JSON）</a></details>
+<details><summary>映像の証拠と限界について</summary><p>各動画は、公開ソースを固定コミットで取得し、そのソースのユニットテストを実行して、実際に得た標準出力を読みやすく編集したもの。実画面の連続録画ではなく、テスト実行ログの映像化です。実データ、顧客システム、非公開AgentLink本体、実際の外部APIは使っていません。</p><a data-href="./tool-videos/tools.json">実行結果と使用したコミットを見る（JSON）</a></details>
 <div class="footer"><a href="./gallery.html">← 実行デモ7本へ戻る</a><a href="https://github.com/paper-daemon/AgentLink/blob/main/tools/README.md">公開ツールの使い方</a><span>AgentLink / 12 public utility clips</span></div>
 </main><script>
 const tools=[
@@ -50,6 +50,7 @@ const tools=[
 ["side-effect-guard","副作用の二重実行を防ぐ","実行予約とレシートの失敗境界を確認","examples/idempotent-side-effect-guard/README.md"]
 ];
 const root=document.getElementById("cards");
+document.querySelectorAll("a[data-href]").forEach(a=>{a.href=a.dataset.href});
 tools.forEach(([slug,title,description,source],i)=>{
 const card=document.createElement("article");card.className="card";card.id=slug;
 const video=document.createElement("video");video.controls=true;video.playsInline=true;video.preload="none";video.poster="tool-videos/"+slug+".jpg";video.src="tool-videos/"+slug+".mp4";video.setAttribute("aria-label",title+"の解説動画");card.appendChild(video);
