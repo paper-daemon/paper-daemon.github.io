@@ -13,7 +13,7 @@ VIDEOS = ROOT / "agentlink-continuity" / "videos"
 EXPECTED = {
     "agent-evaluation": '"passed": 4',
     "idempotency-key": "REPLAY",
-    "receipt-recovery": "UNCERTAIN",
+    "receipt-recovery": "uncertain",
     "worker-handoff": "PASS",
     "api-job-orchestrator": "Ran 5 tests",
     "reorder-drift": "3 passed",
