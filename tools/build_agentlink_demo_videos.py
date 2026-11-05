@@ -76,8 +76,8 @@ DEMOS = [
         "title": "発注サイクルの変化を検出",
         "subtitle": "架空の注文履歴から、再注文の遅れを判定",
         "folder": "reorder-drift-detector",
-        "args": ["-m", "unittest", "-v", "test_reorder_drift.py"],
-        "command": "python3 -m unittest -v test_reorder_drift.py",
+        "args": ["-m", "pytest", "-q", "test_reorder_drift.py"],
+        "command": "python3 -m pytest -q test_reorder_drift.py",
         "result": "中央値と遅延率の判定を回帰テスト",
     },
 ]
