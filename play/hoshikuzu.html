@@ -59,7 +59,7 @@ body{overscroll-behavior:none}
 <section class="section" id="about"><div class="page">
 <p class="eyebrow">EXHIBIT 01 / TOY</p>
 <h2 style="font-size:clamp(1.55rem,3.4vw,2.3rem);margin:0 0 14px">星の砂が入った、小さなガラス瓶。</h2>
-<p class="hoshi-note">星の砂は一粒ずつ立体で敷き詰めてあります。傾けると表面の粒が雪崩れて、星が転がって、光の粒がきらめきます。速く振ると中身が舞います。「こわす」を押すと瓶が砕けて、「もどす」できれいに元に戻ります。開いた直後、勝手に一度ゆれます。<br>背景の夢色の空、砂の結晶の質感、ラベルの金箔の紙は生成アートをパーツとして組み込み、ガラスと中身の動きは実3Dの物理で動かしています。<br><span style="opacity:.5">build 2026-1103-01</span></p>
+<p class="hoshi-note">星の砂は一粒ずつ立体で敷き詰めてあります。傾けると表面の粒が雪崩れて、星が転がって、光の粒がきらめきます。速く振ると中身が舞います。「こわす」を押すと瓶が砕けて、中身の星屑がぜんぶこぼれて床に積もります。「もどす」できれいに元に戻ります。開いた直後、勝手に一度ゆれます。<br>背景の夢色の空、砂の結晶の質感、ラベルの金箔の紙は生成アートをパーツとして組み込み、ガラスと中身の動きは実3Dの物理で動かしています。<br><span style="opacity:.5">build 2026-1107-01</span></p>
 <p style="margin-top:26px"><a class="button soft" href="/demo.html">あそぶ一覧へ →</a></p>
 </div></section>
 </main>
@@ -331,7 +331,7 @@ function init(){
     for (let i = 0; i < N; i++){ snapArr[i * 3] = P[i].x; snapArr[i * 3 + 1] = P[i].y; snapArr[i * 3 + 2] = P[i].z; }
     scene.updateMatrixWorld(true);
     glass.visible = false; cork.visible = false; label.visible = false;
-    column.visible = false; surface.visible = false; glints.visible = false; bedMesh.visible = false;
+    spillStart();
     // shards start exactly where the glass is now
     body.getWorldQuaternion(_q1);
     for (const sh of shards){
@@ -366,6 +366,7 @@ function init(){
     hState = 'restoring'; restoreT = 0;
     scene.updateMatrixWorld(true);
     for (const sh of shards){ sh.fromP.copy(sh.mesh.position); sh.fromQ.copy(sh.mesh.quaternion); }
+    spillSnapshot();
     for (let i = 0; i < N; i++){ const p = P[i]; p.fx = p.x; p.fy = p.y; p.fz = p.z; }
     breakBtn.disabled = true; breakBtn.textContent = 'もどしています…';
     for (let i = 0; i < 5; i++) clink(1300 + i * 420, i * .13, .045, .22);
@@ -427,6 +428,7 @@ function init(){
       sh.mesh.position.y += arc * 26;
       sh.mesh.quaternion.slerpQuaternions(sh.fromQ, _q1, e);
     }
+    spillLerp(e, arc);
     for (let i = 0; i < N; i++){
       const p = P[i];
       _v1.set(snapArr[i * 3], snapArr[i * 3 + 1], snapArr[i * 3 + 2]); body.localToWorld(_v1);
@@ -439,6 +441,7 @@ function init(){
       shardGroup.visible = false;
       glass.visible = true; cork.visible = true; label.visible = true;
       column.visible = true; surface.visible = true; glints.visible = true; bedMesh.visible = true;
+      spillFinish();
       body.attach(grainMesh); body.attach(starMesh);
       grainMesh.position.set(0, 0, 0); grainMesh.quaternion.identity(); grainMesh.scale.set(1, 1, 1);
       starMesh.position.set(0, 0, 0); starMesh.quaternion.identity(); starMesh.scale.set(1, 1, 1);
@@ -451,6 +454,100 @@ function init(){
       hState = 'intact';
       breakBtn.disabled = false; breakBtn.textContent = 'こわす';
     }
+  }
+
+
+  // ---- spill & gather for the bed grains (build 2026-1107-01) ----
+  // The bed (9,500 instanced grains) IS the visible bulk of the sand. The old
+  // doBreak hid it (with column/surface) in a single frame, so the contents
+  // seemed to vanish. Now the grains pour out in the world frame, settle as
+  // a heap on the floor, and fly back on restore. The column/surface meshes
+  // fade out while the grains cascade (no one-frame pop).
+  let spill = null;
+  function spillStart(){
+    scene.updateMatrixWorld(true);
+    const n = BED;
+    spill = { pos: new Float32Array(n * 3), vel: new Float32Array(n * 3), tgt: new Float32Array(n * 3), flr: new Float32Array(n), from: new Float32Array(n * 3), slp: new Uint8Array(n), fade: 0 };
+    _v2.set(0, 0, 0); body.localToWorld(_v2);
+    const cx = _v2.x, cz = _v2.z, R = 104;
+    const m = new THREE.Matrix4();
+    for (let i = 0; i < n; i++){
+      bedMesh.getMatrixAt(i, m);
+      _v1.setFromMatrixPosition(m); body.localToWorld(_v1);
+      const i3 = i * 3;
+      spill.pos[i3] = _v1.x; spill.pos[i3 + 1] = _v1.y; spill.pos[i3 + 2] = _v1.z;
+      const a = Math.atan2(_v1.z - cz, _v1.x - cx) + (Math.random() - .5) * .9;
+      const rr = 12 + Math.pow(Math.random(), .72) * (R - 12);
+      spill.tgt[i3] = cx + Math.cos(a) * rr; spill.tgt[i3 + 2] = cz + Math.sin(a) * rr;
+      const heap = 13 * Math.max(0, 1 - rr / R);
+      spill.flr[i] = heap * (.55 + Math.random() * .45) + bedDat[i].s * .3;
+      const sp = 12 + Math.random() * 36;
+      spill.vel[i3] = Math.cos(a) * sp; spill.vel[i3 + 1] = 6 + Math.random() * 30; spill.vel[i3 + 2] = Math.sin(a) * sp;
+    }
+    scene.attach(bedMesh);
+    bedMesh.position.set(0, 0, 0); bedMesh.quaternion.identity(); bedMesh.scale.set(1, 1, 1);
+    column.material.transparent = true; surface.material.transparent = true;
+  }
+  function spillStep(dt){
+    if (!spill) return;
+    if (spill.fade < 1){
+      spill.fade = Math.min(1, spill.fade + dt / .38);
+      const op = 1 - spill.fade;
+      column.material.opacity = op; surface.material.opacity = op;
+      if (spill.fade >= 1){ column.visible = false; surface.visible = false; glints.visible = false; }
+    }
+    for (let i = 0; i < BED; i++){
+      if (spill.slp[i] > 4) continue;
+      const i3 = i * 3;
+      let x = spill.pos[i3], y = spill.pos[i3 + 1], z = spill.pos[i3 + 2];
+      let vx = spill.vel[i3], vy = spill.vel[i3 + 1], vz = spill.vel[i3 + 2];
+      vy -= 300 * dt; vx *= .995; vz *= .995;
+      vx += (spill.tgt[i3] - x) * 1.9 * dt; vz += (spill.tgt[i3 + 2] - z) * 1.9 * dt;
+      x += vx * dt; y += vy * dt; z += vz * dt;
+      const fy = spill.flr[i];
+      if (y < fy){ y = fy; if (vy < 0) vy = -vy * .07; vx *= .8; vz *= .8; }
+      if (x > 245) { x = 245; vx *= -.35; }
+      if (x < -245) { x = -245; vx *= -.35; }
+      if (z > 185) { z = 185; vz *= -.35; }
+      if (z < -105) { z = -105; vz *= -.35; }
+      spill.pos[i3] = x; spill.pos[i3 + 1] = y; spill.pos[i3 + 2] = z;
+      spill.vel[i3] = vx; spill.vel[i3 + 1] = vy; spill.vel[i3 + 2] = vz;
+      const spd = Math.abs(vx) + Math.abs(vy) + Math.abs(vz);
+      if (y <= fy + .5 && spd < 6) spill.slp[i]++; else if (spd >= 6) spill.slp[i] = 0;
+      const b = bedDat[i];
+      dummy.position.set(x, y, z);
+      dummy.scale.set(b.s, b.s * .78, b.s);
+      dummy.rotation.set(b.rx, b.ry, b.rz);
+      dummy.updateMatrix();
+      bedMesh.setMatrixAt(i, dummy.matrix);
+    }
+    bedMesh.instanceMatrix.needsUpdate = true;
+  }
+  function spillSnapshot(){ if (spill) spill.from.set(spill.pos); }
+  function spillLerp(e, arc){
+    if (!spill) return;
+    for (let i = 0; i < BED; i++){
+      const b = bedDat[i];
+      _v1.set(b.x, surfY(b.x, b.z) + b.s * .34, b.z); body.localToWorld(_v1);
+      const i3 = i * 3;
+      dummy.position.set(
+        spill.from[i3] + (_v1.x - spill.from[i3]) * e,
+        spill.from[i3 + 1] + (_v1.y - spill.from[i3 + 1]) * e + arc * 14,
+        spill.from[i3 + 2] + (_v1.z - spill.from[i3 + 2]) * e);
+      dummy.scale.set(b.s, b.s * .78, b.s);
+      dummy.rotation.set(b.rx, b.ry, b.rz);
+      dummy.updateMatrix();
+      bedMesh.setMatrixAt(i, dummy.matrix);
+    }
+    bedMesh.instanceMatrix.needsUpdate = true;
+  }
+  function spillFinish(){
+    if (!spill) return;
+    body.attach(bedMesh);
+    bedMesh.position.set(0, 0, 0); bedMesh.quaternion.identity(); bedMesh.scale.set(1, 1, 1);
+    column.material.opacity = 1; column.material.transparent = false; column.material.needsUpdate = true;
+    surface.material.opacity = 1; surface.material.transparent = false; surface.material.needsUpdate = true;
+    spill = null;
   }
 
   // ---- sand column (child of bottle; its top surface stays world-level) ----
@@ -689,7 +786,7 @@ function init(){
     // bottle as it tilts, so grains slide down the surface slope, stars roll,
     // and shaking flings them with the bottle's own angular motion.
     if (hState === 'restoring') restoreStep(dt);
-    else if (hState === 'broken'){ shardStep(dt); worldStep(dt); }
+    else if (hState === 'broken'){ shardStep(dt); worldStep(dt); spillStep(dt); }
     if (hState === 'intact'){
     const shake = Math.min(2.2, Math.abs(velZ) * 26 * step + Math.abs(velX) * 20 * step);
     const omZ = velZ * 60, omX = velX * 60;              // angular velocity, rad/s
