@@ -532,12 +532,20 @@ fetch(FRESH_URL).then(r=>r.ok?r.json():[]).then(list=>{
   }
   if(cards.filter(Boolean).length){
     const topCard=grid.querySelector('[data-code="KUOD1S"]')||grid.querySelector('.card');
-    // KUOD1S (the first static card) always stays at the very top:
-    // every form submission is inserted directly below it, newest first.
-    // cards[] was built in list order (newest first) alongside the same dedupe pass
+    // Original ordering spec (Junya, 2026-10-29): visitor submissions dated on or after
+    // the KUOD1S card's data-reshare date appear ABOVE KUOD1S, newest first; older
+    // submissions appear below it. When the daily reshare advances data-reshare,
+    // KUOD1S returns to the top on its own. cards[] is in list order (newest first).
     if(topCard){
-      const below=cards.filter(Boolean);
+      const reshare=topCard.dataset.reshare||"";
+      const above=[], below=[];
+      list.forEach((it,i)=>{
+        const html=cards[i]; if(!html) return;
+        const when=(it.date||"").slice(0,10);
+        (when>=reshare?above:below).push(html);
+      });
       if(below.length) topCard.insertAdjacentHTML('afterend', below.join(""));
+      if(above.length) topCard.insertAdjacentHTML('beforebegin', above.join(""));
     } else {
       grid.insertAdjacentHTML('afterbegin', cards.join(""));
     }
