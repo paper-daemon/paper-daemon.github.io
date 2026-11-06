@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache">
 <title>スターブレイク | Shelfiria</title>
-<meta name="description" content="Shelfiriaの縦スクロール弾幕シューティング。全3ステージ、ステージごとに違うボスと弾幕。ウェーブを抜けて、ボスを撃ち落とせ。">
+<meta name="description" content="Shelfiriaの縦スクロール弾幕シューティング。全3ステージ、ステージごとに違うボスと弾幕。ウェーブの敵を全て撃ち落とし、ボスを倒せ。">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="theme-color" content="#131847"><meta property="og:type" content="website"><meta property="og:site_name" content="Shelfiria"><meta property="og:image" content="https://paper-daemon.github.io/og-shooter.jpg"><meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/site.css?v=20261101-1">
 <style>
@@ -70,7 +70,7 @@ body.sb-playing{overflow:hidden;touch-action:none}
 <p class="eyebrow">PLAY — STAR BREAK</p>
 <h2 style="font-size:clamp(1.55rem,3.4vw,2.3rem);margin:0 0 14px">縦スクロール弾幕、画面いっぱいで。</h2>
 <p style="max-width:44rem;line-height:1.95;color:var(--ink-dim);margin:0">縦スクロールの弾幕シューティング。全3ステージ——ステージごとに編隊ウェーブを抜けた先にボスがいて、ボスごとに名前付きの「詠唱」を5つ、弾幕のパターンごと切り替えて放ってきます。進むほど先のスタート地点（次のステージや中間地点）が開いていき、奥の地点から始めるほど難易度も上がります。Shiftの低速移動では当たり判定が中心の点だけになり、弾をかするグレイズでもスコアが入ります。</p>
-<p class="legend" style="margin-top:22px">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1103-14</span></p>
+<p class="legend" style="margin-top:22px">PC：矢印キー／WASDで移動（ショットは自動）、Shiftで低速（当たり判定は中心の点だけ・ショット集中）｜スマホ：ドラッグで移動、「低速」ボタンで低速モード<br>ボム：Xキー or 大ボタン or ダブルタップ（敵弾を消して得点化＋全体攻撃）｜ポーズ：Esc｜弾をかするとグレイズ+300点<br>ウェーブは敵を全て倒さないと先へ進めない（ボスも体力を削り切るまで終わらない）。敵の体に触れても当たります<br>敵を倒すとたまにアイテム：<b style="color:#2b50c8">P</b>=ショット強化（最大Lv5）、<b style="color:#d23b2a">B</b>=ボム追加<br><span style="opacity:.5">build 2026-1106-15</span></p>
 <p style="margin-top:26px"><a class="button soft" href="/demo.html">あそぶ一覧へ →</a></p>
 </div></section>
 </main>
@@ -384,11 +384,7 @@ function bossPattern(){
   if(b.id===1){boss2Pattern(b,t);}
   else if(b.id===2){boss3Pattern(b,t);}
   else boss1Pattern(b,t);
-  if(t>p.dur*60){ // timeout -> next phase, no bonus
-    boss.phase++;
-    if(boss.phase>=BPH().length){killBoss(false);}
-    else{boss.hp=BPH()[boss.phase].hp*(1+(boss.num-1)*0.3);boss.maxhp=boss.hp;boss.pt=0;bossPhaseStart();}
-  }
+  // no timeout escape: a phase ends only when its HP is depleted
 }
 function boss2Pattern(b,t){
   if(b.phase===0){ // 連符「ツインストリーム」 twin aimed burst streams
@@ -580,7 +576,7 @@ function step(){
   if(!boss){
     waveT++;
     for(const e of spawnQ)if(e.t===waveT)spawnEntry(e);
-    if(waveT>480&&enemies.length===0&&spawnQ.every(e=>e.t<waveT))nextWave();
+    if(enemies.length===0&&spawnQ.every(e=>e.t<waveT))nextWave();
   }else{
     boss.t++;
     if(boss.y<boss.ty)boss.y+=1.1;
@@ -615,7 +611,8 @@ function step(){
       else if(e.st===3){e.x+=e.vx;e.y+=e.vy;if(e.stT%13===0)fire(e.x,e.y,(Math.random()-0.5)*0.4,1.1,'#ffb84d',4);if(e.stT>44)e.st=4;}
       else{e.y+=3.4;e.x+=(e.vx||0)*0.35;}
     }
-    if(e.y>H+34){enemies.splice(i,1);continue;}
+    if(e.y>H+34)e.y=-34; // enemies never leave for good: a wave ends only when all of them are shot down
+    if(e.x<-44)e.x+=W+88;else if(e.x>W+44)e.x-=W+88;
     // hit by shots
     for(let j=pshots.length-1;j>=0;j--){const s=pshots[j];const dx=s.x-e.x,dy=s.y-e.y;if(dx*dx+dy*dy<(e.r+7)*(e.r+7)){pshots.splice(j,1);e.hp--;addScore(10);spark(s.x,s.y,'#9fd8ff',1,1);break;}}
     if(e.hp<=0){
@@ -629,6 +626,19 @@ function step(){
       if(e.kind==='carrier'){items.push({x:e.x,y:e.y,vy:1,kind:Math.random()<0.6?'P':'B'});}
       else if(Math.random()<0.05)items.push({x:e.x,y:e.y,vy:1,kind:'P'});
       enemies.splice(i,1);
+    }
+  }
+  // body collision: the hit point must not touch an enemy body either
+  if(player.invuln<=0&&bombT<=0){
+    const hx=player.x+PHIT.dx,hy=player.y+PHIT.dy;
+    for(const e of enemies){
+      if(e.t===0)continue; // split-spawned this very frame: one frame of grace
+      const dx=e.x-hx,dy=e.y-hy,rr=e.r*0.85+PHIT.r;
+      if(dx*dx+dy*dy<rr*rr){die();break;}
+    }
+    if(mode==='play'&&player.invuln<=0&&boss){
+      const dx=boss.x-hx,dy=boss.y-hy;
+      if(dx*dx+dy*dy<33*33)die();
     }
   }
   // boss damage
