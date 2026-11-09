@@ -840,7 +840,7 @@ function updateOptions(){
   const focus=(keys['Shift']||focusTouch);
   for(const o of options){
     const side=(o.slot%2===0)?-1:1, tier=o.slot<2?1:2;
-    const off=tier===1?(focus?[10,3]:[22,6]):(focus?[19,6]:[34,10]);
+    const off=tier===1?(focus?[9,3]:[20,5]):(focus?[17,5]:[30,8]);
     o.x+=(player.x+side*off[0]-o.x)*0.35;o.y+=(player.y+off[1]-o.y)*0.35;o.age++;
   }
 }
@@ -999,8 +999,8 @@ function draw(){
     const sc=o.age<8?0.4+0.6*(o.age/8):1;
     const bobY=Math.sin(frame*0.08+o.slot*1.7)*1.3;
     ctx.save();ctx.translate(o.x,o.y+bobY);ctx.scale(sc,sc);
-    ctx.globalAlpha=0.65;ctx.drawImage(glowDot(col),-19,-19,38,38);ctx.globalAlpha=1;
-    if(img.complete&&img.naturalWidth){const w=44,h=w*img.naturalHeight/img.naturalWidth;ctx.drawImage(img,-w/2,-h/2,w,h);}
+    ctx.globalAlpha=0.65;ctx.drawImage(glowDot(col),-15,-15,30,30);ctx.globalAlpha=1;
+    if(img.complete&&img.naturalWidth){const w=26,h=w*img.naturalHeight/img.naturalWidth;ctx.drawImage(img,-w/2,-h/2,w,h);}
     else{
       ctx.fillStyle=col;ctx.beginPath();ctx.arc(0,0,5.5,0,7);ctx.fill();
       ctx.fillStyle='#ffffff';ctx.beginPath();ctx.arc(0,0,2.4,0,7);ctx.fill();
