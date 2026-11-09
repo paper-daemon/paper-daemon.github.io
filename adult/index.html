@@ -4,44 +4,45 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>大人の置き場｜あませの棚</title>
+<title>あませの棚｜応援ページ</title>
 <style>
   :root{
     --bg:#17121a; --bg2:#211826; --card:#241b2e; --line:#3d2f47;
     --ink:#f2e9f5; --sub:#bfaec9; --accent:#e8a2c0; --accent2:#c98bb0;
-    --gold:#e6c98a;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{-webkit-text-size-adjust:100%}
   body{background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%);color:var(--ink);
     font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",sans-serif;
-    min-height:100vh;line-height:1.7}
+    min-height:100vh;line-height:1.8}
   a{color:var(--accent)}
-  .wrap{max-width:720px;margin:0 auto;padding:28px 18px 56px}
+  .wrap{max-width:640px;margin:0 auto;padding:28px 18px 56px}
   .crumb{font-size:.82rem;color:var(--sub);margin-bottom:22px}
   .crumb a{color:var(--sub);text-decoration:none}
   .crumb a:hover{color:var(--accent)}
-  header.top{text-align:center;padding:18px 0 8px}
+  header.top{text-align:center;padding:22px 0 6px}
   header.top small{letter-spacing:.35em;color:var(--accent2);font-size:.72rem}
   header.top h1{font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-weight:600;
-    font-size:clamp(1.7rem,6vw,2.4rem);margin:.35em 0 .3em}
-  header.top p{color:var(--sub);font-size:.92rem}
-  .works{display:grid;gap:26px;margin-top:30px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
-  .card img{display:block;width:100%;height:auto}
-  .card .body{padding:18px 20px 22px}
-  .card h2{font-size:1.12rem;line-height:1.5;margin-bottom:6px}
-  .meta{color:var(--sub);font-size:.85rem;margin-bottom:12px}
-  .price{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:16px}
-  .price .now{color:var(--gold);font-size:1.35rem;font-weight:700}
-  .price .unit{color:var(--sub);font-size:.85rem}
-  .price .sale{color:var(--accent);font-size:.85rem;border:1px solid var(--accent2);
-    border-radius:999px;padding:2px 10px}
-  .btn{display:block;text-align:center;border-radius:999px;padding:13px 18px;
-    font-size:.98rem;text-decoration:none;border:1px solid var(--line);
-    background:#17121a;color:var(--sub);cursor:not-allowed;user-select:none;-webkit-user-select:none}
-  .rj{color:var(--sub);font-size:.78rem;margin-top:10px;text-align:right}
-  footer{margin-top:38px;text-align:center;color:var(--sub);font-size:.85rem}
+    font-size:clamp(1.8rem,6vw,2.5rem);margin:.35em 0 .3em}
+  header.top p{color:var(--sub);font-size:.93rem}
+  section{margin-top:36px}
+  section h2{font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-weight:600;
+    font-size:1.2rem;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  section p{font-size:.94rem}
+  .news{list-style:none}
+  .news li{padding:10px 2px;border-bottom:1px dashed var(--line);font-size:.92rem}
+  .news .date{color:var(--sub);font-size:.82rem;margin-right:10px}
+  .cta{display:block;text-align:center;border-radius:999px;padding:15px 18px;margin-top:18px;
+    background:linear-gradient(90deg,var(--accent2),var(--accent));color:#241425;
+    font-size:1rem;font-weight:700;text-decoration:none}
+  .works-links{list-style:none}
+  .works-links li{padding:8px 2px;font-size:.94rem}
+  .works-links .kind{color:var(--sub);font-size:.82rem;margin-left:8px}
+  .sns{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+  .sns a{flex:1 1 42%;text-align:center;border:1px solid var(--line);border-radius:999px;
+    padding:11px 8px;text-decoration:none;color:var(--ink);font-size:.92rem;background:var(--card)}
+  .sns a:hover{border-color:var(--accent2);color:var(--accent)}
+  footer{margin-top:42px;text-align:center;color:var(--sub);font-size:.85rem}
   footer a{text-decoration:none}
   /* age gate */
   #gate{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
@@ -62,7 +63,7 @@
 <div id="gate">
   <div class="box">
     <h2>年齢確認</h2>
-    <p>ここから先は、成人向け作品のページです。<br>18歳以上の方のみお進みください。</p>
+    <p>ここから先は、成人向け作品を扱うサークルのページです。<br>18歳以上の方のみお進みください。</p>
     <button class="ok" id="gateOk" type="button">18歳以上です</button>
     <a class="ng" href="https://paper-daemon.github.io/">やめておく（トップへ戻る）</a>
   </div>
@@ -70,40 +71,47 @@
 
 <div id="content">
   <div class="wrap">
-    <div class="crumb"><a href="https://paper-daemon.github.io/">Shelfiria トップ</a><span> / </span><span>大人の置き場</span></div>
+    <div class="crumb"><a href="https://paper-daemon.github.io/">Shelfiria トップ</a><span> / </span><span>あませの棚</span></div>
     <header class="top">
       <small>AMASE NO TANA</small>
-      <h1>大人の置き場</h1>
-      <p>DLsiteサークル「あませの棚」の作品を置く場所。<br>販売はDLsiteで行っています。</p>
+      <h1>あませの棚</h1>
+      <p>DLsiteサークル「あませの棚」の応援ページです。<br>作品の販売はDLsiteで行っています。</p>
     </header>
 
-    <div class="works">
-      <article class="card">
-        <img src="img/miko.jpg" alt="巨乳巫女 メス堕ち〜清廉な巫女が快楽に完全に堕ちるまで〜">
-        <div class="body">
-          <h2>巨乳巫女 メス堕ち〜清廉な巫女が快楽に完全に堕ちるまで〜</h2>
-          <div class="meta">CG集 ・ 本編340枚</div>
-          <div class="price"><span class="now">880円</span><span class="unit">（税込）</span><span class="sale">販売開始から28日間は半額 440円</span></div>
-          <span class="btn">DLsiteで審査中です</span>
-          <div class="rj">RJ01766006</div>
-        </div>
-      </article>
+    <section>
+      <h2>サークルについて</h2>
+      <p>あませの棚は、Shelfiriaの大人向け作品を出すためのサークルです。CG集と漫画を中心に、少しずつ作品を増やしていきます。気に入ってもらえたら、DLsiteでサークルをフォローしてもらえると励みになります。</p>
+      <a class="cta" href="https://www.dlsite.com/home/circle/profile/=/maker_id/RG01085920.html">DLsiteのサークルページへ</a>
+    </section>
 
-      <article class="card">
-        <img src="img/cow.jpg" alt="枯れ果てるまで乳搾りしよっ♡">
-        <div class="body">
-          <h2>枯れ果てるまで乳搾りしよっ♡</h2>
-          <div class="meta">漫画 ・ 全11ページ</div>
-          <div class="price"><span class="now">550円</span><span class="unit">（税込）</span><span class="sale">販売開始から28日間は半額 275円</span></div>
-          <span class="btn">DLsiteで審査中です</span>
-          <div class="rj">RJ01766030</div>
-        </div>
-      </article>
-    </div>
+    <section>
+      <h2>お知らせ</h2>
+      <ul class="news">
+        <li><span class="date">2026.11.09</span>サークル「あませの棚」を開設しました。最初の2作品はDLsiteで審査中です。</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>作品</h2>
+      <ul class="works-links">
+        <li><a href="https://www.dlsite.com/home/circle/profile/=/maker_id/RG01085920.html">巨乳巫女 メス堕ち〜清廉な巫女が快楽に完全に堕ちるまで〜</a><span class="kind">CG集（DLsiteで審査中）</span></li>
+        <li><a href="https://www.dlsite.com/home/circle/profile/=/maker_id/RG01085920.html">枯れ果てるまで乳搾りしよっ♡</a><span class="kind">漫画（DLsiteで審査中）</span></li>
+      </ul>
+      <p style="color:var(--sub);font-size:.85rem;margin-top:8px">販売が始まったら、作品ページへのリンクに切り替えます。</p>
+    </section>
+
+    <section>
+      <h2>あませのSNS</h2>
+      <div class="sns">
+        <a href="https://www.threads.net/@ive.amase">Threads</a>
+        <a href="https://www.instagram.com/ive.amase/">Instagram</a>
+        <a href="https://x.com/amase__iv">X</a>
+        <a href="https://note.com/lovely_hosta391">note</a>
+      </div>
+    </section>
 
     <footer>
-      <p>販売開始後、このページのボタンからDLsiteの作品ページへ進めるようになります。</p>
-      <p style="margin-top:10px"><a href="https://paper-daemon.github.io/">Shelfiria トップへ</a></p>
+      <p><a href="https://paper-daemon.github.io/">Shelfiria トップへ</a></p>
     </footer>
   </div>
 </div>
