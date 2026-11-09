@@ -59,7 +59,7 @@ body{overscroll-behavior:none}
 <section class="section" id="about"><div class="page">
 <p class="eyebrow">EXHIBIT 01 / TOY</p>
 <h2 style="font-size:clamp(1.55rem,3.4vw,2.3rem);margin:0 0 14px">星の砂が入った、小さなガラス瓶。</h2>
-<p class="hoshi-note">星の砂は一粒ずつ立体で敷き詰めてあります。傾けると表面の粒が雪崩れて、星が転がって、光の粒がきらめきます。速く振ると中身が舞います。「こわす」を押すと瓶が砕けて、中身の星屑がぜんぶこぼれて床に積もります。「もどす」できれいに元に戻ります。開いた直後、勝手に一度ゆれます。<br>背景の夢色の空、砂の結晶の質感、ラベルの金箔の紙は生成アートをパーツとして組み込み、ガラスと中身の動きは実3Dの物理で動かしています。<br><span style="opacity:.5">build 2026-1107-01</span></p>
+<p class="hoshi-note">星の砂は一粒ずつ立体で敷き詰めてあります。傾けると表面の粒が雪崩れて、星が転がって、光の粒がきらめきます。速く振ると中身が舞います。「こわす」を押すと瓶が砕けて、中身の星屑がぜんぶこぼれて床に積もります。「もどす」できれいに元に戻ります。開いた直後、勝手に一度ゆれます。<br>背景の夢色の空、砂の結晶の質感、ラベルの金箔の紙は生成アートをパーツとして組み込み、ガラスと中身の動きは実3Dの物理で動かしています。<br><span style="opacity:.5">build 2026-1109-01</span></p>
 <p style="margin-top:26px"><a class="button soft" href="/demo.html">あそぶ一覧へ →</a></p>
 </div></section>
 </main>
@@ -457,7 +457,7 @@ function init(){
   }
 
 
-  // ---- spill & gather for the bed grains (build 2026-1107-01) ----
+  // ---- spill & gather for the bed grains (build 2026-1109-01) ----
   // The bed (9,500 instanced grains) IS the visible bulk of the sand. The old
   // doBreak hid it (with column/surface) in a single frame, so the contents
   // seemed to vanish. Now the grains pour out in the world frame, settle as
@@ -481,8 +481,8 @@ function init(){
       spill.tgt[i3] = cx + Math.cos(a) * rr; spill.tgt[i3 + 2] = cz + Math.sin(a) * rr;
       const heap = 13 * Math.max(0, 1 - rr / R);
       spill.flr[i] = heap * (.55 + Math.random() * .45) + bedDat[i].s * .3;
-      const sp = 12 + Math.random() * 36;
-      spill.vel[i3] = Math.cos(a) * sp; spill.vel[i3 + 1] = 6 + Math.random() * 30; spill.vel[i3 + 2] = Math.sin(a) * sp;
+      const sp = 18 + Math.random() * 55;
+      spill.vel[i3] = Math.cos(a) * sp; spill.vel[i3 + 1] = -12 + Math.random() * 16; spill.vel[i3 + 2] = Math.sin(a) * sp;
     }
     scene.attach(bedMesh);
     bedMesh.position.set(0, 0, 0); bedMesh.quaternion.identity(); bedMesh.scale.set(1, 1, 1);
@@ -501,8 +501,9 @@ function init(){
       const i3 = i * 3;
       let x = spill.pos[i3], y = spill.pos[i3 + 1], z = spill.pos[i3 + 2];
       let vx = spill.vel[i3], vy = spill.vel[i3 + 1], vz = spill.vel[i3 + 2];
-      vy -= 300 * dt; vx *= .995; vz *= .995;
-      vx += (spill.tgt[i3] - x) * 1.9 * dt; vz += (spill.tgt[i3 + 2] - z) * 1.9 * dt;
+      vy -= 300 * dt * (.82 + (i % 13) * .028); vx *= .995; vz *= .995;
+      const spr = y < 62 ? 1.9 : .55;
+      vx += (spill.tgt[i3] - x) * spr * dt; vz += (spill.tgt[i3 + 2] - z) * spr * dt;
       x += vx * dt; y += vy * dt; z += vz * dt;
       const fy = spill.flr[i];
       if (y < fy){ y = fy; if (vy < 0) vy = -vy * .07; vx *= .8; vz *= .8; }
@@ -667,7 +668,9 @@ function init(){
   function updateBed(){
     for (let i = 0; i < BED; i++){
       const b = bedDat[i];
-      dummy.position.set(b.x, surfY(b.x, b.z) + b.s * .34, b.z);
+      const by = surfY(b.x, b.z) + b.s * .34;
+      const br = Math.hypot(b.x, b.z), bm = innerR(by) - 1, bs = br > bm ? bm / br : 1;
+      dummy.position.set(b.x * bs, by, b.z * bs);
       dummy.scale.set(b.s, b.s * .78, b.s);
       dummy.rotation.set(b.rx, b.ry, b.rz);
       dummy.updateMatrix();
@@ -676,7 +679,9 @@ function init(){
     bedMesh.instanceMatrix.needsUpdate = true;
     for (let i = 0; i < GLN; i++){
       const gd = glDat[i];
-      glPos[i * 3] = gd.x; glPos[i * 3 + 1] = surfY(gd.x, gd.z) + 1.5; glPos[i * 3 + 2] = gd.z;
+      const gy = surfY(gd.x, gd.z) + 1.5;
+      const gr = Math.hypot(gd.x, gd.z), gm = innerR(gy) - 1, gs = gr > gm ? gm / gr : 1;
+      glPos[i * 3] = gd.x * gs; glPos[i * 3 + 1] = gy; glPos[i * 3 + 2] = gd.z * gs;
     }
     glGeo.attributes.position.needsUpdate = true;
   }
@@ -715,7 +720,7 @@ function init(){
       const dx = x - pileX * 20, dz = z - pileZ * 20;
       y += pileAmt * Math.exp(-(dx * dx + dz * dz) / 480);
     }
-    return THREE.MathUtils.clamp(y, 30, 104);
+    return THREE.MathUtils.clamp(y, 26, 118);
   };
   const gB = new THREE.Vector3();
 
@@ -745,8 +750,8 @@ function init(){
       tgtZ = Math.sin(t * .55) * .07; tgtX = .03 + Math.sin(t * .42) * .02;
     }
     const prevVelZ = velZ, prevVelX = velX;
-    velZ += (tgtZ - angZ) * .05 * step; velZ *= Math.pow(.90, step); angZ += velZ * step;
-    velX += (tgtX - angX) * .05 * step; velX *= Math.pow(.90, step); angX += velX * step;
+    velZ += (tgtZ - angZ) * .065 * step; velZ *= Math.pow(.865, step); angZ = THREE.MathUtils.clamp(angZ + velZ * step, -.66, .66);
+    velX += (tgtX - angX) * .065 * step; velX *= Math.pow(.865, step); angX = THREE.MathUtils.clamp(angX + velX * step, -.16, .5);
     tilt.rotation.z = angZ; tilt.rotation.x = angX; tilt.rotation.y = angZ * .35;
     scene.environmentRotation.y = Math.sin(t * .25) * .25;
 
@@ -772,10 +777,11 @@ function init(){
     if (hState === 'intact'){
     const colAttr = colGeo.attributes.position, surfAttr = surfGeo.attributes.position;
     for (let s = 0; s <= SEG; s++){
-      const x = colAttr.getX(colTopStart + s), z = colAttr.getZ(colTopStart + s);
+      const a2 = s / SEG * Math.PI * 2, x = Math.cos(a2) * 54, z = Math.sin(a2) * 54;
       const y = surfY(x, z) + (((s * 37) % 11) - 5) * .22;
-      colAttr.setY(colTopStart + s, y);
-      surfAttr.setY(s + 1, y);
+      const mx = innerR(y) - 1.5, sc = 54 > mx ? mx / 54 : 1;
+      colAttr.setY(colTopStart + s, y); colAttr.setX(colTopStart + s, x * sc); colAttr.setZ(colTopStart + s, z * sc);
+      surfAttr.setY(s + 1, y); surfAttr.setX(s + 1, x * sc); surfAttr.setZ(s + 1, z * sc);
     }
     surfAttr.setY(0, surfY(0, 0));
     colAttr.needsUpdate = true; surfAttr.needsUpdate = true;
@@ -785,8 +791,11 @@ function init(){
     // particles — simulated in the BOTTLE frame: gravity rotates inside the
     // bottle as it tilts, so grains slide down the surface slope, stars roll,
     // and shaking flings them with the bottle's own angular motion.
-    if (hState === 'restoring') restoreStep(dt);
-    else if (hState === 'broken'){ shardStep(dt); worldStep(dt); spillStep(dt); }
+    { const simDt = Math.min(dt, .12), nSub = Math.max(1, Math.ceil(simDt / (1 / 60))), sh = simDt / nSub;
+      for (let su = 0; su < nSub; su++){
+        if (hState === 'restoring') restoreStep(sh);
+        else if (hState === 'broken'){ shardStep(sh); worldStep(sh); spillStep(sh); }
+      } }
     if (hState === 'intact'){
     const shake = Math.min(2.2, Math.abs(velZ) * 26 * step + Math.abs(velX) * 20 * step);
     const omZ = velZ * 60, omX = velX * 60;              // angular velocity, rad/s
