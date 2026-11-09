@@ -102,7 +102,7 @@ function midWave(st){return Math.floor(STAGES[st-1].waves/2)+1;}
 function pointStage(pi){return Math.floor(pi/2)+1;}
 function pointWave(pi){return pi%2===1?midWave(pointStage(pi)):1;}
 let score=0,wave=0,lives=3,bombs=3,power=1,graze=0,frame=0,shake=0;
-let player,pshots,ebullets,enemies,items,parts,stars,boss,waveT,spawnQ,bombT,bannerT,bannerText,focusTouch=false;
+let player,pshots,ebullets,enemies,items,parts,stars,boss,casters=[],waveT,spawnQ,bombT,bannerT,bannerText,focusTouch=false;
 let flashT=0,slowmo=0,vigT=0,frameCost=16,lowQ=false;
 const keys={};
 // ---------- bullet glow sprites (pre-rendered) ----------
@@ -292,7 +292,7 @@ setInterval(()=>{
 },800);
 function reset(full){
   player={x:W/2,y:H-90,invuln:0,shotT:0};
-  pshots=[];ebullets=[];enemies=[];items=[];parts=[];boss=null;spawnQ=[];bombT=0;bannerT=0;bannerText='';
+  pshots=[];ebullets=[];enemies=[];items=[];parts=[];boss=null;casters=[];spawnQ=[];bombT=0;bannerT=0;bannerText='';
   stars=[];for(let i=0;i<90;i++)stars.push({x:Math.random()*W,y:Math.random()*H,s:Math.random()<0.8?1:2,v:0.4+Math.random()*1.1});
   if(full){score=0;wave=0;lives=3;bombs=3;power=1;graze=0;frame=0;}
 }
@@ -300,6 +300,30 @@ reset(true);
 function addScore(n){score+=n;if(score>hi){hi=score;localStorage.setItem('sbBest',hi);}}
 function spark(x,y,c,n,sp){if(lowQ)n=Math.ceil(n/2);for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=(0.4+Math.random())*(sp||2);parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:22+Math.random()*16,c,r:1+Math.random()*2,kind:'dot'});}}
 function ringFx(x,y,c,maxR,lw){parts.push({x,y,vx:0,vy:0,life:20,c,r:4,maxR:maxR||44,lw:lw||2.4,kind:'ring'});}
+function spawnCaster(o){casters.push(Object.assign({x:0,y:0,t:0,ang:0,nextIn:0,life:1e9,color:'#ffffff',mode:'fixed',act:'passive'},o));spark(o.x||0,o.y||0,o.color||'#ffffff',6,1.6);}
+function updateCasters(){
+  for(let i=casters.length-1;i>=0;i--){
+    const c=casters[i];c.t++;
+    if(c.mode==='orbit'&&boss){c.ang+=c.angSpd;c.x=boss.x+Math.cos(c.ang)*c.rad;c.y=boss.y+Math.sin(c.ang)*c.rad*0.62;}
+    else if(c.mode==='follow'&&boss){c.x=boss.x+c.ox;c.y=boss.y+c.oy+Math.sin(c.t*0.05)*2;}
+    if(c.act==='bloom'){
+      if(c.t===c.chargeTime-6)chargeFx(c.x,c.y,c.color);
+      if(c.t===c.chargeTime){bossFiring=true;ring(c.x,c.y,c.p.n,c.p.speed,c.p.color,c.p.off,5,{delay:0});bossFiring=false;}
+      if(c.t===c.chargeTime+14){bossFiring=true;shapeRing(c.x,c.y,starVerts(5),c.p.n2,c.p.speed2,c.p.color2,c.p.off2,5,{delay:0});bossFiring=false;}
+      if(c.t>c.chargeTime+24){spark(c.x,c.y,c.color,5,1.6);casters.splice(i,1);continue;}
+    }else if(c.act==='pulseRing'||c.act==='starCast'){
+      c.nextIn--;
+      if(c.nextIn===18)chargeFx(c.x,c.y,c.color);
+      if(c.nextIn<=0){bossFiring=true;
+        if(c.act==='pulseRing')ring(c.x,c.y,c.p.n,c.p.speed,c.p.color,c.t*0.01);
+        else shapeRing(c.x,c.y,starVerts(5),20,0.95,'#c39bff',-c.t*0.009,5,{delay:22});
+        bossFiring=false;c.nextIn=c.period;}
+    }else if(c.act==='stream2'){
+      if(c.t%7===0){bossFiring=true;fire(c.x,c.y,Math.cos(c.ang)*1.35,Math.sin(c.ang)*1.35,c.color);bossFiring=false;}
+    }
+    if(c.t>c.life)casters.splice(i,1);
+  }
+}
 function burstFx(x,y,c){spark(x,y,c,bossFiring?3:2,1.5);if(bossFiring)ringFx(x,y,c,30,1.6);}
 function chargeFx(x,y,c){parts.push({x,y,vx:0,vy:0,life:18,c,r:56,kind:'charge'});if(boss&&Math.abs(x-boss.x)<70&&Math.abs(y-boss.y)<70)boss.charge=18;}
 let curSty='orb';
@@ -419,7 +443,7 @@ function bossPhaseStart(){
   ringFx(boss.x,boss.y,'#ffe9a8',120,3);ringFx(boss.x,boss.y,'#ff5d8f',80,2);
   // clear bullets for score
   for(const b of ebullets){addScore(50);spark(b.x,b.y,b.color,1,1.2);}
-  ebullets=[];
+  ebullets=[];casters=[];
 }
 function fireWall(gapC,gapW,speed,color){
   if(boss)burstFx(boss.x,boss.y,color);
@@ -440,10 +464,13 @@ function bossPattern(){
 }
 function boss2Pattern(b,t){
   if(b.phase===0){ // 連符「ツインストリーム」 twin aimed burst streams
+    if(t===1){spawnCaster({mode:'follow',ox:-64,oy:14,x:b.x,y:b.y,color:'#37c8d9'});spawnCaster({mode:'follow',ox:64,oy:14,x:b.x,y:b.y,color:'#8ff3ff'});}
+    const c0=casters[0],c1=casters[1];
+    const sx0=c0?c0.x:b.x-30,sy0=c0?c0.y:b.y+8,sx1=c1?c1.x:b.x+30,sy1=c1?c1.y:b.y+8;
     const ph=t%30;
-    if(ph<8&&ph%2===0){aimed(b.x-30,b.y+8,2.7,'#37c8d9');aimed(b.x+30,b.y+8,2.7,'#8ff3ff');}
-    if((t+18)%84===0){chargeFx(b.x-30,b.y+8,'#37c8d9');chargeFx(b.x+30,b.y+8,'#8ff3ff');}
-    if(t%84===0){ring(b.x-30,b.y+8,10,1.15,'#37c8d9',t*0.02);ring(b.x+30,b.y+8,10,1.15,'#8ff3ff',-t*0.02);}
+    if(ph<8&&ph%2===0){aimed(sx0,sy0,2.7,'#37c8d9');aimed(sx1,sy1,2.7,'#8ff3ff');}
+    if((t+18)%84===0){chargeFx(sx0,sy0,'#37c8d9');chargeFx(sx1,sy1,'#8ff3ff');}
+    if(t%84===0){ring(sx0,sy0,10,1.15,'#37c8d9',t*0.02);ring(sx1,sy1,10,1.15,'#8ff3ff',-t*0.02);}
   }else if(b.phase===1){ // 壁符「星垣の壁」 bullet walls with a drifting gap
     if((t+18)%50===0)chargeFx(b.x,b.y,'#37c8d9');
     if(t%50===0)fireWall(W/2+Math.sin(t*0.008)*115,42,1.65,'#37c8d9');
@@ -469,13 +496,12 @@ function boss2Pattern(b,t){
 function boss3Pattern(b,t){
   if(b.phase===0){ // 渦符「三重の渦」 triple spiral, two layers counter-rotating
     if(t%4===0){for(let k=0;k<3;k++){const a=b.ang+k*Math.PI*2/3;fire(b.x,b.y,Math.cos(a)*1.8,Math.sin(a)*1.8,'#ff7a5c');}b.ang+=0.24;}
-    if(t%7===0){for(let k=0;k<2;k++){const a=-b.ang2+k*Math.PI;fire(b.x,b.y,Math.cos(a)*1.35,Math.sin(a)*1.35,'#ffb84d');}b.ang2+=0.19;}
+    if(t===1){spawnCaster({mode:'orbit',rad:58,ang:0,angSpd:-0.027,x:b.x,y:b.y,color:'#ffb84d',act:'stream2'});spawnCaster({mode:'orbit',rad:58,ang:Math.PI,angSpd:-0.027,x:b.x,y:b.y,color:'#ffb84d',act:'stream2'});}
     if((t+18)%128===0)chargeFx(b.x,b.y,'#ffe066');
     if(t%128===0){shapeRing(b.x,b.y,starVerts(5),25,1.05,'#ffe066',b.ang,5,{delay:18});ring(b.x,b.y,20,0.8,'#ffb84d',-b.ang,5,{delay:18});}
   }else if(b.phase===1){ // 花符「葬送の花園」 delayed blooms everywhere
     if(t%8===0){for(const s of[-1,1])fire(b.x+s*30,b.y+6,s*0.7,1.45,'#ff8fd0',5,{curve:s*0.011});}
-    if((t+18)%46===0)chargeFx(b.x+[-72,-36,0,36,72,36,0,-36][Math.floor((t+18)/46)%8],b.y+30,'#ff7a5c');
-    if(t%46===0){const bx=b.x+[-72,-36,0,36,72,36,0,-36][Math.floor(t/46)%8];ring(bx,b.y+30,14,0.85,'#ff7a5c',t*0.01,5,{delay:30});shapeRing(bx,b.y+30,starVerts(5),15,0.7,'#ffb84d',-t*0.014,5,{delay:44});}
+    if(t%46===0){const bx=b.x+[-72,-36,0,36,72,36,0,-36][Math.floor(t/46)%8];spawnCaster({mode:'fixed',x:bx,y:b.y+30,color:'#ff7a5c',act:'bloom',chargeTime:30,p:{n:14,speed:0.85,color:'#ff7a5c',off:t*0.01,n2:15,speed2:0.7,color2:'#ffb84d',off2:-t*0.014}});}
     if(t%70===0)aimed(b.x,b.y,1.9,'#c39bff',5,0.6,5);
   }else if(b.phase===2){ // 壁符「断罪の壁」 walls + spiral pressure
     if((t+18)%54===0)chargeFx(b.x,b.y,'#ff7a5c');
@@ -511,6 +537,7 @@ function boss1Pattern(b,t){
     if(t%42===0){if(Math.floor(t/42)%2===0)shapeRing(b.x,b.y,polyVerts(4),28,1.5,'#ffb84d',t*0.011);else ring(b.x,b.y,26,1.5,'#ffb84d',t*0.011);ring(b.x,b.y,18,1.02,'#ff5d8f',t*0.011+Math.PI/18);}
     if(t%28===0)aimed(b.x,b.y,2.15,'#6ee7ff',5,0.5,3);
   }else if(b.phase===2){ // 花符「星薔薇の嵐」 petal curves + delayed blooms
+    if(t===1){spawnCaster({mode:'orbit',rad:76,ang:0.6,angSpd:0.011,x:b.x,y:b.y,color:'#ff8fd0',act:'pulseRing',period:96,nextIn:60,p:{n:10,speed:0.92,color:'#ff8fd0'}});spawnCaster({mode:'orbit',rad:76,ang:0.6+Math.PI,angSpd:0.011,x:b.x,y:b.y,color:'#ffb84d',act:'pulseRing',period:96,nextIn:96,p:{n:10,speed:0.92,color:'#ffb84d'}});}
     if(t%7===0){for(const s of[-1,1])fire(b.x+s*26,b.y+6,s*0.72,1.5,'#ff8fd0',5,{curve:s*0.011});}
     if((t+18)%84===0)chargeFx(b.x,b.y,'#ff5d8f');
     if(t%84===0)shapeRing(b.x,b.y,starVerts(5),20,0.92,'#ff5d8f',t*0.021,5,{delay:26});
@@ -524,10 +551,10 @@ function boss1Pattern(b,t){
     if(t%168===0)aimed(b.x,b.y,1.25,'#fff3b0',8,0.34,3);
   }else{ // 終詠「星屑の葬送」 layered finale
     if(t%4===0){for(let k=0;k<2;k++){const a=b.ang+k*Math.PI;fire(b.x,b.y,Math.cos(a)*1.95,Math.sin(a)*1.95,k===0?'#6ee7ff':'#ff8fd0');}b.ang+=0.265;}
+    if(t===1)spawnCaster({mode:'fixed',x:W/2,y:128,color:'#c39bff',act:'starCast',period:96,nextIn:96});
     if((t+18)%46===0)chargeFx(b.x,b.y,'#ffb84d');
     if(t%46===0)shapeRing(b.x,b.y,polyVerts(6),26,1.28,'#ffb84d',t*0.017);
     if(t%92===0)ring(b.x,b.y,16,0.78,'#ff8fd0',-t*0.017);
-    if(t%96===0)shapeRing(b.x,b.y,starVerts(5),20,0.95,'#c39bff',-t*0.009,5,{delay:22});
     if(t%30===0)aimed(b.x,b.y,2.3,'#ff5d8f',5,0.55,5);
   }
 }
@@ -557,7 +584,7 @@ function killBoss(withBonus){
   spark(boss.x,boss.y,'#ffe066',70,3.6);spark(boss.x,boss.y,'#ff5d8f',46,2.6);spark(boss.x,boss.y,'#6ee7ff',30,2);
   ringFx(boss.x,boss.y,'#ffe066',150,3.4);ringFx(boss.x,boss.y,'#ff5d8f',105,2.4);ringFx(boss.x,boss.y,'#ffffff',64,2);
   flashT=12;slowmo=22;se('boomL',0.7);
-  shake=16;boss=null;ebullets=[];
+  shake=16;boss=null;ebullets=[];casters=[];
   items.push({x:W/2-30,y:120,vy:1,kind:'P'});items.push({x:W/2+30,y:120,vy:1,kind:'B'});
   spawnQ=[];
   // stage clear!
@@ -655,6 +682,7 @@ function step(){
     if(boss.y<boss.ty)boss.y+=1.1;
     else bossMove();
     bossFiring=true;bossPattern();bossFiring=false;
+    updateCasters();
   }
   // player shots
   for(let i=pshots.length-1;i>=0;i--){const s=pshots[i];s.x+=s.vx;s.y+=s.vy;if(s.y<-16||s.x<-8||s.x>W+8){pshots.splice(i,1);}}
@@ -842,6 +870,19 @@ function draw(){
     ctx.fillText(BOSSES[boss.id].name+' — '+BPH()[boss.phase].name,14,32);
     for(let k=0;k<BPH().length;k++){ctx.fillStyle=k<boss.phase?'#3ddc97':(k===boss.phase?'#ffe066':'rgba(255,255,255,.25)');ctx.beginPath();ctx.arc(W-16-k*13,13,3.4,0,7);ctx.fill();}
   }
+  // magic-circle casters (secondary emitters)
+  for(const c of casters){
+    const fadeIn=Math.min(1,c.t/12), fadeOut=c.life<1e8?Math.min(1,Math.max(0,(c.life-c.t)/12)):1;
+    const charging=c.act==='bloom'?(c.t/c.chargeTime):(c.nextIn<=18&&c.nextIn>0?1-c.nextIn/18:0);
+    ctx.save();ctx.translate(c.x,c.y);ctx.globalAlpha=0.85*fadeIn*fadeOut;
+    ctx.save();ctx.rotate(c.t*0.02);ctx.strokeStyle=c.color;ctx.globalAlpha=0.55*fadeIn*fadeOut;ctx.lineWidth=1.5;ctx.setLineDash([10,7]);ctx.beginPath();ctx.arc(0,0,30,0,7);ctx.stroke();ctx.restore();
+    ctx.save();ctx.rotate(-c.t*0.031);ctx.strokeStyle=c.color;ctx.globalAlpha=0.4*fadeIn*fadeOut;ctx.lineWidth=1.1;ctx.setLineDash([4,6]);ctx.beginPath();ctx.arc(0,0,22,0,7);ctx.stroke();ctx.restore();
+    ctx.setLineDash([]);
+    ctx.globalAlpha=(0.25+0.65*charging)*fadeIn*fadeOut;ctx.fillStyle=c.color;ctx.beginPath();ctx.arc(0,0,4+5*charging,0,7);ctx.fill();
+    ctx.globalAlpha=0.9*fadeIn*fadeOut;ctx.fillStyle='#ffffff';ctx.beginPath();ctx.arc(0,0,2,0,7);ctx.fill();
+    ctx.restore();
+  }
+  ctx.globalAlpha=1;
   // enemy bullets (glow sprites; delayed bullets materialize first)
   for(const b of ebullets){
     const styled=b.sty&&b.sty!=='orb';
