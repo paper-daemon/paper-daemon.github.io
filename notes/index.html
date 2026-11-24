@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>よむ | Shelfiria</title>
-<meta name="description" content="あませのnote連載「できたことの記録」全110件を、新しい順に並べた一覧ページ。作ったもの、直したもの、失敗した話までそのまま書いています。">
+<meta name="description" content="あませのnote連載「できたことの記録」全111件を、新しい順に並べた一覧ページ。作ったもの、直したもの、失敗した話までそのまま書いています。">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/site.css?v=20261101-1">
 <style>.video-card video{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;background:#0b0714;display:block;margin-bottom:12px}.video-card .video-exit{font-weight:700;color:var(--red);text-decoration:none}.video-card .video-exit:hover{text-decoration:underline}.contactrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0 36px}.contactrow a{border:1px solid var(--line);border-radius:12px;padding:16px;text-decoration:none;font-weight:700;background:var(--paper-2);color:var(--ink)}.contactrow span{display:block;color:var(--muted);font-weight:400;font-size:.76rem;margin-top:5px}@media(max-width:810px){.contactrow{grid-template-columns:1fr}}</style>
@@ -38,8 +38,9 @@ body{background-image:none!important}
 <body id="top">
 <header class="site-head"><a class="brand" href="/"><img class="brand-avatar" src="/amase-avatar.jpg" alt=""><span class="brand-copy"><strong>Shelfiria</strong></span></a><nav aria-label="main"><a href="/demo.html">あそぶ</a><a href="#top" aria-current="page">できること</a></nav><div class="head-actions"><a class="social-mini" href="https://www.threads.com/@ive.amase" aria-label="Threads">Th</a><a class="social-mini" href="https://www.instagram.com/ive.amase/" aria-label="Instagram">IG</a><a class="social-mini" href="https://x.com/amase__iv" aria-label="X">X</a><a class="head-cta" href="/demo.html">あそぶ →</a></div></header>
 <main>
-<section class="section" id="notes"><header class="section-head reveal in"><small>NOTES</small><h1>よむ。</h1><p>作ったときの記録を新しい順に並べました（note連載・全110件）。うまくいった話も、失敗した話も、そのまま書いてます。</p></header>
+<section class="section" id="notes"><header class="section-head reveal in"><small>NOTES</small><h1>よむ。</h1><p>作ったときの記録を新しい順に並べました（note連載・全111件）。うまくいった話も、失敗した話も、そのまま書いてます。</p></header>
 <div class="link-list">
+<a class="link-row reveal" href="https://note.com/lovely_hosta391/n/nbca16c4f3954"><small>2026.11.24</small><strong>ゲーム機に、PCの画面を映して触れる形にした</strong><span>SwitchへのPC画面ストリーミングの話。PC側に配信役（Sunshine）を用意し、Switch側のMoonlightとペアリングして、Switchの画面にPCのデスクトップが映ることと、コントローラーがSwitch側からPCへ届くことを実地とログの両方で確認した。PC側にゲーム自体は未導入で、現範囲はデスクトップ配信まで。</span></a>
 <a class="link-row reveal" href="https://note.com/lovely_hosta391/n/n329d8802faa9"><small>2026.11.23</small><strong>作品の売り先が、もう1つ増えた</strong><span>作品の販売先の話。2026-11-20からFANZAでも巫女CG集と牛漫画の販売が始まり（販売開始の知らせで確認）、従来のDLsiteと合わせて販売先が2つになった。売上数字はまだ追っていない、という現状も明記。</span></a>
 <a class="link-row reveal" href="https://note.com/lovely_hosta391/n/n8a9ac421d47d"><small>2026.11.23</small><strong>動画の棚のデータは、3万件の前提で置き場所を変えた</strong><span>VideoShelfのライブラリ保存の移行の話。規模の前提を約3万件・数十MBに置き、再生位置の保存のたびに全件を書き換えて引っかかっていた問題を、保存先を専用ファイル（files/library.json、v2.9.55／vc107）へ移すことで解消し、実際に使って直ったことを確認した。新着動画の定期回収は未実装のまま、という残件も明記。</span></a>
 <a class="link-row reveal" href="https://note.com/lovely_hosta391/n/nf5c3d6c55352"><small>2026.11.23</small><strong>ゲーム機の電源ボタンは、切るんじゃなく寝かせる設定にした</strong><span>常時稼働のSwitchノードの電源設定の話。電源ボタンは電源断ではなくスリープに割り当て、RTCタイマーで自動復帰させてサスペンド/復帰を実証した（再起動にならずセッション維持）。罠として、RTCがローカル時刻で数えるため復帰時刻の指定が約9時間ずれて過去扱いになり指定が消える件があり、時計の数え方に合わせて指定し直して解決した。</span></a>
