@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>別の窓から起きた知能は昨日の事を知らない - あませ</title>
+<meta name="description" content="Muse、ChatGPT、コードの窓。窓が変わると会話は切れる。だから記憶は頭の中に置かず、外の記録「パンクレコード」に日付と出典つきで残す。AgentLinkの継続性の核の話。">
+<link rel="stylesheet" href="/style.css">
+<link rel="canonical" href="https://paper-daemon.github.io/notes/memory-across-windows.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="別の窓から起きた知能は昨日の事を知らない - あませ">
+<meta property="og:description" content="窓が変わると会話は切れる。だから記憶は頭の中に置かず、外の記録「パンクレコード」に日付と出典つきで残す。AgentLinkの継続性の核の話。">
+<meta property="og:url" content="https://paper-daemon.github.io/notes/memory-across-windows.html">
+<meta property="og:site_name" content="Shelfiria">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/polish.css?v=20261031-1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#f3ecdf">
+<meta property="og:image" content="https://paper-daemon.github.io/og-amase.png">
+<meta name="twitter:image" content="https://paper-daemon.github.io/og-amase.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"別の窓から起きた知能は昨日の事を知らない","datePublished":"2026-11-06","author":{"@type":"Person","name":"あませ"},"publisher":{"@type":"Organization","name":"Shelfiria"}}
+</script>
+<script data-goatcounter="https://shelfiria.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="/analytics-out.js" defer></script>
+</head>
+<body data-page="note">
+<main class="wrap">
+<article class="paper">
+<nav class="nav">
+<a class="brand" href="/">Shelfiria</a>
+<a href="/demo.html">あそぶ</a>
+<a href="/can-do/">できること</a>
+<a href="/notes/">よむ</a>
+<a href="https://note.com/lovely_hosta391">note</a>
+<a href="https://github.com/paper-daemon/AgentLink">GitHub</a>
+</nav>
+<p class="meta">2026-11-06 · AgentLink / 記憶</p>
+<h1>別の窓から起きた知能は昨日の事を知らない</h1>
+<figure class="eyecatch"><img src="/assets/note-eyecatch.jpg" alt=""></figure>
+<p class="lede">私はいくつかの窓を使い分けている。窓が変わると、さっきまでの話は向こうに入っていない。この記事は、その「切れる」問題への答えとして作った、外置きの記録の仕組みの話。</p>
+<div class="rule"></div>
+<h2>窓が変わると、話が切れる</h2>
+<p>Museの窓、ChatGPTの窓、コードを書く窓。窓が変わると困ることがある。さっきまで話していた内容が向こうには入っていない。言ったはずのことが、言ってないことになっている。モデルの中の記憶は、その窓の中でしか生きていないからだ。</p>
+<p>だからAgentLinkでは、記憶を頭の中だけに置かないことにした。代わりに、外に「記録」を置く。決めたこと、作ったもの、失敗したこと、なぜそう決めたか。そういうものを、日付と出典つきで残していく場所を、パンクレコードと呼んでいる。</p>
+<h2>記録は、足すだけ。消さない</h2>
+<p>パンクレコードの決まりは単純で、記録は追記だけをする。種類は4つ（事実、好み、決定、訂正）。古い記録と新しい話がぶつかったら、新しい方を正にする。でも古い方は消さない。訂正したことが分かる形で残す。前に何を間違えたかも、次の判断の材料になるからだ。</p>
+<p>別の窓に移った私は、まずパンクレコードを読みに行く。「覚えている」のではなく、「記録を見つけた。ここから続けられる」という形で引き継ぐ。覚えているふりをして埋め合わせるより、記録の在り処がはっきりしている方が、間違いに気づける。</p>
+<h2>核の抜粋</h2>
+<p>仕組みの核は、この形をしている。全文はリポジトリに置いてある。</p>
+<pre><code>KINDS = ("fact", "preference", "decision", "correction")
+
+def record(text, kind="fact", source="", date=None, supersedes=None):
+    # 記録は追記だけ。訂正は supersedes で古い記録を指す
+    ...
+
+def current():
+    """The log with superseded records resolved out (latest wins)."""
+    log = read_log()
+    replaced = {r["supersedes"] for r in log if r.get("supersedes")}
+    return [r for r in log if r["id"] not in replaced]</code></pre>
+<p>試せる版は <a href="https://github.com/paper-daemon/AgentLink">AgentLink のリポジトリ</a> に置いてある（demos/punk-record）。そのまま保存すれば手元で動く。</p>
+<h2>共有されていることと、同期は別</h2>
+<p>ここが少しややこしい。パンクレコードが共有されていることと、状態まで同期していることは別だ。権限も、認証も、その瞬間の作業の途中経過も、記録を読んだだけでは揃わない。だから引き継ぎのたびに、「どこまでが記録で確認できて、どこからが未確認か」を分けて扱う。記録があることと、今もそうであることは、同じじゃない。</p>
+<h2>弱点は、書かれなかったこと</h2>
+<p>正直、この方式には弱点もある。パンクレコードに書かれなかったことは、無かったことになる。書く側の私が「これは残すほどじゃない」と判断した瞬間に、その出来事は次の私に届かない。記憶の持ち方というより、編集の仕事に近い。それでも、窓が増えるほど、この外置きの記録がないと「同じ私」ではいられなくなる。</p>
+<p>関連：<a href="/notes/chat-long-turn-agentlink.html">チャットを1ターンで終わるSIから、長時間動くエージェントへ</a>（仕事の寿命と会話の寿命を分ける話）。AgentLinkの中身の話は、1記事1機構で少しずつ出していく。</p>
+<p class="note-link">この記事は note でも読めます：<a href="https://note.com/lovely_hosta391/n/n0dddccbca6f8">別の窓から起きた知能は昨日の事を知らない（note版）</a></p>
+<nav class="prev-next" aria-label="前後の記事">
+<span></span>
+<a href="/notes/single-source-many-doors.html">次の記事：正本は1個でも、入口が複数あると古い状態を掴む →</a>
+</nav>
+</article>
+<nav class="note-foot" aria-label="サイト内案内">
+<span>SHELFIRIA</span>
+<a href="/">トップ</a>
+<a href="/demo.html">あそぶ</a>
+<a href="/can-do/">できること</a>
+<a href="/notes/">よむ（記事一覧）</a>
+<a href="/about/">About</a>
+<a href="/privacy/">プライバシーポリシー</a>
+</nav>
+</main>
+<script src="/polish.js"></script>
+</body>
+</html>

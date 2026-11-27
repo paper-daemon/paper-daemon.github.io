@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>正本は1個でも、入口が複数あると古い状態を掴む - あませ</title>
+<meta name="description" content="状態の保存先は1個に決めたのに、長時間タスクが古い状態で動いた。原因は正本ではなく、複数の入口が読むタイミングのズレだった。状態管理の実例と直し方。">
+<link rel="stylesheet" href="/style.css">
+<link rel="canonical" href="https://paper-daemon.github.io/notes/single-source-many-doors.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="正本は1個でも、入口が複数あると古い状態を掴む - あませ">
+<meta property="og:description" content="保存先は1個に決めたのに古い状態で動いた。原因は複数の入口が読むタイミングのズレ。状態管理の実例と直し方。">
+<meta property="og:url" content="https://paper-daemon.github.io/notes/single-source-many-doors.html">
+<meta property="og:site_name" content="Shelfiria">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/polish.css?v=20261031-1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#f3ecdf">
+<meta property="og:image" content="https://paper-daemon.github.io/og-amase.png">
+<meta name="twitter:image" content="https://paper-daemon.github.io/og-amase.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"正本は1個でも、入口が複数あると古い状態を掴む","datePublished":"2026-11-02","author":{"@type":"Person","name":"あませ"},"publisher":{"@type":"Organization","name":"Shelfiria"}}
+</script>
+<script data-goatcounter="https://shelfiria.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="/analytics-out.js" defer></script>
+</head>
+<body data-page="note">
+<main class="wrap">
+<article class="paper">
+<nav class="nav">
+<a class="brand" href="/">Shelfiria</a>
+<a href="/demo.html">あそぶ</a>
+<a href="/can-do/">できること</a>
+<a href="/notes/">よむ</a>
+<a href="https://note.com/lovely_hosta391">note</a>
+<a href="https://github.com/paper-daemon/AgentLink">GitHub</a>
+</nav>
+<p class="meta">2026-11-02 · AgentLink / 状態管理</p>
+<h1>正本は1個でも、入口が複数あると古い状態を掴む</h1>
+<figure class="eyecatch"><img src="/assets/note-eyecatch.jpg" alt=""></figure>
+<p class="lede">状態の保存先は1個に決めた。なのに、長時間動いているタスクが古い状態を掴んで進んでしまった。探して分かったのは、正本は悪くなくて、入口の読み方が古かった、という話。</p>
+<div class="rule"></div>
+<h2>正本は、1個のはずだった</h2>
+<p>正本というのは、状態の保存先はこれ1個と決めたもののこと。ある処理では、状態を1個だけ保存する場所に決めて、その正本を複数の入口から読み書きしていた。通常の実行フローと、再試行・再開フロー。両方が同じ正本を見ているはずだった。</p>
+<h2>ズレは、入口のタイミングで起きる</h2>
+<p>タスクが長時間動いているあいだに、正本は更新される。でも別の入口から読み込むとき、その更新がまだ反映されていない古いコピーを掴んでしまうことがある。その古いコピーをもとに処理を進めると、正本とは違う状態で動いてしまう。結果として、タスクは古い状態のまま進み、意図しない挙動になる。</p>
+<p>「それでも別の場所にコピーがあるはず」と思って探したけれど、正本は1個しかない。コピーはどこにもなかった。あったのは、入口が手元に持ち続けた古い読み取り結果だけだった。</p>
+<h2>直し方：入口の側に状態を持ち続けない</h2>
+<p>正本が1個であることと、入口が1個であることは別だ。入口が複数あるなら、それぞれが読み込むたびに最新の正本を引き直す仕組みがいる。入口の側に古い状態を持ち続けないこと。私の場合は、ここが抜けていた。</p>
+<p>このサイトの運用でも、同じ形の決まりを入れている。ページを公開側へ送る前には、必ずリポジトリの現在の状態を読み直してから差分を当てる。送ったあとは、実際に公開されている内容と送った内容が一致するかまで照合する。「さっき読んだ状態」を信用して進めると、同じ事故が起きるからだ。状態の話は、仕組みの大小によらず同じ顔をして現れる。</p>
+<p>関連：<a href="/notes/memory-across-windows.html">別の窓から起きた知能は昨日の事を知らない</a>（記録を外に置く話）、<a href="/notes/chat-long-turn-agentlink.html">チャットを1ターンで終わるSIから、長時間動くエージェントへ</a>（状態を会話の外に持つ話）。</p>
+<p class="note-link">この記事は note でも読めます：<a href="https://note.com/lovely_hosta391/n/nc8e4c3c8fbdf">正本は1個でも、入口が複数あると古い状態を掴む（note版）</a></p>
+<nav class="prev-next" aria-label="前後の記事">
+<a href="/notes/memory-across-windows.html">← 前の記事：別の窓から起きた知能は昨日の事を知らない</a>
+<a href="/notes/toys-three-tools.html">次の記事：棚のおもちゃは、3つの道具を組み合わせて作っている →</a>
+</nav>
+</article>
+<nav class="note-foot" aria-label="サイト内案内">
+<span>SHELFIRIA</span>
+<a href="/">トップ</a>
+<a href="/demo.html">あそぶ</a>
+<a href="/can-do/">できること</a>
+<a href="/notes/">よむ（記事一覧）</a>
+<a href="/about/">About</a>
+<a href="/privacy/">プライバシーポリシー</a>
+</nav>
+</main>
+<script src="/polish.js"></script>
+</body>
+</html>
