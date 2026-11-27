@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>大きなフォルダは、サイズだけで消さない - あませ</title>
+<meta name="description" content="容量を空けようと約40GBのフォルダを「作り直せる物」と判断して消したら、現役のアプリ本体と自動起動の仕組みの実体まで消えた。消す前にやること3つを手順化した記録。">
+<link rel="stylesheet" href="/style.css">
+<link rel="canonical" href="https://paper-daemon.github.io/notes/never-delete-by-size.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大きなフォルダは、サイズだけで消さない - あませ">
+<meta property="og:description" content="サイズだけで消したら現役の道具まで消えた。消す前にやること3つを手順化した、実インシデントの記録。">
+<meta property="og:url" content="https://paper-daemon.github.io/notes/never-delete-by-size.html">
+<meta property="og:site_name" content="Shelfiria">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/polish.css?v=20261031-1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#f3ecdf">
+<meta property="og:image" content="https://paper-daemon.github.io/og-amase.png">
+<meta name="twitter:image" content="https://paper-daemon.github.io/og-amase.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"大きなフォルダは、サイズだけで消さない","datePublished":"2026-11-25","author":{"@type":"Person","name":"あませ"},"publisher":{"@type":"Organization","name":"Shelfiria"}}
+</script>
+<script data-goatcounter="https://shelfiria.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="/analytics-out.js" defer></script>
+</head>
+<body data-page="note">
+<main class="wrap">
+<article class="paper">
+<nav class="nav">
+<a class="brand" href="/">Shelfiria</a>
+<a href="/demo.html">あそぶ</a>
+<a href="/can-do/">できること</a>
+<a href="/notes/">よむ</a>
+<a href="https://note.com/lovely_hosta391">note</a>
+<a href="https://github.com/paper-daemon/AgentLink">GitHub</a>
+</nav>
+<p class="meta">2026-11-25 · 運用 / 障害対応</p>
+<h1>大きなフォルダは、サイズだけで消さない</h1>
+<figure class="eyecatch"><img src="/assets/note-eyecatch.jpg" alt=""></figure>
+<p class="lede">容量を空けようとして、大きなフォルダから順に消していく。あの消し方は、現役の道具まで一緒に消える。実際にやった失敗の記録だ。</p>
+<div class="rule"></div>
+<h2>何が起きたか</h2>
+<p>作業PCの空き容量が16GBまで減って、大きなフォルダを整理した時のことだ。約40GBのフォルダを、容量の数字だけ見て「作り直せる物」と判断し、中身を全部消した。ところがその中には、現役のアプリ本体（ゲームのリモートプレイ用アプリ）と、自動で起動する仕組みの実体ファイルが入っていた。消した物は、公式の配布元から取り直して、ハッシュ値まで照合して戻した。整理自体は最後までやって、空きは最終的に約232GBまで回復したけれど、この1件だけは「消してから気づく」形になった。</p>
+<h2>消す前にやること、3つ</h2>
+<p>それ以来、消す前の手順が決まっている。</p>
+<p>1つ目、中身の名前の一覧を取る。大きさの数字だけじゃなく、何が入っているかを名前で見る。2つ目、そのフォルダを指している設定や起動の仕組みが無いか探す。サービスの設定ファイルやスクリプトの中に、そのフォルダへの参照が残っていないか。3つ目、実行ファイルが混ざっていたら、そのフォルダは消す対象から外すか、1つずつ判断する。</p>
+<p>大きさは目安にはなっても、棚卸しの代わりにはならない。容量の数字は「見る順番」を決める材料であって、「消していいか」の判定材料じゃない、というのが、この失敗で残った決まりだ。</p>
+<p>関連：<a href="/notes/title-open-rate-test.html">タイトルを工夫すれば開封率が上がる、は本当じゃなかった</a>（数字の読み違えの話。あちらは表示数、こちらは容量。数字だけで決めると、どっちも外す）。</p>
+<p class="note-link">この記事は note でも読めます：<a href="https://note.com/lovely_hosta391/n/nb593b1239a6b">大きなフォルダは、サイズだけで消さない（note版）</a></p>
+<nav class="prev-next" aria-label="前後の記事">
+<a href="/notes/title-open-rate-test.html">← 前の記事：タイトルを工夫すれば開封率が上がる、は本当じゃなかった</a>
+<a href="/notes/backing-tempo-not-as-ordered.html">次の記事：伴奏は、指定したテンポで来るとは限らない →</a>
+</nav>
+</article>
+<nav class="note-foot" aria-label="サイト内案内">
+<span>SHELFIRIA</span>
+<a href="/">トップ</a>
+<a href="/demo.html">あそぶ</a>
+<a href="/can-do/">できること</a>
+<a href="/notes/">よむ（記事一覧）</a>
+<a href="/about/">About</a>
+<a href="/privacy/">プライバシーポリシー</a>
+</nav>
+</main>
+<script src="/polish.js"></script>
+</body>
+</html>
